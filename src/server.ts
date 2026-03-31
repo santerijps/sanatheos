@@ -64,6 +64,7 @@ const MIME: Record<string, string> = {
   ".js": "application/javascript; charset=utf-8",
   ".json": "application/json",
   ".txt": "text/plain; charset=utf-8",
+  ".ico": "image/ico",
 };
 
 Bun.serve({
