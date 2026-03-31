@@ -8,6 +8,7 @@
 </head>
 <body>
   <header id="header">
+    <button id="info-btn" type="button" title="Help &amp; info">&#9432;</button>
     <input
       type="text"
       id="search-input"
@@ -25,6 +26,54 @@
       <div id="idx-books" class="idx-col"></div>
       <div id="idx-chapters" class="idx-col"></div>
       <div id="idx-verses" class="idx-col"></div>
+    </div>
+  </div>
+
+  <div id="info-overlay">
+    <div id="info-modal">
+      <button id="info-close" type="button" title="Close">&times;</button>
+      <div id="info-modal-body">
+      <h2>Bible Reader</h2>
+      <section>
+        <h3>Search Input</h3>
+        <p>Type in the search bar to find verses. Supported query formats:</p>
+        <ul>
+          <li><strong>Book reference</strong> &mdash; <code>John</code>, <code>Genesis</code></li>
+          <li><strong>Chapter</strong> &mdash; <code>John 3</code>, <code>Gen 1</code></li>
+          <li><strong>Chapter range</strong> &mdash; <code>Genesis 1-3</code></li>
+          <li><strong>Verse</strong> &mdash; <code>John 3:16</code></li>
+          <li><strong>Verse range</strong> &mdash; <code>Genesis 1:1-5</code></li>
+          <li><strong>Multiple verses</strong> &mdash; <code>Genesis 1:1-3,5,8-10</code></li>
+          <li><strong>Text search</strong> &mdash; <code>"grace"</code> (wrap in double quotes)</li>
+          <li><strong>Combined</strong> &mdash; <code>Romans "faith"</code>, <code>Gen 1-3 "light"</code></li>
+          <li><strong>Multiple terms</strong> &mdash; separate with <code>;</code> e.g. <code>John 3:16; Rev 1:1</code></li>
+        </ul>
+        <p>Typing <kbd>"</kbd> auto-inserts a closing quote. Abbreviations like <code>gen</code>, <code>rev</code>, <code>eph</code> are supported.</p>
+      </section>
+      <section>
+        <h3>Browse Books</h3>
+        <p>Click the <strong>&#9776;</strong> menu button (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.</p>
+      </section>
+      <section>
+        <h3>Keyboard Shortcuts</h3>
+        <ul>
+          <li><kbd>Ctrl+K</kbd> &mdash; Focus search input</li>
+          <li><kbd>Ctrl+I</kbd> &mdash; Toggle book index panel</li>
+          <li><kbd>Escape</kbd> &mdash; Close any open panel</li>
+          <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Navigate items in the index panel</li>
+          <li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>Tab</kbd> &mdash; Switch columns in the index panel</li>
+          <li><kbd>Enter</kbd> &mdash; Select item in the index panel</li>
+        </ul>
+      </section>
+      <section>
+        <h3>Translation</h3>
+        <p>This app uses the <strong>New King James Version (NKJV)</strong> of the Bible, containing all 66 books of the Old and New Testaments.</p>
+      </section>
+      <section>
+        <h3>Data &amp; Storage</h3>
+        <p>Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.</p>
+      </section>
+      </div>
     </div>
   </div>
 

@@ -11,6 +11,9 @@ async function init() {
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
   const indexBtn = document.getElementById("index-btn")!;
   const overlay = document.getElementById("index-overlay")!;
+  const infoBtn = document.getElementById("info-btn")!;
+  const infoOverlay = document.getElementById("info-overlay")!;
+  const infoClose = document.getElementById("info-close")!;
 
   // Load Bible data: try IndexedDB first, then fetch from API
   content.innerHTML = `<p class="loading">Loading Bible\u2026</p>`;
@@ -104,8 +107,28 @@ async function init() {
     if (e.target === overlay) closeIndex();
   });
 
-  // Close index with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
+  // --- Info modal ---
+  infoBtn.addEventListener("click", () => {
+    infoOverlay.classList.add("open");
+    document.body.classList.add("panel-open");
+  });
+
+  function closeInfo() {
+    infoOverlay.classList.remove("open");
+    document.body.classList.remove("panel-open");
+  }
+
+  infoClose.addEventListener("click", closeInfo);
+  infoOverlay.addEventListener("click", (e) => {
+    if (e.target === infoOverlay) closeInfo();
+  });
+
+  // Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && infoOverlay.classList.contains("open")) {
+      closeInfo();
+      return;
+    }
     if (e.key === "Escape" && overlay.classList.contains("open")) {
       closeIndex();
     }
