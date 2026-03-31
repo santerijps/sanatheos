@@ -66,7 +66,7 @@ const MIME: Record<string, string> = {
 };
 
 Bun.serve({
-  port: 3001,
+  port: 3000,
   async fetch(req) {
     const url = new URL(req.url);
     let path: string;
@@ -107,4 +107,4 @@ Bun.serve({
   },
 });
 
-console.log("→ http://localhost:3001");
+console.log("→ http://localhost:3000");
