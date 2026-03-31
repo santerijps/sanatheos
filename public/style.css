@@ -431,6 +431,25 @@ mark {
 .nav-next { margin-left: auto; }
 .nav-disabled { visibility: hidden; }
 
+/* === Multi-Nav Sections === */
+.multi-nav-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+.multi-nav-section {
+  margin-bottom: 8px;
+}
+
+.multi-nav-subheading {
+  font-family: var(--sans);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 20px 0 8px;
+}
+
 /* === Footer === */
 #footer {
   max-width: 720px;

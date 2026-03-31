@@ -1,8 +1,9 @@
 import type { BibleData, AppState } from "./types.ts";
 import { loadBible, saveBible } from "./db.ts";
 import { initSearch, search, tryParseNav } from "./search.ts";
+import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderBook, renderVerse, renderResults, renderIndex } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex } from "./render.ts";
 
 let data: BibleData;
 
@@ -51,19 +52,15 @@ async function init() {
         replaceState({});
         return;
       }
-      // Pure reference → navigate directly
-      const nav = tryParseNav(q);
-      if (nav && data[nav.book]) {
-        if (nav.chapter && nav.verse) {
-          renderVerse(data, nav.book, nav.chapter, nav.verse);
-          replaceState({ book: nav.book, chapter: nav.chapter, verse: nav.verse });
-        } else if (nav.chapter) {
-          renderChapter(data, nav.book, nav.chapter);
-          replaceState({ book: nav.book, chapter: nav.chapter });
+      // Pure reference(s) → navigate directly
+      const navRefs = tryParseNav(q);
+      if (navRefs && navRefs.every(r => !!data[r.book])) {
+        if (navRefs.length === 1) {
+          renderNavRef(navRefs[0]);
         } else {
-          renderChapter(data, nav.book, 1);
-          replaceState({ book: nav.book, chapter: 1 });
+          renderMultiNav(data, navRefs);
         }
+        replaceState({ query: q });
       } else {
         const results = search(data, q);
         renderResults(results, q);
@@ -221,17 +218,40 @@ function navigate(s: AppState) {
   pushState(s);
 }
 
+function renderNavRef(nav: NavRef) {
+  const { book, chapterStart, chapterEnd, verseSegments } = nav;
+
+  if (chapterStart !== undefined && chapterEnd !== undefined) {
+    if (verseSegments) {
+      // Single verse: Genesis 1:2
+      if (verseSegments.length === 1 && verseSegments[0].start === verseSegments[0].end) {
+        renderVerse(data, book, chapterStart, verseSegments[0].start);
+      } else {
+        // Verse segments: Genesis 8:1-3 or Genesis 8:1-3,6
+        renderVerseSegments(data, book, chapterStart, verseSegments);
+      }
+    } else if (chapterStart === chapterEnd) {
+      // Single chapter: Genesis 8
+      renderChapter(data, book, chapterStart);
+    } else {
+      // Chapter range: Genesis 8-10
+      renderChapterRange(data, book, chapterStart, chapterEnd);
+    }
+  } else {
+    // Whole book: Genesis → show chapter 1
+    renderChapter(data, book, 1);
+  }
+}
+
 function applyState(s: AppState) {
   if (s.query) {
-    // Check if the query is a pure reference → navigate instead of search
-    const nav = tryParseNav(s.query);
-    if (nav && data[nav.book]) {
-      if (nav.chapter && nav.verse) {
-        renderVerse(data, nav.book, nav.chapter, nav.verse);
-      } else if (nav.chapter) {
-        renderChapter(data, nav.book, nav.chapter);
+    // Check if the query is pure reference(s) → navigate instead of search
+    const navRefs = tryParseNav(s.query);
+    if (navRefs && navRefs.every(r => !!data[r.book])) {
+      if (navRefs.length === 1) {
+        renderNavRef(navRefs[0]);
       } else {
-        renderChapter(data, nav.book, 1);
+        renderMultiNav(data, navRefs);
       }
     } else {
       const results = search(data, s.query);

@@ -99,30 +99,32 @@ function parseRef(term: string): Ref | null {
   return null;
 }
 
+export interface NavRef {
+  book: string;
+  chapterStart?: number;
+  chapterEnd?: number;
+  verseSegments?: VerseSegment[];
+}
+
 /**
- * Try to parse a single-term query as a pure reference (no text filter).
- * Returns an AppState-like object for navigation, or null if it's a search query.
+ * Try to parse a query as pure references (no text filter).
+ * Returns an array of NavRef for navigation, or null if any term is a search query.
  */
-export function tryParseNav(query: string): { book: string; chapter?: number; verse?: number } | null {
+export function tryParseNav(query: string): NavRef[] | null {
   const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
-  if (terms.length !== 1) return null;
-  const term = terms[0];
+  if (!terms.length) return null;
 
-  // If it contains a quoted filter, it's a search, not navigation
-  const quotedMatch = term.match(/"(.*?)"/);
-  if (quotedMatch) return null;
+  const refs: NavRef[] = [];
+  for (const term of terms) {
+    // If it contains a quoted filter, it's a search
+    if (term.match(/"(.*?)"/)) return null;
 
-  const ref = parseRef(term);
-  if (!ref) return null;
+    const ref = parseRef(term);
+    if (!ref) return null;
 
-  // Only navigate for simple cases: whole book, single chapter, or single verse
-  if (ref.chapterStart !== undefined && ref.chapterEnd !== undefined && ref.chapterStart !== ref.chapterEnd) return null;
-  if (ref.verseSegments && ref.verseSegments.length > 1) return null;
-  if (ref.verseSegments && (ref.verseSegments[0].start !== ref.verseSegments[0].end)) return null;
-
-  const chapter = ref.chapterStart;
-  const verse = ref.verseSegments?.[0]?.start;
-  return { book: ref.book, chapter, verse };
+    refs.push({ book: ref.book, chapterStart: ref.chapterStart, chapterEnd: ref.chapterEnd, verseSegments: ref.verseSegments });
+  }
+  return refs;
 }
 
 export function search(data: BibleData, query: string, limit = 200): VerseResult[] {

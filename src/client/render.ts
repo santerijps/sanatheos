@@ -1,4 +1,5 @@
 import type { BibleData, VerseResult } from "./types.ts";
+import type { NavRef } from "./search.ts";
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -155,6 +156,133 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
   window.scrollTo(0, 0);
 }
 
+export function renderChapterRange(data: BibleData, book: string, chStart: number, chEnd: number) {
+  const bd = data[book];
+  if (!bd) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+
+  const { prev } = getChapterNav(data, book, chStart);
+  const { next } = getChapterNav(data, book, chEnd);
+  let html = navArrowsHtml(prev, next);
+  for (let c = chStart; c <= chEnd; c++) {
+    const ch = bd[String(c)];
+    if (!ch) continue;
+    const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
+    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(book)} ${c}</h2><div class="verses">`;
+    for (const n of nums) {
+      html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+    }
+    html += `</div></div>`;
+  }
+  html += navArrowsHtml(prev, next);
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+export function renderVerseSegments(data: BibleData, book: string, chapter: number, segments: { start: number; end: number }[]) {
+  const ch = data[book]?.[String(chapter)];
+  if (!ch) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+
+  // Build title label like "Genesis 8:1-3,6"
+  const segLabel = segments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
+  const title = `${book} ${chapter}:${segLabel}`;
+
+  // Determine first and last verse for nav
+  const firstVerse = segments[0].start;
+  const lastSeg = segments[segments.length - 1];
+  const lastVerse = lastSeg.end;
+
+  const { prev } = getVerseNav(data, book, chapter, firstVerse);
+  const { next } = getVerseNav(data, book, chapter, lastVerse);
+
+  let html = navArrowsHtml(prev, next);
+  html += `<h2 class="section-title">${esc(title)}</h2><div class="verses">`;
+  for (const seg of segments) {
+    for (let v = seg.start; v <= seg.end; v++) {
+      const text = ch[String(v)];
+      if (!text) continue;
+      html += `<span class="verse"><sup>${v}</sup>${fmt(text)}</span> `;
+    }
+  }
+  html += `</div>`;
+  html += navArrowsHtml(prev, next);
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+function navRefLabel(nav: NavRef): string {
+  const { book, chapterStart, chapterEnd, verseSegments } = nav;
+  if (chapterStart !== undefined && chapterEnd !== undefined) {
+    if (verseSegments) {
+      const segLabel = verseSegments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
+      return `${book} ${chapterStart}:${segLabel}`;
+    }
+    if (chapterStart === chapterEnd) return `${book} ${chapterStart}`;
+    return `${book} ${chapterStart}-${chapterEnd}`;
+  }
+  return book;
+}
+
+function navRefVersesHtml(data: BibleData, nav: NavRef): string {
+  const { book, chapterStart, chapterEnd, verseSegments } = nav;
+  const bd = data[book];
+  if (!bd) return '';
+
+  let html = '';
+
+  if (chapterStart !== undefined && chapterEnd !== undefined) {
+    if (verseSegments) {
+      const ch = bd[String(chapterStart)];
+      if (!ch) return '';
+      html += `<div class="verses">`;
+      for (const seg of verseSegments) {
+        for (let v = seg.start; v <= seg.end; v++) {
+          const text = ch[String(v)];
+          if (!text) continue;
+          html += `<span class="verse"><sup>${v}</sup>${fmt(text)}</span> `;
+        }
+      }
+      html += `</div>`;
+    } else {
+      for (let c = chapterStart; c <= chapterEnd; c++) {
+        const ch = bd[String(c)];
+        if (!ch) continue;
+        const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
+        if (chapterStart !== chapterEnd) {
+          html += `<h3 class="multi-nav-subheading">${esc(book)} ${c}</h3>`;
+        }
+        html += `<div class="verses">`;
+        for (const n of nums) {
+          html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+        }
+        html += `</div>`;
+      }
+    }
+  } else {
+    // Whole book → show chapter 1
+    const ch = bd["1"];
+    if (!ch) return '';
+    const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
+    html += `<div class="verses">`;
+    for (const n of nums) {
+      html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+    }
+    html += `</div>`;
+  }
+
+  return html;
+}
+
+export function renderMultiNav(data: BibleData, refs: NavRef[]) {
+  let html = '';
+  for (let i = 0; i < refs.length; i++) {
+    if (i > 0) html += `<hr class="multi-nav-divider">`;
+    html += `<section class="multi-nav-section">`;
+    html += `<h2 class="section-title">${esc(navRefLabel(refs[i]))}</h2>`;
+    html += navRefVersesHtml(data, refs[i]);
+    html += `</section>`;
+  }
+  $('content').innerHTML = html;
+  window.scrollTo(0, 0);
+}
 export function renderResults(results: VerseResult[], query: string) {
   if (!results.length) {
     $("content").innerHTML = `<p class="empty">No results for &ldquo;${esc(query)}&rdquo;</p>`;
