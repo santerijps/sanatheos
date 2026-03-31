@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
-import { initSearch, search, tryParseNav, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher } from "../src/client/search.ts";
+import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher } from "../src/client/search.ts";
+import { setTranslation } from "../src/client/bookNames.ts";
 
 // Minimal fixture data
 const fixture: BibleData = {
@@ -934,5 +935,89 @@ describe("search — unquoted ^/$ anchors return nothing", () => {
     expect(tryParseNav("^God$")).toBeNull();
     expect(tryParseNav("earth$")).toBeNull();
     expect(tryParseNav("^light")).toBeNull();
+  });
+});
+
+// --- parseQueryBooks ---
+describe("parseQueryBooks", () => {
+  test("parses single book reference", () => {
+    const result = parseQueryBooks("Genesis 1:1");
+    expect(result).toHaveLength(1);
+    expect(result[0].book).toBe("Genesis");
+    expect(result[0].rest).toBe("1:1");
+    expect(result[0].quoted).toBe("");
+  });
+
+  test("parses multiple semicolon-separated references", () => {
+    const result = parseQueryBooks("Genesis 1:1-5; John 3:16");
+    expect(result).toHaveLength(2);
+    expect(result[0].book).toBe("Genesis");
+    expect(result[0].rest).toBe("1:1-5");
+    expect(result[1].book).toBe("John");
+    expect(result[1].rest).toBe("3:16");
+  });
+
+  test("parses book only (no chapter)", () => {
+    const result = parseQueryBooks("Genesis");
+    expect(result).toHaveLength(1);
+    expect(result[0].book).toBe("Genesis");
+    expect(result[0].rest).toBe("");
+  });
+
+  test("preserves quoted text filter", () => {
+    const result = parseQueryBooks('Genesis "grace"');
+    expect(result).toHaveLength(1);
+    expect(result[0].book).toBe("Genesis");
+    expect(result[0].quoted).toBe('"grace"');
+  });
+
+  test("pure quoted term has empty book", () => {
+    const result = parseQueryBooks('"grace"');
+    expect(result).toHaveLength(1);
+    expect(result[0].book).toBe("");
+    expect(result[0].quoted).toBe('"grace"');
+  });
+
+  test("unrecognized term preserves original", () => {
+    const result = parseQueryBooks("Foobar 3:16");
+    expect(result).toHaveLength(1);
+    expect(result[0].book).toBe("");
+    expect(result[0].original).toBe("Foobar 3:16");
+  });
+
+  test("KR38 Finnish alias resolves to English key", () => {
+    setTranslation("KR38");
+    const result = parseQueryBooks("2. Moos 2:5-10");
+    expect(result).toHaveLength(1);
+    expect(result[0].book).toBe("Exodus");
+    expect(result[0].rest).toBe("2:5-10");
+    setTranslation("WEB");
+  });
+
+  test("KR38 Finnish prefix resolves to English key", () => {
+    setTranslation("KR38");
+    const result = parseQueryBooks("2. Moo 2:5-10; Job 1:13-22");
+    expect(result).toHaveLength(2);
+    expect(result[0].book).toBe("Exodus");
+    expect(result[0].rest).toBe("2:5-10");
+    expect(result[1].book).toBe("Job");
+    expect(result[1].rest).toBe("1:13-22");
+    setTranslation("WEB");
+  });
+});
+
+// --- search only shows results for quoted text ---
+describe("search — nav-only queries without quotes", () => {
+  test("tryParseNav returns null when query has unresolvable book", () => {
+    setTranslation("WEB");
+    expect(tryParseNav("Foobar 2:5-10; John 1:1-3")).toBeNull();
+  });
+
+  test("search still returns results for partially valid nav query without quotes", () => {
+    setTranslation("WEB");
+    const results = search(fixture, "Foobar 2:5-10; John 1:1-3");
+    // "John" resolves in the search function even though tryParseNav failed
+    // But the app layer should not render this as a list for nav-only queries
+    expect(results.length).toBeGreaterThan(0);
   });
 });

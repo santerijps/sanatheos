@@ -92,7 +92,7 @@ const EN: Strings = {
   infoDataTitle: "Data & Storage",
   infoDataText: "Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.",
 
-  footerLine1: "All Bible translations are in the public domain",
+  footerLine1: "All available Bible translations are in the public domain.",
   footerFavicon: 'Favicon: &ldquo;Jesus Christ from Hagia Sophia&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 };
 
@@ -147,7 +147,7 @@ const FI: Strings = {
   infoDataTitle: "Tiedot ja tallennus",
   infoDataText: "Raamatun teksti haetaan palvelimelta kerran ja tallennetaan selaimeesi <strong>IndexedDB</strong>-tietokantaan nopeaa offline-käyttöä varten. Tietoja ei lähetetä kolmansille osapuolille. Kaikki toimii selaimessasi.",
 
-  footerLine1: "Kaikki raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia",
+  footerLine1: "Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
   footerFavicon: 'Sivustokuvake: &ldquo;Jesus Christ from Hagia Sophia&rdquo;, Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 };
 

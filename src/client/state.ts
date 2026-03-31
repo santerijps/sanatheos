@@ -8,11 +8,13 @@ export function readState(): AppState {
   if (p.has("book")) s.book = p.get("book")!;
   if (p.has("chapter")) { const n = +p.get("chapter")!; if (Number.isFinite(n)) s.chapter = n; }
   if (p.has("verse"))   { const n = +p.get("verse")!;   if (Number.isFinite(n)) s.verse = n; }
+  if (p.has("t")) s.translation = p.get("t")!.toUpperCase();
   return s;
 }
 
 function toUrl(s: AppState): string {
   const p = new URLSearchParams();
+  if (s.translation) p.set("t", s.translation);
   if (s.query) p.set("q", s.query);
   if (s.book) p.set("book", s.book);
   if (s.chapter !== undefined) p.set("chapter", String(s.chapter));

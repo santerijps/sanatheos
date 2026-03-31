@@ -1,15 +1,19 @@
 import type { BibleData, AppState } from "./types.ts";
 import { loadBible, saveBible } from "./db.ts";
-import { initSearch, search, tryParseNav } from "./search.ts";
+import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
 import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex } from "./render.ts";
-import { setTranslation } from "./bookNames.ts";
+import { setTranslation, displayName } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
 let data: BibleData;
 let currentTranslation = "WEB";
 const DEFAULT_TRANSLATION = "WEB";
+
+function withT(s: AppState): AppState {
+  return { ...s, translation: currentTranslation };
+}
 
 async function fetchTranslation(code: string): Promise<BibleData> {
   const cached = await loadBible(code);
@@ -44,8 +48,8 @@ async function init() {
   const settingsClose = document.getElementById("settings-close")!;
 
   // Determine initial translation from URL or localStorage
-  const urlT = new URLSearchParams(window.location.search).get("t");
-  currentTranslation = urlT?.toUpperCase() || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
+  const initialState = readState();
+  currentTranslation = initialState.translation || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
   setTranslation(currentTranslation);
 
   // Determine initial language
@@ -79,6 +83,11 @@ async function init() {
     translationSelect.addEventListener("change", async () => {
       const code = translationSelect.value;
       if (code === currentTranslation) return;
+
+      // Pre-parse query books with old translation's aliases
+      const state = readState();
+      const parsedBooks = state.query ? parseQueryBooks(state.query) : null;
+
       content.innerHTML = `<p class="loading">${t().loadingTranslation(code)}</p>`;
       try {
         data = await fetchTranslation(code);
@@ -87,9 +96,21 @@ async function init() {
         localStorage.setItem("bible-translation", code);
         initSearch(data);
         indexRendered = false;
-        const state = readState();
+
+        // Translate query book names to new translation
+        if (parsedBooks) {
+          state.query = parsedBooks.map(p => {
+            if (!p.book) return p.original;
+            const name = displayName(p.book);
+            let result = p.rest ? `${name} ${p.rest}` : name;
+            if (p.quoted) result += ` ${p.quoted}`;
+            return result;
+          }).join("; ");
+        }
+
         searchInput.value = stateToInputText(state);
         applyState(state);
+        replaceState(withT(state));
         updateFooter();
       } catch {
         content.innerHTML = `<p class="empty">${t().loadTranslationFailed(code)}</p>`;
@@ -119,6 +140,7 @@ async function init() {
   const state = readState();
   searchInput.value = stateToInputText(state);
   applyState(state);
+  replaceState(withT(state));
   updateFooter();
 
   // --- Search with debounce ---
@@ -130,7 +152,7 @@ async function init() {
       if (!q) {
         renderChapter(data, "Genesis", 1);
         updateFooter();
-        replaceState({});
+        replaceState(withT({}));
         return;
       }
       // Pure reference(s) → navigate directly
@@ -142,11 +164,14 @@ async function init() {
           renderMultiNav(data, navRefs);
         }
         updateFooter();
-        replaceState({ query: q });
-      } else {
+        replaceState(withT({ query: q }));
+      } else if (/".*?"/.test(q)) {
         const results = search(data, q);
         renderResults(results, q);
-        replaceState({ query: q });
+        replaceState(withT({ query: q }));
+      } else {
+        renderResults([], q);
+        replaceState(withT({ query: q }));
       }
     }, 150);
   });
@@ -311,8 +336,20 @@ async function init() {
   });
 
   // --- Browser back/forward ---
-  window.addEventListener("popstate", () => {
+  window.addEventListener("popstate", async () => {
     const s = readState();
+    if (s.translation && s.translation !== currentTranslation) {
+      try {
+        data = await fetchTranslation(s.translation);
+        currentTranslation = s.translation;
+        setTranslation(s.translation);
+        localStorage.setItem("bible-translation", s.translation);
+        initSearch(data);
+        indexRendered = false;
+        if (translationSelect) translationSelect.value = s.translation;
+        updateFooter();
+      } catch { /* keep current translation */ }
+    }
     searchInput.value = stateToInputText(s);
     applyState(s);
   });
@@ -324,7 +361,7 @@ function navigate(s: AppState) {
   document.getElementById("index-overlay")!.classList.remove("open");
   document.body.classList.remove("panel-open");
   applyState(s);
-  pushState(s);
+  pushState(withT(s));
 }
 
 function renderNavRef(nav: NavRef) {
@@ -362,9 +399,11 @@ function applyState(s: AppState) {
       } else {
         renderMultiNav(data, navRefs);
       }
-    } else {
+    } else if (/".*?"/.test(s.query)) {
       const results = search(data, s.query);
       renderResults(results, s.query);
+    } else {
+      renderResults([], s.query);
     }
   } else if (s.book && s.chapter && s.verse) {
     renderVerse(data, s.book, s.chapter, s.verse);

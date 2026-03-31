@@ -18,4 +18,5 @@ export interface AppState {
   chapter?: number;
   verse?: number;
   query?: string;
+  translation?: string;
 }

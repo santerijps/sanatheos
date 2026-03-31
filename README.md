@@ -37,7 +37,13 @@ A fast, modern web app for reading and searching the Bible — built with TypeSc
 | `Enter` | Select item in index panel |
 
 ### 🔗 Shareable URLs
-Every search query, book, chapter, and verse selection updates the URL. Copy and share a direct link to any passage — it will open exactly where you left off.
+Every search query, book, chapter, verse selection, and **Bible translation** is encoded in the URL. Copy and share a direct link to any passage — the recipient will see it in the same translation you were using, regardless of their own settings.
+
+### 🌐 Translations & Languages
+- Switch between Bible translations (e.g. **WEB**, **KR38**) in the settings
+- Switching translations **auto-translates book names** in the search input (e.g. "2. Moos" → "Exodus" when switching KR38 → WEB)
+- UI language can be set to **English** or **Finnish**
+- Finnish book names and abbreviations are fully supported (e.g. `2. moos`, `joh`, `room`)
 
 ### 📴 Works Offline
 Bible data is fetched once and cached in your browser's **IndexedDB**. After the first load, everything works without an internet connection.
@@ -47,9 +53,13 @@ Click the **ⓘ** button next to the search bar to see a full guide on search sy
 
 ---
 
-## 📜 Translation
+## 📜 Translations
 
-Currently includes the **World English Bible (WEB)** — a public domain modern English translation. All 66 books of the Old and New Testaments.
+Currently includes:
+- **World English Bible (WEB)** — a public domain modern English translation
+- **Raamattu 1933/1938 (KR38)** — Finnish Bible translation
+
+All 66 books of the Old and New Testaments.
 
 ---
 
@@ -103,12 +113,14 @@ Outputs a ready-to-deploy static site in the `docs/` directory.
 │       ├── app.ts           # Main entry point
 │       ├── search.ts        # Search engine & reference parser
 │       ├── render.ts        # DOM rendering
-│       ├── state.ts         # URL state management
+│       ├── state.ts         # URL state management (incl. translation)
+│       ├── bookNames.ts     # Translation-specific book names & aliases
+│       ├── i18n.ts          # Internationalization (EN/FI)
 │       ├── db.ts            # IndexedDB wrapper
 │       └── types.ts         # Shared interfaces
 ├── tests/                   # Unit tests (bun:test)
 ├── scripts/                 # Build & utility scripts
-├── translations/WEB/        # Bible JSON data files
+├── translations/            # Bible JSON data files (WEB, KR38)
 ├── public/                  # Static assets (HTML, CSS)
 └── docs/                    # GitHub Pages output (generated)
 ```

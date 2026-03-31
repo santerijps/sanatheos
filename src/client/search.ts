@@ -224,5 +224,28 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
   return results;
 }
 
+export interface ParsedQueryTerm {
+  book: string;
+  rest: string;
+  quoted: string;
+  original: string;
+}
+
+/**
+ * Parse each semicolon-separated term in a query to extract the English book key.
+ * Call this while the current translation is still active so aliases resolve correctly.
+ */
+export function parseQueryBooks(query: string): ParsedQueryTerm[] {
+  return query.split(/;/).map(t => t.trim()).filter(Boolean).map(term => {
+    const qm = term.match(/"(.*?)"/);
+    const quoted = qm ? qm[0] : "";
+    const refPart = qm ? term.replace(/"(.*?)"/, "").trim() : term;
+    if (!refPart) return { book: "", rest: "", quoted, original: term };
+    const bm = matchBook(refPart);
+    if (!bm) return { book: "", rest: "", quoted: "", original: term };
+    return { book: bm.book, rest: bm.rest, quoted, original: term };
+  });
+}
+
 // Exported for testing
 export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher };
