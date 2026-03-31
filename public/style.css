@@ -11,6 +11,7 @@
   --border: #e5e5e5;
   --hover: #f0f0f0;
   --accent: #333333;
+  --muted: #666666;
 }
 
 html { height: 100%; }

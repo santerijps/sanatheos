@@ -80,7 +80,12 @@ function parseVerseSegments(s: string): VerseSegment[] | null {
   const segs: VerseSegment[] = [];
   for (const part of parts) {
     const range = part.match(/^(\d+)-(\d+)$/);
-    if (range) { segs.push({ start: +range[1], end: +range[2] }); continue; }
+    if (range) {
+      const start = +range[1], end = +range[2];
+      if (start > end) return null;
+      segs.push({ start, end });
+      continue;
+    }
     const single = part.match(/^(\d+)$/);
     if (single) { segs.push({ start: +single[1], end: +single[1] }); continue; }
     return null;
@@ -95,19 +100,26 @@ function parseRef(term: string): Ref | null {
   if (!bm) return null;
   if (!bm.rest) return { book: bm.book };
 
+  // Strip trailing incomplete operators (dash, comma, colon) while user is still typing
+  const rest = bm.rest.replace(/[-,:]+$/, "");
+  if (!rest) return { book: bm.book };
+
   // chapter:verseSegments  e.g. 1:3-7  or  1:1-10,13,20-25
-  const cvm = bm.rest.match(/^(\d+):(.+)$/);
+  const cvm = rest.match(/^(\d+):(.+)$/);
   if (cvm) {
-    const segs = parseVerseSegments(cvm[2]);
+    const segStr = cvm[2].replace(/[-,]+$/, "");
+    const segs = segStr ? parseVerseSegments(segStr) : null;
     if (segs) return { book: bm.book, chapterStart: +cvm[1], chapterEnd: +cvm[1], verseSegments: segs };
+    // If only "chapter:" remains, treat as single chapter
+    if (!segStr) return { book: bm.book, chapterStart: +cvm[1], chapterEnd: +cvm[1] };
   }
 
   // chapterStart-chapterEnd  e.g. 1-10
-  const cr = bm.rest.match(/^(\d+)-(\d+)$/);
+  const cr = rest.match(/^(\d+)-(\d+)$/);
   if (cr) return { book: bm.book, chapterStart: +cr[1], chapterEnd: +cr[2] };
 
   // single chapter  e.g. 3
-  const sc = bm.rest.match(/^(\d+)$/);
+  const sc = rest.match(/^(\d+)$/);
   if (sc) return { book: bm.book, chapterStart: +sc[1], chapterEnd: +sc[1] };
 
   return null;

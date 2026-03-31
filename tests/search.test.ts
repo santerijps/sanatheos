@@ -587,9 +587,13 @@ describe("parseRef — edge cases", () => {
     });
   });
 
-  test("invalid format: colon without verse", () => {
-    // "Genesis 1:" — the rest is "1:" which doesn't match any pattern fully
-    expect(_parseRef("Genesis 1:")).toBeNull();
+  test("trailing colon: Genesis 1: treated as chapter", () => {
+    // "Genesis 1:" — trailing colon stripped, treated as Genesis chapter 1
+    expect(_parseRef("Genesis 1:")).toEqual({
+      book: "Genesis",
+      chapterStart: 1,
+      chapterEnd: 1,
+    });
   });
 
   test("invalid format: double colon", () => {
@@ -935,6 +939,43 @@ describe("search — unquoted ^/$ anchors return nothing", () => {
     expect(tryParseNav("^God$")).toBeNull();
     expect(tryParseNav("earth$")).toBeNull();
     expect(tryParseNav("^light")).toBeNull();
+  });
+});
+
+// --- trailing incomplete operators ---
+describe("parseRef — trailing dash/comma ignored", () => {
+  test("John 1:1- parses as John 1:1", () => {
+    const ref = _parseRef("John 1:1-");
+    expect(ref).toEqual({ book: "John", chapterStart: 1, chapterEnd: 1, verseSegments: [{ start: 1, end: 1 }] });
+  });
+
+  test("Genesis 1- parses as Genesis 1", () => {
+    const ref = _parseRef("Genesis 1-");
+    expect(ref).toEqual({ book: "Genesis", chapterStart: 1, chapterEnd: 1 });
+  });
+
+  test("Genesis 1:1-3, parses as Genesis 1:1-3", () => {
+    const ref = _parseRef("Genesis 1:1-3,");
+    expect(ref).toEqual({ book: "Genesis", chapterStart: 1, chapterEnd: 1, verseSegments: [{ start: 1, end: 3 }] });
+  });
+
+  test("John 1: parses as John 1", () => {
+    const ref = _parseRef("John 1:");
+    expect(ref).toEqual({ book: "John", chapterStart: 1, chapterEnd: 1 });
+  });
+
+  test("tryParseNav handles trailing dash", () => {
+    const refs = tryParseNav("John 1:1-");
+    expect(refs).toHaveLength(1);
+    expect(refs![0].book).toBe("John");
+    expect(refs![0].verseSegments).toEqual([{ start: 1, end: 1 }]);
+  });
+
+  test("tryParseNav handles trailing dash in multi-term", () => {
+    const refs = tryParseNav("Genesis 1:1-5; John 1:1-");
+    expect(refs).toHaveLength(2);
+    expect(refs![0].verseSegments).toEqual([{ start: 1, end: 5 }]);
+    expect(refs![1].verseSegments).toEqual([{ start: 1, end: 1 }]);
   });
 });
 

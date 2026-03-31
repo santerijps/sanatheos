@@ -10,6 +10,7 @@ import { setLanguage, getLanguage, t } from "./i18n.ts";
 let data: BibleData;
 let currentTranslation = "WEB";
 const DEFAULT_TRANSLATION = "WEB";
+let translationRequestId = 0;
 
 function withT(s: AppState): AppState {
   return { ...s, translation: currentTranslation };
@@ -88,9 +89,12 @@ async function init() {
       const state = readState();
       const parsedBooks = state.query ? parseQueryBooks(state.query) : null;
 
+      const requestId = ++translationRequestId;
       content.innerHTML = `<p class="loading">${t().loadingTranslation(code)}</p>`;
       try {
-        data = await fetchTranslation(code);
+        const newData = await fetchTranslation(code);
+        if (requestId !== translationRequestId) return; // stale request
+        data = newData;
         currentTranslation = code;
         setTranslation(code);
         localStorage.setItem("bible-translation", code);
