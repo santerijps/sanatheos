@@ -48,6 +48,24 @@ async function init() {
     }, 150);
   });
 
+  // Auto-close double quotes and place cursor between them
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === '"') {
+      const start = searchInput.selectionStart ?? searchInput.value.length;
+      const end = searchInput.selectionEnd ?? start;
+      const val = searchInput.value;
+      // Only auto-close if the character after cursor is not already a quote
+      if (val[end] !== '"') {
+        e.preventDefault();
+        const before = val.slice(0, start);
+        const after = val.slice(end);
+        searchInput.value = before + '""' + after;
+        searchInput.selectionStart = searchInput.selectionEnd = start + 1;
+        searchInput.dispatchEvent(new Event("input"));
+      }
+    }
+  });
+
   // --- Index panel ---
   let indexRendered = false;
 
