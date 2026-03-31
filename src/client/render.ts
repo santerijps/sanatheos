@@ -12,7 +12,10 @@ function esc(s: string): string {
 }
 
 function fmt(text: string): string {
-  return esc(text).replace(/\n/g, "<br>");
+  let open = true;
+  return esc(text)
+    .replace(/\n/g, "<br>")
+    .replace(/&quot;/g, () => { const q = open ? "&ldquo;" : "&rdquo;"; open = !open; return q; });
 }
 
 function escRegex(s: string): string {
@@ -154,7 +157,8 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
     <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse}</h2>
     <div class="verses single-verse">
       <span class="verse"><sup>${verse}</sup>${fmt(text)}</span>
-    </div>`;
+    </div>
+    <div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   window.scrollTo(0, 0);
 }
 
@@ -188,15 +192,7 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
   const segLabel = segments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
   const title = `${displayName(book)} ${chapter}:${segLabel}`;
 
-  // Determine first and last verse for nav
-  const firstVerse = segments[0].start;
-  const lastSeg = segments[segments.length - 1];
-  const lastVerse = lastSeg.end;
-
-  const { prev } = getVerseNav(data, book, chapter, firstVerse);
-  const { next } = getVerseNav(data, book, chapter, lastVerse);
-
-  let html = navArrowsHtml(prev, next);
+  let html = `<div class="translation-label"><span class="nav-translation"></span></div>`;
   html += `<h2 class="section-title">${esc(title)}</h2><div class="verses">`;
   for (const seg of segments) {
     for (let v = seg.start; v <= seg.end; v++) {
@@ -206,7 +202,7 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
     }
   }
   html += `</div>`;
-  html += navArrowsHtml(prev, next);
+  html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }

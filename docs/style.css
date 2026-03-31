@@ -499,6 +499,11 @@ mark {
   white-space: nowrap;
 }
 
+.translation-label {
+  text-align: center;
+  padding: 12px 0;
+}
+
 /* === Chapter/Verse Navigation === */
 .chapter-nav {
   display: flex;
@@ -527,6 +532,27 @@ mark {
 .nav-prev { text-align: left; }
 .nav-next { text-align: right; }
 .nav-disabled { visibility: hidden; }
+
+/* === Read Full Chapter === */
+.read-full-chapter {
+  text-align: right;
+  margin: 12px 0 4px;
+  font: 14px var(--sans);
+}
+
+.full-chapter-link {
+  color: var(--accent);
+  cursor: pointer;
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.full-chapter-link:hover {
+  background: var(--hover);
+  color: var(--popout);
+}
 
 /* === Multi-Nav Sections === */
 .multi-nav-divider {

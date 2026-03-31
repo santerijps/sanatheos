@@ -295,6 +295,13 @@ async function init() {
       return;
     }
 
+    // Click on "Read the full chapter" link
+    const fullChapter = (e.target as HTMLElement).closest(".full-chapter-link") as HTMLElement;
+    if (fullChapter) {
+      navigate({ book: fullChapter.dataset.book!, chapter: +fullChapter.dataset.chapter! });
+      return;
+    }
+
     // Click on chapter heading in book view → navigate to chapter
     const heading = (e.target as HTMLElement).closest(".chapter-heading") as HTMLElement;
     if (heading) {
