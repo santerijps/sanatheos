@@ -25,6 +25,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+body.panel-open {
+  overflow: hidden;
+}
+
 /* === Header === */
 header {
   position: sticky;

@@ -52,6 +52,7 @@ async function init() {
   let indexRendered = false;
   indexBtn.addEventListener("click", () => {
     overlay.classList.toggle("open");
+    document.body.classList.toggle("panel-open", overlay.classList.contains("open"));
     if (!indexRendered && overlay.classList.contains("open")) {
       renderIndex(data, {
         onBook(book) { navigate({ book }); },
@@ -63,13 +64,17 @@ async function init() {
   });
 
   overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) overlay.classList.remove("open");
+    if (e.target === overlay) {
+      overlay.classList.remove("open");
+      document.body.classList.remove("panel-open");
+    }
   });
 
   // Close index with Escape
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && overlay.classList.contains("open")) {
       overlay.classList.remove("open");
+      document.body.classList.remove("panel-open");
     }
   });
 
@@ -109,6 +114,7 @@ function navigate(s: AppState) {
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
   searchInput.value = "";
   document.getElementById("index-overlay")!.classList.remove("open");
+  document.body.classList.remove("panel-open");
   applyState(s);
   pushState(s);
 }
