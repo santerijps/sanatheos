@@ -423,7 +423,7 @@ mark {
   position: relative;
   background: var(--surface);
   border-radius: 12px;
-  max-width: 420px;
+  max-width: 520px;
   width: 90vw;
   max-height: 85vh;
   overflow: hidden;
@@ -470,8 +470,8 @@ mark {
 
 #settings-modal section {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 4px;
   margin: 12px 0;
 }
 
@@ -484,6 +484,7 @@ mark {
 
 #translation-select,
 #language-select {
+  width: 100%;
   padding: 6px 10px;
   font: 15px var(--sans);
   border: 1px solid #ccc;

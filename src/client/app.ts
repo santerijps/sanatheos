@@ -77,9 +77,11 @@ async function init() {
   const translationSelect = document.getElementById("translation-select") as HTMLSelectElement | null;
   if (translationSelect) {
     const translations = await fetchTranslations();
-    translationSelect.innerHTML = translations.map(t =>
-      `<option value="${t}"${t === currentTranslation ? " selected" : ""}>${t}</option>`
-    ).join("");
+    translationSelect.innerHTML = translations.map(t => {
+      const info = TRANSLATION_NAMES[t];
+      const label = info ? `${t} — ${info.name} (${info.language})` : t;
+      return `<option value="${t}"${t === currentTranslation ? " selected" : ""}>${label}</option>`;
+    }).join("");
 
     translationSelect.addEventListener("change", async () => {
       const code = translationSelect.value;
@@ -114,7 +116,7 @@ async function init() {
 
         searchInput.value = stateToInputText(state);
         applyState(state);
-        replaceState(withT(state));
+        replaceState(withT(stateForUrl(state)));
         updateFooter();
       } catch {
         content.innerHTML = `<p class="empty">${t().loadTranslationFailed(code)}</p>`;
@@ -144,7 +146,7 @@ async function init() {
   const state = readState();
   searchInput.value = stateToInputText(state);
   applyState(state);
-  replaceState(withT(state));
+  replaceState(withT(stateForUrl(state)));
   updateFooter();
 
   // --- Search with debounce ---
@@ -159,9 +161,8 @@ async function init() {
         replaceState(withT(s));
         return;
       }
-      const s: AppState = { query: q };
-      applyState(s);
-      replaceState(withT(s));
+      applyState({ query: q });
+      replaceState(withT(stateForUrl({ query: q })));
     }, 150);
   });
 
@@ -399,6 +400,28 @@ function updateTitle(s: AppState) {
   document.title = `${label} | Sanatheos`;
 }
 
+function queryToUrlState(q: string): AppState {
+  const navRefs = tryParseNav(q);
+  if (!navRefs || navRefs.length !== 1 || !data[navRefs[0].book]) return { query: q };
+  const nav = navRefs[0];
+  if (nav.chapterStart === undefined) {
+    return { book: nav.book, chapter: 1 };
+  }
+  if (nav.chapterStart === nav.chapterEnd && !nav.verseSegments) {
+    return { book: nav.book, chapter: nav.chapterStart };
+  }
+  if (nav.chapterStart === nav.chapterEnd && nav.verseSegments &&
+      nav.verseSegments.length === 1 && nav.verseSegments[0].start === nav.verseSegments[0].end) {
+    return { book: nav.book, chapter: nav.chapterStart, verse: nav.verseSegments[0].start };
+  }
+  return { query: q };
+}
+
+function stateForUrl(s: AppState): AppState {
+  if (s.query) return queryToUrlState(s.query);
+  return s;
+}
+
 function applyState(s: AppState) {
   if (s.query) {
     // Check if the query is pure reference(s) → navigate instead of search
@@ -428,9 +451,9 @@ function applyState(s: AppState) {
   updateFooter();
 }
 
-const TRANSLATION_NAMES: Record<string, string> = {
-  WEB: "World English Bible",
-  KR38: "Raamattu 1933/1938",
+const TRANSLATION_NAMES: Record<string, { name: string; language: string }> = {
+  WEB: { name: "World English Bible", language: "English" },
+  KR38: { name: "Raamattu 1933/1938", language: "Suomi" },
 };
 
 function updateStaticText() {
@@ -476,7 +499,8 @@ function updateStaticText() {
 }
 
 function updateFooter() {
-  const name = TRANSLATION_NAMES[currentTranslation] || currentTranslation;
+  const info = TRANSLATION_NAMES[currentTranslation];
+  const name = info ? info.name : currentTranslation;
   const label = `${currentTranslation} \u2014 ${name}`;
   for (const el of document.querySelectorAll(".nav-translation")) {
     el.textContent = label;
