@@ -23,7 +23,7 @@ async function init() {
     if (cached) {
       data = cached;
     } else {
-      const res = await fetch("/api/bible");
+      const res = await fetch("/bible.json");
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       data = await res.json();
       await saveBible(data);

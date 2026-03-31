@@ -76,7 +76,7 @@ Bun.serve({
       return new Response("Bad Request", { status: 400 });
     }
 
-    if (path === "/api/bible") {
+    if (path === "/bible.json") {
       return new Response(bibleJson, {
         headers: {
           "Content-Type": "application/json",
