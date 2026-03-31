@@ -58,7 +58,7 @@ if (!result.success) {
 console.log("Client bundled.");
 
 // Copy static files (HTML, CSS)
-for (const name of ["index.html", "style.css"]) {
+for (const name of ["index.html", "style.css", "robots.txt"]) {
   await cp(join(PUBLIC, name), join(OUT, name));
 }
 console.log("Static files copied.");

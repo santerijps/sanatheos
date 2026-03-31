@@ -7,7 +7,7 @@
   --bg: #fafafa;
   --surface: #ffffff;
   --text: #1a1a1a;
-  --muted: #888888;
+  --popout: firebrick;
   --border: #e5e5e5;
   --hover: #f0f0f0;
   --accent: #333333;
@@ -138,7 +138,7 @@ main {
   font-size: 0.65em;
   font-family: var(--sans);
   font-weight: 600;
-  color: var(--muted);
+  color: var(--popout);
   margin-right: 2px;
   vertical-align: super;
 }
@@ -153,13 +153,13 @@ main {
   text-align: center;
   padding: 80px 20px;
   font: 16px var(--sans);
-  color: var(--muted);
+  color: var(--popout);
 }
 
 /* === Search Results === */
 .results-info {
   font: 13px var(--sans);
-  color: var(--muted);
+  color: var(--popout);
   margin-bottom: 16px;
 }
 
@@ -271,7 +271,7 @@ mark {
 .idx-chapter small {
   display: block;
   font-size: 11px;
-  color: var(--muted);
+  color: var(--popout);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -344,7 +344,7 @@ mark {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  color: var(--muted);
+  color: var(--popout);
   transition: background 0.12s, color 0.12s;
 }
 
