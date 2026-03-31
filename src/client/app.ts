@@ -4,6 +4,7 @@ import { initSearch, search, tryParseNav } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
 import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex } from "./render.ts";
+import { setTranslation } from "./bookNames.ts";
 
 let data: BibleData;
 let currentTranslation = "WEB";
@@ -44,6 +45,7 @@ async function init() {
   // Determine initial translation from URL or localStorage
   const urlT = new URLSearchParams(window.location.search).get("t");
   currentTranslation = urlT?.toUpperCase() || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
+  setTranslation(currentTranslation);
 
   // Load Bible data: try IndexedDB first, then fetch from API
   content.innerHTML = `<p class="loading">Loading Bible\u2026</p>`;
@@ -73,10 +75,12 @@ async function init() {
       try {
         data = await fetchTranslation(code);
         currentTranslation = code;
+        setTranslation(code);
         localStorage.setItem("bible-translation", code);
         initSearch(data);
         indexRendered = false;
         const state = readState();
+        searchInput.value = stateToInputText(state);
         applyState(state);
         updateFooter();
       } catch {
@@ -344,8 +348,7 @@ function applyState(s: AppState) {
 
 const TRANSLATION_NAMES: Record<string, string> = {
   WEB: "World English Bible",
-  FIN: "Finnish Bible 1933/1938",
-  NKJV: "New King James Version",
+  KR38: "Raamattu 1933/1938",
 };
 
 function updateFooter() {

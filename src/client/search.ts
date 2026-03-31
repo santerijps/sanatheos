@@ -1,4 +1,5 @@
 import type { BibleData, VerseResult } from "./types.ts";
+import { getAliases } from "./bookNames.ts";
 
 interface SearchEntry {
   book: string;
@@ -28,22 +29,35 @@ function matchBook(q: string): { book: string; rest: string } | null {
   // Sort longest-first so "1 John" matches before "John"
   const sorted = [...bookNames].sort((a, b) => b.length - a.length);
 
-  // Exact full-name match (possibly followed by chapter:verse)
+  // Exact full-name match on English keys
   for (const book of sorted) {
     const bl = book.toLowerCase();
     if (ql === bl) return { book, rest: "" };
     if (ql.startsWith(bl + " ")) return { book, rest: q.slice(book.length + 1).trim() };
   }
 
+  // Exact/starts-with match on translation aliases (Finnish display names + abbreviations)
+  const aliases = getAliases();
+  const sortedAliases = [...aliases.entries()].sort((a, b) => b[0].length - a[0].length);
+  for (const [alias, key] of sortedAliases) {
+    if (ql === alias) return { book: key, rest: "" };
+    if (ql.startsWith(alias + " ")) return { book: key, rest: q.slice(alias.length + 1).trim() };
+  }
+
   // Prefix / abbreviation match
-  // Extract the name portion: optional leading digit + letters
-  const m = ql.match(/^(\d\s+)?([a-z\s]+?)(?:\s+(\d.*))?$/);
+  // Extract the name portion: optional leading digit (with optional period) + letters
+  const m = ql.match(/^(\d\.?\s+)?([a-zäöå\s]+?)(?:\s+(\d.*))?$/);
   if (!m) return null;
   const prefix = ((m[1] || "") + m[2]).trim();
   const rest = (m[3] || "").trim();
   for (const book of sorted) {
     if (book.toLowerCase().startsWith(prefix)) {
       return { book, rest };
+    }
+  }
+  for (const [alias, key] of sortedAliases) {
+    if (alias.startsWith(prefix)) {
+      return { book: key, rest };
     }
   }
   return null;

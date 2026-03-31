@@ -1,5 +1,6 @@
 import type { BibleData, VerseResult } from "./types.ts";
 import type { NavRef } from "./search.ts";
+import { displayName } from "./bookNames.ts";
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -34,20 +35,20 @@ function getChapterNav(data: BibleData, book: string, chapter: number): { prev: 
   let next: NavTarget | null = null;
 
   if (ci > 0) {
-    prev = { book, chapter: chapters[ci - 1], label: `${book} ${chapters[ci - 1]}` };
+    prev = { book, chapter: chapters[ci - 1], label: `${displayName(book)} ${chapters[ci - 1]}` };
   } else if (bi > 0) {
     const pb = books[bi - 1];
     const pChs = Object.keys(data[pb]).map(Number).sort((a, b) => a - b);
     const lastCh = pChs[pChs.length - 1];
-    prev = { book: pb, chapter: lastCh, label: `${pb} ${lastCh}` };
+    prev = { book: pb, chapter: lastCh, label: `${displayName(pb)} ${lastCh}` };
   }
 
   if (ci < chapters.length - 1) {
-    next = { book, chapter: chapters[ci + 1], label: `${book} ${chapters[ci + 1]}` };
+    next = { book, chapter: chapters[ci + 1], label: `${displayName(book)} ${chapters[ci + 1]}` };
   } else if (bi < books.length - 1) {
     const nb = books[bi + 1];
     const nChs = Object.keys(data[nb]).map(Number).sort((a, b) => a - b);
-    next = { book: nb, chapter: nChs[0], label: `${nb} ${nChs[0]}` };
+    next = { book: nb, chapter: nChs[0], label: `${displayName(nb)} ${nChs[0]}` };
   }
 
   return { prev, next };
@@ -65,32 +66,32 @@ function getVerseNav(data: BibleData, book: string, chapter: number, verse: numb
   let next: NavTarget | null = null;
 
   if (vi > 0) {
-    prev = { book, chapter, verse: verses[vi - 1], label: `${book} ${chapter}:${verses[vi - 1]}` };
+    prev = { book, chapter, verse: verses[vi - 1], label: `${displayName(book)} ${chapter}:${verses[vi - 1]}` };
   } else if (ci > 0) {
     const pc = chapters[ci - 1];
     const pVs = Object.keys(data[book][String(pc)]).map(Number).sort((a, b) => a - b);
     const lastV = pVs[pVs.length - 1];
-    prev = { book, chapter: pc, verse: lastV, label: `${book} ${pc}:${lastV}` };
+    prev = { book, chapter: pc, verse: lastV, label: `${displayName(book)} ${pc}:${lastV}` };
   } else if (bi > 0) {
     const pb = books[bi - 1];
     const pChs = Object.keys(data[pb]).map(Number).sort((a, b) => a - b);
     const lastCh = pChs[pChs.length - 1];
     const pVs = Object.keys(data[pb][String(lastCh)]).map(Number).sort((a, b) => a - b);
     const lastV = pVs[pVs.length - 1];
-    prev = { book: pb, chapter: lastCh, verse: lastV, label: `${pb} ${lastCh}:${lastV}` };
+    prev = { book: pb, chapter: lastCh, verse: lastV, label: `${displayName(pb)} ${lastCh}:${lastV}` };
   }
 
   if (vi < verses.length - 1) {
-    next = { book, chapter, verse: verses[vi + 1], label: `${book} ${chapter}:${verses[vi + 1]}` };
+    next = { book, chapter, verse: verses[vi + 1], label: `${displayName(book)} ${chapter}:${verses[vi + 1]}` };
   } else if (ci < chapters.length - 1) {
     const nc = chapters[ci + 1];
     const nVs = Object.keys(data[book][String(nc)]).map(Number).sort((a, b) => a - b);
-    next = { book, chapter: nc, verse: nVs[0], label: `${book} ${nc}:${nVs[0]}` };
+    next = { book, chapter: nc, verse: nVs[0], label: `${displayName(book)} ${nc}:${nVs[0]}` };
   } else if (bi < books.length - 1) {
     const nb = books[bi + 1];
     const nChs = Object.keys(data[nb]).map(Number).sort((a, b) => a - b);
     const nVs = Object.keys(data[nb][String(nChs[0])]).map(Number).sort((a, b) => a - b);
-    next = { book: nb, chapter: nChs[0], verse: nVs[0], label: `${nb} ${nChs[0]}:${nVs[0]}` };
+    next = { book: nb, chapter: nChs[0], verse: nVs[0], label: `${displayName(nb)} ${nChs[0]}:${nVs[0]}` };
   }
 
   return { prev, next };
@@ -113,7 +114,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
   const { prev, next } = getChapterNav(data, book, chapter);
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
   let html = navArrowsHtml(prev, next);
-  html += `<h2 class="section-title">${esc(book)} ${chapter}</h2><div class="verses">`;
+  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter}</h2><div class="verses">`;
   for (const n of nums) {
     html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
   }
@@ -128,7 +129,7 @@ export function renderBook(data: BibleData, book: string) {
   if (!bd) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
 
   const chs = Object.keys(bd).map(Number).sort((a, b) => a - b);
-  let html = `<h1 class="book-title">${esc(book)}</h1>`;
+  let html = `<h1 class="book-title">${esc(displayName(book))}</h1>`;
   for (const c of chs) {
     const verses = bd[String(c)];
     const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
@@ -149,7 +150,7 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
   const { prev, next } = getVerseNav(data, book, chapter, verse);
   $("content").innerHTML = `
     ${navArrowsHtml(prev, next)}
-    <h2 class="section-title">${esc(book)} ${chapter}:${verse}</h2>
+    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse}</h2>
     <div class="verses single-verse">
       <span class="verse"><sup>${verse}</sup>${fmt(text)}</span>
     </div>`;
@@ -167,7 +168,7 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
     const ch = bd[String(c)];
     if (!ch) continue;
     const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
-    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(book)} ${c}</h2><div class="verses">`;
+    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(displayName(book))} ${c}</h2><div class="verses">`;
     for (const n of nums) {
       html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
     }
@@ -184,7 +185,7 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
 
   // Build title label like "Genesis 8:1-3,6"
   const segLabel = segments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
-  const title = `${book} ${chapter}:${segLabel}`;
+  const title = `${displayName(book)} ${chapter}:${segLabel}`;
 
   // Determine first and last verse for nav
   const firstVerse = segments[0].start;
@@ -213,12 +214,12 @@ function navRefLabel(nav: NavRef): string {
   if (chapterStart !== undefined && chapterEnd !== undefined) {
     if (verseSegments) {
       const segLabel = verseSegments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
-      return `${book} ${chapterStart}:${segLabel}`;
+      return `${displayName(book)} ${chapterStart}:${segLabel}`;
     }
-    if (chapterStart === chapterEnd) return `${book} ${chapterStart}`;
-    return `${book} ${chapterStart}-${chapterEnd}`;
+    if (chapterStart === chapterEnd) return `${displayName(book)} ${chapterStart}`;
+    return `${displayName(book)} ${chapterStart}-${chapterEnd}`;
   }
-  return book;
+  return displayName(book);
 }
 
 function navRefVersesHtml(data: BibleData, nav: NavRef): string {
@@ -247,7 +248,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
         if (!ch) continue;
         const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
         if (chapterStart !== chapterEnd) {
-          html += `<h3 class="multi-nav-subheading">${esc(book)} ${c}</h3>`;
+          html += `<h3 class="multi-nav-subheading">${esc(displayName(book))} ${c}</h3>`;
         }
         html += `<div class="verses">`;
         for (const n of nums) {
@@ -310,7 +311,7 @@ export function renderResults(results: VerseResult[], query: string) {
     let highlighted = fmt(r.text);
     if (hlRegex) highlighted = highlighted.replace(hlRegex, "<mark>$1</mark>");
     html += `<div class="result" data-book="${esc(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
-      <div class="result-ref">${esc(r.book)} ${r.chapter}:${r.verse}</div>
+      <div class="result-ref">${esc(displayName(r.book))} ${r.chapter}:${r.verse}</div>
       <div class="result-text">${highlighted}</div>
     </div>`;
   }
@@ -394,7 +395,7 @@ export function renderIndex(
     const el = document.createElement("div");
     el.className = "idx-item";
     el.dataset.book = book;
-    el.textContent = book;
+    el.textContent = displayName(book);
     el.tabIndex = -1;
 
     el.addEventListener("mouseenter", () => showChapters(book));

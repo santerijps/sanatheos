@@ -1,4 +1,5 @@
 import type { AppState } from "./types.ts";
+import { displayName } from "./bookNames.ts";
 
 export function readState(): AppState {
   const p = new URLSearchParams(window.location.search);
@@ -30,8 +31,8 @@ export function replaceState(s: AppState) {
 
 export function stateToInputText(s: AppState): string {
   if (s.query) return s.query;
-  if (s.book && s.chapter && s.verse) return `${s.book} ${s.chapter}:${s.verse}`;
-  if (s.book && s.chapter) return `${s.book} ${s.chapter}`;
-  if (s.book) return s.book;
+  if (s.book && s.chapter && s.verse) return `${displayName(s.book)} ${s.chapter}:${s.verse}`;
+  if (s.book && s.chapter) return `${displayName(s.book)} ${s.chapter}`;
+  if (s.book) return displayName(s.book);
   return "";
 }
