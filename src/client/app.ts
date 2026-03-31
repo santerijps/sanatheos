@@ -172,6 +172,20 @@ async function init() {
 
   // --- Click handlers for rendered content ---
   content.addEventListener("click", (e) => {
+    // Click on nav arrow → navigate to prev/next chapter/verse
+    const arrow = (e.target as HTMLElement).closest(".nav-arrow") as HTMLElement;
+    if (arrow && !arrow.classList.contains("nav-disabled")) {
+      const b = arrow.dataset.book!;
+      const c = +arrow.dataset.chapter!;
+      const v = arrow.dataset.verse;
+      if (v !== undefined) {
+        navigate({ book: b, chapter: c, verse: +v });
+      } else {
+        navigate({ book: b, chapter: c });
+      }
+      return;
+    }
+
     // Click on search result → navigate to verse
     const result = (e.target as HTMLElement).closest(".result") as HTMLElement;
     if (result) {

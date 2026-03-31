@@ -16,16 +16,108 @@ function escRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+interface NavTarget {
+  book: string;
+  chapter: number;
+  verse?: number;
+  label: string;
+}
+
+function getChapterNav(data: BibleData, book: string, chapter: number): { prev: NavTarget | null; next: NavTarget | null } {
+  const books = Object.keys(data);
+  const bi = books.indexOf(book);
+  const chapters = Object.keys(data[book]).map(Number).sort((a, b) => a - b);
+  const ci = chapters.indexOf(chapter);
+
+  let prev: NavTarget | null = null;
+  let next: NavTarget | null = null;
+
+  if (ci > 0) {
+    prev = { book, chapter: chapters[ci - 1], label: `${book} ${chapters[ci - 1]}` };
+  } else if (bi > 0) {
+    const pb = books[bi - 1];
+    const pChs = Object.keys(data[pb]).map(Number).sort((a, b) => a - b);
+    const lastCh = pChs[pChs.length - 1];
+    prev = { book: pb, chapter: lastCh, label: `${pb} ${lastCh}` };
+  }
+
+  if (ci < chapters.length - 1) {
+    next = { book, chapter: chapters[ci + 1], label: `${book} ${chapters[ci + 1]}` };
+  } else if (bi < books.length - 1) {
+    const nb = books[bi + 1];
+    const nChs = Object.keys(data[nb]).map(Number).sort((a, b) => a - b);
+    next = { book: nb, chapter: nChs[0], label: `${nb} ${nChs[0]}` };
+  }
+
+  return { prev, next };
+}
+
+function getVerseNav(data: BibleData, book: string, chapter: number, verse: number): { prev: NavTarget | null; next: NavTarget | null } {
+  const books = Object.keys(data);
+  const bi = books.indexOf(book);
+  const chapters = Object.keys(data[book]).map(Number).sort((a, b) => a - b);
+  const ci = chapters.indexOf(chapter);
+  const verses = Object.keys(data[book][String(chapter)]).map(Number).sort((a, b) => a - b);
+  const vi = verses.indexOf(verse);
+
+  let prev: NavTarget | null = null;
+  let next: NavTarget | null = null;
+
+  if (vi > 0) {
+    prev = { book, chapter, verse: verses[vi - 1], label: `${book} ${chapter}:${verses[vi - 1]}` };
+  } else if (ci > 0) {
+    const pc = chapters[ci - 1];
+    const pVs = Object.keys(data[book][String(pc)]).map(Number).sort((a, b) => a - b);
+    const lastV = pVs[pVs.length - 1];
+    prev = { book, chapter: pc, verse: lastV, label: `${book} ${pc}:${lastV}` };
+  } else if (bi > 0) {
+    const pb = books[bi - 1];
+    const pChs = Object.keys(data[pb]).map(Number).sort((a, b) => a - b);
+    const lastCh = pChs[pChs.length - 1];
+    const pVs = Object.keys(data[pb][String(lastCh)]).map(Number).sort((a, b) => a - b);
+    const lastV = pVs[pVs.length - 1];
+    prev = { book: pb, chapter: lastCh, verse: lastV, label: `${pb} ${lastCh}:${lastV}` };
+  }
+
+  if (vi < verses.length - 1) {
+    next = { book, chapter, verse: verses[vi + 1], label: `${book} ${chapter}:${verses[vi + 1]}` };
+  } else if (ci < chapters.length - 1) {
+    const nc = chapters[ci + 1];
+    const nVs = Object.keys(data[book][String(nc)]).map(Number).sort((a, b) => a - b);
+    next = { book, chapter: nc, verse: nVs[0], label: `${book} ${nc}:${nVs[0]}` };
+  } else if (bi < books.length - 1) {
+    const nb = books[bi + 1];
+    const nChs = Object.keys(data[nb]).map(Number).sort((a, b) => a - b);
+    const nVs = Object.keys(data[nb][String(nChs[0])]).map(Number).sort((a, b) => a - b);
+    next = { book: nb, chapter: nChs[0], verse: nVs[0], label: `${nb} ${nChs[0]}:${nVs[0]}` };
+  }
+
+  return { prev, next };
+}
+
+function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null): string {
+  const prevBtn = prev
+    ? `<a class="nav-arrow nav-prev" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&#8592; ${esc(prev.label)}</a>`
+    : `<span class="nav-arrow nav-disabled"></span>`;
+  const nextBtn = next
+    ? `<a class="nav-arrow nav-next" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>${esc(next.label)} &#8594;</a>`
+    : `<span class="nav-arrow nav-disabled"></span>`;
+  return `<nav class="chapter-nav">${prevBtn}${nextBtn}</nav>`;
+}
+
 export function renderChapter(data: BibleData, book: string, chapter: number) {
   const ch = data[book]?.[String(chapter)];
   if (!ch) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
 
+  const { prev, next } = getChapterNav(data, book, chapter);
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
-  let html = `<h2 class="section-title">${esc(book)} ${chapter}</h2><div class="verses">`;
+  let html = navArrowsHtml(prev, next);
+  html += `<h2 class="section-title">${esc(book)} ${chapter}</h2><div class="verses">`;
   for (const n of nums) {
     html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
   }
   html += `</div>`;
+  html += navArrowsHtml(prev, next);
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }
@@ -53,7 +145,9 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
   const text = data[book]?.[String(chapter)]?.[String(verse)];
   if (!text) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
 
+  const { prev, next } = getVerseNav(data, book, chapter, verse);
   $("content").innerHTML = `
+    ${navArrowsHtml(prev, next)}
     <h2 class="section-title">${esc(book)} ${chapter}:${verse}</h2>
     <div class="verses single-verse">
       <span class="verse"><sup>${verse}</sup>${fmt(text)}</span>

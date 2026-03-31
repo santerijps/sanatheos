@@ -401,6 +401,37 @@ mark {
 }
 
 /* === Footer === */
+
+/* === Chapter/Verse Navigation === */
+.chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  font-family: var(--sans);
+  font-size: 14px;
+}
+
+.nav-arrow {
+  cursor: pointer;
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: background 0.15s, color 0.15s;
+  user-select: none;
+  text-decoration: none;
+}
+
+.nav-arrow:hover {
+  background: var(--hover);
+  color: var(--popout);
+}
+
+.nav-prev { margin-right: auto; }
+.nav-next { margin-left: auto; }
+.nav-disabled { visibility: hidden; }
+
+/* === Footer === */
 #footer {
   max-width: 720px;
   margin: 0 auto;
