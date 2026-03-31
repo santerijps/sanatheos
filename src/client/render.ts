@@ -1,0 +1,151 @@
+import type { BibleData, VerseResult } from "./types.ts";
+
+const $ = (id: string) => document.getElementById(id)!;
+
+function esc(s: string): string {
+  const d = document.createElement("div");
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function fmt(text: string): string {
+  return esc(text).replace(/\n/g, "<br>");
+}
+
+function escRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+export function renderChapter(data: BibleData, book: string, chapter: number) {
+  const ch = data[book]?.[String(chapter)];
+  if (!ch) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+
+  const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
+  let html = `<h2 class="section-title">${esc(book)} ${chapter}</h2><div class="verses">`;
+  for (const n of nums) {
+    html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+  }
+  html += `</div>`;
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+export function renderBook(data: BibleData, book: string) {
+  const bd = data[book];
+  if (!bd) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+
+  const chs = Object.keys(bd).map(Number).sort((a, b) => a - b);
+  let html = `<h1 class="book-title">${esc(book)}</h1>`;
+  for (const c of chs) {
+    const verses = bd[String(c)];
+    const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
+    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">Chapter ${c}</h2><div class="verses">`;
+    for (const n of nums) {
+      html += `<span class="verse"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
+    }
+    html += `</div></div>`;
+  }
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+export function renderVerse(data: BibleData, book: string, chapter: number, verse: number) {
+  const text = data[book]?.[String(chapter)]?.[String(verse)];
+  if (!text) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+
+  $("content").innerHTML = `
+    <h2 class="section-title">${esc(book)} ${chapter}:${verse}</h2>
+    <div class="verses single-verse">
+      <span class="verse"><sup>${verse}</sup>${fmt(text)}</span>
+    </div>`;
+  window.scrollTo(0, 0);
+}
+
+export function renderResults(results: VerseResult[], query: string) {
+  if (!results.length) {
+    $("content").innerHTML = `<p class="empty">No results for &ldquo;${esc(query)}&rdquo;</p>`;
+    return;
+  }
+
+  const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
+  let html = `<p class="results-info">${results.length} result${results.length !== 1 ? "s" : ""}</p><div class="results">`;
+
+  for (const r of results) {
+    let highlighted = fmt(r.text);
+    for (const t of terms) {
+      if (t.length >= 2) {
+        const re = new RegExp(`(${escRegex(esc(t))})`, "gi");
+        highlighted = highlighted.replace(re, "<mark>$1</mark>");
+      }
+    }
+    html += `<div class="result" data-book="${esc(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
+      <div class="result-ref">${esc(r.book)} ${r.chapter}:${r.verse}</div>
+      <div class="result-text">${highlighted}</div>
+    </div>`;
+  }
+
+  html += `</div>`;
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+export function renderIndex(
+  data: BibleData,
+  callbacks: {
+    onBook: (book: string) => void;
+    onChapter: (book: string, chapter: number) => void;
+    onVerse: (book: string, chapter: number, verse: number) => void;
+  },
+) {
+  const booksCol = $("idx-books");
+  const chapsCol = $("idx-chapters");
+  const versesCol = $("idx-verses");
+
+  if (booksCol.children.length > 0) return;
+
+  for (const book of Object.keys(data)) {
+    const el = document.createElement("div");
+    el.className = "idx-item";
+    el.textContent = book;
+
+    el.addEventListener("mouseenter", () => {
+      booksCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
+      el.classList.add("active");
+      chapsCol.innerHTML = "";
+      versesCol.innerHTML = "";
+
+      const chs = Object.keys(data[book]).map(Number).sort((a, b) => a - b);
+      for (const c of chs) {
+        const chEl = document.createElement("div");
+        chEl.className = "idx-item idx-chapter";
+        const first = data[book][String(c)]?.["1"] || "";
+        const preview = first.substring(0, 60).replace(/\n/g, " ");
+        chEl.innerHTML = `<strong>Chapter ${c}</strong><small>${esc(preview)}${first.length > 60 ? "\u2026" : ""}</small>`;
+
+        chEl.addEventListener("mouseenter", () => {
+          chapsCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
+          chEl.classList.add("active");
+          versesCol.innerHTML = "";
+
+          const vs = Object.keys(data[book][String(c)]).map(Number).sort((a, b) => a - b);
+          for (const v of vs) {
+            const vEl = document.createElement("div");
+            vEl.className = "idx-item idx-verse";
+            const text = data[book][String(c)][String(v)];
+            const p = text.substring(0, 50).replace(/\n/g, " ");
+            vEl.textContent = `${v}. ${p}${text.length > 50 ? "\u2026" : ""}`;
+
+            vEl.addEventListener("click", (e) => { e.stopPropagation(); callbacks.onVerse(book, c, v); });
+            versesCol.appendChild(vEl);
+          }
+        });
+
+        chEl.addEventListener("click", (e) => { e.stopPropagation(); callbacks.onChapter(book, c); });
+        chapsCol.appendChild(chEl);
+      }
+    });
+
+    el.addEventListener("click", () => callbacks.onBook(book));
+    booksCol.appendChild(el);
+  }
+}

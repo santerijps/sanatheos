@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bible</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header id="header">
+    <input
+      type="text"
+      id="search-input"
+      placeholder="Search verses, references (John 3:16), or topics…"
+      autocomplete="off"
+      spellcheck="false"
+    >
+    <button id="index-btn" type="button" title="Browse books">&#9776;</button>
+  </header>
+
+  <main id="content"></main>
+
+  <div id="index-overlay">
+    <div id="index-panel">
+      <div id="idx-books" class="idx-col"></div>
+      <div id="idx-chapters" class="idx-col"></div>
+      <div id="idx-verses" class="idx-col"></div>
+    </div>
+  </div>
+
+  <script src="/bundle.js"></script>
+</body>
+</html>
