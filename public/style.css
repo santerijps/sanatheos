@@ -467,22 +467,22 @@ mark {
   margin-bottom: 20px;
 }
 
-#settings-modal h3 {
+#settings-modal section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+#settings-modal label {
   font-size: 15px;
   font-weight: 600;
-  margin: 20px 0 8px;
   color: var(--accent);
+  white-space: nowrap;
 }
 
-#settings-modal p {
-  font-size: 14px;
-  color: #444;
-  margin-bottom: 8px;
-}
-
-#translation-select {
-  display: block;
-  margin-top: 8px;
+#translation-select,
+#language-select {
   padding: 6px 10px;
   font: 15px var(--sans);
   border: 1px solid #ccc;

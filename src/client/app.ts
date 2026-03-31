@@ -5,6 +5,7 @@ import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
 import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex } from "./render.ts";
 import { setTranslation } from "./bookNames.ts";
+import { setLanguage, getLanguage, t } from "./i18n.ts";
 
 let data: BibleData;
 let currentTranslation = "WEB";
@@ -47,13 +48,20 @@ async function init() {
   currentTranslation = urlT?.toUpperCase() || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
   setTranslation(currentTranslation);
 
+  // Determine initial language
+  const savedLang = localStorage.getItem("bible-language") || "en";
+  setLanguage(savedLang);
+
+  const languageSelect = document.getElementById("language-select") as HTMLSelectElement | null;
+  if (languageSelect) languageSelect.value = savedLang;
+
   // Load Bible data: try IndexedDB first, then fetch from API
-  content.innerHTML = `<p class="loading">Loading Bible\u2026</p>`;
+  content.innerHTML = `<p class="loading">${t().loadingBible}</p>`;
 
   try {
     data = await fetchTranslation(currentTranslation);
   } catch (err) {
-    content.innerHTML = `<p class="empty">Failed to load Bible data. Please refresh the page.</p>`;
+    content.innerHTML = `<p class="empty">${t().loadFailed}</p>`;
     return;
   }
 
@@ -71,7 +79,7 @@ async function init() {
     translationSelect.addEventListener("change", async () => {
       const code = translationSelect.value;
       if (code === currentTranslation) return;
-      content.innerHTML = `<p class="loading">Loading ${code}\u2026</p>`;
+      content.innerHTML = `<p class="loading">${t().loadingTranslation(code)}</p>`;
       try {
         data = await fetchTranslation(code);
         currentTranslation = code;
@@ -84,11 +92,28 @@ async function init() {
         applyState(state);
         updateFooter();
       } catch {
-        content.innerHTML = `<p class="empty">Failed to load ${code}. Please try again.</p>`;
+        content.innerHTML = `<p class="empty">${t().loadTranslationFailed(code)}</p>`;
         translationSelect.value = currentTranslation;
       }
     });
   }
+
+  // Language selector
+  if (languageSelect) {
+    languageSelect.addEventListener("change", () => {
+      const lang = languageSelect.value;
+      setLanguage(lang);
+      localStorage.setItem("bible-language", lang);
+      updateStaticText();
+      indexRendered = false;
+      const state = readState();
+      searchInput.value = stateToInputText(state);
+      applyState(state);
+      updateFooter();
+    });
+  }
+
+  updateStaticText();
 
   // Render initial state from URL
   const state = readState();
@@ -350,6 +375,48 @@ const TRANSLATION_NAMES: Record<string, string> = {
   WEB: "World English Bible",
   KR38: "Raamattu 1933/1938",
 };
+
+function updateStaticText() {
+  const s = t();
+  // Header buttons
+  const infoBtn = document.getElementById("info-btn");
+  if (infoBtn) infoBtn.title = s.helpInfo;
+  const settingsBtn = document.getElementById("settings-btn");
+  if (settingsBtn) settingsBtn.title = s.settings;
+  const searchInput = document.getElementById("search-input") as HTMLInputElement | null;
+  if (searchInput) searchInput.placeholder = s.searchPlaceholder;
+  const indexBtn = document.getElementById("index-btn");
+  if (indexBtn) indexBtn.title = s.browseBooks;
+
+  // Settings modal
+  const settingsTitle = document.querySelector("#settings-modal-body h2");
+  if (settingsTitle) settingsTitle.textContent = s.settingsTitle;
+  const transLabel = document.getElementById("settings-translation-label");
+  if (transLabel) transLabel.textContent = s.translationLabel;
+  const langLabel = document.getElementById("settings-language-label");
+  if (langLabel) langLabel.textContent = s.languageLabel;
+
+  // Info modal
+  const infoBody = document.getElementById("info-modal-body");
+  if (infoBody) {
+    infoBody.innerHTML = `
+      <h2>${s.infoTitle}</h2>
+      <section><h3>${s.infoSearchTitle}</h3><p>${s.infoSearchIntro}</p><ul>${s.infoSearchItems.map(i => `<li>${i}</li>`).join("")}</ul><p>${s.infoSearchNote}</p></section>
+      <section><h3>${s.infoBrowseTitle}</h3><p>${s.infoBrowseText}</p></section>
+      <section><h3>${s.infoShortcutsTitle}</h3><ul>${s.infoShortcuts.map(i => `<li>${i}</li>`).join("")}</ul></section>
+      <section><h3>${s.infoSettingsTitle}</h3><p>${s.infoSettingsText}</p></section>
+      <section><h3>${s.infoDataTitle}</h3><p>${s.infoDataText}</p></section>`;
+  }
+
+  // Footer
+  const footer = document.getElementById("footer");
+  if (footer) {
+    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerFavicon}</p>`;
+  }
+
+  // HTML lang attribute
+  document.documentElement.lang = getLanguage() === "fi" ? "fi" : "en";
+}
 
 function updateFooter() {
   const name = TRANSLATION_NAMES[currentTranslation] || currentTranslation;

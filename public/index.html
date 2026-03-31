@@ -87,9 +87,16 @@
       <div id="settings-modal-body">
         <h2>Settings</h2>
         <section>
-          <h3>Translation</h3>
-          <p>Select a Bible translation:</p>
+          <label id="settings-language-label" for="language-select">Language</label>
+          <select id="language-select">
+            <option value="en">English</option>
+            <option value="fi">Suomi</option>
+          </select>
+        </section>
+        <section>
+          <label id="settings-translation-label" for="translation-select">Translation</label>
           <select id="translation-select"></select>
+        </section>
         </section>
       </div>
     </div>

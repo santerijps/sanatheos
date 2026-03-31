@@ -1,6 +1,7 @@
 import type { BibleData, VerseResult } from "./types.ts";
 import type { NavRef } from "./search.ts";
 import { displayName } from "./bookNames.ts";
+import { t } from "./i18n.ts";
 
 const $ = (id: string) => document.getElementById(id)!;
 
@@ -109,7 +110,7 @@ function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null): string {
 
 export function renderChapter(data: BibleData, book: string, chapter: number) {
   const ch = data[book]?.[String(chapter)];
-  if (!ch) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+  if (!ch) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const { prev, next } = getChapterNav(data, book, chapter);
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
@@ -126,14 +127,14 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
 
 export function renderBook(data: BibleData, book: string) {
   const bd = data[book];
-  if (!bd) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+  if (!bd) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const chs = Object.keys(bd).map(Number).sort((a, b) => a - b);
   let html = `<h1 class="book-title">${esc(displayName(book))}</h1>`;
   for (const c of chs) {
     const verses = bd[String(c)];
     const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
-    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">Chapter ${c}</h2><div class="verses">`;
+    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2><div class="verses">`;
     for (const n of nums) {
       html += `<span class="verse"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
     }
@@ -145,7 +146,7 @@ export function renderBook(data: BibleData, book: string) {
 
 export function renderVerse(data: BibleData, book: string, chapter: number, verse: number) {
   const text = data[book]?.[String(chapter)]?.[String(verse)];
-  if (!text) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+  if (!text) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const { prev, next } = getVerseNav(data, book, chapter, verse);
   $("content").innerHTML = `
@@ -159,7 +160,7 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 
 export function renderChapterRange(data: BibleData, book: string, chStart: number, chEnd: number) {
   const bd = data[book];
-  if (!bd) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+  if (!bd) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const { prev } = getChapterNav(data, book, chStart);
   const { next } = getChapterNav(data, book, chEnd);
@@ -181,7 +182,7 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
 
 export function renderVerseSegments(data: BibleData, book: string, chapter: number, segments: { start: number; end: number }[]) {
   const ch = data[book]?.[String(chapter)];
-  if (!ch) { $("content").innerHTML = `<p class="empty">Not found.</p>`; return; }
+  if (!ch) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   // Build title label like "Genesis 8:1-3,6"
   const segLabel = segments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
@@ -286,7 +287,7 @@ export function renderMultiNav(data: BibleData, refs: NavRef[]) {
 }
 export function renderResults(results: VerseResult[], query: string) {
   if (!results.length) {
-    $("content").innerHTML = `<p class="empty">No results for &ldquo;${esc(query)}&rdquo;</p>`;
+    $("content").innerHTML = `<p class="empty">${t().noResults(esc(query))}</p>`;
     return;
   }
 
@@ -300,7 +301,7 @@ export function renderResults(results: VerseResult[], query: string) {
     raw = raw.replace(/^\^/, "").replace(/\$$/, "");
     if (raw.length >= 2) highlights.push(raw);
   }
-  let html = `<p class="results-info">${results.length} result${results.length !== 1 ? "s" : ""}</p><div class="results">`;
+  let html = `<p class="results-info">${t().resultCount(results.length)}</p><div class="results">`;
 
   // Build a single combined regex to avoid corrupting <mark> tags across passes
   const hlRegex = highlights.length
@@ -370,7 +371,7 @@ export function renderIndex(
       chEl.tabIndex = -1;
       const first = data[book][String(c)]?.["1"] || "";
       const preview = first.substring(0, 60).replace(/\n/g, " ");
-      chEl.innerHTML = `<strong>Chapter ${c}</strong><small>${esc(preview)}${first.length > 60 ? "\u2026" : ""}</small>`;
+      chEl.innerHTML = `<strong>${t().chapter} ${c}</strong><small>${esc(preview)}${first.length > 60 ? "\u2026" : ""}</small>`;
 
       chEl.addEventListener("mouseenter", () => {
         chapsCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
