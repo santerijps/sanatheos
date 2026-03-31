@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test";
-import type { BibleData } from "../client/types.ts";
-import { initSearch, search, _matchBook, _parseRef, _parseVerseSegments } from "../client/search.ts";
+import type { BibleData } from "../src/client/types.ts";
+import { initSearch, search, _matchBook, _parseRef, _parseVerseSegments } from "../src/client/search.ts";
 
 // Minimal fixture data
 const fixture: BibleData = {

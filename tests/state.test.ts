@@ -1,6 +1,6 @@
 import { describe, test, expect } from "bun:test";
-import type { AppState } from "../client/types.ts";
-import { stateToInputText } from "../client/state.ts";
+import type { AppState } from "../src/client/types.ts";
+import { stateToInputText } from "../src/client/state.ts";
 
 describe("stateToInputText", () => {
   test("empty state returns empty string", () => {

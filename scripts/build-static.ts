@@ -1,6 +1,6 @@
 import { join, resolve } from "node:path";
 import { readdir, cp, mkdir, rm } from "node:fs/promises";
-import type { BibleData } from "./client/types.ts";
+import type { BibleData } from "../src/client/types.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
