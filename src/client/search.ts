@@ -99,6 +99,32 @@ function parseRef(term: string): Ref | null {
   return null;
 }
 
+/**
+ * Try to parse a single-term query as a pure reference (no text filter).
+ * Returns an AppState-like object for navigation, or null if it's a search query.
+ */
+export function tryParseNav(query: string): { book: string; chapter?: number; verse?: number } | null {
+  const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
+  if (terms.length !== 1) return null;
+  const term = terms[0];
+
+  // If it contains a quoted filter, it's a search, not navigation
+  const quotedMatch = term.match(/"(.*?)"/);
+  if (quotedMatch) return null;
+
+  const ref = parseRef(term);
+  if (!ref) return null;
+
+  // Only navigate for simple cases: whole book, single chapter, or single verse
+  if (ref.chapterStart !== undefined && ref.chapterEnd !== undefined && ref.chapterStart !== ref.chapterEnd) return null;
+  if (ref.verseSegments && ref.verseSegments.length > 1) return null;
+  if (ref.verseSegments && (ref.verseSegments[0].start !== ref.verseSegments[0].end)) return null;
+
+  const chapter = ref.chapterStart;
+  const verse = ref.verseSegments?.[0]?.start;
+  return { book: ref.book, chapter, verse };
+}
+
 export function search(data: BibleData, query: string, limit = 200): VerseResult[] {
   const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
   const results: VerseResult[] = [];

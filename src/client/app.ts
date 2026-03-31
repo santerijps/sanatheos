@@ -1,6 +1,6 @@
 import type { BibleData, AppState } from "./types.ts";
 import { loadBible, saveBible } from "./db.ts";
-import { initSearch, search } from "./search.ts";
+import { initSearch, search, tryParseNav } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
 import { renderChapter, renderBook, renderVerse, renderResults, renderIndex } from "./render.ts";
 
@@ -46,13 +46,28 @@ async function init() {
     clearTimeout(timer);
     timer = window.setTimeout(() => {
       const q = searchInput.value.trim();
-      if (q) {
+      if (!q) {
+        renderChapter(data, "Genesis", 1);
+        replaceState({});
+        return;
+      }
+      // Pure reference → navigate directly
+      const nav = tryParseNav(q);
+      if (nav && data[nav.book]) {
+        if (nav.chapter && nav.verse) {
+          renderVerse(data, nav.book, nav.chapter, nav.verse);
+          replaceState({ book: nav.book, chapter: nav.chapter, verse: nav.verse });
+        } else if (nav.chapter) {
+          renderChapter(data, nav.book, nav.chapter);
+          replaceState({ book: nav.book, chapter: nav.chapter });
+        } else {
+          renderChapter(data, nav.book, 1);
+          replaceState({ book: nav.book, chapter: 1 });
+        }
+      } else {
         const results = search(data, q);
         renderResults(results, q);
         replaceState({ query: q });
-      } else {
-        renderChapter(data, "Genesis", 1);
-        replaceState({});
       }
     }, 150);
   });
@@ -194,8 +209,20 @@ function navigate(s: AppState) {
 
 function applyState(s: AppState) {
   if (s.query) {
-    const results = search(data, s.query);
-    renderResults(results, s.query);
+    // Check if the query is a pure reference → navigate instead of search
+    const nav = tryParseNav(s.query);
+    if (nav && data[nav.book]) {
+      if (nav.chapter && nav.verse) {
+        renderVerse(data, nav.book, nav.chapter, nav.verse);
+      } else if (nav.chapter) {
+        renderChapter(data, nav.book, nav.chapter);
+      } else {
+        renderChapter(data, nav.book, 1);
+      }
+    } else {
+      const results = search(data, s.query);
+      renderResults(results, s.query);
+    }
   } else if (s.book && s.chapter && s.verse) {
     renderVerse(data, s.book, s.chapter, s.verse);
   } else if (s.book && s.chapter) {
