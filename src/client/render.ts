@@ -270,7 +270,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
 }
 
 export function renderMultiNav(data: BibleData, refs: NavRef[]) {
-  let html = '';
+  let html = '<div class="translation-label"><span class="nav-translation"></span></div>';
   for (let i = 0; i < refs.length; i++) {
     if (i > 0) html += `<hr class="multi-nav-divider">`;
     html += `<section class="multi-nav-section">`;
