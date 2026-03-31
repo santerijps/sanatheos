@@ -5,7 +5,7 @@ import type { BibleData } from "./client/types.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
-const BOOKS_DIR = join(ROOT, "NKJV", "NKJV_books");
+const BOOKS_DIR = join(ROOT, "translations", "NKJV", "NKJV_books");
 
 const BOOK_ORDER = [
   "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
