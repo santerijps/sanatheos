@@ -105,7 +105,24 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
   const seen = new Set<string>();
 
   for (const term of terms) {
-    const ref = parseRef(term);
+    // Extract an optional quoted text filter from the term
+    const quotedMatch = term.match(/"(.*?)"/);
+    const textFilter = quotedMatch && quotedMatch[1].length > 0 ? quotedMatch[1].toLowerCase() : null;
+    const refPart = quotedMatch ? term.replace(/"(.*?)"/, "").trim() : term;
+
+    // Pure text search — entire term is just a quoted string
+    if (textFilter && !refPart) {
+      for (const e of entries) {
+        if (results.length >= limit) break;
+        if (e.lower.includes(textFilter)) {
+          const k = `${e.book}:${e.chapter}:${e.verse}`;
+          if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
+        }
+      }
+      continue;
+    }
+
+    const ref = parseRef(refPart);
     if (ref && data[ref.book]) {
       const bookData = data[ref.book];
 
@@ -120,6 +137,7 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
             for (let v = seg.start; v <= seg.end; v++) {
               const text = ch[String(v)];
               if (!text) continue;
+              if (textFilter && !text.toLowerCase().includes(textFilter)) continue;
               const k = `${ref.book}:${c}:${v}`;
               if (!seen.has(k) && results.length < limit) { seen.add(k); results.push({ book: ref.book, chapter: c, verse: v, text }); }
             }
@@ -129,22 +147,13 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
         // Whole book
         for (const [c, verses] of Object.entries(bookData)) {
           for (const [v, text] of Object.entries(verses)) {
+            if (textFilter && !text.toLowerCase().includes(textFilter)) continue;
             const k = `${ref.book}:${c}:${v}`;
             if (!seen.has(k) && results.length < limit) { seen.add(k); results.push({ book: ref.book, chapter: +c, verse: +v, text }); }
           }
         }
       }
       continue;
-    }
-
-    // Text search — case-insensitive substring
-    const tl = term.toLowerCase();
-    for (const e of entries) {
-      if (results.length >= limit) break;
-      if (e.lower.includes(tl)) {
-        const k = `${e.book}:${e.chapter}:${e.verse}`;
-        if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
-      }
     }
   }
 

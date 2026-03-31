@@ -226,22 +226,27 @@ describe("search — reference queries", () => {
 
 // --- search (text queries) ---
 describe("search — text queries", () => {
-  test("case insensitive text match", () => {
-    const results = search(fixture, "beginning");
+  test("quoted text match is case insensitive", () => {
+    const results = search(fixture, '"beginning"');
     expect(results.length).toBeGreaterThanOrEqual(3);
     for (const r of results) {
       expect(r.text.toLowerCase()).toContain("beginning");
     }
   });
 
-  test("text search with no matches", () => {
-    const results = search(fixture, "xyznonexistent");
+  test("quoted text with no matches", () => {
+    const results = search(fixture, '"xyznonexistent"');
     expect(results).toHaveLength(0);
   });
 
   test("respects result limit", () => {
-    const results = search(fixture, "God", 3);
+    const results = search(fixture, '"God"', 3);
     expect(results).toHaveLength(3);
+  });
+
+  test("unquoted non-reference text returns empty", () => {
+    const results = search(fixture, "beginning");
+    expect(results).toHaveLength(0);
   });
 });
 
@@ -259,8 +264,8 @@ describe("search — multi-term", () => {
     expect(results).toHaveLength(1);
   });
 
-  test("mix reference and text", () => {
-    const results = search(fixture, "Genesis 1:1;serpent");
+  test("mix reference and quoted text", () => {
+    const results = search(fixture, 'Genesis 1:1;"serpent"');
     expect(results.length).toBeGreaterThanOrEqual(2);
     expect(results[0].book).toBe("Genesis");
     expect(results[0].chapter).toBe(1);
@@ -285,5 +290,83 @@ describe("search — abbreviations", () => {
     const results = search(fixture, "REV 1:1");
     expect(results).toHaveLength(1);
     expect(results[0].book).toBe("Revelation");
+  });
+});
+
+// --- search (combined reference + text) ---
+describe("search — combined reference + text", () => {
+  test("book + text filter", () => {
+    const results = search(fixture, 'Genesis "serpent"');
+    expect(results.length).toBeGreaterThanOrEqual(1);
+    for (const r of results) {
+      expect(r.book).toBe("Genesis");
+      expect(r.text.toLowerCase()).toContain("serpent");
+    }
+  });
+
+  test("chapter + text filter", () => {
+    const results = search(fixture, 'Genesis 1 "light"');
+    expect(results.length).toBeGreaterThanOrEqual(1);
+    for (const r of results) {
+      expect(r.book).toBe("Genesis");
+      expect(r.chapter).toBe(1);
+      expect(r.text.toLowerCase()).toContain("light");
+    }
+  });
+
+  test("chapter:verse + text filter narrows results", () => {
+    const results = search(fixture, 'Genesis 1:1 "beginning"');
+    expect(results).toHaveLength(1);
+    expect(results[0].verse).toBe(1);
+    expect(results[0].text.toLowerCase()).toContain("beginning");
+  });
+
+  test("chapter:verse + text filter with no match", () => {
+    const results = search(fixture, 'Genesis 1:1 "serpent"');
+    expect(results).toHaveLength(0);
+  });
+
+  test("chapter range + text filter", () => {
+    const results = search(fixture, 'Genesis 1-3 "seventh"');
+    expect(results.length).toBeGreaterThanOrEqual(1);
+    for (const r of results) {
+      expect(r.book).toBe("Genesis");
+      expect(r.text.toLowerCase()).toContain("seventh");
+    }
+  });
+
+  test("abbreviated book + text filter", () => {
+    const results = search(fixture, 'gen "void"');
+    expect(results).toHaveLength(1);
+    expect(results[0].book).toBe("Genesis");
+    expect(results[0].text.toLowerCase()).toContain("void");
+  });
+
+  test("combined with semicolon multi-term", () => {
+    const results = search(fixture, 'Genesis "light";John 3:16');
+    expect(results.length).toBeGreaterThanOrEqual(3); // light in Gen + John 3:16
+    const genResults = results.filter(r => r.book === "Genesis");
+    const johnResults = results.filter(r => r.book === "John");
+    expect(genResults.length).toBeGreaterThanOrEqual(1);
+    expect(johnResults).toHaveLength(1);
+    for (const r of genResults) {
+      expect(r.text.toLowerCase()).toContain("light");
+    }
+  });
+
+  test("empty quotes ignored — returns full reference", () => {
+    const results = search(fixture, 'Genesis 1 ""');
+    expect(results).toHaveLength(5); // all 5 verses of Genesis 1
+  });
+
+  test("empty quotes with book only", () => {
+    const results = search(fixture, 'John ""');
+    const allJohn = search(fixture, "John");
+    expect(results).toHaveLength(allJohn.length);
+  });
+
+  test("standalone empty quotes returns nothing", () => {
+    const results = search(fixture, '""');
+    expect(results).toHaveLength(0);
   });
 });

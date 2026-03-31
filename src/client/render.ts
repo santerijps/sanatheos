@@ -68,15 +68,18 @@ export function renderResults(results: VerseResult[], query: string) {
   }
 
   const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
+  const highlights: string[] = [];
+  for (const t of terms) {
+    const m = t.match(/"(.+?)"/);
+    if (m && m[1].length >= 2) highlights.push(m[1]);
+  }
   let html = `<p class="results-info">${results.length} result${results.length !== 1 ? "s" : ""}</p><div class="results">`;
 
   for (const r of results) {
     let highlighted = fmt(r.text);
-    for (const t of terms) {
-      if (t.length >= 2) {
-        const re = new RegExp(`(${escRegex(esc(t))})`, "gi");
-        highlighted = highlighted.replace(re, "<mark>$1</mark>");
-      }
+    for (const h of highlights) {
+      const re = new RegExp(`(${escRegex(esc(h))})`, "gi");
+      highlighted = highlighted.replace(re, "<mark>$1</mark>");
     }
     html += `<div class="result" data-book="${esc(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
       <div class="result-ref">${esc(r.book)} ${r.chapter}:${r.verse}</div>
