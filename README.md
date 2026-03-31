@@ -1,6 +1,6 @@
-# 📖 Bible Reader
+# 📖 Sanatheos
 
-A fast, modern web app for reading and searching the Bible — built with TypeScript and Bun.
+A fast, modern web app for reading and searching the Bible — built with TypeScript and Bun. The name comes from *sana* (Finnish: "word") and *theos* (Greek: "God").
 
 > Lightweight. Offline-ready. Keyboard-friendly. No sign-up required.
 

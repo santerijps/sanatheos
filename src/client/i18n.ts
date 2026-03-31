@@ -61,7 +61,7 @@ const EN: Strings = {
   translationLabel: "Bible translation",
   languageLabel: "Application language",
 
-  infoTitle: "Bible Reader",
+  infoTitle: "Sanatheos",
   infoSearchTitle: "Search Input",
   infoSearchIntro: "Type in the search bar to find verses. Supported query formats:",
   infoSearchItems: [
@@ -116,7 +116,7 @@ const FI: Strings = {
   translationLabel: "Raamatunkäännös",
   languageLabel: "Sovelluksen kieli",
 
-  infoTitle: "Raamatun lukija",
+  infoTitle: "Sanatheos",
   infoSearchTitle: "Hakukenttä",
   infoSearchIntro: "Kirjoita hakukenttään löytääksesi jakeita. Tuetut hakumuodot:",
   infoSearchItems: [

@@ -206,7 +206,7 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }
-function navRefLabel(nav: NavRef): string {
+export function navRefLabel(nav: NavRef): string {
   const { book, chapterStart, chapterEnd, verseSegments } = nav;
   if (chapterStart !== undefined && chapterEnd !== undefined) {
     if (verseSegments) {

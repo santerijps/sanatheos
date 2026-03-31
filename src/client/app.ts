@@ -3,7 +3,7 @@ import { loadBible, saveBible } from "./db.ts";
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel } from "./render.ts";
 import { setTranslation, displayName } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -154,29 +154,14 @@ async function init() {
     timer = window.setTimeout(() => {
       const q = searchInput.value.trim();
       if (!q) {
-        renderChapter(data, "Genesis", 1);
-        updateFooter();
-        replaceState(withT({}));
+        const s: AppState = {};
+        applyState(s);
+        replaceState(withT(s));
         return;
       }
-      // Pure reference(s) → navigate directly
-      const navRefs = tryParseNav(q);
-      if (navRefs && navRefs.every(r => !!data[r.book])) {
-        if (navRefs.length === 1) {
-          renderNavRef(navRefs[0]);
-        } else {
-          renderMultiNav(data, navRefs);
-        }
-        updateFooter();
-        replaceState(withT({ query: q }));
-      } else if (/".*?"/.test(q)) {
-        const results = search(data, q);
-        renderResults(results, q);
-        replaceState(withT({ query: q }));
-      } else {
-        renderResults([], q);
-        replaceState(withT({ query: q }));
-      }
+      const s: AppState = { query: q };
+      applyState(s);
+      replaceState(withT(s));
     }, 150);
   });
 
@@ -393,6 +378,27 @@ function renderNavRef(nav: NavRef) {
   }
 }
 
+function updateTitle(s: AppState) {
+  let label: string;
+  if (s.query) {
+    const navRefs = tryParseNav(s.query);
+    if (navRefs && navRefs.every(r => !!data[r.book])) {
+      label = navRefs.map(r => navRefLabel(r)).join("; ");
+    } else {
+      label = s.query;
+    }
+  } else if (s.book && s.chapter && s.verse) {
+    label = `${displayName(s.book)} ${s.chapter}:${s.verse}`;
+  } else if (s.book && s.chapter) {
+    label = `${displayName(s.book)} ${s.chapter}`;
+  } else if (s.book) {
+    label = displayName(s.book);
+  } else {
+    label = `${displayName("Genesis")} 1`;
+  }
+  document.title = `${label} | Sanatheos`;
+}
+
 function applyState(s: AppState) {
   if (s.query) {
     // Check if the query is pure reference(s) → navigate instead of search
@@ -418,6 +424,7 @@ function applyState(s: AppState) {
   } else {
     renderChapter(data, "Genesis", 1);
   }
+  updateTitle(s);
   updateFooter();
 }
 
