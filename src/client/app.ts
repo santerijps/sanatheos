@@ -50,10 +50,11 @@ async function init() {
 
   // --- Index panel ---
   let indexRendered = false;
-  indexBtn.addEventListener("click", () => {
-    overlay.classList.toggle("open");
-    document.body.classList.toggle("panel-open", overlay.classList.contains("open"));
-    if (!indexRendered && overlay.classList.contains("open")) {
+
+  function openIndex() {
+    overlay.classList.add("open");
+    document.body.classList.add("panel-open");
+    if (!indexRendered) {
       renderIndex(data, {
         onBook(book) { navigate({ book }); },
         onChapter(book, chapter) { navigate({ book, chapter }); },
@@ -61,20 +62,44 @@ async function init() {
       });
       indexRendered = true;
     }
-  });
+    // Focus the active book in the panel
+    requestAnimationFrame(() => {
+      const active = document.querySelector("#idx-books .idx-item.active") as HTMLElement
+        ?? document.querySelector("#idx-books .idx-item") as HTMLElement;
+      active?.focus();
+    });
+  }
+
+  function closeIndex() {
+    overlay.classList.remove("open");
+    document.body.classList.remove("panel-open");
+  }
+
+  function toggleIndex() {
+    if (overlay.classList.contains("open")) closeIndex();
+    else openIndex();
+  }
+
+  indexBtn.addEventListener("click", toggleIndex);
 
   overlay.addEventListener("click", (e) => {
-    if (e.target === overlay) {
-      overlay.classList.remove("open");
-      document.body.classList.remove("panel-open");
-    }
+    if (e.target === overlay) closeIndex();
   });
 
-  // Close index with Escape
+  // Close index with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && overlay.classList.contains("open")) {
-      overlay.classList.remove("open");
-      document.body.classList.remove("panel-open");
+      closeIndex();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+      e.preventDefault();
+      if (overlay.classList.contains("open")) closeIndex();
+      searchInput.focus();
+      searchInput.select();
+    }
+    if ((e.ctrlKey || e.metaKey) && e.key === "i") {
+      e.preventDefault();
+      toggleIndex();
     }
   });
 

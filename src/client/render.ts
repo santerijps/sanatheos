@@ -111,6 +111,7 @@ export function renderIndex(
     for (const v of vs) {
       const vEl = document.createElement("div");
       vEl.className = "idx-item idx-verse";
+      vEl.tabIndex = -1;
       const text = data[book][String(chapter)][String(v)];
       const p = text.substring(0, 50).replace(/\n/g, " ");
       vEl.textContent = `${v}. ${p}${text.length > 50 ? "\u2026" : ""}`;
@@ -134,6 +135,7 @@ export function renderIndex(
     for (const c of chs) {
       const chEl = document.createElement("div");
       chEl.className = "idx-item idx-chapter";
+      chEl.tabIndex = -1;
       const first = data[book][String(c)]?.["1"] || "";
       const preview = first.substring(0, 60).replace(/\n/g, " ");
       chEl.innerHTML = `<strong>Chapter ${c}</strong><small>${esc(preview)}${first.length > 60 ? "\u2026" : ""}</small>`;
@@ -162,6 +164,7 @@ export function renderIndex(
     el.className = "idx-item";
     el.dataset.book = book;
     el.textContent = book;
+    el.tabIndex = -1;
 
     el.addEventListener("mouseenter", () => showChapters(book));
     el.addEventListener("click", () => callbacks.onBook(book));
@@ -171,5 +174,90 @@ export function renderIndex(
   // Default: activate first book
   if (books.length > 0) {
     showChapters(books[0]);
+  }
+
+  // --- Keyboard navigation ---
+  const cols = [booksCol, chapsCol, versesCol];
+  let focusedCol = 0;
+
+  function getItems(col: HTMLElement): HTMLElement[] {
+    return Array.from(col.querySelectorAll(".idx-item"));
+  }
+
+  function focusItem(col: HTMLElement, index: number) {
+    const items = getItems(col);
+    if (!items.length) return;
+    const i = Math.max(0, Math.min(index, items.length - 1));
+    items[i].focus();
+  }
+
+  function getActiveIndex(col: HTMLElement): number {
+    const items = getItems(col);
+    const active = col.querySelector(".idx-item:focus") as HTMLElement;
+    return active ? items.indexOf(active) : -1;
+  }
+
+  function getPanel(): HTMLElement | null {
+    return document.getElementById("index-panel");
+  }
+
+  getPanel()?.addEventListener("keydown", (e) => {
+    const key = e.key;
+    const col = cols[focusedCol];
+
+    if (key === "ArrowDown" || key === "ArrowUp") {
+      e.preventDefault();
+      const items = getItems(col);
+      let idx = getActiveIndex(col);
+      if (key === "ArrowDown") idx = idx < items.length - 1 ? idx + 1 : 0;
+      else idx = idx > 0 ? idx - 1 : items.length - 1;
+      items[idx]?.focus();
+      // Trigger hover-equivalent behavior
+      if (col === booksCol) {
+        const book = items[idx]?.dataset.book;
+        if (book) showChapters(book);
+      } else if (col === chapsCol) {
+        items[idx]?.dispatchEvent(new MouseEvent("mouseenter"));
+      }
+      return;
+    }
+
+    if (key === "ArrowRight" || key === "Tab" && !e.shiftKey) {
+      if (focusedCol < 2 && getItems(cols[focusedCol + 1]).length) {
+        e.preventDefault();
+        focusedCol++;
+        const active = cols[focusedCol].querySelector(".idx-item.active") as HTMLElement;
+        if (active) active.focus();
+        else focusItem(cols[focusedCol], 0);
+      } else if (key === "Tab") {
+        e.preventDefault();
+      }
+      return;
+    }
+
+    if (key === "ArrowLeft" || key === "Tab" && e.shiftKey) {
+      if (focusedCol > 0) {
+        e.preventDefault();
+        focusedCol--;
+        const active = cols[focusedCol].querySelector(".idx-item.active") as HTMLElement;
+        if (active) active.focus();
+        else focusItem(cols[focusedCol], 0);
+      } else if (key === "Tab") {
+        e.preventDefault();
+      }
+      return;
+    }
+
+    if (key === "Enter") {
+      e.preventDefault();
+      const focused = col.querySelector(".idx-item:focus") as HTMLElement;
+      if (focused) focused.click();
+      return;
+    }
+  });
+
+  // Track which column has focus
+  for (let i = 0; i < cols.length; i++) {
+    cols[i].addEventListener("focusin", () => { focusedCol = i; });
   }
 }
