@@ -18,13 +18,19 @@ async function init() {
   // Load Bible data: try IndexedDB first, then fetch from API
   content.innerHTML = `<p class="loading">Loading Bible\u2026</p>`;
 
-  let cached = await loadBible();
-  if (cached) {
-    data = cached;
-  } else {
-    const res = await fetch("/api/bible");
-    data = await res.json();
-    await saveBible(data);
+  try {
+    const cached = await loadBible();
+    if (cached) {
+      data = cached;
+    } else {
+      const res = await fetch("/api/bible");
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      data = await res.json();
+      await saveBible(data);
+    }
+  } catch (err) {
+    content.innerHTML = `<p class="empty">Failed to load Bible data. Please refresh the page.</p>`;
+    return;
   }
 
   initSearch(data);
@@ -57,8 +63,13 @@ async function init() {
       const start = searchInput.selectionStart ?? searchInput.value.length;
       const end = searchInput.selectionEnd ?? start;
       const val = searchInput.value;
-      // Only auto-close if the character after cursor is not already a quote
-      if (val[end] !== '"') {
+      if (val[end] === '"') {
+        // Skip over existing closing quote
+        e.preventDefault();
+        searchInput.selectionStart = searchInput.selectionEnd = end + 1;
+        searchInput.dispatchEvent(new Event("input"));
+      } else {
+        // Auto-close: insert pair and place cursor between
         e.preventDefault();
         const before = val.slice(0, start);
         const after = val.slice(end);

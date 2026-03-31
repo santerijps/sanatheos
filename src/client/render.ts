@@ -5,7 +5,7 @@ const $ = (id: string) => document.getElementById(id)!;
 function esc(s: string): string {
   const d = document.createElement("div");
   d.textContent = s;
-  return d.innerHTML;
+  return d.innerHTML.replace(/"/g, "&quot;");
 }
 
 function fmt(text: string): string {
@@ -75,12 +75,14 @@ export function renderResults(results: VerseResult[], query: string) {
   }
   let html = `<p class="results-info">${results.length} result${results.length !== 1 ? "s" : ""}</p><div class="results">`;
 
+  // Build a single combined regex to avoid corrupting <mark> tags across passes
+  const hlRegex = highlights.length
+    ? new RegExp(`(${highlights.map(h => escRegex(esc(h))).join("|")})`, "gi")
+    : null;
+
   for (const r of results) {
     let highlighted = fmt(r.text);
-    for (const h of highlights) {
-      const re = new RegExp(`(${escRegex(esc(h))})`, "gi");
-      highlighted = highlighted.replace(re, "<mark>$1</mark>");
-    }
+    if (hlRegex) highlighted = highlighted.replace(hlRegex, "<mark>$1</mark>");
     html += `<div class="result" data-book="${esc(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
       <div class="result-ref">${esc(r.book)} ${r.chapter}:${r.verse}</div>
       <div class="result-text">${highlighted}</div>

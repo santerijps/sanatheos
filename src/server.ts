@@ -69,7 +69,12 @@ Bun.serve({
   port: 3001,
   async fetch(req) {
     const url = new URL(req.url);
-    let path = decodeURIComponent(url.pathname);
+    let path: string;
+    try {
+      path = decodeURIComponent(url.pathname);
+    } catch {
+      return new Response("Bad Request", { status: 400 });
+    }
 
     if (path === "/api/bible") {
       return new Response(bibleJson, {

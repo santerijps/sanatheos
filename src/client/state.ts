@@ -5,8 +5,8 @@ export function readState(): AppState {
   const s: AppState = {};
   if (p.has("q")) s.query = p.get("q")!;
   if (p.has("book")) s.book = p.get("book")!;
-  if (p.has("chapter")) s.chapter = +p.get("chapter")!;
-  if (p.has("verse")) s.verse = +p.get("verse")!;
+  if (p.has("chapter")) { const n = +p.get("chapter")!; if (Number.isFinite(n)) s.chapter = n; }
+  if (p.has("verse"))   { const n = +p.get("verse")!;   if (Number.isFinite(n)) s.verse = n; }
   return s;
 }
 
@@ -14,8 +14,8 @@ function toUrl(s: AppState): string {
   const p = new URLSearchParams();
   if (s.query) p.set("q", s.query);
   if (s.book) p.set("book", s.book);
-  if (s.chapter) p.set("chapter", String(s.chapter));
-  if (s.verse) p.set("verse", String(s.verse));
+  if (s.chapter !== undefined) p.set("chapter", String(s.chapter));
+  if (s.verse !== undefined) p.set("verse", String(s.verse));
   const qs = p.toString();
   return qs ? `/?${qs}` : "/";
 }
