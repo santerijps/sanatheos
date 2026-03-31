@@ -90,7 +90,7 @@ header {
 main {
   max-width: 720px;
   margin: 0 auto;
-  padding: 32px 24px 100px;
+  padding: 32px 24px 32px;
 }
 
 .book-title {
@@ -400,7 +400,26 @@ mark {
   line-height: 1.6;
 }
 
-/* === Footer === */
+#translation-select {
+  display: block;
+  margin-top: 8px;
+  padding: 6px 10px;
+  font: 15px var(--sans);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* === Translation Label === */
+#translation-label {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 24px 32px;
+  text-align: center;
+  font: 13px var(--sans);
+  color: var(--muted);
+}
 
 /* === Chapter/Verse Navigation === */
 .chapter-nav {
@@ -475,7 +494,7 @@ mark {
 /* === Responsive === */
 @media (max-width: 800px) {
   header { padding: 8px 12px; }
-  main { padding: 20px 16px 60px; }
+  main { padding: 20px 16px 20px; }
   #index-panel { flex-direction: column; max-height: 85vh; max-width: 90vw; }
   .idx-col { width: 100%; max-height: 28vh; border-right: none; }
 }

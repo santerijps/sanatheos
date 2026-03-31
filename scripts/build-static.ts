@@ -4,7 +4,7 @@ import type { BibleData } from "../src/client/types.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
-const BOOKS_DIR = join(ROOT, "translations", "WEB", "WEB_books");
+const TRANSLATIONS_DIR = join(ROOT, "translations");
 const OUT = join(ROOT, "docs");
 
 const BOOK_ORDER = [
@@ -23,12 +23,13 @@ const BOOK_ORDER = [
   "1 John", "2 John", "3 John", "Jude", "Revelation",
 ];
 
-async function loadBible(): Promise<string> {
+async function loadBible(code: string): Promise<string> {
+  const booksDir = join(TRANSLATIONS_DIR, code, `${code}_books`);
   const combined: BibleData = {};
-  const files = await readdir(BOOKS_DIR);
+  const files = await readdir(booksDir);
   for (const f of files) {
     if (!f.endsWith(".json")) continue;
-    const data: Record<string, unknown> = await Bun.file(join(BOOKS_DIR, f)).json();
+    const data: Record<string, unknown> = await Bun.file(join(booksDir, f)).json();
     delete data.Info;
     Object.assign(combined, data);
   }
@@ -37,6 +38,11 @@ async function loadBible(): Promise<string> {
     if (combined[b]) ordered[b] = combined[b];
   }
   return JSON.stringify(ordered);
+}
+
+async function discoverTranslations(): Promise<string[]> {
+  const entries = await readdir(TRANSLATIONS_DIR, { withFileTypes: true });
+  return entries.filter(e => e.isDirectory()).map(e => e.name).sort();
 }
 
 // Clean and create output directory
@@ -63,10 +69,21 @@ for (const name of ["index.html", "style.css", "robots.txt", "favicon.ico"]) {
 }
 console.log("Static files copied.");
 
-// Generate bible.json
-const json = await loadBible();
-await Bun.write(join(OUT, "bible.json"), json);
-console.log(`bible.json written (${(json.length / 1024 / 1024).toFixed(1)} MB).`);
+// Discover and generate per-translation JSON files
+const translations = await discoverTranslations();
+for (const t of translations) {
+  const json = await loadBible(t);
+  // Default (WEB) also written as bible.json for backward compatibility
+  if (t === "WEB") {
+    await Bun.write(join(OUT, "bible.json"), json);
+  }
+  await Bun.write(join(OUT, `bible-${t}.json`), json);
+  console.log(`bible-${t}.json written (${(json.length / 1024 / 1024).toFixed(1)} MB).`);
+}
+
+// Write translations manifest
+await Bun.write(join(OUT, "translations.json"), JSON.stringify(translations));
+console.log(`translations.json written (${translations.join(", ")})`);
 
 // Create .nojekyll to prevent GitHub Pages from ignoring underscore files
 await Bun.write(join(OUT, ".nojekyll"), "");

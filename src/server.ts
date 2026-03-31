@@ -5,7 +5,7 @@ import type { BibleData } from "./client/types.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
-const BOOKS_DIR = join(ROOT, "translations", "WEB", "WEB_books");
+const TRANSLATIONS_DIR = join(ROOT, "translations");
 
 const BOOK_ORDER = [
   "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
@@ -23,12 +23,13 @@ const BOOK_ORDER = [
   "1 John", "2 John", "3 John", "Jude", "Revelation",
 ];
 
-async function loadBible(): Promise<string> {
+async function loadBible(code: string): Promise<string> {
+  const booksDir = join(TRANSLATIONS_DIR, code, `${code}_books`);
   const combined: BibleData = {};
-  const files = await readdir(BOOKS_DIR);
+  const files = await readdir(booksDir);
   for (const f of files) {
     if (!f.endsWith(".json")) continue;
-    const data: Record<string, unknown> = await Bun.file(join(BOOKS_DIR, f)).json();
+    const data: Record<string, unknown> = await Bun.file(join(booksDir, f)).json();
     delete data.Info;
     Object.assign(combined, data);
   }
@@ -37,6 +38,11 @@ async function loadBible(): Promise<string> {
     if (combined[b]) ordered[b] = combined[b];
   }
   return JSON.stringify(ordered);
+}
+
+async function discoverTranslations(): Promise<string[]> {
+  const entries = await readdir(TRANSLATIONS_DIR, { withFileTypes: true });
+  return entries.filter(e => e.isDirectory()).map(e => e.name).sort();
 }
 
 async function buildClient() {
@@ -55,8 +61,15 @@ async function buildClient() {
 }
 
 await buildClient();
-const bibleJson = await loadBible();
-console.log(`Bible loaded (${(bibleJson.length / 1024 / 1024).toFixed(1)} MB)`);
+
+// Pre-load all translations into memory
+const translations = await discoverTranslations();
+const bibleCache: Record<string, string> = {};
+for (const t of translations) {
+  bibleCache[t] = await loadBible(t);
+  console.log(`${t} loaded (${(bibleCache[t].length / 1024 / 1024).toFixed(1)} MB)`);
+}
+const translationsJson = JSON.stringify(translations);
 
 const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
@@ -78,8 +91,22 @@ Bun.serve({
       return new Response("Bad Request", { status: 400 });
     }
 
-    if (path === "/bible.json") {
-      return new Response(bibleJson, {
+    // Match /bible-CODE.json (e.g. /bible-WEB.json)
+    const bibleMatch = path.match(/^\/bible-([A-Z0-9]+)\.json$/i);
+    if (bibleMatch) {
+      const t = bibleMatch[1].toUpperCase();
+      const json = bibleCache[t];
+      if (!json) return new Response("Translation not found", { status: 404 });
+      return new Response(json, {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, max-age=86400",
+        },
+      });
+    }
+
+    if (path === "/translations.json") {
+      return new Response(translationsJson, {
         headers: {
           "Content-Type": "application/json",
           "Cache-Control": "public, max-age=86400",

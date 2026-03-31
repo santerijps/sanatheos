@@ -6,6 +6,28 @@ import { readState, pushState, replaceState, stateToInputText } from "./state.ts
 import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex } from "./render.ts";
 
 let data: BibleData;
+let currentTranslation = "WEB";
+const DEFAULT_TRANSLATION = "WEB";
+
+async function fetchTranslation(code: string): Promise<BibleData> {
+  const cached = await loadBible(code);
+  if (cached) return cached;
+  const res = await fetch(`/bible-${encodeURIComponent(code)}.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const d: BibleData = await res.json();
+  await saveBible(code, d);
+  return d;
+}
+
+async function fetchTranslations(): Promise<string[]> {
+  try {
+    const res = await fetch("/translations.json");
+    if (!res.ok) return [DEFAULT_TRANSLATION];
+    return await res.json();
+  } catch {
+    return [DEFAULT_TRANSLATION];
+  }
+}
 
 async function init() {
   const content = document.getElementById("content")!;
@@ -16,30 +38,56 @@ async function init() {
   const infoOverlay = document.getElementById("info-overlay")!;
   const infoClose = document.getElementById("info-close")!;
 
+  // Determine initial translation from URL or localStorage
+  const urlT = new URLSearchParams(window.location.search).get("t");
+  currentTranslation = urlT?.toUpperCase() || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
+
   // Load Bible data: try IndexedDB first, then fetch from API
   content.innerHTML = `<p class="loading">Loading Bible\u2026</p>`;
 
   try {
-    const cached = await loadBible();
-    if (cached) {
-      data = cached;
-    } else {
-      const res = await fetch("/bible.json");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      data = await res.json();
-      await saveBible(data);
-    }
+    data = await fetchTranslation(currentTranslation);
   } catch (err) {
     content.innerHTML = `<p class="empty">Failed to load Bible data. Please refresh the page.</p>`;
     return;
   }
 
+  localStorage.setItem("bible-translation", currentTranslation);
   initSearch(data);
+
+  // Populate translation selector
+  const translationSelect = document.getElementById("translation-select") as HTMLSelectElement | null;
+  if (translationSelect) {
+    const translations = await fetchTranslations();
+    translationSelect.innerHTML = translations.map(t =>
+      `<option value="${t}"${t === currentTranslation ? " selected" : ""}>${t}</option>`
+    ).join("");
+
+    translationSelect.addEventListener("change", async () => {
+      const code = translationSelect.value;
+      if (code === currentTranslation) return;
+      content.innerHTML = `<p class="loading">Loading ${code}\u2026</p>`;
+      try {
+        data = await fetchTranslation(code);
+        currentTranslation = code;
+        localStorage.setItem("bible-translation", code);
+        initSearch(data);
+        indexRendered = false;
+        const state = readState();
+        applyState(state);
+        updateFooter();
+      } catch {
+        content.innerHTML = `<p class="empty">Failed to load ${code}. Please try again.</p>`;
+        translationSelect.value = currentTranslation;
+      }
+    });
+  }
 
   // Render initial state from URL
   const state = readState();
   searchInput.value = stateToInputText(state);
   applyState(state);
+  updateFooter();
 
   // --- Search with debounce ---
   let timer: number;
@@ -265,6 +313,20 @@ function applyState(s: AppState) {
     renderBook(data, s.book);
   } else {
     renderChapter(data, "Genesis", 1);
+  }
+}
+
+const TRANSLATION_NAMES: Record<string, string> = {
+  WEB: "World English Bible",
+  FIN: "Finnish Bible 1933/1938",
+  NKJV: "New King James Version",
+};
+
+function updateFooter() {
+  const el = document.getElementById("translation-label");
+  if (el) {
+    const name = TRANSLATION_NAMES[currentTranslation] || currentTranslation;
+    el.textContent = `${currentTranslation} \u2014 ${name}`;
   }
 }
 
