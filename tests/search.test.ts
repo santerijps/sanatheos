@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
-import { initSearch, search, tryParseNav, _matchBook, _parseRef, _parseVerseSegments } from "../src/client/search.ts";
+import { initSearch, search, tryParseNav, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher } from "../src/client/search.ts";
 
 // Minimal fixture data
 const fixture: BibleData = {
@@ -732,5 +732,202 @@ describe("search — edge cases", () => {
     const results = search(fixture, "Genesis 1:1; Bogus 99");
     expect(results).toHaveLength(1);
     expect(results[0].book).toBe("Genesis");
+  });
+});
+
+// --- buildTextMatcher (^ and $ word boundaries) ---
+describe("buildTextMatcher", () => {
+  test("plain text: substring match", () => {
+    const m = _buildTextMatcher("grace");
+    expect(m("Amazing grace how sweet")).toBe(true);
+    expect(m("disgraceful")).toBe(true);
+    expect(m("nothing here")).toBe(false);
+  });
+
+  test("plain text: case insensitive", () => {
+    const m = _buildTextMatcher("God");
+    expect(m("god is great")).toBe(true);
+    expect(m("GOD IS GREAT")).toBe(true);
+  });
+
+  test("^ anchors start of word", () => {
+    const m = _buildTextMatcher("^grace");
+    expect(m("grace is given")).toBe(true);
+    expect(m("graceful living")).toBe(true);
+    expect(m("by grace alone")).toBe(true);
+    expect(m("disgrace")).toBe(false);
+    expect(m("disgraceful")).toBe(false);
+  });
+
+  test("$ anchors end of word", () => {
+    const m = _buildTextMatcher("grace$");
+    expect(m("by grace alone")).toBe(true);
+    expect(m("disgrace is bad")).toBe(true);
+    expect(m("grace.")).toBe(true);
+    expect(m("graceful")).toBe(false);
+  });
+
+  test("^...$ anchors exact word", () => {
+    const m = _buildTextMatcher("^grace$");
+    expect(m("by grace alone")).toBe(true);
+    expect(m("grace.")).toBe(true);
+    expect(m("graceful")).toBe(false);
+    expect(m("disgrace")).toBe(false);
+    expect(m("disgraceful")).toBe(false);
+  });
+
+  test("^...$ case insensitive", () => {
+    const m = _buildTextMatcher("^God$");
+    expect(m("God is great")).toBe(true);
+    expect(m("god is great")).toBe(true);
+    expect(m("godly")).toBe(false);
+  });
+
+  test("^ only returns empty-core false", () => {
+    const m = _buildTextMatcher("^");
+    expect(m("anything")).toBe(false);
+  });
+
+  test("$ only returns empty-core false", () => {
+    const m = _buildTextMatcher("$");
+    expect(m("anything")).toBe(false);
+  });
+
+  test("^$ returns false", () => {
+    const m = _buildTextMatcher("^$");
+    expect(m("anything")).toBe(false);
+  });
+
+  test("special regex chars are escaped", () => {
+    const m = _buildTextMatcher("^test.case$");
+    expect(m("this is a test.case here")).toBe(true);
+    expect(m("testXcase")).toBe(false);
+  });
+
+  test("multi-word with ^ anchor", () => {
+    const m = _buildTextMatcher("^in the");
+    expect(m("In the beginning")).toBe(true);
+    expect(m("within the walls")).toBe(false);
+  });
+
+  test("multi-word with $ anchor", () => {
+    const m = _buildTextMatcher("the world$");
+    expect(m("condemn the world")).toBe(true);
+    expect(m("the worldly")).toBe(false);
+  });
+});
+
+// --- search with word boundary anchors ---
+describe("search — word boundary anchors", () => {
+  test("^God$ matches exact word God", () => {
+    const results = search(fixture, '"^God$"');
+    // Should match verses containing " God " as a word, not "godly" etc.
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/\bGod\b/i);
+    }
+  });
+
+  test("^In matches word starting with In", () => {
+    const results = search(fixture, '"^In"');
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/\bIn/i);
+    }
+  });
+
+  test("earth$ matches word ending with earth", () => {
+    const results = search(fixture, '"earth$"');
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/earth\b/i);
+    }
+  });
+
+  test("combined ref + ^word$ filter", () => {
+    const results = search(fixture, 'Genesis 1 "^light$"');
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.book).toBe("Genesis");
+      expect(r.chapter).toBe(1);
+      expect(r.text).toMatch(/\blight\b/i);
+    }
+  });
+
+  test("^ anchor excludes mid-word matches", () => {
+    // "cunning" appears in fixture. "^unning" should NOT match since 'unning' is mid-word.
+    const results = search(fixture, '"^unning"');
+    expect(results).toHaveLength(0);
+  });
+
+  test("$ anchor excludes mid-word matches", () => {
+    // "beginning" appears. "beginni$" should NOT match since "beginni" is not a word end.
+    const results = search(fixture, '"beginni$"');
+    expect(results).toHaveLength(0);
+  });
+
+  test("plain text without anchors still works as substring", () => {
+    const results = search(fixture, '"eginni"');
+    expect(results.length).toBeGreaterThan(0);
+  });
+});
+
+// --- unquoted ^/$ anchors ---
+describe("search — unquoted ^/$ anchors", () => {
+  test("^God matches without quotes", () => {
+    const results = search(fixture, "^God");
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/\bGod/i);
+    }
+  });
+
+  test("earth$ matches without quotes", () => {
+    const results = search(fixture, "earth$");
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/earth\b/i);
+    }
+  });
+
+  test("^God$ exact word without quotes", () => {
+    const results = search(fixture, "^God$");
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/\bGod\b/i);
+    }
+  });
+
+  test("multi-word unquoted: ^in the", () => {
+    const results = search(fixture, "^in the");
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/\bin the/i);
+    }
+  });
+
+  test("multi-word unquoted: the earth$", () => {
+    const results = search(fixture, "the earth$");
+    expect(results.length).toBeGreaterThan(0);
+    for (const r of results) {
+      expect(r.text).toMatch(/the earth\b/i);
+    }
+  });
+
+  test("unquoted ^ excludes mid-word", () => {
+    const results = search(fixture, "^unning");
+    expect(results).toHaveLength(0);
+  });
+
+  test("unquoted $ excludes mid-word", () => {
+    const results = search(fixture, "beginni$");
+    expect(results).toHaveLength(0);
+  });
+
+  test("tryParseNav returns null for ^/$ terms", () => {
+    expect(tryParseNav("^God$")).toBeNull();
+    expect(tryParseNav("earth$")).toBeNull();
+    expect(tryParseNav("^light")).toBeNull();
+    expect(tryParseNav("Genesis 1; ^God$")).toBeNull();
   });
 });

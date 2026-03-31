@@ -116,8 +116,8 @@ export function tryParseNav(query: string): NavRef[] | null {
 
   const refs: NavRef[] = [];
   for (const term of terms) {
-    // If it contains a quoted filter, it's a search
-    if (term.match(/"(.*?)"/)) return null;
+    // If it contains a quoted filter or ^/$ anchors, it's a search
+    if (term.match(/"(.*?)"/) || term.startsWith("^") || term.endsWith("$")) return null;
 
     const ref = parseRef(term);
     if (!ref) return null;
@@ -125,6 +125,27 @@ export function tryParseNav(query: string): NavRef[] | null {
     refs.push({ book: ref.book, chapterStart: ref.chapterStart, chapterEnd: ref.chapterEnd, verseSegments: ref.verseSegments });
   }
   return refs;
+}
+
+function escRegex(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function buildTextMatcher(filter: string): (text: string) => boolean {
+  const hasStart = filter.startsWith("^");
+  const hasEnd = filter.endsWith("$") && filter.length > (hasStart ? 1 : 0);
+  const core = filter.slice(hasStart ? 1 : 0, hasEnd ? -1 : undefined);
+  if (!core) return () => false;
+
+  if (!hasStart && !hasEnd) {
+    // Plain substring match (fast path)
+    const lower = core.toLowerCase();
+    return (text) => text.toLowerCase().includes(lower);
+  }
+
+  const pattern = (hasStart ? "\\b" : "") + escRegex(core) + (hasEnd ? "\\b" : "");
+  const re = new RegExp(pattern, "i");
+  return (text) => re.test(text);
 }
 
 export function search(data: BibleData, query: string, limit = 200): VerseResult[] {
@@ -135,14 +156,28 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
   for (const term of terms) {
     // Extract an optional quoted text filter from the term
     const quotedMatch = term.match(/"(.*?)"/);
-    const textFilter = quotedMatch && quotedMatch[1].length > 0 ? quotedMatch[1].toLowerCase() : null;
+    const rawFilter = quotedMatch && quotedMatch[1].length > 0 ? quotedMatch[1] : null;
+    const textMatch = rawFilter ? buildTextMatcher(rawFilter) : null;
     const refPart = quotedMatch ? term.replace(/"(.*?)"/, "").trim() : term;
 
     // Pure text search — entire term is just a quoted string
-    if (textFilter && !refPart) {
+    if (textMatch && !refPart) {
       for (const e of entries) {
         if (results.length >= limit) break;
-        if (e.lower.includes(textFilter)) {
+        if (textMatch(e.text)) {
+          const k = `${e.book}:${e.chapter}:${e.verse}`;
+          if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
+        }
+      }
+      continue;
+    }
+
+    // Unquoted ^/$ anchors — treat as text search
+    if (!textMatch && (term.startsWith("^") || term.endsWith("$"))) {
+      const anchorMatch = buildTextMatcher(term);
+      for (const e of entries) {
+        if (results.length >= limit) break;
+        if (anchorMatch(e.text)) {
           const k = `${e.book}:${e.chapter}:${e.verse}`;
           if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
         }
@@ -165,7 +200,7 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
             for (let v = seg.start; v <= seg.end; v++) {
               const text = ch[String(v)];
               if (!text) continue;
-              if (textFilter && !text.toLowerCase().includes(textFilter)) continue;
+              if (textMatch && !textMatch(text)) continue;
               const k = `${ref.book}:${c}:${v}`;
               if (!seen.has(k) && results.length < limit) { seen.add(k); results.push({ book: ref.book, chapter: c, verse: v, text }); }
             }
@@ -175,7 +210,7 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
         // Whole book
         for (const [c, verses] of Object.entries(bookData)) {
           for (const [v, text] of Object.entries(verses)) {
-            if (textFilter && !text.toLowerCase().includes(textFilter)) continue;
+            if (textMatch && !textMatch(text)) continue;
             const k = `${ref.book}:${c}:${v}`;
             if (!seen.has(k) && results.length < limit) { seen.add(k); results.push({ book: ref.book, chapter: +c, verse: +v, text }); }
           }
@@ -189,4 +224,4 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
 }
 
 // Exported for testing
-export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments };
+export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher };

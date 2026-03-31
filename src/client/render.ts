@@ -293,7 +293,11 @@ export function renderResults(results: VerseResult[], query: string) {
   const highlights: string[] = [];
   for (const t of terms) {
     const m = t.match(/"(.+?)"/);
-    if (m && m[1].length >= 2) highlights.push(m[1]);
+    let raw = m ? m[1] : (t.startsWith("^") || t.endsWith("$")) ? t : null;
+    if (!raw) continue;
+    // Strip ^/$ anchors — they control matching, not literal text
+    raw = raw.replace(/^\^/, "").replace(/\$$/, "");
+    if (raw.length >= 2) highlights.push(raw);
   }
   let html = `<p class="results-info">${results.length} result${results.length !== 1 ? "s" : ""}</p><div class="results">`;
 
