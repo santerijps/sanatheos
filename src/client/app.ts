@@ -28,7 +28,7 @@ async function init() {
 
   // Render initial state from URL
   const state = readState();
-  if (state.query) searchInput.value = state.query;
+  searchInput.value = stateToInputText(state);
   applyState(state);
 
   // --- Search with debounce ---
@@ -101,18 +101,22 @@ async function init() {
   // --- Browser back/forward ---
   window.addEventListener("popstate", () => {
     const s = readState();
-    if (s.query) {
-      searchInput.value = s.query;
-    } else {
-      searchInput.value = "";
-    }
+    searchInput.value = stateToInputText(s);
     applyState(s);
   });
 }
 
+function stateToInputText(s: AppState): string {
+  if (s.query) return s.query;
+  if (s.book && s.chapter && s.verse) return `${s.book} ${s.chapter}:${s.verse}`;
+  if (s.book && s.chapter) return `${s.book} ${s.chapter}`;
+  if (s.book) return s.book;
+  return "";
+}
+
 function navigate(s: AppState) {
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
-  searchInput.value = "";
+  searchInput.value = stateToInputText(s);
   document.getElementById("index-overlay")!.classList.remove("open");
   document.body.classList.remove("panel-open");
   applyState(s);
