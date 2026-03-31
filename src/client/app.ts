@@ -37,6 +37,9 @@ async function init() {
   const infoBtn = document.getElementById("info-btn")!;
   const infoOverlay = document.getElementById("info-overlay")!;
   const infoClose = document.getElementById("info-close")!;
+  const settingsBtn = document.getElementById("settings-btn")!;
+  const settingsOverlay = document.getElementById("settings-overlay")!;
+  const settingsClose = document.getElementById("settings-close")!;
 
   // Determine initial translation from URL or localStorage
   const urlT = new URLSearchParams(window.location.search).get("t");
@@ -97,6 +100,7 @@ async function init() {
       const q = searchInput.value.trim();
       if (!q) {
         renderChapter(data, "Genesis", 1);
+        updateFooter();
         replaceState({});
         return;
       }
@@ -108,6 +112,7 @@ async function init() {
         } else {
           renderMultiNav(data, navRefs);
         }
+        updateFooter();
         replaceState({ query: q });
       } else {
         const results = search(data, q);
@@ -194,8 +199,28 @@ async function init() {
     if (e.target === infoOverlay) closeInfo();
   });
 
+  // --- Settings modal ---
+  settingsBtn.addEventListener("click", () => {
+    settingsOverlay.classList.add("open");
+    document.body.classList.add("panel-open");
+  });
+
+  function closeSettings() {
+    settingsOverlay.classList.remove("open");
+    document.body.classList.remove("panel-open");
+  }
+
+  settingsClose.addEventListener("click", closeSettings);
+  settingsOverlay.addEventListener("click", (e) => {
+    if (e.target === settingsOverlay) closeSettings();
+  });
+
   // Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
   document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && settingsOverlay.classList.contains("open")) {
+      closeSettings();
+      return;
+    }
     if (e.key === "Escape" && infoOverlay.classList.contains("open")) {
       closeInfo();
       return;
@@ -314,6 +339,7 @@ function applyState(s: AppState) {
   } else {
     renderChapter(data, "Genesis", 1);
   }
+  updateFooter();
 }
 
 const TRANSLATION_NAMES: Record<string, string> = {
@@ -323,10 +349,10 @@ const TRANSLATION_NAMES: Record<string, string> = {
 };
 
 function updateFooter() {
-  const el = document.getElementById("translation-label");
-  if (el) {
-    const name = TRANSLATION_NAMES[currentTranslation] || currentTranslation;
-    el.textContent = `${currentTranslation} \u2014 ${name}`;
+  const name = TRANSLATION_NAMES[currentTranslation] || currentTranslation;
+  const label = `${currentTranslation} \u2014 ${name}`;
+  for (const el of document.querySelectorAll(".nav-translation")) {
+    el.textContent = label;
   }
 }
 

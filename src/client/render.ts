@@ -98,12 +98,12 @@ function getVerseNav(data: BibleData, book: string, chapter: number, verse: numb
 
 function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null): string {
   const prevBtn = prev
-    ? `<a class="nav-arrow nav-prev" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&#8592; ${esc(prev.label)}</a>`
-    : `<span class="nav-arrow nav-disabled"></span>`;
+    ? `<a class="nav-arrow nav-prev" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&laquo; ${esc(prev.label)}</a>`
+    : `<span class="nav-arrow nav-prev nav-disabled"></span>`;
   const nextBtn = next
-    ? `<a class="nav-arrow nav-next" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>${esc(next.label)} &#8594;</a>`
-    : `<span class="nav-arrow nav-disabled"></span>`;
-  return `<nav class="chapter-nav">${prevBtn}${nextBtn}</nav>`;
+    ? `<a class="nav-arrow nav-next" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>${esc(next.label)} &raquo;</a>`
+    : `<span class="nav-arrow nav-next nav-disabled"></span>`;
+  return `<nav class="chapter-nav">${prevBtn}<span class="nav-translation"></span>${nextBtn}</nav>`;
 }
 
 export function renderChapter(data: BibleData, book: string, chapter: number) {
