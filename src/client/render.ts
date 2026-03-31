@@ -291,8 +291,8 @@ export function renderResults(results: VerseResult[], query: string) {
   const highlights: string[] = [];
   for (const t of terms) {
     const m = t.match(/"(.+?)"/);
-    let raw = m ? m[1] : (t.startsWith("^") || t.endsWith("$")) ? t : null;
-    if (!raw) continue;
+    if (!m) continue;
+    let raw = m[1];
     // Strip ^/$ anchors — they control matching, not literal text
     raw = raw.replace(/^\^/, "").replace(/\$$/, "");
     if (raw.length >= 2) highlights.push(raw);

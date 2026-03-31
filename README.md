@@ -13,13 +13,13 @@ A fast, modern web app for reading and searching the Bible — built with TypeSc
 - **Chapter ranges** — `Genesis 1-3`, `Romans 5-8`
 - **Comma-separated verses** — `Genesis 1:1-3,5,8-10`
 - **Text search** — `"grace"`, `"in the beginning"` (wrap in double quotes)
-- **Word boundary** — `^grace` (starts with), `grace$` (ends with), `^grace$` (exact word) — quotes optional
+- **Word boundary** — `"^grace"` (starts with), `"grace$"` (ends with), `"^grace$"` (exact word)
 - **Combined search** — `Romans "faith"`, `Daniel "clouds of heaven"`, `Gen 1-3 "light"`
 - **Multi-term** — separate queries with `;` e.g. `John 3:16; Rev 1:1`
 - **Abbreviations** — `gen`, `rev`, `eph`, `1 cor` all work
 - **Auto-closing quotes** — typing `"` inserts a pair and places the cursor inside
 - Results are instant with debounced input and highlighted matching text
-- Word boundary anchors `^` and `$` let you match word starts, ends, or exact words
+- Word boundary anchors `^` and `$` inside quotes let you match word starts, ends, or exact words
 
 ### 📚 Book Index Panel
 - Browse all 66 books in a three-column layout (books → chapters → verses)

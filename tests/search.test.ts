@@ -872,62 +872,67 @@ describe("search — word boundary anchors", () => {
   });
 });
 
-// --- unquoted ^/$ anchors ---
-describe("search — unquoted ^/$ anchors", () => {
-  test("^God matches without quotes", () => {
+// --- unquoted ^/$ anchors (now require quotes) ---
+describe("search — unquoted ^/$ anchors return nothing", () => {
+  test("^God without quotes returns empty", () => {
     const results = search(fixture, "^God");
+    expect(results).toHaveLength(0);
+  });
+
+  test("earth$ without quotes returns empty", () => {
+    const results = search(fixture, "earth$");
+    expect(results).toHaveLength(0);
+  });
+
+  test("^God$ without quotes returns empty", () => {
+    const results = search(fixture, "^God$");
+    expect(results).toHaveLength(0);
+  });
+
+  test("quoted ^God matches with word boundary", () => {
+    const results = search(fixture, '"^God"');
     expect(results.length).toBeGreaterThan(0);
     for (const r of results) {
       expect(r.text).toMatch(/\bGod/i);
     }
   });
 
-  test("earth$ matches without quotes", () => {
-    const results = search(fixture, "earth$");
+  test("quoted earth$ matches with word boundary", () => {
+    const results = search(fixture, '"earth$"');
     expect(results.length).toBeGreaterThan(0);
     for (const r of results) {
       expect(r.text).toMatch(/earth\b/i);
     }
   });
 
-  test("^God$ exact word without quotes", () => {
-    const results = search(fixture, "^God$");
+  test("quoted ^God$ matches exact word", () => {
+    const results = search(fixture, '"^God$"');
     expect(results.length).toBeGreaterThan(0);
     for (const r of results) {
       expect(r.text).toMatch(/\bGod\b/i);
     }
   });
 
-  test("multi-word unquoted: ^in the", () => {
-    const results = search(fixture, "^in the");
-    expect(results.length).toBeGreaterThan(0);
-    for (const r of results) {
-      expect(r.text).toMatch(/\bin the/i);
-    }
-  });
-
-  test("multi-word unquoted: the earth$", () => {
-    const results = search(fixture, "the earth$");
-    expect(results.length).toBeGreaterThan(0);
-    for (const r of results) {
-      expect(r.text).toMatch(/the earth\b/i);
-    }
-  });
-
-  test("unquoted ^ excludes mid-word", () => {
-    const results = search(fixture, "^unning");
+  test("quoted ^unning excludes mid-word", () => {
+    const results = search(fixture, '"^unning"');
     expect(results).toHaveLength(0);
   });
 
-  test("unquoted $ excludes mid-word", () => {
-    const results = search(fixture, "beginni$");
+  test("quoted beginni$ excludes mid-word", () => {
+    const results = search(fixture, '"beginni$"');
     expect(results).toHaveLength(0);
   });
 
-  test("tryParseNav returns null for ^/$ terms", () => {
+  test("tryParseNav returns null for quoted text terms", () => {
+    expect(tryParseNav('"^God$"')).toBeNull();
+    expect(tryParseNav('"earth$"')).toBeNull();
+    expect(tryParseNav('"^light"')).toBeNull();
+    expect(tryParseNav('Genesis 1; "^God$"')).toBeNull();
+  });
+
+  test("tryParseNav treats unquoted ^/$ as plain book lookup (returns null for non-book)", () => {
     expect(tryParseNav("^God$")).toBeNull();
     expect(tryParseNav("earth$")).toBeNull();
     expect(tryParseNav("^light")).toBeNull();
-    expect(tryParseNav("Genesis 1; ^God$")).toBeNull();
   });
 });

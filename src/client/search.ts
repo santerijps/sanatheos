@@ -130,8 +130,8 @@ export function tryParseNav(query: string): NavRef[] | null {
 
   const refs: NavRef[] = [];
   for (const term of terms) {
-    // If it contains a quoted filter or ^/$ anchors, it's a search
-    if (term.match(/"(.*?)"/) || term.startsWith("^") || term.endsWith("$")) return null;
+    // If it contains a quoted filter, it's a search
+    if (term.match(/"(.*?)"/)) return null;
 
     const ref = parseRef(term);
     if (!ref) return null;
@@ -179,19 +179,6 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
       for (const e of entries) {
         if (results.length >= limit) break;
         if (textMatch(e.text)) {
-          const k = `${e.book}:${e.chapter}:${e.verse}`;
-          if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
-        }
-      }
-      continue;
-    }
-
-    // Unquoted ^/$ anchors — treat as text search
-    if (!textMatch && (term.startsWith("^") || term.endsWith("$"))) {
-      const anchorMatch = buildTextMatcher(term);
-      for (const e of entries) {
-        if (results.length >= limit) break;
-        if (anchorMatch(e.text)) {
           const k = `${e.book}:${e.chapter}:${e.verse}`;
           if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
         }
