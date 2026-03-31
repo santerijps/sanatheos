@@ -1,6 +1,8 @@
 import { join, resolve, extname } from "node:path";
 import { readdir } from "node:fs/promises";
 
+import type { BibleData } from "./client/types.ts";
+
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
 const BOOKS_DIR = join(ROOT, "NKJV", "NKJV_books");
@@ -22,15 +24,15 @@ const BOOK_ORDER = [
 ];
 
 async function loadBible(): Promise<string> {
-  const combined: Record<string, any> = {};
+  const combined: BibleData = {};
   const files = await readdir(BOOKS_DIR);
   for (const f of files) {
     if (!f.endsWith(".json")) continue;
-    const data = await Bun.file(join(BOOKS_DIR, f)).json();
+    const data: Record<string, unknown> = await Bun.file(join(BOOKS_DIR, f)).json();
     delete data.Info;
     Object.assign(combined, data);
   }
-  const ordered: Record<string, any> = {};
+  const ordered: BibleData = {};
   for (const b of BOOK_ORDER) {
     if (combined[b]) ordered[b] = combined[b];
   }

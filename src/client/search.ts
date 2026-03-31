@@ -150,3 +150,6 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
 
   return results;
 }
+
+// Exported for testing
+export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments };

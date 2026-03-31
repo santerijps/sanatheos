@@ -1,7 +1,7 @@
 import type { BibleData, AppState } from "./types.ts";
 import { loadBible, saveBible } from "./db.ts";
 import { initSearch, search } from "./search.ts";
-import { readState, pushState, replaceState } from "./state.ts";
+import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
 import { renderChapter, renderBook, renderVerse, renderResults, renderIndex } from "./render.ts";
 
 let data: BibleData;
@@ -129,14 +129,6 @@ async function init() {
     searchInput.value = stateToInputText(s);
     applyState(s);
   });
-}
-
-function stateToInputText(s: AppState): string {
-  if (s.query) return s.query;
-  if (s.book && s.chapter && s.verse) return `${s.book} ${s.chapter}:${s.verse}`;
-  if (s.book && s.chapter) return `${s.book} ${s.chapter}`;
-  if (s.book) return s.book;
-  return "";
 }
 
 function navigate(s: AppState) {
