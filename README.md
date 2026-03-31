@@ -1,34 +1,112 @@
-# Untitled app
+# 📖 Bible Reader
 
-Untitled app (from now on referred to as "app" or "the app") is a web app where users can read the Bible. The features are as follows:
+A fast, modern web app for reading and searching the Bible — built with TypeScript and Bun.
 
-- Read the Bible book by book
-- Query the Bible for specific books, chapters, verses or matching text (fuzzy find)
-    - Querying should be very fast, and the app itself should feel snappy and low latency
-    - The user can query with many search terms simultaniously, and all the results will be listed
-- The user can access and index of all the books in the Bible, and all the chapters in each book and verses in each chapter
-- The Bible is downloaded and stored locally in the web browser's Indexed DB for quick access
-    - This allows for the user to read and query the Bible without an internet connection (in case the connection is lost, or the user opens the cached page)
-- When any slice (segment of the Bible) is selected (by querying or selection from the index) the URL of the page should change
-    - The URL should maintain the state of the current selection
-    - This way Bible verses can be shared easily
-    - It should be possible to open a URL and have it open to the selection mentioned in the URL's query parameters
+> Lightweight. Offline-ready. Keyboard-friendly. No sign-up required.
 
-The app is supposed have a very modern and simplistic visual design. Simple colors (black, white, gray) can be used. Bible content should include verse numbers at the start of each verse and a line break when a new chapter or new book begins.
+---
 
-Initially there will only be one Bible translation: the New King James Version.
+## ✨ Features
 
-## App flow
+### 🔍 Powerful Search
+- **Verse lookup** — `John 3:16`, `Genesis 1:1-5`, `Psalm 23`
+- **Chapter ranges** — `Genesis 1-3`, `Romans 5-8`
+- **Comma-separated verses** — `Genesis 1:1-3,5,8-10`
+- **Text search** — `"grace"`, `"in the beginning"` (wrap in double quotes)
+- **Combined search** — `Romans "faith"`, `Daniel "clouds of heaven"`, `Gen 1-3 "light"`
+- **Multi-term** — separate queries with `;` e.g. `John 3:16; Rev 1:1`
+- **Abbreviations** — `gen`, `rev`, `eph`, `1 cor` all work
+- **Auto-closing quotes** — typing `"` inserts a pair and places the cursor inside
+- Results are instant with debounced input and highlighted matching text
 
-1. User enters the web page at path /
-2. The user is shown Genesis 1 (the entire chapter) with a text search input at the top of the page
-3. Writing into the search input immediately (disregarding some debounce time) begins to look for matching Bible verses
-4. Deleting characters from the search input likewise looks for matching Bible verses
-5. If the search input is cleared entirely, the user is shown Genesis 1 again
-6. The user can also open the index by clicking a button and be displayed a list of Bible books
-7. Hovering over a book reveals the chapters in the book (chapter number and context/subtitle)
-9. Hovering over a chapter reveals the verses the chapter (verse number and the first few words of the verse)
-8. The user can navigate as follows:
-    - If the user clicks the book name, the book contents is shown to them
-    - If the user clicks on a chapter, the chapter contents is shown to them
-    - If the user clicks on a verse, the verse contents is shown to them
+### 📚 Book Index Panel
+- Browse all 66 books in a three-column layout (books → chapters → verses)
+- Chapter previews and verse snippets visible on hover
+- Full keyboard navigation with arrow keys, Tab, and Enter
+
+### ⌨️ Keyboard Shortcuts
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+K` | Focus search input |
+| `Ctrl+I` | Toggle book index panel |
+| `Escape` | Close any open panel |
+| `↑` `↓` | Navigate items in index panel |
+| `←` `→` / `Tab` | Switch columns in index panel |
+| `Enter` | Select item in index panel |
+
+### 🔗 Shareable URLs
+Every search query, book, chapter, and verse selection updates the URL. Copy and share a direct link to any passage — it will open exactly where you left off.
+
+### 📴 Works Offline
+Bible data is fetched once and cached in your browser's **IndexedDB**. After the first load, everything works without an internet connection.
+
+### ℹ️ Built-in Help
+Click the **ⓘ** button next to the search bar to see a full guide on search syntax, keyboard shortcuts, and how data is stored.
+
+---
+
+## 📜 Translation
+
+Currently includes the **New King James Version (NKJV)** — all 66 books of the Old and New Testaments.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- [Bun](https://bun.sh/) runtime installed
+
+### Install & Run
+```bash
+bun install
+bun run start
+```
+Open [http://localhost:3001](http://localhost:3000) in your browser.
+
+### Development (watch mode)
+```bash
+bun run dev
+```
+
+### Run Tests
+```bash
+bun test
+```
+
+### Build for GitHub Pages
+```bash
+bun run build:static
+```
+Outputs a ready-to-deploy static site in the `docs/` directory.
+
+---
+
+## 🏗️ Tech Stack
+
+- **Runtime & Server** — [Bun](https://bun.sh/) (HTTP server, bundler, test runner)
+- **Language** — TypeScript (strict, zero `any`)
+- **Client** — Vanilla TypeScript, no frameworks (~8KB minified)
+- **Storage** — IndexedDB for offline Bible caching
+- **Search** — Client-side reference parsing + full-text search
+- **Styling** — Minimal CSS with responsive design
+
+---
+
+## 📁 Project Structure
+
+```
+├── src/
+│   ├── server.ts            # Bun HTTP server
+│   └── client/              # Browser-side TypeScript
+│       ├── app.ts           # Main entry point
+│       ├── search.ts        # Search engine & reference parser
+│       ├── render.ts        # DOM rendering
+│       ├── state.ts         # URL state management
+│       ├── db.ts            # IndexedDB wrapper
+│       └── types.ts         # Shared interfaces
+├── tests/                   # Unit tests (bun:test)
+├── scripts/                 # Build & utility scripts
+├── translations/NKJV/       # Bible JSON data files
+├── public/                  # Static assets (HTML, CSS)
+└── docs/                    # GitHub Pages output (generated)
+```
