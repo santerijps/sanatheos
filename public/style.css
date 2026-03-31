@@ -225,7 +225,7 @@ mark {
 }
 
 .idx-col:empty {
-  display: none;
+  visibility: hidden;
 }
 
 /* Scrollbar */

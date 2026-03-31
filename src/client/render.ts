@@ -103,49 +103,73 @@ export function renderIndex(
 
   if (booksCol.children.length > 0) return;
 
-  for (const book of Object.keys(data)) {
+  let activeBook = "";
+
+  function showVerses(book: string, chapter: number) {
+    versesCol.innerHTML = "";
+    const vs = Object.keys(data[book][String(chapter)]).map(Number).sort((a, b) => a - b);
+    for (const v of vs) {
+      const vEl = document.createElement("div");
+      vEl.className = "idx-item idx-verse";
+      const text = data[book][String(chapter)][String(v)];
+      const p = text.substring(0, 50).replace(/\n/g, " ");
+      vEl.textContent = `${v}. ${p}${text.length > 50 ? "\u2026" : ""}`;
+      vEl.addEventListener("click", (e) => { e.stopPropagation(); callbacks.onVerse(book, chapter, v); });
+      versesCol.appendChild(vEl);
+    }
+  }
+
+  function showChapters(book: string) {
+    if (activeBook === book) return;
+    activeBook = book;
+
+    booksCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
+    const bookEl = booksCol.querySelector(`[data-book="${book}"]`);
+    if (bookEl) bookEl.classList.add("active");
+
+    chapsCol.innerHTML = "";
+    versesCol.innerHTML = "";
+
+    const chs = Object.keys(data[book]).map(Number).sort((a, b) => a - b);
+    for (const c of chs) {
+      const chEl = document.createElement("div");
+      chEl.className = "idx-item idx-chapter";
+      const first = data[book][String(c)]?.["1"] || "";
+      const preview = first.substring(0, 60).replace(/\n/g, " ");
+      chEl.innerHTML = `<strong>Chapter ${c}</strong><small>${esc(preview)}${first.length > 60 ? "\u2026" : ""}</small>`;
+
+      chEl.addEventListener("mouseenter", () => {
+        chapsCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
+        chEl.classList.add("active");
+        showVerses(book, c);
+      });
+
+      chEl.addEventListener("click", (e) => { e.stopPropagation(); callbacks.onChapter(book, c); });
+      chapsCol.appendChild(chEl);
+    }
+
+    // Default: activate first chapter
+    const firstChEl = chapsCol.querySelector(".idx-item") as HTMLElement | null;
+    if (firstChEl && chs.length > 0) {
+      firstChEl.classList.add("active");
+      showVerses(book, chs[0]);
+    }
+  }
+
+  const books = Object.keys(data);
+  for (const book of books) {
     const el = document.createElement("div");
     el.className = "idx-item";
+    el.dataset.book = book;
     el.textContent = book;
 
-    el.addEventListener("mouseenter", () => {
-      booksCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
-      el.classList.add("active");
-      chapsCol.innerHTML = "";
-      versesCol.innerHTML = "";
-
-      const chs = Object.keys(data[book]).map(Number).sort((a, b) => a - b);
-      for (const c of chs) {
-        const chEl = document.createElement("div");
-        chEl.className = "idx-item idx-chapter";
-        const first = data[book][String(c)]?.["1"] || "";
-        const preview = first.substring(0, 60).replace(/\n/g, " ");
-        chEl.innerHTML = `<strong>Chapter ${c}</strong><small>${esc(preview)}${first.length > 60 ? "\u2026" : ""}</small>`;
-
-        chEl.addEventListener("mouseenter", () => {
-          chapsCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
-          chEl.classList.add("active");
-          versesCol.innerHTML = "";
-
-          const vs = Object.keys(data[book][String(c)]).map(Number).sort((a, b) => a - b);
-          for (const v of vs) {
-            const vEl = document.createElement("div");
-            vEl.className = "idx-item idx-verse";
-            const text = data[book][String(c)][String(v)];
-            const p = text.substring(0, 50).replace(/\n/g, " ");
-            vEl.textContent = `${v}. ${p}${text.length > 50 ? "\u2026" : ""}`;
-
-            vEl.addEventListener("click", (e) => { e.stopPropagation(); callbacks.onVerse(book, c, v); });
-            versesCol.appendChild(vEl);
-          }
-        });
-
-        chEl.addEventListener("click", (e) => { e.stopPropagation(); callbacks.onChapter(book, c); });
-        chapsCol.appendChild(chEl);
-      }
-    });
-
+    el.addEventListener("mouseenter", () => showChapters(book));
     el.addEventListener("click", () => callbacks.onBook(book));
     booksCol.appendChild(el);
+  }
+
+  // Default: activate first book
+  if (books.length > 0) {
+    showChapters(books[0]);
   }
 }
