@@ -3,7 +3,7 @@ import type { BibleData } from "./types.ts";
 const DB_NAME = "bible-app";
 const DB_VERSION = 1;
 const STORE = "data";
-const KEY = "nkjv";
+const KEY = "web";
 
 function open(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {

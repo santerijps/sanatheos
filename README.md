@@ -47,7 +47,7 @@ Click the **ⓘ** button next to the search bar to see a full guide on search sy
 
 ## 📜 Translation
 
-Currently includes the **New King James Version (NKJV)** — all 66 books of the Old and New Testaments.
+Currently includes the **World English Bible (WEB)** — a public domain modern English translation. All 66 books of the Old and New Testaments.
 
 ---
 
@@ -106,7 +106,7 @@ Outputs a ready-to-deploy static site in the `docs/` directory.
 │       └── types.ts         # Shared interfaces
 ├── tests/                   # Unit tests (bun:test)
 ├── scripts/                 # Build & utility scripts
-├── translations/NKJV/       # Bible JSON data files
+├── translations/WEB/        # Bible JSON data files
 ├── public/                  # Static assets (HTML, CSS)
 └── docs/                    # GitHub Pages output (generated)
 ```
