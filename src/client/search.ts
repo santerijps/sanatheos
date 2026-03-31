@@ -49,19 +49,54 @@ function matchBook(q: string): { book: string; rest: string } | null {
   return null;
 }
 
-function parseRef(term: string): { book: string; chapter?: number; verse?: number } | null {
+interface VerseSegment {
+  start: number;
+  end: number;
+}
+
+interface Ref {
+  book: string;
+  chapterStart?: number;
+  chapterEnd?: number;
+  verseSegments?: VerseSegment[];
+}
+
+function parseVerseSegments(s: string): VerseSegment[] | null {
+  const parts = s.split(",").map(p => p.trim()).filter(Boolean);
+  const segs: VerseSegment[] = [];
+  for (const part of parts) {
+    const range = part.match(/^(\d+)-(\d+)$/);
+    if (range) { segs.push({ start: +range[1], end: +range[2] }); continue; }
+    const single = part.match(/^(\d+)$/);
+    if (single) { segs.push({ start: +single[1], end: +single[1] }); continue; }
+    return null;
+  }
+  return segs.length ? segs : null;
+}
+
+function parseRef(term: string): Ref | null {
   const t = term.trim();
   if (!t) return null;
   const bm = matchBook(t);
   if (!bm) return null;
   if (!bm.rest) return { book: bm.book };
-  const cv = bm.rest.match(/^(\d+)(?::(\d+))?$/);
-  if (!cv) return null;
-  return {
-    book: bm.book,
-    chapter: +cv[1],
-    verse: cv[2] ? +cv[2] : undefined,
-  };
+
+  // chapter:verseSegments  e.g. 1:3-7  or  1:1-10,13,20-25
+  const cvm = bm.rest.match(/^(\d+):(.+)$/);
+  if (cvm) {
+    const segs = parseVerseSegments(cvm[2]);
+    if (segs) return { book: bm.book, chapterStart: +cvm[1], chapterEnd: +cvm[1], verseSegments: segs };
+  }
+
+  // chapterStart-chapterEnd  e.g. 1-10
+  const cr = bm.rest.match(/^(\d+)-(\d+)$/);
+  if (cr) return { book: bm.book, chapterStart: +cr[1], chapterEnd: +cr[2] };
+
+  // single chapter  e.g. 3
+  const sc = bm.rest.match(/^(\d+)$/);
+  if (sc) return { book: bm.book, chapterStart: +sc[1], chapterEnd: +sc[1] };
+
+  return null;
 }
 
 export function search(data: BibleData, query: string, limit = 200): VerseResult[] {
@@ -73,21 +108,25 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
     const ref = parseRef(term);
     if (ref && data[ref.book]) {
       const bookData = data[ref.book];
-      if (ref.chapter !== undefined && ref.verse !== undefined) {
-        const text = bookData[String(ref.chapter)]?.[String(ref.verse)];
-        if (text) {
-          const k = `${ref.book}:${ref.chapter}:${ref.verse}`;
-          if (!seen.has(k)) { seen.add(k); results.push({ book: ref.book, chapter: ref.chapter, verse: ref.verse, text }); }
-        }
-      } else if (ref.chapter !== undefined) {
-        const ch = bookData[String(ref.chapter)];
-        if (ch) {
-          for (const [v, text] of Object.entries(ch)) {
-            const k = `${ref.book}:${ref.chapter}:${v}`;
-            if (!seen.has(k)) { seen.add(k); results.push({ book: ref.book, chapter: ref.chapter, verse: +v, text }); }
+
+      if (ref.chapterStart !== undefined && ref.chapterEnd !== undefined) {
+        for (let c = ref.chapterStart; c <= ref.chapterEnd; c++) {
+          const ch = bookData[String(c)];
+          if (!ch) continue;
+          const segments = ref.verseSegments
+            ? ref.verseSegments
+            : [{ start: 1, end: Math.max(...Object.keys(ch).map(Number)) }];
+          for (const seg of segments) {
+            for (let v = seg.start; v <= seg.end; v++) {
+              const text = ch[String(v)];
+              if (!text) continue;
+              const k = `${ref.book}:${c}:${v}`;
+              if (!seen.has(k) && results.length < limit) { seen.add(k); results.push({ book: ref.book, chapter: c, verse: v, text }); }
+            }
           }
         }
       } else {
+        // Whole book
         for (const [c, verses] of Object.entries(bookData)) {
           for (const [v, text] of Object.entries(verses)) {
             const k = `${ref.book}:${c}:${v}`;
