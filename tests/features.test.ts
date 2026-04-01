@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import { setLanguage, getLanguage, t } from "../src/client/i18n.ts";
-import type { Bookmark, Highlight, HighlightColor } from "../src/client/types.ts";
+import type { Highlight, HighlightColor } from "../src/client/types.ts";
 
 // ---------------------------------------------------------------------------
 // i18n — new feature strings
@@ -26,14 +26,6 @@ describe("i18n — new feature strings (EN)", () => {
   test("copy string exists", () => {
     expect(t().copied).toBe("Copied!");
     expect(t().copyVerse).toBe("Copy verse");
-  });
-
-  test("bookmark strings exist", () => {
-    const s = t();
-    expect(s.bookmarkAdded).toBe("Bookmark added");
-    expect(s.bookmarkRemoved).toBe("Bookmark removed");
-    expect(s.bookmarks).toBe("Bookmarks");
-    expect(s.noBookmarks).toContain("No bookmarks");
   });
 
   test("highlight strings exist", () => {
@@ -65,14 +57,6 @@ describe("i18n — new feature strings (FI)", () => {
     expect(t().copyVerse).toBe("Kopioi jae");
   });
 
-  test("bookmark strings exist", () => {
-    const s = t();
-    expect(s.bookmarkAdded).toBe("Kirjanmerkki lisätty");
-    expect(s.bookmarkRemoved).toBe("Kirjanmerkki poistettu");
-    expect(s.bookmarks).toBe("Kirjanmerkit");
-    expect(s.noBookmarks).toContain("Ei kirjanmerkkejä");
-  });
-
   test("highlight strings exist", () => {
     const s = t();
     expect(s.highlight).toBe("Korosta");
@@ -84,22 +68,22 @@ describe("i18n — language switching preserves new strings", () => {
   test("switching en → fi → en returns correct strings", () => {
     setLanguage("en");
     expect(t().themeLabel).toBe("Theme");
-    expect(t().bookmarks).toBe("Bookmarks");
+    expect(t().highlight).toBe("Highlight");
 
     setLanguage("fi");
     expect(t().themeLabel).toBe("Teema");
-    expect(t().bookmarks).toBe("Kirjanmerkit");
+    expect(t().highlight).toBe("Korosta");
 
     setLanguage("en");
     expect(t().themeLabel).toBe("Theme");
-    expect(t().bookmarks).toBe("Bookmarks");
+    expect(t().highlight).toBe("Highlight");
   });
 
   test("unknown language falls back to EN for new strings", () => {
     setLanguage("xx");
     expect(t().themeLabel).toBe("Theme");
     expect(t().copied).toBe("Copied!");
-    expect(t().bookmarks).toBe("Bookmarks");
+    expect(t().highlight).toBe("Highlight");
   });
 });
 
@@ -107,7 +91,7 @@ describe("i18n — all new keys are non-empty strings", () => {
   const newKeys = [
     "themeLabel", "themeLight", "themeDark", "themeSystem",
     "parallelLabel", "parallelNone",
-    "copied", "copyVerse", "bookmarkAdded", "bookmarkRemoved", "bookmarks", "noBookmarks",
+    "copied", "copyVerse",
     "highlight", "removeHighlight",
   ] as const;
 
@@ -131,37 +115,8 @@ describe("i18n — all new keys are non-empty strings", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Types — Bookmark & Highlight shape validation
+// Types — Highlight shape validation
 // ---------------------------------------------------------------------------
-
-describe("Bookmark type", () => {
-  test("valid bookmark object has required fields", () => {
-    const bm: Bookmark = {
-      book: "Genesis",
-      chapter: 1,
-      verse: 1,
-      translation: "WEB",
-      timestamp: Date.now(),
-    };
-    expect(bm.book).toBe("Genesis");
-    expect(bm.chapter).toBe(1);
-    expect(bm.verse).toBe(1);
-    expect(bm.translation).toBe("WEB");
-    expect(typeof bm.timestamp).toBe("number");
-  });
-
-  test("bookmark key construction pattern", () => {
-    const bm: Bookmark = { book: "John", chapter: 3, verse: 16, translation: "WEB", timestamp: 0 };
-    const key = `${bm.book}:${bm.chapter}:${bm.verse}`;
-    expect(key).toBe("John:3:16");
-  });
-
-  test("bookmark key for numbered book", () => {
-    const bm: Bookmark = { book: "1 John", chapter: 1, verse: 1, translation: "KR38", timestamp: 0 };
-    const key = `${bm.book}:${bm.chapter}:${bm.verse}`;
-    expect(key).toBe("1 John:1:1");
-  });
-});
 
 describe("Highlight type", () => {
   const VALID_COLORS: HighlightColor[] = ["yellow", "green", "blue", "pink", "orange"];
@@ -260,9 +215,8 @@ describe("i18n — info features section (EN)", () => {
     expect(items.length).toBeGreaterThan(0);
   });
 
-  test("infoFeaturesItems mentions bookmarks, highlights, copy, swipe, print", () => {
+  test("infoFeaturesItems mentions highlights, copy, swipe, print", () => {
     const joined = t().infoFeaturesItems.join(" ").toLowerCase();
-    expect(joined).toContain("bookmark");
     expect(joined).toContain("highlight");
     expect(joined).toContain("copy");
     expect(joined).toContain("swipe");

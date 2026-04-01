@@ -54,10 +54,7 @@ Choose between **Light**, **Dark**, or **System** (auto) theme in Settings. Your
 ### 📖 Parallel Translation
 Display two Bible translations side by side. Select a secondary translation in Settings — verses render in a two-column layout so you can compare translations at a glance. Works with chapters, verse ranges, and comma-separated verses.
 
-### 🔖 Bookmarks
-Right-click (or long-press on mobile) any verse number to **bookmark** it. Access all saved bookmarks from the **★** button in the header. Bookmarks persist in your browser's IndexedDB.
-
-### 🖍️ Verse Highlighting
+### ️ Verse Highlighting
 Right-click (or long-press) a verse number and choose **Highlight** to color a verse. Five colors available: yellow, green, blue, pink, and orange. Highlights are saved locally and visible across sessions.
 
 ### 📋 Copy to Clipboard

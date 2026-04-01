@@ -51,10 +51,6 @@ interface Strings {
   // New features
   copied: string;
   copyVerse: string;
-  bookmarkAdded: string;
-  bookmarkRemoved: string;
-  bookmarks: string;
-  noBookmarks: string;
   highlight: string;
   removeHighlight: string;
 }
@@ -115,7 +111,6 @@ const EN: Strings = {
   infoSettingsText: "Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. WEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.",
   infoFeaturesTitle: "Features",
   infoFeaturesItems: [
-    "<strong>Bookmarks</strong> &mdash; Right-click (or long-press on mobile) a verse number to bookmark it. View saved bookmarks from the <strong>&#9733;</strong> button.",
     "<strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.",
     "<strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.",
     "<strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.",
@@ -129,10 +124,6 @@ const EN: Strings = {
 
   copied: "Copied!",
   copyVerse: "Copy verse",
-  bookmarkAdded: "Bookmark added",
-  bookmarkRemoved: "Bookmark removed",
-  bookmarks: "Bookmarks",
-  noBookmarks: "No bookmarks yet. Long-press or right-click a verse number to bookmark it.",
   highlight: "Highlight",
   removeHighlight: "Remove highlight",
 };
@@ -193,7 +184,6 @@ const FI: Strings = {
   infoSettingsText: "Napsauta <strong>&#9881;</strong>-rataspainiketta avataksesi asetukset. Voit vaihtaa raamatunkäännöstä (esim. WEB, KR38), valita <strong>rinnakkaiskäännöksen</strong> (vierekkäin-näkymä), asettaa <strong>teeman</strong> (Vaalea, Tumma tai Järjestelmä) ja vaihtaa sovelluksen kielen. Valinnat tallennetaan.",
   infoFeaturesTitle: "Ominaisuudet",
   infoFeaturesItems: [
-    "<strong>Kirjanmerkit</strong> &mdash; Napsauta hiiren oikealla (tai paina pitkään mobiilissa) jaenumeroa lisätäksesi kirjanmerkin. Näet kirjanmerkit <strong>&#9733;</strong>-painikkeesta.",
     "<strong>Korostus</strong> &mdash; Napsauta hiiren oikealla jaenumeroa ja valitse korostusväri (keltainen, vihreä, sininen, pinkki, oranssi). Valitse &ldquo;Poista korostus&rdquo; poistaaksesi sen.",
     "<strong>Kopioi</strong> &mdash; Napsauta <strong>&#128203;</strong>-painiketta otsikon vieressä kopioidaksesi näytetyt jakeet. Rinnakkaisnäkymässä molemmat käännökset kopioidaan.",
     "<strong>Pyyhkäisynavigaatio</strong> &mdash; Kosketuslaitteilla pyyhkäise vasemmalle tai oikealle siirtyäksesi lukujen välillä.",
@@ -207,10 +197,6 @@ const FI: Strings = {
 
   copied: "Kopioitu!",
   copyVerse: "Kopioi jae",
-  bookmarkAdded: "Kirjanmerkki lisätty",
-  bookmarkRemoved: "Kirjanmerkki poistettu",
-  bookmarks: "Kirjanmerkit",
-  noBookmarks: "Ei kirjanmerkkejä. Paina pitkään tai napsauta hiiren oikealla jaenumeroa lisätäksesi kirjanmerkin.",
   highlight: "Korosta",
   removeHighlight: "Poista korostus",
 };

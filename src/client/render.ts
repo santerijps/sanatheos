@@ -342,7 +342,9 @@ export function renderIndex(
   const chapsCol = $("idx-chapters");
   const versesCol = $("idx-verses");
 
-  if (booksCol.children.length > 0) return;
+  booksCol.innerHTML = "";
+  chapsCol.innerHTML = "";
+  versesCol.innerHTML = "";
 
   let activeBook = "";
 
@@ -529,7 +531,7 @@ export function renderParallelChapter(primary: BibleData, secondary: BibleData, 
   if (ch2) {
     for (const n of nums) {
       const text = ch2[String(n)];
-      if (text) html += `<span class="verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
+      if (text) html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
     }
   } else {
     html += `<p class="empty">${t().notFound}</p>`;
@@ -572,7 +574,7 @@ export function renderParallelVerseSegments(primary: BibleData, secondary: Bible
       for (let v = seg.start; v <= seg.end; v++) {
         const text = ch2[String(v)];
         if (!text) continue;
-        html += `<span class="verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}" data-secondary="1"><sup>${v}</sup>${fmt(text)}</span> `;
+        html += `<span class="verse${hlClass(book, chapter, v)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}" data-secondary="1"><sup>${v}</sup>${fmt(text)}</span> `;
       }
     }
   } else {
@@ -596,7 +598,7 @@ export function renderParallelVerse(primary: BibleData, secondary: BibleData, bo
   html += `<h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button></h2>`;
   html += `<div class="parallel-container">`;
   html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div><div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text1)}</span></div></div>`;
-  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses single-verse"><span class="verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? fmt(text2) : t().notFound}</span></div></div>`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? fmt(text2) : t().notFound}</span></div></div>`;
   html += `</div>`;
   html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   $("content").innerHTML = html;

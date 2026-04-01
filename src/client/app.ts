@@ -1,5 +1,5 @@
 import type { BibleData, AppState, HighlightColor } from "./types.ts";
-import { loadBible, saveBible, getBookmarks, addBookmark, removeBookmark, isBookmarked, getHighlightMap, setHighlight, removeHighlight } from "./db.ts";
+import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight } from "./db.ts";
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText, toUrl } from "./state.ts";
@@ -71,9 +71,6 @@ async function init() {
   const settingsBtn = document.getElementById("settings-btn")!;
   const settingsOverlay = document.getElementById("settings-overlay")!;
   const settingsClose = document.getElementById("settings-close")!;
-  const bookmarksBtn = document.getElementById("bookmarks-btn")!;
-  const bookmarksOverlay = document.getElementById("bookmarks-overlay")!;
-  const bookmarksClose = document.getElementById("bookmarks-close")!;
   const verseMenu = document.getElementById("verse-menu")!;
 
   // Determine initial translation from URL or localStorage
@@ -81,9 +78,10 @@ async function init() {
   currentTranslation = initialState.translation || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
   setTranslation(currentTranslation);
 
-  // Determine initial language
-  const savedLang = localStorage.getItem("bible-language") || "en";
+  // Determine initial language: sync with translation
+  const savedLang = TRANSLATION_LANG[currentTranslation] || localStorage.getItem("bible-language") || "en";
   setLanguage(savedLang);
+  localStorage.setItem("bible-language", savedLang);
 
   const languageSelect = document.getElementById("language-select") as HTMLSelectElement | null;
   if (languageSelect) languageSelect.value = savedLang;
@@ -145,7 +143,18 @@ async function init() {
         setTranslation(code);
         localStorage.setItem("bible-translation", code);
         initSearch(data);
+
+        // Auto-switch UI language to match translation
+        const newLang = TRANSLATION_LANG[code];
+        if (newLang && newLang !== getLanguage()) {
+          setLanguage(newLang);
+          localStorage.setItem("bible-language", newLang);
+          if (languageSelect) languageSelect.value = newLang;
+          updateStaticText();
+        }
+
         indexRendered = false;
+        if (overlay.classList.contains("open")) openIndex();
 
         // Translate query book names to new translation
         if (parsedBooks) {
@@ -177,6 +186,7 @@ async function init() {
       localStorage.setItem("bible-language", lang);
       updateStaticText();
       indexRendered = false;
+      if (overlay.classList.contains("open")) openIndex();
       const state = readState();
       searchInput.value = stateToInputText(state);
       applyState(state);
@@ -199,7 +209,7 @@ async function init() {
       try {
         parallelTranslation = savedParallel;
         parallelData = await fetchTranslation(savedParallel);
-      } catch { parallelTranslation = ""; parallelData = null; }
+      } catch { parallelTranslation = ""; parallelData = null; parallelSelect.value = ""; }
     }
 
     parallelSelect.addEventListener("change", async () => {
@@ -356,7 +366,6 @@ async function init() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       if (verseMenu.classList.contains("open")) { closeVerseMenu(); return; }
-      if (bookmarksOverlay.classList.contains("open")) { closeBookmarks(); return; }
       if (settingsOverlay.classList.contains("open")) { closeSettings(); return; }
       if (infoOverlay.classList.contains("open")) { closeInfo(); return; }
       if (overlay.classList.contains("open")) { closeIndex(); return; }
@@ -497,9 +506,6 @@ async function init() {
     // Copy verse
     html += `<button class="verse-menu-item" data-action="copy">&#128203; ${t().copyVerse}</button>`;
 
-    // Bookmark
-    html += `<button class="verse-menu-item" data-action="bookmark">&#9733; Bookmark</button>`;
-
     // Highlight colors
     html += `<div class="verse-menu-colors">`;
     for (const c of colors) {
@@ -538,15 +544,6 @@ async function init() {
         if (text) {
           const full = `${displayName(book)} ${chapter}:${verse} [${sourceLabel}] — ${text}`;
           navigator.clipboard.writeText(full).then(() => showToast(t().copied));
-        }
-      } else if (action === "bookmark") {
-        const already = await isBookmarked(book, chapter, verse);
-        if (already) {
-          await removeBookmark(book, chapter, verse);
-          showToast(t().bookmarkRemoved);
-        } else {
-          await addBookmark({ book, chapter, verse, translation: currentTranslation, timestamp: Date.now() });
-          showToast(t().bookmarkAdded);
         }
       } else if (action === "highlight") {
         const color = target.dataset.color as HighlightColor;
@@ -593,55 +590,6 @@ async function init() {
     if (!verseMenu.contains(e.target as Node)) closeVerseMenu();
   });
 
-  // --- Bookmarks modal ---
-  bookmarksBtn.addEventListener("click", async () => {
-    bookmarksOverlay.classList.add("open");
-    document.body.classList.add("panel-open");
-    const bookmarks = await getBookmarks();
-    const listEl = document.getElementById("bookmarks-list")!;
-    const titleEl = bookmarksOverlay.querySelector("h2")!;
-    titleEl.textContent = t().bookmarks;
-
-    if (!bookmarks.length) {
-      listEl.innerHTML = `<p class="bookmarks-empty">${t().noBookmarks}</p>`;
-      return;
-    }
-
-    bookmarks.sort((a, b) => b.timestamp - a.timestamp);
-    listEl.innerHTML = bookmarks.map(b =>
-      `<div class="bookmark-item" data-book="${b.book}" data-chapter="${b.chapter}" data-verse="${b.verse}">
-        <span class="bookmark-ref">${displayName(b.book)} ${b.chapter}:${b.verse}</span>
-        <button class="bookmark-remove" data-book="${b.book}" data-chapter="${b.chapter}" data-verse="${b.verse}" title="Remove">&times;</button>
-      </div>`
-    ).join("");
-
-    listEl.onclick = async (ev) => {
-      const removeBtn = (ev.target as HTMLElement).closest(".bookmark-remove") as HTMLElement;
-      if (removeBtn) {
-        ev.stopPropagation();
-        await removeBookmark(removeBtn.dataset.book!, +removeBtn.dataset.chapter!, +removeBtn.dataset.verse!);
-        removeBtn.closest(".bookmark-item")!.remove();
-        if (!listEl.children.length) listEl.innerHTML = `<p class="bookmarks-empty">${t().noBookmarks}</p>`;
-        return;
-      }
-      const item = (ev.target as HTMLElement).closest(".bookmark-item") as HTMLElement;
-      if (item) {
-        closeBookmarks();
-        navigate({ book: item.dataset.book!, chapter: +item.dataset.chapter!, verse: +item.dataset.verse! });
-      }
-    };
-  });
-
-  function closeBookmarks() {
-    bookmarksOverlay.classList.remove("open");
-    document.body.classList.remove("panel-open");
-  }
-
-  bookmarksClose.addEventListener("click", closeBookmarks);
-  bookmarksOverlay.addEventListener("click", (e) => {
-    if (e.target === bookmarksOverlay) closeBookmarks();
-  });
-
   // --- Swipe navigation ---
   let touchStartX = 0;
   let touchStartY = 0;
@@ -676,7 +624,18 @@ async function init() {
         setTranslation(s.translation);
         localStorage.setItem("bible-translation", s.translation);
         initSearch(data);
+
+        // Auto-switch UI language to match translation
+        const newLang = TRANSLATION_LANG[s.translation];
+        if (newLang && newLang !== getLanguage()) {
+          setLanguage(newLang);
+          localStorage.setItem("bible-language", newLang);
+          if (languageSelect) languageSelect.value = newLang;
+          updateStaticText();
+        }
+
         indexRendered = false;
+        if (overlay.classList.contains("open")) openIndex();
         if (translationSelect) translationSelect.value = s.translation;
         updateFooter();
       } catch { /* keep current translation */ }
@@ -827,6 +786,11 @@ const TRANSLATION_NAMES: Record<string, { name: string; language: string }> = {
   KR38: { name: "Raamattu 1933/1938", language: "Suomi" },
 };
 
+const TRANSLATION_LANG: Record<string, string> = {
+  WEB: "en",
+  KR38: "fi",
+};
+
 function updateStaticText() {
   const s = t();
   // Header buttons
@@ -850,10 +814,6 @@ function updateStaticText() {
   if (themeLabel) themeLabel.textContent = s.themeLabel;
   const parallelLabel = document.getElementById("settings-parallel-label");
   if (parallelLabel) parallelLabel.textContent = s.parallelLabel;
-
-  // Bookmarks button
-  const bookmarksBtn = document.getElementById("bookmarks-btn");
-  if (bookmarksBtn) bookmarksBtn.title = s.bookmarks;
 
   // Info modal
   const infoBody = document.getElementById("info-modal-body");
