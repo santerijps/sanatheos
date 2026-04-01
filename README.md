@@ -91,7 +91,7 @@ All 66 books of the Old and New Testaments.
 bun install
 bun run start
 ```
-Open [http://localhost:3001](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Development (watch mode)
 ```bash

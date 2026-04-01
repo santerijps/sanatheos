@@ -1,5 +1,5 @@
 import { join, resolve } from "node:path";
-import { readdir, cp, mkdir, rm } from "node:fs/promises";
+import { readdir, cp, mkdir, rm, readFile, writeFile } from "node:fs/promises";
 import type { BibleData } from "../src/client/types.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
@@ -68,6 +68,29 @@ for (const name of ["index.html", "style.css", "robots.txt", "favicon.ico"]) {
   await cp(join(PUBLIC, name), join(OUT, name));
 }
 console.log("Static files copied.");
+
+// Minify CSS
+const cssPath = join(OUT, "style.css");
+const cssResult = await Bun.build({
+  entrypoints: [cssPath],
+  minify: true,
+});
+if (cssResult.success && cssResult.outputs.length > 0) {
+  await Bun.write(cssPath, await cssResult.outputs[0].text());
+  console.log("CSS minified.");
+}
+
+// Minify HTML
+const htmlPath = join(OUT, "index.html");
+let html = await readFile(htmlPath, "utf-8");
+html = html
+  .replace(/<!--[\s\S]*?-->/g, "")          // remove comments
+  .replace(/\n\s*/g, "\n")                   // collapse leading whitespace per line
+  .replace(/\n+/g, "\n")                     // collapse blank lines
+  .replace(/>\s+</g, "><")                   // remove whitespace between tags
+  .trim();
+await writeFile(htmlPath, html, "utf-8");
+console.log("HTML minified.");
 
 // Discover and generate per-translation JSON files
 const translations = await discoverTranslations();
