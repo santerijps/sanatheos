@@ -19,6 +19,7 @@
       autocomplete="off"
       spellcheck="false"
     >
+    <button id="bookmarks-btn" type="button" title="Bookmarks">&#9733;</button>
     <button id="index-btn" type="button" title="Browse books">&#9776;</button>
   </header>
 
@@ -71,7 +72,17 @@
       </section>
       <section>
         <h3>Settings</h3>
-        <p>Click the <strong>&#9881;</strong> gear button to open settings. From there you can switch between Bible translations (e.g. WEB, KR38). Your selection is saved and persisted across sessions.</p>
+        <p>Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. WEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.</p>
+      </section>
+      <section>
+        <h3>Features</h3>
+        <ul>
+          <li><strong>Bookmarks</strong> &mdash; Right-click (or long-press on mobile) a verse number to bookmark it. View saved bookmarks from the <strong>&#9733;</strong> button.</li>
+          <li><strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.</li>
+          <li><strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.</li>
+          <li><strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.</li>
+          <li><strong>Print</strong> &mdash; Use <kbd>Ctrl+P</kbd> for a clean, print-optimized layout.</li>
+        </ul>
       </section>
       <section>
         <h3>Data &amp; Storage</h3>
@@ -97,9 +108,34 @@
           <label id="settings-translation-label" for="translation-select">Translation</label>
           <select id="translation-select"></select>
         </section>
+        <section>
+          <label id="settings-parallel-label" for="parallel-select">Parallel translation</label>
+          <select id="parallel-select"></select>
+        </section>
+        <section>
+          <label id="settings-theme-label" for="theme-select">Theme</label>
+          <select id="theme-select">
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </section>
       </div>
     </div>
   </div>
+
+  <div id="bookmarks-overlay">
+    <div id="bookmarks-modal">
+      <button id="bookmarks-close" type="button" title="Close">&times;</button>
+      <div id="bookmarks-modal-body">
+        <h2>Bookmarks</h2>
+        <div id="bookmarks-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="verse-menu" class="verse-menu"></div>
+  <div id="toast" class="toast"></div>
 
   <footer id="footer">
     <p>Multiple translations &bull; Offline-ready</p>

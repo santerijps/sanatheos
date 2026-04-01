@@ -1,9 +1,20 @@
-import type { BibleData, VerseResult } from "./types.ts";
+import type { BibleData, VerseResult, HighlightColor } from "./types.ts";
 import type { NavRef } from "./search.ts";
 import { displayName } from "./bookNames.ts";
 import { t } from "./i18n.ts";
 
 const $ = (id: string) => document.getElementById(id)!;
+
+let highlightMap = new Map<string, HighlightColor>();
+
+export function setHighlightMap(m: Map<string, HighlightColor>) {
+  highlightMap = m;
+}
+
+function hlClass(book: string, chapter: number, verse: number): string {
+  const color = highlightMap.get(`${book}:${chapter}:${verse}`);
+  return color ? ` hl-${color}` : "";
+}
 
 function esc(s: string): string {
   const d = document.createElement("div");
@@ -27,6 +38,7 @@ interface NavTarget {
   chapter: number;
   verse?: number;
   label: string;
+  shortLabel: string;
 }
 
 function getChapterNav(data: BibleData, book: string, chapter: number): { prev: NavTarget | null; next: NavTarget | null } {
@@ -39,20 +51,20 @@ function getChapterNav(data: BibleData, book: string, chapter: number): { prev: 
   let next: NavTarget | null = null;
 
   if (ci > 0) {
-    prev = { book, chapter: chapters[ci - 1], label: `${displayName(book)} ${chapters[ci - 1]}` };
+    prev = { book, chapter: chapters[ci - 1], label: `${displayName(book)} ${chapters[ci - 1]}`, shortLabel: `${chapters[ci - 1]}` };
   } else if (bi > 0) {
     const pb = books[bi - 1];
     const pChs = Object.keys(data[pb]).map(Number).sort((a, b) => a - b);
     const lastCh = pChs[pChs.length - 1];
-    prev = { book: pb, chapter: lastCh, label: `${displayName(pb)} ${lastCh}` };
+    prev = { book: pb, chapter: lastCh, label: `${displayName(pb)} ${lastCh}`, shortLabel: `${displayName(pb)} ${lastCh}` };
   }
 
   if (ci < chapters.length - 1) {
-    next = { book, chapter: chapters[ci + 1], label: `${displayName(book)} ${chapters[ci + 1]}` };
+    next = { book, chapter: chapters[ci + 1], label: `${displayName(book)} ${chapters[ci + 1]}`, shortLabel: `${chapters[ci + 1]}` };
   } else if (bi < books.length - 1) {
     const nb = books[bi + 1];
     const nChs = Object.keys(data[nb]).map(Number).sort((a, b) => a - b);
-    next = { book: nb, chapter: nChs[0], label: `${displayName(nb)} ${nChs[0]}` };
+    next = { book: nb, chapter: nChs[0], label: `${displayName(nb)} ${nChs[0]}`, shortLabel: `${displayName(nb)} ${nChs[0]}` };
   }
 
   return { prev, next };
@@ -70,32 +82,32 @@ function getVerseNav(data: BibleData, book: string, chapter: number, verse: numb
   let next: NavTarget | null = null;
 
   if (vi > 0) {
-    prev = { book, chapter, verse: verses[vi - 1], label: `${displayName(book)} ${chapter}:${verses[vi - 1]}` };
+    prev = { book, chapter, verse: verses[vi - 1], label: `${displayName(book)} ${chapter}:${verses[vi - 1]}`, shortLabel: `${chapter}:${verses[vi - 1]}` };
   } else if (ci > 0) {
     const pc = chapters[ci - 1];
     const pVs = Object.keys(data[book][String(pc)]).map(Number).sort((a, b) => a - b);
     const lastV = pVs[pVs.length - 1];
-    prev = { book, chapter: pc, verse: lastV, label: `${displayName(book)} ${pc}:${lastV}` };
+    prev = { book, chapter: pc, verse: lastV, label: `${displayName(book)} ${pc}:${lastV}`, shortLabel: `${pc}:${lastV}` };
   } else if (bi > 0) {
     const pb = books[bi - 1];
     const pChs = Object.keys(data[pb]).map(Number).sort((a, b) => a - b);
     const lastCh = pChs[pChs.length - 1];
     const pVs = Object.keys(data[pb][String(lastCh)]).map(Number).sort((a, b) => a - b);
     const lastV = pVs[pVs.length - 1];
-    prev = { book: pb, chapter: lastCh, verse: lastV, label: `${displayName(pb)} ${lastCh}:${lastV}` };
+    prev = { book: pb, chapter: lastCh, verse: lastV, label: `${displayName(pb)} ${lastCh}:${lastV}`, shortLabel: `${displayName(pb)} ${lastCh}:${lastV}` };
   }
 
   if (vi < verses.length - 1) {
-    next = { book, chapter, verse: verses[vi + 1], label: `${displayName(book)} ${chapter}:${verses[vi + 1]}` };
+    next = { book, chapter, verse: verses[vi + 1], label: `${displayName(book)} ${chapter}:${verses[vi + 1]}`, shortLabel: `${chapter}:${verses[vi + 1]}` };
   } else if (ci < chapters.length - 1) {
     const nc = chapters[ci + 1];
     const nVs = Object.keys(data[book][String(nc)]).map(Number).sort((a, b) => a - b);
-    next = { book, chapter: nc, verse: nVs[0], label: `${displayName(book)} ${nc}:${nVs[0]}` };
+    next = { book, chapter: nc, verse: nVs[0], label: `${displayName(book)} ${nc}:${nVs[0]}`, shortLabel: `${nc}:${nVs[0]}` };
   } else if (bi < books.length - 1) {
     const nb = books[bi + 1];
     const nChs = Object.keys(data[nb]).map(Number).sort((a, b) => a - b);
     const nVs = Object.keys(data[nb][String(nChs[0])]).map(Number).sort((a, b) => a - b);
-    next = { book: nb, chapter: nChs[0], verse: nVs[0], label: `${displayName(nb)} ${nChs[0]}:${nVs[0]}` };
+    next = { book: nb, chapter: nChs[0], verse: nVs[0], label: `${displayName(nb)} ${nChs[0]}:${nVs[0]}`, shortLabel: `${displayName(nb)} ${nChs[0]}:${nVs[0]}` };
   }
 
   return { prev, next };
@@ -103,10 +115,10 @@ function getVerseNav(data: BibleData, book: string, chapter: number, verse: numb
 
 function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null): string {
   const prevBtn = prev
-    ? `<a class="nav-arrow nav-prev" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&laquo; ${esc(prev.label)}</a>`
+    ? `<a class="nav-arrow nav-prev" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&laquo; <span class="nav-full">${esc(prev.label)}</span><span class="nav-short">${esc(prev.shortLabel)}</span></a>`
     : `<span class="nav-arrow nav-prev nav-disabled"></span>`;
   const nextBtn = next
-    ? `<a class="nav-arrow nav-next" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>${esc(next.label)} &raquo;</a>`
+    ? `<a class="nav-arrow nav-next" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}><span class="nav-full">${esc(next.label)}</span><span class="nav-short">${esc(next.shortLabel)}</span> &raquo;</a>`
     : `<span class="nav-arrow nav-next nav-disabled"></span>`;
   return `<nav class="chapter-nav">${prevBtn}<span class="nav-translation"></span>${nextBtn}</nav>`;
 }
@@ -118,9 +130,9 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
   const { prev, next } = getChapterNav(data, book, chapter);
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
   let html = navArrowsHtml(prev, next);
-  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter}</h2><div class="verses">`;
+  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button></h2><div class="verses">`;
   for (const n of nums) {
-    html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+    html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
   }
   html += `</div>`;
   html += navArrowsHtml(prev, next);
@@ -139,7 +151,7 @@ export function renderBook(data: BibleData, book: string) {
     const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
     html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2><div class="verses">`;
     for (const n of nums) {
-      html += `<span class="verse"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
+      html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
     }
     html += `</div></div>`;
   }
@@ -154,9 +166,9 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
   const { prev, next } = getVerseNav(data, book, chapter, verse);
   $("content").innerHTML = `
     ${navArrowsHtml(prev, next)}
-    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse}</h2>
+    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button></h2>
     <div class="verses single-verse">
-      <span class="verse"><sup>${verse}</sup>${fmt(text)}</span>
+      <span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}</span>
     </div>
     <div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   window.scrollTo(0, 0);
@@ -175,7 +187,7 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
     const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
     html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(displayName(book))} ${c}</h2><div class="verses">`;
     for (const n of nums) {
-      html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+      html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
     }
     html += `</div></div>`;
   }
@@ -193,12 +205,12 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
   const title = `${displayName(book)} ${chapter}:${segLabel}`;
 
   let html = `<div class="translation-label"><span class="nav-translation"></span></div>`;
-  html += `<h2 class="section-title">${esc(title)}</h2><div class="verses">`;
+  html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button></h2><div class="verses">`;
   for (const seg of segments) {
     for (let v = seg.start; v <= seg.end; v++) {
       const text = ch[String(v)];
       if (!text) continue;
-      html += `<span class="verse"><sup>${v}</sup>${fmt(text)}</span> `;
+      html += `<span class="verse${hlClass(book, chapter, v)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
     }
   }
   html += `</div>`;
@@ -235,7 +247,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
         for (let v = seg.start; v <= seg.end; v++) {
           const text = ch[String(v)];
           if (!text) continue;
-          html += `<span class="verse"><sup>${v}</sup>${fmt(text)}</span> `;
+          html += `<span class="verse${hlClass(book, chapterStart, v)}" data-book="${esc(book)}" data-chapter="${chapterStart}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
         }
       }
       html += `</div>`;
@@ -249,7 +261,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
         }
         html += `<div class="verses">`;
         for (const n of nums) {
-          html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+          html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
         }
         html += `</div>`;
       }
@@ -261,7 +273,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
     const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
     html += `<div class="verses">`;
     for (const n of nums) {
-      html += `<span class="verse"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
+      html += `<span class="verse${hlClass(book, 1, n)}" data-book="${esc(book)}" data-chapter="1" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
     }
     html += `</div>`;
   }
@@ -489,4 +501,104 @@ export function renderIndex(
   for (let i = 0; i < cols.length; i++) {
     cols[i].addEventListener("focusin", () => { focusedCol = i; });
   }
+}
+
+// --- Parallel translation rendering ---
+
+export function renderParallelChapter(primary: BibleData, secondary: BibleData, book: string, chapter: number, primaryLabel: string, secondaryLabel: string) {
+  const ch1 = primary[book]?.[String(chapter)];
+  const ch2 = secondary[book]?.[String(chapter)];
+  if (!ch1) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
+
+  const { prev, next } = getChapterNav(primary, book, chapter);
+  const nums = Object.keys(ch1).map(Number).sort((a, b) => a - b);
+
+  let html = navArrowsHtml(prev, next);
+  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter}</h2>`;
+  html += `<div class="parallel-container">`;
+
+  // Primary column
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div><div class="verses">`;
+  for (const n of nums) {
+    html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
+  }
+  html += `</div></div>`;
+
+  // Secondary column
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses">`;
+  if (ch2) {
+    for (const n of nums) {
+      const text = ch2[String(n)];
+      if (text) html += `<span class="verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
+    }
+  } else {
+    html += `<p class="empty">${t().notFound}</p>`;
+  }
+  html += `</div></div>`;
+
+  html += `</div>`;
+  html += navArrowsHtml(prev, next);
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+export function renderParallelVerseSegments(primary: BibleData, secondary: BibleData, book: string, chapter: number, segments: { start: number; end: number }[], primaryLabel: string, secondaryLabel: string) {
+  const ch1 = primary[book]?.[String(chapter)];
+  const ch2 = secondary[book]?.[String(chapter)];
+  if (!ch1) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
+
+  const segLabel = segments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
+  const title = `${displayName(book)} ${chapter}:${segLabel}`;
+
+  let html = `<div class="translation-label"><span class="nav-translation"></span></div>`;
+  html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button></h2>`;
+  html += `<div class="parallel-container">`;
+
+  // Primary column
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div><div class="verses">`;
+  for (const seg of segments) {
+    for (let v = seg.start; v <= seg.end; v++) {
+      const text = ch1[String(v)];
+      if (!text) continue;
+      html += `<span class="verse${hlClass(book, chapter, v)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
+    }
+  }
+  html += `</div></div>`;
+
+  // Secondary column
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses">`;
+  if (ch2) {
+    for (const seg of segments) {
+      for (let v = seg.start; v <= seg.end; v++) {
+        const text = ch2[String(v)];
+        if (!text) continue;
+        html += `<span class="verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}" data-secondary="1"><sup>${v}</sup>${fmt(text)}</span> `;
+      }
+    }
+  } else {
+    html += `<p class="empty">${t().notFound}</p>`;
+  }
+  html += `</div></div>`;
+
+  html += `</div>`;
+  html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+export function renderParallelVerse(primary: BibleData, secondary: BibleData, book: string, chapter: number, verse: number, primaryLabel: string, secondaryLabel: string) {
+  const text1 = primary[book]?.[String(chapter)]?.[String(verse)];
+  if (!text1) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
+  const text2 = secondary[book]?.[String(chapter)]?.[String(verse)];
+
+  const { prev, next } = getVerseNav(primary, book, chapter, verse);
+  let html = navArrowsHtml(prev, next);
+  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button></h2>`;
+  html += `<div class="parallel-container">`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div><div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text1)}</span></div></div>`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses single-verse"><span class="verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? fmt(text2) : t().notFound}</span></div></div>`;
+  html += `</div>`;
+  html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
 }

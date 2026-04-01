@@ -48,6 +48,27 @@ Every search query, book, chapter, verse selection, and **Bible translation** is
 ### 📴 Works Offline
 Bible data is fetched once and cached in your browser's **IndexedDB**. After the first load, everything works without an internet connection.
 
+### 🎨 Dark Mode / Theme
+Choose between **Light**, **Dark**, or **System** (auto) theme in Settings. Your preference is saved across sessions.
+
+### 📖 Parallel Translation
+Display two Bible translations side by side. Select a secondary translation in Settings — verses render in a two-column layout so you can compare translations at a glance. Works with chapters, verse ranges, and comma-separated verses.
+
+### 🔖 Bookmarks
+Right-click (or long-press on mobile) any verse number to **bookmark** it. Access all saved bookmarks from the **★** button in the header. Bookmarks persist in your browser's IndexedDB.
+
+### 🖍️ Verse Highlighting
+Right-click (or long-press) a verse number and choose **Highlight** to color a verse. Five colors available: yellow, green, blue, pink, and orange. Highlights are saved locally and visible across sessions.
+
+### 📋 Copy to Clipboard
+Click the **📋** button next to a section heading to copy the displayed verses to your clipboard. In parallel mode, both translations are included with labels. You can also right-click a single verse to copy it.
+
+### 👆 Swipe Navigation
+On touch devices, swipe left/right to navigate between chapters.
+
+### 🖨️ Print-Friendly View
+Use your browser's print function (`Ctrl+P`) to get a clean, print-optimized layout with hidden UI chrome.
+
 ### ℹ️ Built-in Help
 Click the **ⓘ** button next to the search bar to see a full guide on search syntax, keyboard shortcuts, and how data is stored.
 

@@ -1,9 +1,9 @@
-import type { BibleData, AppState } from "./types.ts";
-import { loadBible, saveBible } from "./db.ts";
+import type { BibleData, AppState, HighlightColor } from "./types.ts";
+import { loadBible, saveBible, getBookmarks, addBookmark, removeBookmark, isBookmarked, getHighlightMap, setHighlight, removeHighlight } from "./db.ts";
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
-import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel } from "./render.ts";
+import { readState, pushState, replaceState, stateToInputText, toUrl } from "./state.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, renderParallelChapter, renderParallelVerse, renderParallelVerseSegments } from "./render.ts";
 import { setTranslation, displayName } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -11,6 +11,9 @@ let data: BibleData;
 let currentTranslation = "WEB";
 const DEFAULT_TRANSLATION = "WEB";
 let translationRequestId = 0;
+let parallelTranslation = "";
+let parallelData: BibleData | null = null;
+let highlightMap = new Map<string, HighlightColor>();
 
 function withT(s: AppState): AppState {
   return { ...s, translation: currentTranslation };
@@ -36,6 +39,27 @@ async function fetchTranslations(): Promise<string[]> {
   }
 }
 
+// --- Toast notifications ---
+let toastTimer: number;
+function showToast(msg: string) {
+  const el = document.getElementById("toast");
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = window.setTimeout(() => el.classList.remove("show"), 2000);
+}
+
+// --- Theme management ---
+function applyTheme(theme: string) {
+  if (theme === "system") {
+    const dark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    document.documentElement.setAttribute("data-theme", dark ? "dark" : "light");
+  } else {
+    document.documentElement.setAttribute("data-theme", theme);
+  }
+}
+
 async function init() {
   const content = document.getElementById("content")!;
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
@@ -47,6 +71,10 @@ async function init() {
   const settingsBtn = document.getElementById("settings-btn")!;
   const settingsOverlay = document.getElementById("settings-overlay")!;
   const settingsClose = document.getElementById("settings-close")!;
+  const bookmarksBtn = document.getElementById("bookmarks-btn")!;
+  const bookmarksOverlay = document.getElementById("bookmarks-overlay")!;
+  const bookmarksClose = document.getElementById("bookmarks-close")!;
+  const verseMenu = document.getElementById("verse-menu")!;
 
   // Determine initial translation from URL or localStorage
   const initialState = readState();
@@ -59,6 +87,22 @@ async function init() {
 
   const languageSelect = document.getElementById("language-select") as HTMLSelectElement | null;
   if (languageSelect) languageSelect.value = savedLang;
+
+  // Apply theme
+  const savedTheme = localStorage.getItem("bible-theme") || "system";
+  applyTheme(savedTheme);
+  const themeSelect = document.getElementById("theme-select") as HTMLSelectElement | null;
+  if (themeSelect) themeSelect.value = savedTheme;
+
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    const theme = localStorage.getItem("bible-theme") || "system";
+    if (theme === "system") applyTheme("system");
+  });
+
+  // Load highlights
+  const hlMap = await getHighlightMap();
+  highlightMap = hlMap;
+  setHighlightMap(hlMap);
 
   // Load Bible data: try IndexedDB first, then fetch from API
   content.innerHTML = `<p class="loading">${t().loadingBible}</p>`;
@@ -137,6 +181,55 @@ async function init() {
       searchInput.value = stateToInputText(state);
       applyState(state);
       updateFooter();
+    });
+  }
+
+  // Parallel translation selector
+  const parallelSelect = document.getElementById("parallel-select") as HTMLSelectElement | null;
+  if (parallelSelect && translationSelect) {
+    const translations = await fetchTranslations();
+    const savedParallel = localStorage.getItem("bible-parallel") || "";
+    parallelSelect.innerHTML = `<option value="">${t().parallelNone}</option>` + translations.map(tr => {
+      const info = TRANSLATION_NAMES[tr];
+      const label = info ? `${tr} — ${info.name}` : tr;
+      return `<option value="${tr}"${tr === savedParallel ? " selected" : ""}>${label}</option>`;
+    }).join("");
+
+    if (savedParallel) {
+      try {
+        parallelTranslation = savedParallel;
+        parallelData = await fetchTranslation(savedParallel);
+      } catch { parallelTranslation = ""; parallelData = null; }
+    }
+
+    parallelSelect.addEventListener("change", async () => {
+      const code = parallelSelect.value;
+      if (!code) {
+        parallelTranslation = "";
+        parallelData = null;
+        localStorage.removeItem("bible-parallel");
+      } else {
+        try {
+          parallelData = await fetchTranslation(code);
+          parallelTranslation = code;
+          localStorage.setItem("bible-parallel", code);
+        } catch {
+          parallelTranslation = "";
+          parallelData = null;
+          parallelSelect.value = "";
+        }
+      }
+      const state = readState();
+      applyState(state);
+    });
+  }
+
+  // Theme selector
+  if (themeSelect) {
+    themeSelect.addEventListener("change", () => {
+      const theme = themeSelect.value;
+      applyTheme(theme);
+      localStorage.setItem("bible-theme", theme);
     });
   }
 
@@ -261,16 +354,12 @@ async function init() {
 
   // Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && settingsOverlay.classList.contains("open")) {
-      closeSettings();
-      return;
-    }
-    if (e.key === "Escape" && infoOverlay.classList.contains("open")) {
-      closeInfo();
-      return;
-    }
-    if (e.key === "Escape" && overlay.classList.contains("open")) {
-      closeIndex();
+    if (e.key === "Escape") {
+      if (verseMenu.classList.contains("open")) { closeVerseMenu(); return; }
+      if (bookmarksOverlay.classList.contains("open")) { closeBookmarks(); return; }
+      if (settingsOverlay.classList.contains("open")) { closeSettings(); return; }
+      if (infoOverlay.classList.contains("open")) { closeInfo(); return; }
+      if (overlay.classList.contains("open")) { closeIndex(); return; }
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "k") {
       e.preventDefault();
@@ -323,7 +412,259 @@ async function init() {
       navigate({ book: heading.dataset.book!, chapter: +heading.dataset.chapter! });
       return;
     }
+
+    // Click on copy button → copy text to clipboard
+    const copyBtn = (e.target as HTMLElement).closest(".copy-btn") as HTMLElement;
+    if (copyBtn) {
+      e.preventDefault();
+      const book = copyBtn.dataset.copyBook!;
+      const chapter = +copyBtn.dataset.copyChapter!;
+      const verse = copyBtn.dataset.copyVerse;
+      const segments = copyBtn.dataset.copySegments;
+      const useParallel = !!parallelData && !!parallelTranslation;
+      let text = "";
+      if (verse) {
+        const v = data[book]?.[String(chapter)]?.[verse];
+        if (v) {
+          text = `${displayName(book)} ${chapter}:${verse}\n[${currentTranslation}] ${v}`;
+          if (useParallel) {
+            const v2 = parallelData![book]?.[String(chapter)]?.[verse];
+            if (v2) text += `\n[${parallelTranslation}] ${v2}`;
+          }
+        }
+      } else if (segments) {
+        const ch = data[book]?.[String(chapter)];
+        if (ch) {
+          const parts = segments.split(",");
+          const verses: number[] = [];
+          for (const p of parts) {
+            const range = p.split("-").map(Number);
+            if (range.length === 2) {
+              for (let v = range[0]; v <= range[1]; v++) verses.push(v);
+            } else {
+              verses.push(range[0]);
+            }
+          }
+          text = `${displayName(book)} ${chapter}:${segments}\n[${currentTranslation}]\n` + verses.filter(n => ch[String(n)]).map(n => `${n} ${ch[String(n)]}`).join("\n");
+          if (useParallel) {
+            const ch2 = parallelData![book]?.[String(chapter)];
+            if (ch2) {
+              text += `\n[${parallelTranslation}]\n` + verses.filter(n => ch2[String(n)]).map(n => `${n} ${ch2[String(n)]}`).join("\n");
+            }
+          }
+        }
+      } else {
+        const ch = data[book]?.[String(chapter)];
+        if (ch) {
+          const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
+          text = `${displayName(book)} ${chapter}\n[${currentTranslation}]\n` + nums.map(n => `${n} ${ch[String(n)]}`).join("\n");
+          if (useParallel) {
+            const ch2 = parallelData![book]?.[String(chapter)];
+            if (ch2) {
+              const nums2 = Object.keys(ch2).map(Number).sort((a, b) => a - b);
+              text += `\n[${parallelTranslation}]\n` + nums2.map(n => `${n} ${ch2[String(n)]}`).join("\n");
+            }
+          }
+        }
+      }
+      if (text) {
+        navigator.clipboard.writeText(text).then(() => showToast(t().copied));
+      }
+      return;
+    }
   });
+
+  // --- Verse context menu (right-click / long-press on verse sup) ---
+  let longPressTimer: number;
+  let menuVerseEl: HTMLElement | null = null;
+
+  function closeVerseMenu() {
+    verseMenu.classList.remove("open");
+    verseMenu.innerHTML = "";
+  }
+
+  function openVerseMenu(verseEl: HTMLElement, x: number, y: number) {
+    menuVerseEl = verseEl;
+    const book = verseEl.dataset.book!;
+    const chapter = +verseEl.dataset.chapter!;
+    const verse = +verseEl.dataset.verse!;
+    const hlKey = `${book}:${chapter}:${verse}`;
+    const currentColor = highlightMap.get(hlKey);
+
+    const colors: HighlightColor[] = ["yellow", "green", "blue", "pink", "orange"];
+    let html = "";
+
+    // Copy verse
+    html += `<button class="verse-menu-item" data-action="copy">&#128203; ${t().copyVerse}</button>`;
+
+    // Bookmark
+    html += `<button class="verse-menu-item" data-action="bookmark">&#9733; Bookmark</button>`;
+
+    // Highlight colors
+    html += `<div class="verse-menu-colors">`;
+    for (const c of colors) {
+      html += `<span class="color-dot${currentColor === c ? " active" : ""}" data-color="${c}" data-action="highlight"></span>`;
+    }
+    if (currentColor) {
+      html += `<span class="color-dot" data-action="remove-highlight" style="background: var(--border); position: relative;" title="${t().removeHighlight}">&#10005;</span>`;
+    }
+    html += `</div>`;
+
+    verseMenu.innerHTML = html;
+    verseMenu.classList.add("open");
+
+    // Position menu, keeping it on screen
+    const rect = verseMenu.getBoundingClientRect();
+    const menuW = rect.width || 180;
+    const menuH = rect.height || 120;
+    let left = Math.min(x, window.innerWidth - menuW - 8);
+    let top = Math.min(y, window.innerHeight - menuH - 8);
+    left = Math.max(8, left);
+    top = Math.max(8, top);
+    verseMenu.style.left = left + "px";
+    verseMenu.style.top = top + "px";
+
+    // Handle clicks in menu
+    verseMenu.onclick = async (ev) => {
+      const target = ev.target as HTMLElement;
+      const action = target.dataset.action;
+      if (!action) return;
+
+      if (action === "copy") {
+        const isSecondary = verseEl.dataset.secondary === "1";
+        const sourceData = isSecondary && parallelData ? parallelData : data;
+        const sourceLabel = isSecondary ? parallelTranslation : currentTranslation;
+        const text = sourceData[book]?.[String(chapter)]?.[String(verse)];
+        if (text) {
+          const full = `${displayName(book)} ${chapter}:${verse} [${sourceLabel}] — ${text}`;
+          navigator.clipboard.writeText(full).then(() => showToast(t().copied));
+        }
+      } else if (action === "bookmark") {
+        const already = await isBookmarked(book, chapter, verse);
+        if (already) {
+          await removeBookmark(book, chapter, verse);
+          showToast(t().bookmarkRemoved);
+        } else {
+          await addBookmark({ book, chapter, verse, translation: currentTranslation, timestamp: Date.now() });
+          showToast(t().bookmarkAdded);
+        }
+      } else if (action === "highlight") {
+        const color = target.dataset.color as HighlightColor;
+        await setHighlight({ book, chapter, verse, color });
+        highlightMap.set(hlKey, color);
+        verseEl.className = `verse hl-${color}`;
+      } else if (action === "remove-highlight") {
+        await removeHighlight(book, chapter, verse);
+        highlightMap.delete(hlKey);
+        verseEl.className = "verse";
+      }
+      closeVerseMenu();
+    };
+  }
+
+  // Right-click on verse sup number
+  content.addEventListener("contextmenu", (e) => {
+    const sup = (e.target as HTMLElement).closest("sup");
+    if (!sup) return;
+    const verseEl = sup.closest(".verse") as HTMLElement;
+    if (!verseEl || !verseEl.dataset.book) return;
+    e.preventDefault();
+    openVerseMenu(verseEl, e.clientX, e.clientY);
+  });
+
+  // Long-press for touch devices
+  content.addEventListener("touchstart", (e) => {
+    const sup = (e.target as HTMLElement).closest("sup");
+    if (!sup) return;
+    const verseEl = sup.closest(".verse") as HTMLElement;
+    if (!verseEl || !verseEl.dataset.book) return;
+    const touch = e.touches[0];
+    longPressTimer = window.setTimeout(() => {
+      e.preventDefault();
+      openVerseMenu(verseEl, touch.clientX, touch.clientY);
+    }, 500);
+  }, { passive: false });
+
+  content.addEventListener("touchend", () => clearTimeout(longPressTimer));
+  content.addEventListener("touchmove", () => clearTimeout(longPressTimer));
+
+  // Close verse menu on outside click
+  document.addEventListener("click", (e) => {
+    if (!verseMenu.contains(e.target as Node)) closeVerseMenu();
+  });
+
+  // --- Bookmarks modal ---
+  bookmarksBtn.addEventListener("click", async () => {
+    bookmarksOverlay.classList.add("open");
+    document.body.classList.add("panel-open");
+    const bookmarks = await getBookmarks();
+    const listEl = document.getElementById("bookmarks-list")!;
+    const titleEl = bookmarksOverlay.querySelector("h2")!;
+    titleEl.textContent = t().bookmarks;
+
+    if (!bookmarks.length) {
+      listEl.innerHTML = `<p class="bookmarks-empty">${t().noBookmarks}</p>`;
+      return;
+    }
+
+    bookmarks.sort((a, b) => b.timestamp - a.timestamp);
+    listEl.innerHTML = bookmarks.map(b =>
+      `<div class="bookmark-item" data-book="${b.book}" data-chapter="${b.chapter}" data-verse="${b.verse}">
+        <span class="bookmark-ref">${displayName(b.book)} ${b.chapter}:${b.verse}</span>
+        <button class="bookmark-remove" data-book="${b.book}" data-chapter="${b.chapter}" data-verse="${b.verse}" title="Remove">&times;</button>
+      </div>`
+    ).join("");
+
+    listEl.onclick = async (ev) => {
+      const removeBtn = (ev.target as HTMLElement).closest(".bookmark-remove") as HTMLElement;
+      if (removeBtn) {
+        ev.stopPropagation();
+        await removeBookmark(removeBtn.dataset.book!, +removeBtn.dataset.chapter!, +removeBtn.dataset.verse!);
+        removeBtn.closest(".bookmark-item")!.remove();
+        if (!listEl.children.length) listEl.innerHTML = `<p class="bookmarks-empty">${t().noBookmarks}</p>`;
+        return;
+      }
+      const item = (ev.target as HTMLElement).closest(".bookmark-item") as HTMLElement;
+      if (item) {
+        closeBookmarks();
+        navigate({ book: item.dataset.book!, chapter: +item.dataset.chapter!, verse: +item.dataset.verse! });
+      }
+    };
+  });
+
+  function closeBookmarks() {
+    bookmarksOverlay.classList.remove("open");
+    document.body.classList.remove("panel-open");
+  }
+
+  bookmarksClose.addEventListener("click", closeBookmarks);
+  bookmarksOverlay.addEventListener("click", (e) => {
+    if (e.target === bookmarksOverlay) closeBookmarks();
+  });
+
+  // --- Swipe navigation ---
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchStartTime = 0;
+
+  content.addEventListener("touchstart", (e) => {
+    touchStartX = e.touches[0].clientX;
+    touchStartY = e.touches[0].clientY;
+    touchStartTime = Date.now();
+  }, { passive: true });
+
+  content.addEventListener("touchend", (e) => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    const dt = Date.now() - touchStartTime;
+    // Only count horizontal swipes that are fast and far enough
+    if (dt > 500 || Math.abs(dx) < 80 || Math.abs(dy) > Math.abs(dx) * 0.5) return;
+
+    const arrow = dx > 0
+      ? content.querySelector(".nav-arrow.nav-prev:not(.nav-disabled)") as HTMLElement
+      : content.querySelector(".nav-arrow.nav-next:not(.nav-disabled)") as HTMLElement;
+    if (arrow) arrow.click();
+  }, { passive: true });
 
   // --- Browser back/forward ---
   window.addEventListener("popstate", async () => {
@@ -356,26 +697,43 @@ function navigate(s: AppState) {
 
 function renderNavRef(nav: NavRef) {
   const { book, chapterStart, chapterEnd, verseSegments } = nav;
+  const useParallel = !!parallelData && !!parallelTranslation;
 
   if (chapterStart !== undefined && chapterEnd !== undefined) {
     if (verseSegments) {
       // Single verse: Genesis 1:2
       if (verseSegments.length === 1 && verseSegments[0].start === verseSegments[0].end) {
-        renderVerse(data, book, chapterStart, verseSegments[0].start);
+        if (useParallel) {
+          renderParallelVerse(data, parallelData!, book, chapterStart, verseSegments[0].start, currentTranslation, parallelTranslation);
+        } else {
+          renderVerse(data, book, chapterStart, verseSegments[0].start);
+        }
       } else {
         // Verse segments: Genesis 8:1-3 or Genesis 8:1-3,6
-        renderVerseSegments(data, book, chapterStart, verseSegments);
+        if (useParallel) {
+          renderParallelVerseSegments(data, parallelData!, book, chapterStart, verseSegments, currentTranslation, parallelTranslation);
+        } else {
+          renderVerseSegments(data, book, chapterStart, verseSegments);
+        }
       }
     } else if (chapterStart === chapterEnd) {
       // Single chapter: Genesis 8
-      renderChapter(data, book, chapterStart);
+      if (useParallel) {
+        renderParallelChapter(data, parallelData!, book, chapterStart, currentTranslation, parallelTranslation);
+      } else {
+        renderChapter(data, book, chapterStart);
+      }
     } else {
       // Chapter range: Genesis 8-10
       renderChapterRange(data, book, chapterStart, chapterEnd);
     }
   } else {
     // Whole book: Genesis → show chapter 1
-    renderChapter(data, book, 1);
+    if (useParallel) {
+      renderParallelChapter(data, parallelData!, book, 1, currentTranslation, parallelTranslation);
+    } else {
+      renderChapter(data, book, 1);
+    }
   }
 }
 
@@ -423,6 +781,7 @@ function stateForUrl(s: AppState): AppState {
 }
 
 function applyState(s: AppState) {
+  const useParallel = !!parallelData && !!parallelTranslation;
   if (s.query) {
     // Check if the query is pure reference(s) → navigate instead of search
     const navRefs = tryParseNav(s.query);
@@ -439,13 +798,25 @@ function applyState(s: AppState) {
       renderResults([], s.query);
     }
   } else if (s.book && s.chapter && s.verse) {
-    renderVerse(data, s.book, s.chapter, s.verse);
+    if (useParallel) {
+      renderParallelVerse(data, parallelData!, s.book, s.chapter, s.verse, currentTranslation, parallelTranslation);
+    } else {
+      renderVerse(data, s.book, s.chapter, s.verse);
+    }
   } else if (s.book && s.chapter) {
-    renderChapter(data, s.book, s.chapter);
+    if (useParallel) {
+      renderParallelChapter(data, parallelData!, s.book, s.chapter, currentTranslation, parallelTranslation);
+    } else {
+      renderChapter(data, s.book, s.chapter);
+    }
   } else if (s.book) {
     renderBook(data, s.book);
   } else {
-    renderChapter(data, "Genesis", 1);
+    if (useParallel) {
+      renderParallelChapter(data, parallelData!, "Genesis", 1, currentTranslation, parallelTranslation);
+    } else {
+      renderChapter(data, "Genesis", 1);
+    }
   }
   updateTitle(s);
   updateFooter();
@@ -475,6 +846,14 @@ function updateStaticText() {
   if (transLabel) transLabel.textContent = s.translationLabel;
   const langLabel = document.getElementById("settings-language-label");
   if (langLabel) langLabel.textContent = s.languageLabel;
+  const themeLabel = document.getElementById("settings-theme-label");
+  if (themeLabel) themeLabel.textContent = s.themeLabel;
+  const parallelLabel = document.getElementById("settings-parallel-label");
+  if (parallelLabel) parallelLabel.textContent = s.parallelLabel;
+
+  // Bookmarks button
+  const bookmarksBtn = document.getElementById("bookmarks-btn");
+  if (bookmarksBtn) bookmarksBtn.title = s.bookmarks;
 
   // Info modal
   const infoBody = document.getElementById("info-modal-body");
@@ -485,6 +864,7 @@ function updateStaticText() {
       <section><h3>${s.infoBrowseTitle}</h3><p>${s.infoBrowseText}</p></section>
       <section><h3>${s.infoShortcutsTitle}</h3><ul>${s.infoShortcuts.map(i => `<li>${i}</li>`).join("")}</ul></section>
       <section><h3>${s.infoSettingsTitle}</h3><p>${s.infoSettingsText}</p></section>
+      <section><h3>${s.infoFeaturesTitle}</h3><ul>${s.infoFeaturesItems.map(i => `<li>${i}</li>`).join("")}</ul></section>
       <section><h3>${s.infoDataTitle}</h3><p>${s.infoDataText}</p></section>`;
   }
 

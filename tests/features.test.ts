@@ -1,0 +1,338 @@
+import { describe, test, expect, beforeEach } from "bun:test";
+import { setLanguage, getLanguage, t } from "../src/client/i18n.ts";
+import type { Bookmark, Highlight, HighlightColor } from "../src/client/types.ts";
+
+// ---------------------------------------------------------------------------
+// i18n — new feature strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — new feature strings (EN)", () => {
+  beforeEach(() => setLanguage("en"));
+
+  test("theme strings exist", () => {
+    const s = t();
+    expect(s.themeLabel).toBe("Theme");
+    expect(s.themeLight).toBe("Light");
+    expect(s.themeDark).toBe("Dark");
+    expect(s.themeSystem).toBe("System");
+  });
+
+  test("parallel translation strings exist", () => {
+    const s = t();
+    expect(s.parallelLabel).toBe("Parallel translation");
+    expect(s.parallelNone).toBe("None");
+  });
+
+  test("copy string exists", () => {
+    expect(t().copied).toBe("Copied!");
+    expect(t().copyVerse).toBe("Copy verse");
+  });
+
+  test("bookmark strings exist", () => {
+    const s = t();
+    expect(s.bookmarkAdded).toBe("Bookmark added");
+    expect(s.bookmarkRemoved).toBe("Bookmark removed");
+    expect(s.bookmarks).toBe("Bookmarks");
+    expect(s.noBookmarks).toContain("No bookmarks");
+  });
+
+  test("highlight strings exist", () => {
+    const s = t();
+    expect(s.highlight).toBe("Highlight");
+    expect(s.removeHighlight).toBe("Remove highlight");
+  });
+});
+
+describe("i18n — new feature strings (FI)", () => {
+  beforeEach(() => setLanguage("fi"));
+
+  test("theme strings exist", () => {
+    const s = t();
+    expect(s.themeLabel).toBe("Teema");
+    expect(s.themeLight).toBe("Vaalea");
+    expect(s.themeDark).toBe("Tumma");
+    expect(s.themeSystem).toBe("Järjestelmä");
+  });
+
+  test("parallel translation strings exist", () => {
+    const s = t();
+    expect(s.parallelLabel).toBe("Rinnakkaiskäännös");
+    expect(s.parallelNone).toBe("Ei mitään");
+  });
+
+  test("copy string exists", () => {
+    expect(t().copied).toBe("Kopioitu!");
+    expect(t().copyVerse).toBe("Kopioi jae");
+  });
+
+  test("bookmark strings exist", () => {
+    const s = t();
+    expect(s.bookmarkAdded).toBe("Kirjanmerkki lisätty");
+    expect(s.bookmarkRemoved).toBe("Kirjanmerkki poistettu");
+    expect(s.bookmarks).toBe("Kirjanmerkit");
+    expect(s.noBookmarks).toContain("Ei kirjanmerkkejä");
+  });
+
+  test("highlight strings exist", () => {
+    const s = t();
+    expect(s.highlight).toBe("Korosta");
+    expect(s.removeHighlight).toBe("Poista korostus");
+  });
+});
+
+describe("i18n — language switching preserves new strings", () => {
+  test("switching en → fi → en returns correct strings", () => {
+    setLanguage("en");
+    expect(t().themeLabel).toBe("Theme");
+    expect(t().bookmarks).toBe("Bookmarks");
+
+    setLanguage("fi");
+    expect(t().themeLabel).toBe("Teema");
+    expect(t().bookmarks).toBe("Kirjanmerkit");
+
+    setLanguage("en");
+    expect(t().themeLabel).toBe("Theme");
+    expect(t().bookmarks).toBe("Bookmarks");
+  });
+
+  test("unknown language falls back to EN for new strings", () => {
+    setLanguage("xx");
+    expect(t().themeLabel).toBe("Theme");
+    expect(t().copied).toBe("Copied!");
+    expect(t().bookmarks).toBe("Bookmarks");
+  });
+});
+
+describe("i18n — all new keys are non-empty strings", () => {
+  const newKeys = [
+    "themeLabel", "themeLight", "themeDark", "themeSystem",
+    "parallelLabel", "parallelNone",
+    "copied", "copyVerse", "bookmarkAdded", "bookmarkRemoved", "bookmarks", "noBookmarks",
+    "highlight", "removeHighlight",
+  ] as const;
+
+  test("EN: all new keys are non-empty", () => {
+    setLanguage("en");
+    const s = t();
+    for (const key of newKeys) {
+      expect(typeof s[key]).toBe("string");
+      expect((s[key] as string).length).toBeGreaterThan(0);
+    }
+  });
+
+  test("FI: all new keys are non-empty", () => {
+    setLanguage("fi");
+    const s = t();
+    for (const key of newKeys) {
+      expect(typeof s[key]).toBe("string");
+      expect((s[key] as string).length).toBeGreaterThan(0);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Types — Bookmark & Highlight shape validation
+// ---------------------------------------------------------------------------
+
+describe("Bookmark type", () => {
+  test("valid bookmark object has required fields", () => {
+    const bm: Bookmark = {
+      book: "Genesis",
+      chapter: 1,
+      verse: 1,
+      translation: "WEB",
+      timestamp: Date.now(),
+    };
+    expect(bm.book).toBe("Genesis");
+    expect(bm.chapter).toBe(1);
+    expect(bm.verse).toBe(1);
+    expect(bm.translation).toBe("WEB");
+    expect(typeof bm.timestamp).toBe("number");
+  });
+
+  test("bookmark key construction pattern", () => {
+    const bm: Bookmark = { book: "John", chapter: 3, verse: 16, translation: "WEB", timestamp: 0 };
+    const key = `${bm.book}:${bm.chapter}:${bm.verse}`;
+    expect(key).toBe("John:3:16");
+  });
+
+  test("bookmark key for numbered book", () => {
+    const bm: Bookmark = { book: "1 John", chapter: 1, verse: 1, translation: "KR38", timestamp: 0 };
+    const key = `${bm.book}:${bm.chapter}:${bm.verse}`;
+    expect(key).toBe("1 John:1:1");
+  });
+});
+
+describe("Highlight type", () => {
+  const VALID_COLORS: HighlightColor[] = ["yellow", "green", "blue", "pink", "orange"];
+
+  test("valid highlight object has required fields", () => {
+    const hl: Highlight = { book: "Genesis", chapter: 1, verse: 1, color: "yellow" };
+    expect(hl.book).toBe("Genesis");
+    expect(hl.chapter).toBe(1);
+    expect(hl.verse).toBe(1);
+    expect(hl.color).toBe("yellow");
+  });
+
+  test("all 5 highlight colors are valid", () => {
+    for (const color of VALID_COLORS) {
+      const hl: Highlight = { book: "Genesis", chapter: 1, verse: 1, color };
+      expect(hl.color).toBe(color);
+    }
+    expect(VALID_COLORS).toHaveLength(5);
+  });
+
+  test("highlight key construction pattern", () => {
+    const hl: Highlight = { book: "Romans", chapter: 8, verse: 28, color: "green" };
+    const key = `${hl.book}:${hl.chapter}:${hl.verse}`;
+    expect(key).toBe("Romans:8:28");
+  });
+});
+
+describe("HighlightMap construction", () => {
+  test("builds map from highlights array", () => {
+    const highlights: Highlight[] = [
+      { book: "Genesis", chapter: 1, verse: 1, color: "yellow" },
+      { book: "John", chapter: 3, verse: 16, color: "blue" },
+      { book: "Romans", chapter: 8, verse: 28, color: "green" },
+    ];
+    // Replicate getHighlightMap logic
+    const map = new Map<string, HighlightColor>();
+    for (const h of highlights) {
+      map.set(`${h.book}:${h.chapter}:${h.verse}`, h.color);
+    }
+    expect(map.size).toBe(3);
+    expect(map.get("Genesis:1:1")).toBe("yellow");
+    expect(map.get("John:3:16")).toBe("blue");
+    expect(map.get("Romans:8:28")).toBe("green");
+    expect(map.get("Exodus:1:1")).toBeUndefined();
+  });
+
+  test("empty highlights array produces empty map", () => {
+    const map = new Map<string, HighlightColor>();
+    expect(map.size).toBe(0);
+  });
+
+  test("later highlight overwrites earlier one for same verse", () => {
+    const highlights: Highlight[] = [
+      { book: "Genesis", chapter: 1, verse: 1, color: "yellow" },
+      { book: "Genesis", chapter: 1, verse: 1, color: "pink" },
+    ];
+    const map = new Map<string, HighlightColor>();
+    for (const h of highlights) {
+      map.set(`${h.book}:${h.chapter}:${h.verse}`, h.color);
+    }
+    expect(map.size).toBe(1);
+    expect(map.get("Genesis:1:1")).toBe("pink");
+  });
+
+  test("hlClass pattern returns correct CSS class string", () => {
+    const map = new Map<string, HighlightColor>();
+    map.set("Genesis:1:1", "yellow");
+    map.set("John:3:16", "orange");
+
+    // Replicate hlClass logic
+    function hlClass(book: string, chapter: number, verse: number): string {
+      const color = map.get(`${book}:${chapter}:${verse}`);
+      return color ? ` hl-${color}` : "";
+    }
+
+    expect(hlClass("Genesis", 1, 1)).toBe(" hl-yellow");
+    expect(hlClass("John", 3, 16)).toBe(" hl-orange");
+    expect(hlClass("Exodus", 1, 1)).toBe("");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// i18n — info features section
+// ---------------------------------------------------------------------------
+
+describe("i18n — info features section (EN)", () => {
+  beforeEach(() => setLanguage("en"));
+
+  test("infoFeaturesTitle exists", () => {
+    expect(t().infoFeaturesTitle).toBe("Features");
+  });
+
+  test("infoFeaturesItems is a non-empty array", () => {
+    const items = t().infoFeaturesItems;
+    expect(Array.isArray(items)).toBe(true);
+    expect(items.length).toBeGreaterThan(0);
+  });
+
+  test("infoFeaturesItems mentions bookmarks, highlights, copy, swipe, print", () => {
+    const joined = t().infoFeaturesItems.join(" ").toLowerCase();
+    expect(joined).toContain("bookmark");
+    expect(joined).toContain("highlight");
+    expect(joined).toContain("copy");
+    expect(joined).toContain("swipe");
+    expect(joined).toContain("print");
+  });
+
+  test("infoSettingsText mentions parallel translation and theme", () => {
+    const text = t().infoSettingsText.toLowerCase();
+    expect(text).toContain("parallel");
+    expect(text).toContain("theme");
+  });
+});
+
+describe("i18n — info features section (FI)", () => {
+  beforeEach(() => setLanguage("fi"));
+
+  test("infoFeaturesTitle exists", () => {
+    expect(t().infoFeaturesTitle).toBe("Ominaisuudet");
+  });
+
+  test("infoFeaturesItems is a non-empty array", () => {
+    const items = t().infoFeaturesItems;
+    expect(Array.isArray(items)).toBe(true);
+    expect(items.length).toBeGreaterThan(0);
+  });
+
+  test("infoSettingsText mentions parallel and theme in Finnish", () => {
+    const text = t().infoSettingsText.toLowerCase();
+    expect(text).toContain("rinnakkais");
+    expect(text).toContain("teema");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Copy segment parsing logic (replicates app.ts copy handler)
+// ---------------------------------------------------------------------------
+
+describe("Copy segment parsing", () => {
+  /** Replicates the segment parsing logic from app.ts copy handler */
+  function parseSegments(segments: string): number[] {
+    const parts = segments.split(",");
+    const verses: number[] = [];
+    for (const p of parts) {
+      const range = p.split("-").map(Number);
+      if (range.length === 2) {
+        for (let v = range[0]; v <= range[1]; v++) verses.push(v);
+      } else {
+        verses.push(range[0]);
+      }
+    }
+    return verses;
+  }
+
+  test("single verse", () => {
+    expect(parseSegments("5")).toEqual([5]);
+  });
+
+  test("simple range", () => {
+    expect(parseSegments("1-3")).toEqual([1, 2, 3]);
+  });
+
+  test("comma-separated singles", () => {
+    expect(parseSegments("1,3,5")).toEqual([1, 3, 5]);
+  });
+
+  test("mixed ranges and singles", () => {
+    expect(parseSegments("1-3,5,8-10")).toEqual([1, 2, 3, 5, 8, 9, 10]);
+  });
+
+  test("single element range", () => {
+    expect(parseSegments("7-7")).toEqual([7]);
+  });
+});

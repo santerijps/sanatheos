@@ -20,3 +20,20 @@ export interface AppState {
   query?: string;
   translation?: string;
 }
+
+export interface Bookmark {
+  book: string;
+  chapter: number;
+  verse: number;
+  translation: string;
+  timestamp: number;
+}
+
+export type HighlightColor = "yellow" | "green" | "blue" | "pink" | "orange";
+
+export interface Highlight {
+  book: string;
+  chapter: number;
+  verse: number;
+  color: HighlightColor;
+}
