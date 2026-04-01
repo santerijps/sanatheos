@@ -16,6 +16,10 @@ export function readState(): AppState {
   return s;
 }
 
+const basePath = typeof window !== "undefined"
+  ? window.location.pathname.replace(/\/+$/, "") + "/"
+  : "/";
+
 export function toUrl(s: AppState): string {
   const p = new URLSearchParams();
   if (s.translation) p.set("t", s.translation);
@@ -24,7 +28,7 @@ export function toUrl(s: AppState): string {
   if (s.chapter !== undefined) p.set("chapter", String(s.chapter));
   if (s.verse !== undefined) p.set("verse", String(s.verse));
   const qs = p.toString();
-  return qs ? `/?${qs}` : "/";
+  return qs ? `${basePath}?${qs}` : basePath;
 }
 
 export function pushState(s: AppState) {
