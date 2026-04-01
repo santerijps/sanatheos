@@ -7,7 +7,8 @@
   --bg: #fafafa;
   --surface: #ffffff;
   --text: #1a1a1a;
-  --popout: firebrick;
+  --verse-num: firebrick;
+  --subtle: #888888;
   --border: #e5e5e5;
   --hover: #f0f0f0;
   --accent: #333333;
@@ -141,7 +142,7 @@ main {
   font-size: 0.65em;
   font-family: var(--sans);
   font-weight: 600;
-  color: var(--popout);
+  color: var(--verse-num);
   margin-right: 2px;
   vertical-align: super;
 }
@@ -156,13 +157,13 @@ main {
   text-align: center;
   padding: 80px 20px;
   font: 16px var(--sans);
-  color: var(--popout);
+  color: var(--subtle);
 }
 
 /* === Search Results === */
 .results-info {
   font: 13px var(--sans);
-  color: var(--popout);
+  color: var(--subtle);
   margin-bottom: 16px;
 }
 
@@ -274,7 +275,7 @@ mark {
 .idx-chapter small {
   display: block;
   font-size: 11px;
-  color: var(--popout);
+  color: var(--subtle);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -347,7 +348,7 @@ mark {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  color: var(--popout);
+  color: var(--subtle);
   transition: background 0.12s, color 0.12s;
 }
 
@@ -453,7 +454,7 @@ mark {
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  color: var(--popout);
+  color: var(--subtle);
   transition: background 0.12s, color 0.12s;
 }
 
@@ -528,7 +529,7 @@ mark {
 
 .nav-arrow:hover {
   background: var(--hover);
-  color: var(--popout);
+  color: var(--accent);
 }
 
 .nav-prev { text-align: left; }
@@ -553,7 +554,7 @@ mark {
 
 .full-chapter-link:hover {
   background: var(--hover);
-  color: var(--popout);
+  color: var(--accent);
 }
 
 /* === Multi-Nav Sections === */
