@@ -19,7 +19,7 @@ function withT(s: AppState): AppState {
 async function fetchTranslation(code: string): Promise<BibleData> {
   const cached = await loadBible(code);
   if (cached) return cached;
-  const res = await fetch(`/bible-${encodeURIComponent(code)}.json`);
+  const res = await fetch(`./bible-${encodeURIComponent(code)}.json`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const d: BibleData = await res.json();
   await saveBible(code, d);
@@ -28,7 +28,7 @@ async function fetchTranslation(code: string): Promise<BibleData> {
 
 async function fetchTranslations(): Promise<string[]> {
   try {
-    const res = await fetch("/translations.json");
+    const res = await fetch("./translations.json");
     if (!res.ok) return [DEFAULT_TRANSLATION];
     return await res.json();
   } catch {
