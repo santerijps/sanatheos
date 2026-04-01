@@ -714,7 +714,7 @@ function updateTitle(s: AppState) {
   } else {
     label = `${displayName("Genesis")} 1`;
   }
-  document.title = `${label} | Sanatheos`;
+  document.title = `${label} | SANATHEOS`;
 }
 
 function queryToUrlState(q: string): AppState {

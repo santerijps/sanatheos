@@ -57,6 +57,17 @@ body.panel-open {
   overflow: hidden;
 }
 
+/* === Title bar === */
+#title-bar {
+  text-align: center;
+  font: 700 18px/1 var(--sans);
+  letter-spacing: 1ch;
+  padding: 12px 20px;
+  color: var(--text);
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
 /* === Header === */
 header {
   position: sticky;
