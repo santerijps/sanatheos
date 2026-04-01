@@ -176,6 +176,7 @@ main {
 }
 
 .verse sup {
+  cursor: pointer;
   font-size: 0.65em;
   font-family: var(--sans);
   font-weight: 600;

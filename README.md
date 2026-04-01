@@ -55,10 +55,10 @@ Choose between **Light**, **Dark**, or **System** (auto) theme in Settings. Your
 Display two Bible translations side by side. Select a secondary translation in Settings — verses render in a two-column layout so you can compare translations at a glance. Works with chapters, verse ranges, and comma-separated verses.
 
 ### ️ Verse Highlighting
-Right-click (or long-press) a verse number and choose **Highlight** to color a verse. Five colors available: yellow, green, blue, pink, and orange. Highlights are saved locally and visible across sessions.
+Click (or long-press) a verse number and choose **Highlight** to color a verse. Five colors available: yellow, green, blue, pink, and orange. Highlights are saved locally and visible across sessions.
 
 ### 📋 Copy to Clipboard
-Click the **📋** button next to a section heading to copy the displayed verses to your clipboard. In parallel mode, both translations are included with labels. You can also right-click a single verse to copy it.
+Click the **📋** button next to a section heading to copy the displayed verses to your clipboard. In parallel mode, both translations are included with labels. You can also click a single verse number to copy it.
 
 ### 👆 Swipe Navigation
 On touch devices, swipe left/right to navigate between chapters.

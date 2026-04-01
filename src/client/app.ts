@@ -559,13 +559,13 @@ async function init() {
     };
   }
 
-  // Right-click on verse sup number
-  content.addEventListener("contextmenu", (e) => {
+  // Left-click on verse sup number
+  content.addEventListener("click", (e) => {
     const sup = (e.target as HTMLElement).closest("sup");
     if (!sup) return;
     const verseEl = sup.closest(".verse") as HTMLElement;
     if (!verseEl || !verseEl.dataset.book) return;
-    e.preventDefault();
+    e.stopPropagation();
     openVerseMenu(verseEl, e.clientX, e.clientY);
   });
 
