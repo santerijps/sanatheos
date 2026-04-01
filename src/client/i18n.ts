@@ -58,7 +58,7 @@ interface Strings {
 const EN: Strings = {
   helpInfo: "Help & info",
   settings: "Settings",
-  searchPlaceholder: 'Search: John 3:16; Gen 1-3 "grace", Romans "faith"',
+  searchPlaceholder: 'Search: John 3:16; Gen 1-3 "Adam"',
   browseBooks: "Browse books",
 
   notFound: "Not found.",
@@ -131,7 +131,7 @@ const EN: Strings = {
 const FI: Strings = {
   helpInfo: "Ohje ja tiedot",
   settings: "Asetukset",
-  searchPlaceholder: 'Haku: Joh 3:16; 1 Moos 1-3 "armo", Room "usko"',
+  searchPlaceholder: 'Haku: Joh 3:16; 1 Moos 1-3 "Aadam"',
   browseBooks: "Selaa kirjoja",
 
   notFound: "Ei löytynyt.",
