@@ -65,7 +65,6 @@ body.panel-open {
   padding: 12px 20px;
   color: var(--text);
   background: var(--surface);
-  border-bottom: 1px solid var(--border);
 }
 
 /* === Header === */
