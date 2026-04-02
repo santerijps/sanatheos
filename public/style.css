@@ -798,6 +798,25 @@ mark {
   opacity: 1;
 }
 
+/* === Show More Button === */
+.show-more-btn {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 28px;
+  font: 14px var(--sans);
+  color: var(--accent);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.show-more-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
 /* === Parallel View === */
 .parallel-container {
   display: flex;

@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
-import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher } from "../src/client/search.ts";
+import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein } from "../src/client/search.ts";
 import { setTranslation } from "../src/client/bookNames.ts";
 
 // Minimal fixture data
@@ -240,9 +240,9 @@ describe("search — text queries", () => {
     expect(results).toHaveLength(0);
   });
 
-  test("respects result limit", () => {
-    const results = search(fixture, '"God"', 3);
-    expect(results).toHaveLength(3);
+  test("returns all matches (no limit)", () => {
+    const results = search(fixture, '"God"');
+    expect(results.length).toBeGreaterThanOrEqual(5);
   });
 
   test("unquoted non-reference text returns empty", () => {
@@ -660,14 +660,6 @@ describe("search — edge cases", () => {
   test("text search partial word", () => {
     const results = search(fixture, '"beginni"');
     expect(results.length).toBeGreaterThanOrEqual(1);
-  });
-
-  test("limit of 0 returns empty", () => {
-    expect(search(fixture, '"God"', 0)).toHaveLength(0);
-  });
-
-  test("limit of 1 returns exactly 1", () => {
-    expect(search(fixture, '"God"', 1)).toHaveLength(1);
   });
 
   test("deduplicate: overlapping verse ranges in same term", () => {
@@ -1123,5 +1115,75 @@ describe("matchBook — 3-letter short codes", () => {
   test("phm resolves to Philemon", () => {
     setTranslation("WEB");
     expect(_matchBook("phm")).toEqual({ book: "Philemon", rest: "" });
+  });
+});
+
+// --- levenshtein distance ---
+describe("levenshtein", () => {
+  test("identical strings return 0", () => {
+    expect(_levenshtein("abc", "abc")).toBe(0);
+  });
+
+  test("empty vs non-empty", () => {
+    expect(_levenshtein("", "abc")).toBe(3);
+    expect(_levenshtein("abc", "")).toBe(3);
+  });
+
+  test("both empty", () => {
+    expect(_levenshtein("", "")).toBe(0);
+  });
+
+  test("single substitution", () => {
+    expect(_levenshtein("cat", "bat")).toBe(1);
+  });
+
+  test("single insertion", () => {
+    expect(_levenshtein("cat", "cats")).toBe(1);
+  });
+
+  test("single deletion", () => {
+    expect(_levenshtein("cats", "cat")).toBe(1);
+  });
+
+  test("two edits", () => {
+    expect(_levenshtein("kitten", "mitten")).toBe(1);
+    expect(_levenshtein("kitten", "sitten")).toBe(1);
+    expect(_levenshtein("kitten", "sittin")).toBe(2);
+  });
+
+  test("completely different", () => {
+    expect(_levenshtein("abc", "xyz")).toBe(3);
+  });
+});
+
+// --- fuzzy matchBook ---
+describe("matchBook — fuzzy matching", () => {
+  test("typo in Genesis: 'genisis' matches Genesis", () => {
+    expect(_matchBook("genisis")).toEqual({ book: "Genesis", rest: "" });
+  });
+
+  test("typo 'jonh' matches Jonah (closest by edit distance)", () => {
+    expect(_matchBook("jonh")).toEqual({ book: "Jonah", rest: "" });
+  });
+
+  test("typo with chapter: 'genisis 1' matches Genesis", () => {
+    const result = _matchBook("genisis 1");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("Genesis");
+    expect(result!.rest).toBe("1");
+  });
+
+  test("typo 'revelaton' matches Revelation", () => {
+    expect(_matchBook("revelaton")).toEqual({ book: "Revelation", rest: "" });
+  });
+
+  test("too many typos returns null", () => {
+    // 'xxxxxxx' is too far from any book name
+    expect(_matchBook("xxxxxxx")).toBeNull();
+  });
+
+  test("short typo prefix (< 3 chars) does not fuzzy match", () => {
+    // 'zz' — too short for fuzzy, should return null
+    expect(_matchBook("zz")).toBeNull();
   });
 });

@@ -24,6 +24,22 @@ export function initSearch(data: BibleData) {
   }
 }
 
+function levenshtein(a: string, b: string): number {
+  const m = a.length;
+  const n = b.length;
+  const dp: number[] = Array.from({ length: n + 1 }, (_, i) => i);
+  for (let i = 1; i <= m; i++) {
+    let prev = dp[0];
+    dp[0] = i;
+    for (let j = 1; j <= n; j++) {
+      const tmp = dp[j];
+      dp[j] = a[i - 1] === b[j - 1] ? prev : 1 + Math.min(prev, dp[j], dp[j - 1]);
+      prev = tmp;
+    }
+  }
+  return dp[n];
+}
+
 function matchBook(q: string): { book: string; rest: string } | null {
   const ql = q.toLowerCase();
   // Sort longest-first so "1 John" matches before "John"
@@ -60,6 +76,23 @@ function matchBook(q: string): { book: string; rest: string } | null {
       return { book: key, rest };
     }
   }
+
+  // Fuzzy match — Levenshtein distance fallback
+  if (prefix.length >= 3) {
+    const maxDist = prefix.length <= 5 ? 1 : 2;
+    let bestDist = maxDist + 1;
+    let bestBook: string | null = null;
+    for (const book of sorted) {
+      const d = levenshtein(prefix, book.toLowerCase());
+      if (d < bestDist) { bestDist = d; bestBook = book; }
+    }
+    for (const [alias, key] of sortedAliases) {
+      const d = levenshtein(prefix, alias);
+      if (d < bestDist) { bestDist = d; bestBook = key; }
+    }
+    if (bestBook) return { book: bestBook, rest };
+  }
+
   return null;
 }
 
@@ -174,7 +207,7 @@ function buildTextMatcher(filter: string): (text: string) => boolean {
   return (text) => re.test(text);
 }
 
-export function search(data: BibleData, query: string, limit = 200): VerseResult[] {
+export function search(data: BibleData, query: string): VerseResult[] {
   const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
   const results: VerseResult[] = [];
   const seen = new Set<string>();
@@ -189,7 +222,6 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
     // Pure text search — entire term is just a quoted string
     if (textMatch && !refPart) {
       for (const e of entries) {
-        if (results.length >= limit) break;
         if (textMatch(e.text)) {
           const k = `${e.book}:${e.chapter}:${e.verse}`;
           if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
@@ -215,7 +247,7 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
               if (!text) continue;
               if (textMatch && !textMatch(text)) continue;
               const k = `${ref.book}:${c}:${v}`;
-              if (!seen.has(k) && results.length < limit) { seen.add(k); results.push({ book: ref.book, chapter: c, verse: v, text }); }
+              if (!seen.has(k)) { seen.add(k); results.push({ book: ref.book, chapter: c, verse: v, text }); }
             }
           }
         }
@@ -225,7 +257,7 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
           for (const [v, text] of Object.entries(verses)) {
             if (textMatch && !textMatch(text)) continue;
             const k = `${ref.book}:${c}:${v}`;
-            if (!seen.has(k) && results.length < limit) { seen.add(k); results.push({ book: ref.book, chapter: +c, verse: +v, text }); }
+            if (!seen.has(k)) { seen.add(k); results.push({ book: ref.book, chapter: +c, verse: +v, text }); }
           }
         }
       }
@@ -236,7 +268,7 @@ export function search(data: BibleData, query: string, limit = 200): VerseResult
   return results;
 }
 
-export interface ParsedQueryTerm {
+interface ParsedQueryTerm {
   book: string;
   rest: string;
   quoted: string;
@@ -260,4 +292,4 @@ export function parseQueryBooks(query: string): ParsedQueryTerm[] {
 }
 
 // Exported for testing
-export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher };
+export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher, levenshtein as _levenshtein };

@@ -1,0 +1,20 @@
+{
+  "name": "Sanatheos",
+  "description": "A very fast online Bible",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#fafafa",
+  "theme_color": "#1a1a1a",
+  "icons": [
+    {
+      "src": "./pwaicon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "./pwaicon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}

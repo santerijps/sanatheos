@@ -53,6 +53,10 @@ The active translation can be changed in Settings. Switching translations automa
 
 Bible text is fetched once from the server and cached in the browser's IndexedDB. After the initial load, the application works entirely offline.
 
+### Progressive Web App
+
+Sanatheos can be installed as a standalone app from the browser. It includes a web app manifest and service worker that cache the application shell (HTML, CSS, JS, icons) for instant offline startup. Bible data is cached separately via IndexedDB, and translation JSON files use a network-first strategy with cache fallback.
+
 ### Themes
 
 Three theme options are available in Settings: Light, Dark, and System (follows the operating system preference). The choice is persisted across sessions.

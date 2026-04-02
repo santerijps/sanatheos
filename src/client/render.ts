@@ -299,6 +299,8 @@ export function renderMultiNav(data: BibleData, refs: NavRef[]) {
   $('content').innerHTML = html;
   window.scrollTo(0, 0);
 }
+const RESULTS_PAGE_SIZE = 50;
+
 export function renderResults(results: VerseResult[], query: string) {
   if (!results.length) {
     $("content").innerHTML = `<p class="empty">${t().noResults(esc(query))}</p>`;
@@ -315,24 +317,69 @@ export function renderResults(results: VerseResult[], query: string) {
     raw = raw.replace(/^\^/, "").replace(/\$$/, "");
     if (raw.length >= 2) highlights.push(raw);
   }
-  let html = `<p class="results-info">${t().resultCount(results.length)}</p><div class="results">`;
 
   // Build a single combined regex to avoid corrupting <mark> tags across passes
   const hlRegex = highlights.length
     ? new RegExp(`(${highlights.map(h => escRegex(esc(h))).join("|")})`, "gi")
     : null;
 
-  for (const r of results) {
+  let shown = 0;
+
+  function renderResultItem(r: VerseResult): string {
     let highlighted = fmt(r.text);
     if (hlRegex) highlighted = highlighted.replace(hlRegex, "<mark>$1</mark>");
-    html += `<div class="result" data-book="${esc(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
+    return `<div class="result" data-book="${esc(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
       <div class="result-ref">${esc(displayName(r.book))} ${r.chapter}:${r.verse}</div>
       <div class="result-text">${highlighted}</div>
     </div>`;
   }
 
+  function showMore() {
+    const container = document.querySelector(".results");
+    if (!container) return;
+    const end = Math.min(shown + RESULTS_PAGE_SIZE, results.length);
+    let html = "";
+    for (let i = shown; i < end; i++) {
+      html += renderResultItem(results[i]);
+    }
+    // Remove existing "Show more" button if present
+    const existingBtn = document.getElementById("show-more-btn");
+    if (existingBtn) existingBtn.remove();
+
+    container.insertAdjacentHTML("beforeend", html);
+    shown = end;
+
+    if (shown < results.length) {
+      const remaining = results.length - shown;
+      container.insertAdjacentHTML("afterend", "");
+      const btn = document.createElement("button");
+      btn.id = "show-more-btn";
+      btn.className = "show-more-btn";
+      btn.textContent = `${t().showMore} (${remaining})`;
+      btn.addEventListener("click", showMore);
+      container.parentElement?.appendChild(btn);
+    }
+  }
+
+  let html = `<p class="results-info">${t().resultCount(results.length)}</p><div class="results">`;
+  const end = Math.min(RESULTS_PAGE_SIZE, results.length);
+  for (let i = 0; i < end; i++) {
+    html += renderResultItem(results[i]);
+  }
   html += `</div>`;
+  shown = end;
+
+  if (shown < results.length) {
+    const remaining = results.length - shown;
+    html += `<button id="show-more-btn" class="show-more-btn">${t().showMore} (${remaining})</button>`;
+  }
+
   $("content").innerHTML = html;
+
+  // Wire up the "Show more" button if it was rendered
+  const btn = document.getElementById("show-more-btn");
+  if (btn) btn.addEventListener("click", showMore);
+
   window.scrollTo(0, 0);
 }
 
@@ -773,3 +820,5 @@ export function renderParallelMultiNav(primary: BibleData, secondary: BibleData,
   $('content').innerHTML = html;
   window.scrollTo(0, 0);
 }
+
+

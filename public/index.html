@@ -6,6 +6,7 @@
   <meta name="description" content="A very fast online Bible">
   <title>SANATHEOS</title>
   <link rel="icon" type="image/jpeg" href="./favicon.ico">
+  <link rel="manifest" href="./manifest.json">
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -80,6 +81,7 @@
           <li><strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.</li>
           <li><strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.</li>
           <li><strong>Print</strong> &mdash; Use <kbd>Ctrl+P</kbd> for a clean, print-optimized layout.</li>
+          <li><strong>Install as app</strong> &mdash; Sanatheos is a Progressive Web App. Use your browser&rsquo;s &ldquo;Install&rdquo; or &ldquo;Add to Home Screen&rdquo; option to install it for quick, offline access.</li>
         </ul>
       </section>
       <section>
@@ -142,5 +144,10 @@
   </footer>
 
   <script src="./bundle.js"></script>
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js");
+    }
+  </script>
 </body>
 </html>

@@ -52,7 +52,7 @@ function highlightId(book: string, chapter: number, verse: number): string {
   return `${book}:${chapter}:${verse}`;
 }
 
-export async function getHighlights(): Promise<Highlight[]> {
+async function getHighlights(): Promise<Highlight[]> {
   const db = await open();
   try {
     return await new Promise((resolve, reject) => {

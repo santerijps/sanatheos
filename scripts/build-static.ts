@@ -63,8 +63,19 @@ if (!result.success) {
 }
 console.log("Client bundled.");
 
-// Copy static files (HTML, CSS)
-for (const name of ["index.html", "style.css", "robots.txt", "favicon.ico"]) {
+const staticFiles = [
+  "index.html",
+  "style.css",
+  "robots.txt",
+  "favicon.ico",
+  "manifest.json",
+  "sw.js",
+  "pwaicon-192.png",
+  "pwaicon-512.png",
+];
+
+// Copy static files (HTML, CSS, PWA)
+for (const name of staticFiles) {
   await cp(join(PUBLIC, name), join(OUT, name));
 }
 console.log("Static files copied.");

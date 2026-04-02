@@ -1,5 +1,4 @@
 import { describe, test, expect } from "bun:test";
-import type { AppState } from "../src/client/types.ts";
 import { stateToInputText, toUrl } from "../src/client/state.ts";
 import { bookFromCode, bookToCode } from "../src/client/bookCodes.ts";
 

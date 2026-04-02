@@ -1,6 +1,8 @@
 import { describe, test, expect, beforeEach } from "bun:test";
-import { setLanguage, getLanguage, t } from "../src/client/i18n.ts";
+import { setLanguage, t } from "../src/client/i18n.ts";
 import type { Highlight, HighlightColor } from "../src/client/types.ts";
+import { readFileSync, existsSync } from "node:fs";
+import { join, resolve } from "node:path";
 
 // ---------------------------------------------------------------------------
 // i18n — new feature strings
@@ -288,5 +290,120 @@ describe("Copy segment parsing", () => {
 
   test("single element range", () => {
     expect(parseSegments("7-7")).toEqual([7]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// PWA — manifest, service worker, icons, and build output
+// ---------------------------------------------------------------------------
+
+const ROOT = resolve(import.meta.dir, "..");
+const PUBLIC = join(ROOT, "public");
+
+describe("PWA — manifest.json", () => {
+  const manifest = JSON.parse(readFileSync(join(PUBLIC, "manifest.json"), "utf-8"));
+
+  test("has required fields", () => {
+    expect(manifest.name).toBe("Sanatheos");
+    expect(manifest.start_url).toBe("./index.html");
+    expect(manifest.display).toBe("standalone");
+    expect(manifest.background_color).toBeTruthy();
+    expect(manifest.theme_color).toBeTruthy();
+  });
+
+  test("declares PNG icons at 192 and 512", () => {
+    expect(Array.isArray(manifest.icons)).toBe(true);
+    const sizes = manifest.icons.map((i: { sizes: string }) => i.sizes);
+    expect(sizes).toContain("192x192");
+    expect(sizes).toContain("512x512");
+    for (const icon of manifest.icons) {
+      expect(icon.type).toBe("image/png");
+      expect(icon.src).toMatch(/\.png$/);
+    }
+  });
+
+  test("icon files exist in public/", () => {
+    for (const icon of manifest.icons) {
+      const file = icon.src.replace("./", "");
+      expect(existsSync(join(PUBLIC, file))).toBe(true);
+    }
+  });
+});
+
+describe("PWA — service worker", () => {
+  const sw = readFileSync(join(PUBLIC, "sw.js"), "utf-8");
+
+  test("defines a cache name", () => {
+    expect(sw).toMatch(/const CACHE_NAME\s*=/);
+  });
+
+  test("caches shell assets on install", () => {
+    expect(sw).toContain("cache.addAll(SHELL_ASSETS)");
+  });
+
+  test("cleans old caches on activate", () => {
+    expect(sw).toContain("caches.delete(k)");
+  });
+
+  test("has a fetch handler", () => {
+    expect(sw).toContain('self.addEventListener("fetch"');
+  });
+
+  test("SHELL_ASSETS includes core files", () => {
+    expect(sw).toContain("./style.css");
+    expect(sw).toContain("./bundle.js");
+    expect(sw).toContain("./manifest.json");
+  });
+
+  test("SHELL_ASSETS includes PWA icons", () => {
+    expect(sw).toContain("./pwaicon-192.png");
+    expect(sw).toContain("./pwaicon-512.png");
+  });
+});
+
+describe("PWA — index.html integration", () => {
+  const html = readFileSync(join(PUBLIC, "index.html"), "utf-8");
+
+  test("links to manifest.json", () => {
+    expect(html).toContain('rel="manifest"');
+    expect(html).toContain("manifest.json");
+  });
+
+  test("registers service worker", () => {
+    expect(html).toContain("serviceWorker.register");
+    expect(html).toContain("sw.js");
+  });
+});
+
+describe("PWA — build script copies PWA files", () => {
+  const buildScript = readFileSync(join(ROOT, "scripts", "build-static.ts"), "utf-8");
+
+  test("copies manifest.json", () => {
+    expect(buildScript).toContain("manifest.json");
+  });
+
+  test("copies sw.js", () => {
+    expect(buildScript).toContain("sw.js");
+  });
+
+  test("copies PWA icon PNGs", () => {
+    expect(buildScript).toContain("pwaicon-192.png");
+    expect(buildScript).toContain("pwaicon-512.png");
+  });
+});
+
+describe("i18n — PWA feature in info items", () => {
+  test("EN infoFeaturesItems mentions install/PWA", () => {
+    setLanguage("en");
+    const joined = t().infoFeaturesItems.join(" ").toLowerCase();
+    expect(joined).toContain("install");
+    expect(joined).toContain("progressive web app");
+  });
+
+  test("FI infoFeaturesItems mentions install/PWA", () => {
+    setLanguage("fi");
+    const joined = t().infoFeaturesItems.join(" ").toLowerCase();
+    expect(joined).toContain("asenna");
+    expect(joined).toContain("pwa");
   });
 });

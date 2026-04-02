@@ -64,6 +64,7 @@ interface Strings {
   copyBoth: string;
   highlight: string;
   removeHighlight: string;
+  showMore: string;
 }
 
 const EN: Strings = {
@@ -132,6 +133,7 @@ const EN: Strings = {
     "<strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.",
     "<strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.",
     "<strong>Print</strong> &mdash; Use <kbd>Ctrl+P</kbd> for a clean, print-optimized layout.",
+    "<strong>Install as app</strong> &mdash; Sanatheos is a Progressive Web App. Use your browser\u2019s \u201cInstall\u201d or \u201cAdd to Home Screen\u201d option to install it for quick, offline access.",
   ],
   infoDataTitle: "Data & Storage",
   infoDataText: "Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.",
@@ -140,13 +142,14 @@ const EN: Strings = {
   newTestament: "New Testament",
 
   footerLine1: "All available Bible translations are in the public domain.",
-  footerFavicon: 'Favicon: &ldquo;Jesus Christ from Hagia Sophia&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+  footerFavicon: 'Application icon: &ldquo;Jesus Christ from Hagia Sophia&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Copied!",
   copyVerse: "Copy verse",
   copyBoth: "Copy both",
   highlight: "Highlight",
   removeHighlight: "Remove highlight",
+  showMore: "Show more",
 };
 
 const FI: Strings = {
@@ -215,6 +218,7 @@ const FI: Strings = {
     "<strong>Kopioi</strong> &mdash; Napsauta <strong>&#128203;</strong>-painiketta otsikon vieressä kopioidaksesi näytetyt jakeet. Rinnakkaisnäkymässä molemmat käännökset kopioidaan.",
     "<strong>Pyyhkäisynavigaatio</strong> &mdash; Kosketuslaitteilla pyyhkäise vasemmalle tai oikealle siirtyäksesi lukujen välillä.",
     "<strong>Tulostus</strong> &mdash; Käytä <kbd>Ctrl+P</kbd> saadaksesi siistin tulostusnäkymän.",
+    "<strong>Asenna sovelluksena</strong> &mdash; Sanatheos on progressiivinen verkkosovellus (PWA). Käytä selaimesi \u201cAsenna\u201d- tai \u201cLisää aloitusnäytölle\u201d-toimintoa asentaaksesi sen nopeaa offline-käyttöä varten.",
   ],
   infoDataTitle: "Tiedot ja tallennus",
   infoDataText: "Raamatun teksti haetaan palvelimelta kerran ja tallennetaan selaimeesi <strong>IndexedDB</strong>-tietokantaan nopeaa offline-käyttöä varten. Tietoja ei lähetetä kolmansille osapuolille. Kaikki toimii selaimessasi.",
@@ -230,6 +234,7 @@ const FI: Strings = {
   copyBoth: "Kopioi molemmat",
   highlight: "Korosta",
   removeHighlight: "Poista korostus",
+  showMore: "Näytä lisää",
 };
 
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };
