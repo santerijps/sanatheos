@@ -1,144 +1,132 @@
-# 📖 Sanatheos
+# Sanatheos
 
-A fast, modern web app for reading and searching the Bible — built with TypeScript and Bun. The name comes from *sana* (Finnish: "word") and *theos* (Greek: "God").
+A fast, modern web application for reading and searching the Bible, built with TypeScript and Bun. The name is derived from *sana* (Finnish: "word") and *theos* (Greek: "God").
 
-> Lightweight. Offline-ready. Keyboard-friendly. No sign-up required.
+Lightweight, offline-ready, keyboard-friendly, and requires no sign-up.
 
 ---
 
-## ✨ Features
+## Features
 
-### 🔍 Powerful Search
+### Search
+
 - **Verse lookup** — `John 3:16`, `Genesis 1:1-5`, `Psalm 23`
 - **Chapter ranges** — `Genesis 1-3`, `Romans 5-8`
 - **Comma-separated verses** — `Genesis 1:1-3,5,8-10`
-- **Text search** — `"grace"`, `"in the beginning"` (wrap in double quotes)
-- **Word boundary** — `"^grace"` (starts with), `"grace$"` (ends with), `"^grace$"` (exact word)
-- **Combined search** — `Romans "faith"`, `Daniel "clouds of heaven"`, `Gen 1-3 "light"`
-- **Multi-term** — separate queries with `;` e.g. `John 3:16; Rev 1:1`
-- **Abbreviations** — `gen`, `rev`, `eph`, `1 cor` all work
-- **Auto-closing quotes** — typing `"` inserts a pair and places the cursor inside
-- Results are instant with debounced input and highlighted matching text
-- Word boundary anchors `^` and `$` inside quotes let you match word starts, ends, or exact words
+- **Full-text search** — Wrap a phrase in double quotes: `"grace"`, `"in the beginning"`
+- **Word boundary matching** — Use `^` for word start and `$` for word end inside quotes: `"^grace"`, `"grace$"`, `"^grace$"` (exact word)
+- **Combined search** — Combine a reference with a text filter: `Romans "faith"`, `Gen 1-3 "light"`
+- **Multi-query** — Separate independent queries with `;`, e.g. `John 3:16; Rev 1:1`
+- **Abbreviations** — Common abbreviations work for both English and Finnish: `gen`, `rev`, `eph`, `1 cor`, `joh`, `room`, `2. moos`
+- **Auto-closing quotes** — Typing `"` inserts a matching pair and places the cursor between them
+- Results appear instantly with debounced input and highlighted matching text.
 
-### 📚 Book Index Panel
-- Browse all 66 books in a three-column layout (books → chapters → verses)
-- Chapter previews and verse snippets visible on hover
-- Full keyboard navigation with arrow keys, Tab, and Enter
+### Book Index Panel
 
-### ⌨️ Keyboard Shortcuts
+Browse all 66 books in a three-column layout (books, chapters, verses). Hovering over a chapter shows a text preview; hovering over a book reveals its chapters. Full keyboard navigation is supported with arrow keys, Tab, and Enter.
+
+### Keyboard Shortcuts
+
 | Shortcut | Action |
 |----------|--------|
 | `Ctrl+K` | Focus search input |
 | `Ctrl+I` | Toggle book index panel |
 | `Escape` | Close any open panel |
-| `↑` `↓` | Navigate items in index panel |
-| `←` `→` / `Tab` | Switch columns in index panel |
-| `Enter` | Select item in index panel |
+| Arrow keys | Navigate items in the index panel |
+| `Tab` | Switch columns in the index panel |
+| `Enter` | Select the focused item |
 
-### 🔗 Shareable URLs
-Every search query, book, chapter, verse selection, and **Bible translation** is encoded in the URL. Copy and share a direct link to any passage — the recipient will see it in the same translation you were using, regardless of their own settings.
+### Shareable URLs
 
-### 🌐 Translations & Languages
-- Switch between Bible translations (e.g. **WEB**, **KR38**) in the settings
-- Switching translations **auto-translates book names** in the search input (e.g. "2. Moos" → "Exodus" when switching KR38 → WEB)
-- UI language can be set to **English** or **Finnish**
-- Finnish book names and abbreviations are fully supported (e.g. `2. moos`, `joh`, `room`)
+Every search query, book, chapter, verse selection, and Bible translation is encoded in the URL. Sharing a link preserves the exact passage and translation for the recipient, regardless of their own settings.
 
-### 📴 Works Offline
-Bible data is fetched once and cached in your browser's **IndexedDB**. After the first load, everything works without an internet connection.
+### Translations and Languages
 
-### 🎨 Dark Mode / Theme
-Choose between **Light**, **Dark**, or **System** (auto) theme in Settings. Your preference is saved across sessions.
+Two Bible translations are currently included:
 
-### 📖 Parallel Translation
-Display two Bible translations side by side. Select a secondary translation in Settings — verses render in a two-column layout so you can compare translations at a glance. Works with chapters, verse ranges, and comma-separated verses.
+- **World English Bible (WEB)** — a public-domain modern English translation
+- **Raamattu 1933/1938 (KR38)** — a Finnish Bible translation
 
-### ️ Verse Highlighting
-Click (or long-press) a verse number and choose **Highlight** to color a verse. Five colors available: yellow, green, blue, pink, and orange. Highlights are saved locally and visible across sessions.
+All 66 books of the Old and New Testaments are available in both translations.
 
-### 📋 Copy to Clipboard
-Click the **📋** button next to a section heading to copy the displayed verses to your clipboard. In parallel mode, both translations are included with labels. You can also click a single verse number to copy it.
+The active translation can be changed in Settings. Switching translations automatically updates the UI language to match and translates any book names present in the search input (e.g. "2. Moos" becomes "Exodus" when switching from KR38 to WEB). The UI language can also be set independently to English or Finnish.
 
-### 👆 Swipe Navigation
-On touch devices, swipe left/right to navigate between chapters.
+### Offline Support
 
-### 🖨️ Print-Friendly View
-Use your browser's print function (`Ctrl+P`) to get a clean, print-optimized layout with hidden UI chrome.
+Bible text is fetched once from the server and cached in the browser's IndexedDB. After the initial load, the application works entirely offline.
 
-### ℹ️ Built-in Help
-Click the **ⓘ** button next to the search bar to see a full guide on search syntax, keyboard shortcuts, and how data is stored.
+### Themes
+
+Three theme options are available in Settings: Light, Dark, and System (follows the operating system preference). The choice is persisted across sessions.
+
+### Parallel Translation
+
+A secondary translation can be selected in Settings to display two translations side by side in a two-column layout. This works with full chapters, individual verses, verse ranges, and comma-separated verse selections.
+
+### Verse Highlighting
+
+Click (or long-press on touch devices) a verse number to open a context menu with highlighting options. Five colors are available: yellow, green, blue, pink, and orange. Highlights are stored locally in IndexedDB and persist across sessions.
+
+### Copy to Clipboard
+
+Click the clipboard button next to a section heading to copy all displayed verses as plain text. In parallel mode, both translations are included with labels. Individual verses can also be copied from the verse context menu.
+
+### Chapter Navigation
+
+Previous/next arrows are displayed at the top and bottom of chapters and verses for sequential navigation. On mobile devices, the arrows show abbreviated labels to save space. On touch devices, swiping left or right navigates between chapters.
+
+### Print View
+
+The browser's print function (`Ctrl+P`) produces a clean, print-optimized layout with all UI chrome hidden.
+
+### Built-in Help
+
+The information button next to the search bar opens a guide covering search syntax, available features, keyboard shortcuts, and data storage details.
 
 ---
 
-## 📜 Translations
-
-Currently includes:
-- **World English Bible (WEB)** — a public domain modern English translation
-- **Raamattu 1933/1938 (KR38)** — Finnish Bible translation
-
-All 66 books of the Old and New Testaments.
-
----
-
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
-- [Bun](https://bun.sh/) runtime installed
 
-### Install & Run
+- [Bun](https://bun.sh/) runtime
+
+### Install and Run
+
 ```bash
 bun install
 bun run start
 ```
+
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ### Development (watch mode)
+
 ```bash
 bun run dev
 ```
 
 ### Run Tests
+
 ```bash
 bun test
 ```
 
 ### Build for GitHub Pages
+
 ```bash
 bun run build:static
 ```
-Outputs a ready-to-deploy static site in the `docs/` directory.
+
+Outputs a ready-to-deploy static site in the `docs/` directory. HTML, CSS, and JavaScript are minified during the build.
 
 ---
 
-## 🏗️ Tech Stack
+## Tech Stack
 
-- **Runtime & Server** — [Bun](https://bun.sh/) (HTTP server, bundler, test runner)
-- **Language** — TypeScript (strict, zero `any`)
-- **Client** — Vanilla TypeScript, no frameworks (~8KB minified)
-- **Storage** — IndexedDB for offline Bible caching
-- **Search** — Client-side reference parsing + full-text search
-- **Styling** — Minimal CSS with responsive design
-
----
-
-## 📁 Project Structure
-
-```
-├── src/
-│   ├── server.ts            # Bun HTTP server
-│   └── client/              # Browser-side TypeScript
-│       ├── app.ts           # Main entry point
-│       ├── search.ts        # Search engine & reference parser
-│       ├── render.ts        # DOM rendering
-│       ├── state.ts         # URL state management (incl. translation)
-│       ├── bookNames.ts     # Translation-specific book names & aliases
-│       ├── i18n.ts          # Internationalization (EN/FI)
-│       ├── db.ts            # IndexedDB wrapper
-│       └── types.ts         # Shared interfaces
-├── tests/                   # Unit tests (bun:test)
-├── scripts/                 # Build & utility scripts
-├── translations/            # Bible JSON data files (WEB, KR38)
-├── public/                  # Static assets (HTML, CSS)
-└── docs/                    # GitHub Pages output (generated)
-```
+- **Runtime and Server** — [Bun](https://bun.sh/) (HTTP server, bundler, test runner)
+- **Language** — TypeScript (strict mode)
+- **Client** — Vanilla TypeScript with no framework dependencies
+- **Storage** — IndexedDB for offline Bible data and highlight persistence
+- **Search** — Client-side reference parsing and full-text search
+- **Styling** — Minimal CSS with responsive design and theme support
