@@ -292,6 +292,8 @@ export function renderMultiNav(data: BibleData, refs: NavRef[]) {
     html += `<section class="multi-nav-section">`;
     html += `<h2 class="section-title">${esc(navRefLabel(refs[i]))}</h2>`;
     html += navRefVersesHtml(data, refs[i]);
+    const ch = refs[i].chapterStart ?? 1;
+    html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(refs[i].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
     html += `</section>`;
   }
   $('content').innerHTML = html;
