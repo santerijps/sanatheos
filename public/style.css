@@ -177,6 +177,16 @@ main {
   line-height: 2;
 }
 
+[data-font-size="small"] .verses { font-size: 14px; }
+[data-font-size="large"] .verses { font-size: 20px; }
+[data-font-size="xl"] .verses { font-size: 23px; }
+[data-font-size="xxl"] .verses { font-size: 26px; }
+
+[data-font-size="small"] .single-verse { font-size: 17px; }
+[data-font-size="large"] .single-verse { font-size: 23px; }
+[data-font-size="xl"] .single-verse { font-size: 26px; }
+[data-font-size="xxl"] .single-verse { font-size: 30px; }
+
 .verse sup {
   cursor: pointer;
   font-size: 0.65em;
@@ -542,7 +552,8 @@ mark {
 #translation-select,
 #language-select,
 #theme-select,
-#parallel-select {
+#parallel-select,
+#fontsize-select {
   width: 100%;
   padding: 6px 10px;
   font: 15px var(--sans);

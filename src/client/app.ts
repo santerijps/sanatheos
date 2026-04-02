@@ -92,6 +92,12 @@ async function init() {
   const themeSelect = document.getElementById("theme-select") as HTMLSelectElement | null;
   if (themeSelect) themeSelect.value = savedTheme;
 
+  // Apply font size
+  const savedFontSize = localStorage.getItem("bible-font-size") || "medium";
+  document.documentElement.setAttribute("data-font-size", savedFontSize);
+  const fontSizeSelect = document.getElementById("fontsize-select") as HTMLSelectElement | null;
+  if (fontSizeSelect) fontSizeSelect.value = savedFontSize;
+
   window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
     const theme = localStorage.getItem("bible-theme") || "system";
     if (theme === "system") applyTheme("system");
@@ -242,6 +248,15 @@ async function init() {
       const theme = themeSelect.value;
       applyTheme(theme);
       localStorage.setItem("bible-theme", theme);
+    });
+  }
+
+  // Font size selector
+  if (fontSizeSelect) {
+    fontSizeSelect.addEventListener("change", () => {
+      const size = fontSizeSelect.value;
+      document.documentElement.setAttribute("data-font-size", size);
+      localStorage.setItem("bible-font-size", size);
     });
   }
 
@@ -840,6 +855,16 @@ function updateStaticText() {
   if (themeLabel) themeLabel.textContent = s.themeLabel;
   const parallelLabel = document.getElementById("settings-parallel-label");
   if (parallelLabel) parallelLabel.textContent = s.parallelLabel;
+  const fontSizeLabel = document.getElementById("settings-fontsize-label");
+  if (fontSizeLabel) fontSizeLabel.textContent = s.fontSizeLabel;
+  const fsSelect = document.getElementById("fontsize-select") as HTMLSelectElement | null;
+  if (fsSelect) {
+    const opts = [s.fontSizeSmall, s.fontSizeMedium, s.fontSizeLarge, s.fontSizeXL, s.fontSizeXXL];
+    const vals = ["small", "medium", "large", "xl", "xxl"];
+    for (let i = 0; i < fsSelect.options.length; i++) {
+      if (i < opts.length) fsSelect.options[i].textContent = opts[i];
+    }
+  }
 
   // Info modal
   const infoBody = document.getElementById("info-modal-body");

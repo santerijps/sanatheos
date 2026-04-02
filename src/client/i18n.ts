@@ -26,6 +26,12 @@ interface Strings {
   themeSystem: string;
   parallelLabel: string;
   parallelNone: string;
+  fontSizeLabel: string;
+  fontSizeSmall: string;
+  fontSizeMedium: string;
+  fontSizeLarge: string;
+  fontSizeXL: string;
+  fontSizeXXL: string;
 
   // Info modal
   infoTitle: string;
@@ -81,6 +87,12 @@ const EN: Strings = {
   themeSystem: "System",
   parallelLabel: "Parallel translation",
   parallelNone: "None",
+  fontSizeLabel: "Font size",
+  fontSizeSmall: "Small",
+  fontSizeMedium: "Medium",
+  fontSizeLarge: "Large",
+  fontSizeXL: "Extra large",
+  fontSizeXXL: "Huge",
 
   infoTitle: "Sanatheos",
   infoSearchTitle: "Search Input",
@@ -155,6 +167,12 @@ const FI: Strings = {
   themeSystem: "Järjestelmä",
   parallelLabel: "Rinnakkaiskäännös",
   parallelNone: "Ei mitään",
+  fontSizeLabel: "Fonttikoko",
+  fontSizeSmall: "Pieni",
+  fontSizeMedium: "Normaali",
+  fontSizeLarge: "Suuri",
+  fontSizeXL: "Erittäin suuri",
+  fontSizeXXL: "Valtava",
 
   infoTitle: "Sanatheos",
   infoSearchTitle: "Hakukenttä",
