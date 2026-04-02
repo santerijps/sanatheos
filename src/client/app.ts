@@ -16,7 +16,7 @@ let parallelData: BibleData | null = null;
 let highlightMap = new Map<string, HighlightColor>();
 
 function withT(s: AppState): AppState {
-  return { ...s, translation: currentTranslation };
+  return { ...s, translation: currentTranslation, parallel: parallelTranslation || undefined };
 }
 
 async function fetchTranslation(code: string): Promise<BibleData> {
@@ -198,7 +198,7 @@ async function init() {
   const parallelSelect = document.getElementById("parallel-select") as HTMLSelectElement | null;
   if (parallelSelect && translationSelect) {
     const translations = await fetchTranslations();
-    const savedParallel = localStorage.getItem("bible-parallel") || "";
+    const savedParallel = initialState.parallel || localStorage.getItem("bible-parallel") || "";
     parallelSelect.innerHTML = `<option value="">${t().parallelNone}</option>` + translations.map(tr => {
       const info = TRANSLATION_NAMES[tr];
       const label = info ? `${tr} — ${info.name}` : tr;
@@ -209,6 +209,7 @@ async function init() {
       try {
         parallelTranslation = savedParallel;
         parallelData = await fetchTranslation(savedParallel);
+        localStorage.setItem("bible-parallel", savedParallel);
       } catch { parallelTranslation = ""; parallelData = null; parallelSelect.value = ""; }
     }
 
@@ -231,6 +232,7 @@ async function init() {
       }
       const state = readState();
       applyState(state);
+      replaceState(withT(stateForUrl(state)));
     });
   }
 
@@ -649,6 +651,23 @@ async function init() {
         updateFooter();
       } catch { /* keep current translation */ }
     }
+
+    // Restore parallel translation from URL
+    const urlParallel = s.parallel || "";
+    if (urlParallel !== parallelTranslation) {
+      if (!urlParallel) {
+        parallelTranslation = "";
+        parallelData = null;
+      } else {
+        try {
+          parallelData = await fetchTranslation(urlParallel);
+          parallelTranslation = urlParallel;
+        } catch { parallelTranslation = ""; parallelData = null; }
+      }
+      localStorage.setItem("bible-parallel", parallelTranslation);
+      if (parallelSelect) parallelSelect.value = parallelTranslation;
+    }
+
     searchInput.value = stateToInputText(s);
     applyState(s);
   });

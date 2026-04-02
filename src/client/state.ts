@@ -13,6 +13,7 @@ export function readState(): AppState {
   if (p.has("chapter")) { const n = +p.get("chapter")!; if (Number.isFinite(n)) s.chapter = n; }
   if (p.has("verse"))   { const n = +p.get("verse")!;   if (Number.isFinite(n)) s.verse = n; }
   if (p.has("t")) s.translation = p.get("t")!.toUpperCase();
+  if (p.has("p")) s.parallel = p.get("p")!.toUpperCase();
   return s;
 }
 
@@ -23,6 +24,7 @@ const basePath = typeof window !== "undefined"
 export function toUrl(s: AppState): string {
   const p = new URLSearchParams();
   if (s.translation) p.set("t", s.translation);
+  if (s.parallel) p.set("p", s.parallel);
   if (s.query) p.set("q", s.query);
   if (s.book) p.set("book", bookToCode(s.book) ?? s.book);
   if (s.chapter !== undefined) p.set("chapter", String(s.chapter));

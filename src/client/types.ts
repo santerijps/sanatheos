@@ -19,6 +19,7 @@ export interface AppState {
   verse?: number;
   query?: string;
   translation?: string;
+  parallel?: string;
 }
 
 export type HighlightColor = "yellow" | "green" | "blue" | "pink" | "orange";
