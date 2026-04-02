@@ -431,14 +431,19 @@ async function init() {
       const verse = copyBtn.dataset.copyVerse;
       const segments = copyBtn.dataset.copySegments;
       const useParallel = !!parallelData && !!parallelTranslation;
+      const translationLabel = (code: string) => {
+        const info = TRANSLATION_NAMES[code];
+        return info ? `${code} — ${info.name}` : code;
+      };
       let text = "";
       if (verse) {
         const v = data[book]?.[String(chapter)]?.[verse];
         if (v) {
-          text = `${displayName(book)} ${chapter}:${verse}\n[${currentTranslation}] ${v}`;
+          const title = `${displayName(book)} ${chapter}:${verse}`;
+          text = `${translationLabel(currentTranslation)}\n${title}\n${verse} ${v}`;
           if (useParallel) {
             const v2 = parallelData![book]?.[String(chapter)]?.[verse];
-            if (v2) text += `\n[${parallelTranslation}] ${v2}`;
+            if (v2) text += `\n\n${translationLabel(parallelTranslation)}\n${title}\n${verse} ${v2}`;
           }
         }
       } else if (segments) {
@@ -454,11 +459,12 @@ async function init() {
               verses.push(range[0]);
             }
           }
-          text = `${displayName(book)} ${chapter}:${segments}\n[${currentTranslation}]\n` + verses.filter(n => ch[String(n)]).map(n => `${n} ${ch[String(n)]}`).join("\n");
+          const title = `${displayName(book)} ${chapter}:${segments}`;
+          text = `${translationLabel(currentTranslation)}\n${title}\n` + verses.filter(n => ch[String(n)]).map(n => `${n} ${ch[String(n)]}`).join("\n");
           if (useParallel) {
             const ch2 = parallelData![book]?.[String(chapter)];
             if (ch2) {
-              text += `\n[${parallelTranslation}]\n` + verses.filter(n => ch2[String(n)]).map(n => `${n} ${ch2[String(n)]}`).join("\n");
+              text += `\n\n${translationLabel(parallelTranslation)}\n${title}\n` + verses.filter(n => ch2[String(n)]).map(n => `${n} ${ch2[String(n)]}`).join("\n");
             }
           }
         }
@@ -466,12 +472,13 @@ async function init() {
         const ch = data[book]?.[String(chapter)];
         if (ch) {
           const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
-          text = `${displayName(book)} ${chapter}\n[${currentTranslation}]\n` + nums.map(n => `${n} ${ch[String(n)]}`).join("\n");
+          const title = `${displayName(book)} ${chapter}`;
+          text = `${translationLabel(currentTranslation)}\n${title}\n` + nums.map(n => `${n} ${ch[String(n)]}`).join("\n");
           if (useParallel) {
             const ch2 = parallelData![book]?.[String(chapter)];
             if (ch2) {
               const nums2 = Object.keys(ch2).map(Number).sort((a, b) => a - b);
-              text += `\n[${parallelTranslation}]\n` + nums2.map(n => `${n} ${ch2[String(n)]}`).join("\n");
+              text += `\n\n${translationLabel(parallelTranslation)}\n${title}\n` + nums2.map(n => `${n} ${ch2[String(n)]}`).join("\n");
             }
           }
         }
@@ -539,10 +546,12 @@ async function init() {
       if (action === "copy") {
         const isSecondary = verseEl.dataset.secondary === "1";
         const sourceData = isSecondary && parallelData ? parallelData : data;
-        const sourceLabel = isSecondary ? parallelTranslation : currentTranslation;
+        const sourceCode = isSecondary ? parallelTranslation : currentTranslation;
+        const sourceInfo = TRANSLATION_NAMES[sourceCode];
+        const sourceLabel = sourceInfo ? `${sourceCode} — ${sourceInfo.name}` : sourceCode;
         const text = sourceData[book]?.[String(chapter)]?.[String(verse)];
         if (text) {
-          const full = `${displayName(book)} ${chapter}:${verse} [${sourceLabel}] — ${text}`;
+          const full = `${sourceLabel}\n${displayName(book)} ${chapter}:${verse}\n${verse} ${text}`;
           navigator.clipboard.writeText(full).then(() => showToast(t().copied));
         }
       } else if (action === "highlight") {
