@@ -157,15 +157,27 @@ export function displayNameFor(code: string, book: string): string {
   return TRANSLATIONS[code]?.[book]?.display ?? book;
 }
 
-/** Returns aliases for the current translation: { aliasLower: englishKey } */
+/** Returns aliases for all translations merged (current translation wins on conflicts) */
 export function getAliases(): Map<string, string> {
   const map = new Map<string, string>();
+  // Load all translations first
+  for (const [code, entries] of Object.entries(TRANSLATIONS)) {
+    if (code === currentCode) continue; // skip current, add it last so it wins
+    for (const [key, entry] of Object.entries(entries)) {
+      map.set(entry.display.toLowerCase(), key);
+      for (const a of entry.aliases) {
+        map.set(a.toLowerCase(), key);
+      }
+    }
+  }
+  // Current translation last → its aliases take priority
   const entries = TRANSLATIONS[currentCode];
-  if (!entries) return map;
-  for (const [key, entry] of Object.entries(entries)) {
-    map.set(entry.display.toLowerCase(), key);
-    for (const a of entry.aliases) {
-      map.set(a.toLowerCase(), key);
+  if (entries) {
+    for (const [key, entry] of Object.entries(entries)) {
+      map.set(entry.display.toLowerCase(), key);
+      for (const a of entry.aliases) {
+        map.set(a.toLowerCase(), key);
+      }
     }
   }
   return map;
