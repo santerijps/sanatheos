@@ -1062,3 +1062,66 @@ describe("search — nav-only queries without quotes", () => {
     expect(results.length).toBeGreaterThan(0);
   });
 });
+
+// --- 3-letter short codes ---
+describe("matchBook — 3-letter short codes", () => {
+  test("gen resolves to Genesis", () => {
+    setTranslation("WEB");
+    expect(_matchBook("gen 1")).toEqual({ book: "Genesis", rest: "1" });
+  });
+
+  test("exo resolves to Exodus", () => {
+    setTranslation("WEB");
+    expect(_matchBook("exo 3")).toEqual({ book: "Exodus", rest: "3" });
+  });
+
+  test("mat resolves to Matthew", () => {
+    setTranslation("WEB");
+    expect(_matchBook("mat 5")).toEqual({ book: "Matthew", rest: "5" });
+  });
+
+  test("rev resolves to Revelation", () => {
+    setTranslation("WEB");
+    expect(_matchBook("rev")).toEqual({ book: "Revelation", rest: "" });
+  });
+
+  test("1co resolves to 1 Corinthians", () => {
+    setTranslation("WEB");
+    expect(_matchBook("1co 13")).toEqual({ book: "1 Corinthians", rest: "13" });
+  });
+
+  test("1sa resolves to 1 Samuel", () => {
+    setTranslation("WEB");
+    expect(_matchBook("1sa 3")).toEqual({ book: "1 Samuel", rest: "3" });
+  });
+
+  test("2ki resolves to 2 Kings", () => {
+    setTranslation("WEB");
+    expect(_matchBook("2ki 5")).toEqual({ book: "2 Kings", rest: "5" });
+  });
+
+  test("psa resolves to Psalm", () => {
+    setTranslation("WEB");
+    expect(_matchBook("psa 23")).toEqual({ book: "Psalm", rest: "23" });
+  });
+
+  test("jud resolves to Jude", () => {
+    setTranslation("WEB");
+    expect(_matchBook("jud")).toEqual({ book: "Jude", rest: "" });
+  });
+
+  test("mrk resolves to Mark", () => {
+    setTranslation("WEB");
+    expect(_matchBook("mrk 1")).toEqual({ book: "Mark", rest: "1" });
+  });
+
+  test("phi resolves to Philippians", () => {
+    setTranslation("WEB");
+    expect(_matchBook("phi 4")).toEqual({ book: "Philippians", rest: "4" });
+  });
+
+  test("phm resolves to Philemon", () => {
+    setTranslation("WEB");
+    expect(_matchBook("phm")).toEqual({ book: "Philemon", rest: "" });
+  });
+});
