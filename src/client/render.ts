@@ -113,14 +113,15 @@ function getVerseNav(data: BibleData, book: string, chapter: number, verse: numb
   return { prev, next };
 }
 
-function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null): string {
+function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null, showTranslation = true): string {
   const prevBtn = prev
     ? `<a class="nav-arrow nav-prev" title="${esc(prev.label)}" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&DoubleLeftArrow;</a>`
     : `<span class="nav-arrow nav-prev nav-disabled">&DoubleLeftArrow;</span>`;
   const nextBtn = next
     ? `<a class="nav-arrow nav-next" title="${esc(next.label)}" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&DoubleRightArrow;</a>`
     : `<span class="nav-arrow nav-next nav-disabled"></span>`;
-  return `<nav class="chapter-nav">${prevBtn}<span class="nav-translation">&DoubleRightArrow;</span>${nextBtn}</nav>`;
+  const mid = showTranslation ? `<span class="nav-translation">&DoubleRightArrow;</span>` : "";
+  return `<nav class="chapter-nav">${prevBtn}${mid}${nextBtn}</nav>`;
 }
 
 export function renderChapter(data: BibleData, book: string, chapter: number) {
@@ -136,7 +137,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
     html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
   }
   html += `</div>`;
-  html += navArrowsHtml(prev, next);
+  html += navArrowsHtml(prev, next, false);
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }
@@ -193,7 +194,7 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
     }
     html += `</div></div>`;
   }
-  html += navArrowsHtml(prev, next);
+  html += navArrowsHtml(prev, next, false);
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }
