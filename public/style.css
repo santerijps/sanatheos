@@ -590,7 +590,8 @@ mark {
 .nav-arrow {
   cursor: pointer;
   color: var(--accent);
-  padding: 6px 12px;
+  font-size: 3ch;
+  padding: 0 12px;
   border-radius: 6px;
   transition: background 0.15s, color 0.15s;
   user-select: none;

@@ -115,10 +115,10 @@ function getVerseNav(data: BibleData, book: string, chapter: number, verse: numb
 
 function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null): string {
   const prevBtn = prev
-    ? `<a class="nav-arrow nav-prev" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&laquo; <span class="nav-full">${esc(prev.label)}</span><span class="nav-short">${esc(prev.shortLabel)}</span></a>`
+    ? `<a class="nav-arrow nav-prev" title="${esc(prev.label)}" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&DoubleLeftArrow;</a>`
     : `<span class="nav-arrow nav-prev nav-disabled"></span>`;
   const nextBtn = next
-    ? `<a class="nav-arrow nav-next" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}><span class="nav-full">${esc(next.label)}</span><span class="nav-short">${esc(next.shortLabel)}</span> &raquo;</a>`
+    ? `<a class="nav-arrow nav-next" title="${esc(next.label)}" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&DoubleRightArrow;</a>`
     : `<span class="nav-arrow nav-next nav-disabled"></span>`;
   return `<nav class="chapter-nav">${prevBtn}<span class="nav-translation"></span>${nextBtn}</nav>`;
 }
