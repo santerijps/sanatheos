@@ -382,6 +382,7 @@ export function renderIndex(
     for (const c of chs) {
       const chEl = document.createElement("div");
       chEl.className = "idx-item idx-chapter";
+      chEl.dataset.chapter = String(c);
       chEl.tabIndex = -1;
       const first = data[book][String(c)]?.["1"] || "";
       const preview = first.substring(0, 60).replace(/\n/g, " ");
@@ -468,42 +469,49 @@ export function renderIndex(
     if (key === "ArrowDown" || key === "ArrowUp") {
       e.preventDefault();
       const items = getItems(col);
+      if (!items.length) return;
       let idx = getActiveIndex(col);
-      if (key === "ArrowDown") idx = idx < items.length - 1 ? idx + 1 : 0;
-      else idx = idx > 0 ? idx - 1 : items.length - 1;
-      items[idx]?.focus();
+      if (idx === -1) {
+        idx = 0;
+      } else if (key === "ArrowDown") {
+        if (idx >= items.length - 1) return;
+        idx++;
+      } else {
+        if (idx <= 0) return;
+        idx--;
+      }
+      items[idx].focus();
       // Trigger hover-equivalent behavior
       if (col === booksCol) {
         const book = items[idx]?.dataset.book;
         if (book) showChapters(book);
       } else if (col === chapsCol) {
-        items[idx]?.dispatchEvent(new MouseEvent("mouseenter"));
+        chapsCol.querySelectorAll(".idx-item").forEach(el => el.classList.remove("active"));
+        items[idx].classList.add("active");
+        const chNum = items[idx].dataset.chapter;
+        if (chNum && activeBook) showVerses(activeBook, Number(chNum));
       }
       return;
     }
 
-    if (key === "ArrowRight" || key === "Tab" && !e.shiftKey) {
+    if (key === "ArrowRight" || (key === "Tab" && !e.shiftKey)) {
+      e.preventDefault();
       if (focusedCol < 2 && getItems(cols[focusedCol + 1]).length) {
-        e.preventDefault();
         focusedCol++;
         const active = cols[focusedCol].querySelector(".idx-item.active") as HTMLElement;
         if (active) active.focus();
         else focusItem(cols[focusedCol], 0);
-      } else if (key === "Tab") {
-        e.preventDefault();
       }
       return;
     }
 
-    if (key === "ArrowLeft" || key === "Tab" && e.shiftKey) {
+    if (key === "ArrowLeft" || (key === "Tab" && e.shiftKey)) {
+      e.preventDefault();
       if (focusedCol > 0) {
-        e.preventDefault();
         focusedCol--;
         const active = cols[focusedCol].querySelector(".idx-item.active") as HTMLElement;
         if (active) active.focus();
         else focusItem(cols[focusedCol], 0);
-      } else if (key === "Tab") {
-        e.preventDefault();
       }
       return;
     }
