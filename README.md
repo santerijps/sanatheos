@@ -81,8 +81,6 @@ The browser's print function (`Ctrl+P`) produces a clean, print-optimized layout
 
 The information button next to the search bar opens a guide covering search syntax, available features, keyboard shortcuts, and data storage details.
 
----
-
 ## Getting Started
 
 ### Prerequisites
