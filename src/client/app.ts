@@ -512,7 +512,7 @@ async function init() {
       html += `<span class="color-dot${currentColor === c ? " active" : ""}" data-color="${c}" data-action="highlight"></span>`;
     }
     if (currentColor) {
-      html += `<span class="color-dot" data-action="remove-highlight" style="background: var(--border); position: relative;" title="${t().removeHighlight}">&#10005;</span>`;
+      html += `<span class="color-dot" data-action="remove-highlight" style="background: var(--border);" title="${t().removeHighlight}">&#10005;</span>`;
     }
     html += `</div>`;
 

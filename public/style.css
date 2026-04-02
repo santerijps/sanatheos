@@ -719,6 +719,11 @@ mark {
   border: 2px solid transparent;
   cursor: pointer;
   transition: border-color 0.12s, transform 0.12s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  line-height: 1;
 }
 
 .color-dot:hover {
