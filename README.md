@@ -4,8 +4,6 @@ A fast, modern web application for reading and searching the Bible, built with T
 
 Lightweight, offline-ready, keyboard-friendly, and requires no sign-up.
 
----
-
 ## Features
 
 ### Search
@@ -119,8 +117,6 @@ bun run build:static
 ```
 
 Outputs a ready-to-deploy static site in the `docs/` directory. HTML, CSS, and JavaScript are minified during the build.
-
----
 
 ## Tech Stack
 
