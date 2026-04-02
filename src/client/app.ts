@@ -312,9 +312,20 @@ async function init() {
   // --- Index panel ---
   let indexRendered = false;
 
+  function lockScroll() {
+    const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = scrollbarW + "px";
+    document.body.classList.add("panel-open");
+  }
+
+  function unlockScroll() {
+    document.body.classList.remove("panel-open");
+    document.body.style.paddingRight = "";
+  }
+
   function openIndex() {
     overlay.classList.add("open");
-    document.body.classList.add("panel-open");
+    lockScroll();
     if (!indexRendered) {
       renderIndex(data, {
         onBook(book) { navigate({ book }); },
@@ -333,7 +344,7 @@ async function init() {
 
   function closeIndex() {
     overlay.classList.remove("open");
-    document.body.classList.remove("panel-open");
+    unlockScroll();
   }
 
   function toggleIndex() {
@@ -350,12 +361,12 @@ async function init() {
   // --- Info modal ---
   infoBtn.addEventListener("click", () => {
     infoOverlay.classList.add("open");
-    document.body.classList.add("panel-open");
+    lockScroll();
   });
 
   function closeInfo() {
     infoOverlay.classList.remove("open");
-    document.body.classList.remove("panel-open");
+    unlockScroll();
   }
 
   infoClose.addEventListener("click", closeInfo);
@@ -366,12 +377,12 @@ async function init() {
   // --- Settings modal ---
   settingsBtn.addEventListener("click", () => {
     settingsOverlay.classList.add("open");
-    document.body.classList.add("panel-open");
+    lockScroll();
   });
 
   function closeSettings() {
     settingsOverlay.classList.remove("open");
-    document.body.classList.remove("panel-open");
+    unlockScroll();
   }
 
   settingsClose.addEventListener("click", closeSettings);
@@ -691,6 +702,7 @@ function navigate(s: AppState) {
   searchInput.value = stateToInputText(s);
   document.getElementById("index-overlay")!.classList.remove("open");
   document.body.classList.remove("panel-open");
+  document.body.style.paddingRight = "";
   applyState(s);
   pushState(withT(s));
 }
