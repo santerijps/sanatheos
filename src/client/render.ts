@@ -405,7 +405,20 @@ export function renderIndex(
   }
 
   const books = Object.keys(data);
+  let addedNtLabel = false;
+  const otLabel = document.createElement("div");
+  otLabel.className = "idx-section-label";
+  otLabel.textContent = t().oldTestament;
+  booksCol.appendChild(otLabel);
+
   for (const book of books) {
+    if (book === "Matthew" && !addedNtLabel) {
+      addedNtLabel = true;
+      const ntLabel = document.createElement("div");
+      ntLabel.className = "idx-section-label";
+      ntLabel.textContent = t().newTestament;
+      booksCol.appendChild(ntLabel);
+    }
     const el = document.createElement("div");
     el.className = "idx-item";
     el.dataset.book = book;

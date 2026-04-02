@@ -310,6 +310,16 @@ mark {
 .idx-col::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
 .idx-col::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
+.idx-section-label {
+  padding: 6px 12px;
+  font: 11px var(--sans);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--subtle);
+  user-select: none;
+}
+
 .idx-item {
   padding: 8px 12px;
   border-radius: 6px;
