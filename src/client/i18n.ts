@@ -51,6 +51,7 @@ interface Strings {
   // New features
   copied: string;
   copyVerse: string;
+  copyBoth: string;
   highlight: string;
   removeHighlight: string;
 }
@@ -124,6 +125,7 @@ const EN: Strings = {
 
   copied: "Copied!",
   copyVerse: "Copy verse",
+  copyBoth: "Copy both",
   highlight: "Highlight",
   removeHighlight: "Remove highlight",
 };
@@ -197,6 +199,7 @@ const FI: Strings = {
 
   copied: "Kopioitu!",
   copyVerse: "Kopioi jae",
+  copyBoth: "Kopioi molemmat",
   highlight: "Korosta",
   removeHighlight: "Poista korostus",
 };

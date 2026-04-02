@@ -4,7 +4,7 @@ import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText, toUrl } from "./state.ts";
 import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, renderParallelChapter, renderParallelVerse, renderParallelVerseSegments } from "./render.ts";
-import { setTranslation, displayName } from "./bookNames.ts";
+import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
 let data: BibleData;
@@ -432,59 +432,57 @@ async function init() {
       const chapter = +copyBtn.dataset.copyChapter!;
       const verse = copyBtn.dataset.copyVerse;
       const segments = copyBtn.dataset.copySegments;
-      const useParallel = !!parallelData && !!parallelTranslation;
+      const source = copyBtn.dataset.copySource || "";
       const translationLabel = (code: string) => {
         const info = TRANSLATION_NAMES[code];
         return info ? `${code} — ${info.name}` : code;
       };
-      let text = "";
-      if (verse) {
-        const v = data[book]?.[String(chapter)]?.[verse];
-        if (v) {
-          const title = `${displayName(book)} ${chapter}:${verse}`;
-          text = `${translationLabel(currentTranslation)}\n${title}\n${verse} ${v}`;
-          if (useParallel) {
-            const v2 = parallelData![book]?.[String(chapter)]?.[verse];
-            if (v2) text += `\n\n${translationLabel(parallelTranslation)}\n${title}\n${verse} ${v2}`;
-          }
-        }
-      } else if (segments) {
-        const ch = data[book]?.[String(chapter)];
-        if (ch) {
-          const parts = segments.split(",");
-          const verses: number[] = [];
-          for (const p of parts) {
+
+      const includePrimary = source !== "secondary";
+      const includeSecondary = source !== "primary" && !!parallelData && !!parallelTranslation;
+
+      function buildVerseNums(): number[] {
+        if (segments) {
+          const nums: number[] = [];
+          for (const p of segments.split(",")) {
             const range = p.split("-").map(Number);
-            if (range.length === 2) {
-              for (let v = range[0]; v <= range[1]; v++) verses.push(v);
-            } else {
-              verses.push(range[0]);
-            }
+            if (range.length === 2) for (let v = range[0]; v <= range[1]; v++) nums.push(v);
+            else nums.push(range[0]);
           }
-          const title = `${displayName(book)} ${chapter}:${segments}`;
-          text = `${translationLabel(currentTranslation)}\n${title}\n` + verses.filter(n => ch[String(n)]).map(n => `${n} ${ch[String(n)]}`).join("\n");
-          if (useParallel) {
-            const ch2 = parallelData![book]?.[String(chapter)];
-            if (ch2) {
-              text += `\n\n${translationLabel(parallelTranslation)}\n${title}\n` + verses.filter(n => ch2[String(n)]).map(n => `${n} ${ch2[String(n)]}`).join("\n");
-            }
-          }
+          return nums;
         }
-      } else {
-        const ch = data[book]?.[String(chapter)];
-        if (ch) {
+        return [];
+      }
+
+      function formatSection(sourceData: BibleData, code: string): string {
+        const titleBook = displayNameFor(code, book);
+        if (verse) {
+          const v = sourceData[book]?.[String(chapter)]?.[verse];
+          if (!v) return "";
+          return `${translationLabel(code)}\n${titleBook} ${chapter}:${verse}\n${verse} ${v}`;
+        } else if (segments) {
+          const ch = sourceData[book]?.[String(chapter)];
+          if (!ch) return "";
+          const nums = buildVerseNums();
+          return `${translationLabel(code)}\n${titleBook} ${chapter}:${segments}\n` + nums.filter(n => ch[String(n)]).map(n => `${n} ${ch[String(n)]}`).join("\n");
+        } else {
+          const ch = sourceData[book]?.[String(chapter)];
+          if (!ch) return "";
           const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
-          const title = `${displayName(book)} ${chapter}`;
-          text = `${translationLabel(currentTranslation)}\n${title}\n` + nums.map(n => `${n} ${ch[String(n)]}`).join("\n");
-          if (useParallel) {
-            const ch2 = parallelData![book]?.[String(chapter)];
-            if (ch2) {
-              const nums2 = Object.keys(ch2).map(Number).sort((a, b) => a - b);
-              text += `\n\n${translationLabel(parallelTranslation)}\n${title}\n` + nums2.map(n => `${n} ${ch2[String(n)]}`).join("\n");
-            }
-          }
+          return `${translationLabel(code)}\n${titleBook} ${chapter}\n` + nums.map(n => `${n} ${ch[String(n)]}`).join("\n");
         }
       }
+
+      const parts: string[] = [];
+      if (includePrimary) {
+        const s = formatSection(data, currentTranslation);
+        if (s) parts.push(s);
+      }
+      if (includeSecondary) {
+        const s = formatSection(parallelData!, parallelTranslation);
+        if (s) parts.push(s);
+      }
+      const text = parts.join("\n\n");
       if (text) {
         navigator.clipboard.writeText(text).then(() => showToast(t().copied));
       }

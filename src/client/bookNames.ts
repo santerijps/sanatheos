@@ -153,6 +153,10 @@ export function displayName(book: string): string {
   return TRANSLATIONS[currentCode]?.[book]?.display ?? book;
 }
 
+export function displayNameFor(code: string, book: string): string {
+  return TRANSLATIONS[code]?.[book]?.display ?? book;
+}
+
 /** Returns aliases for the current translation: { aliasLower: englishKey } */
 export function getAliases(): Map<string, string> {
   const map = new Map<string, string>();

@@ -1,6 +1,6 @@
 import type { BibleData, VerseResult, HighlightColor } from "./types.ts";
 import type { NavRef } from "./search.ts";
-import { displayName } from "./bookNames.ts";
+import { displayName, displayNameFor } from "./bookNames.ts";
 import { t } from "./i18n.ts";
 
 const $ = (id: string) => document.getElementById(id)!;
@@ -516,18 +516,22 @@ export function renderParallelChapter(primary: BibleData, secondary: BibleData, 
   const nums = Object.keys(ch1).map(Number).sort((a, b) => a - b);
 
   let html = navArrowsHtml(prev, next);
-  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter}</h2>`;
+  html += `<div class="parallel-copy-both"><button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="both">&#128203; ${esc(t().copyBoth)}</button></div>`;
   html += `<div class="parallel-container">`;
 
   // Primary column
-  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div><div class="verses">`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="primary">&#128203;</button></h2>`;
+  html += `<div class="verses">`;
   for (const n of nums) {
     html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
   }
   html += `</div></div>`;
 
   // Secondary column
-  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses">`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="secondary">&#128203;</button></h2>`;
+  html += `<div class="verses">`;
   if (ch2) {
     for (const n of nums) {
       const text = ch2[String(n)];
@@ -550,14 +554,14 @@ export function renderParallelVerseSegments(primary: BibleData, secondary: Bible
   if (!ch1) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const segLabel = segments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
-  const title = `${displayName(book)} ${chapter}:${segLabel}`;
 
-  let html = `<div class="translation-label"><span class="nav-translation"></span></div>`;
-  html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button></h2>`;
+  let html = `<div class="parallel-copy-both"><button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="both">&#128203; ${esc(t().copyBoth)}</button></div>`;
   html += `<div class="parallel-container">`;
 
   // Primary column
-  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div><div class="verses">`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="primary">&#128203;</button></h2>`;
+  html += `<div class="verses">`;
   for (const seg of segments) {
     for (let v = seg.start; v <= seg.end; v++) {
       const text = ch1[String(v)];
@@ -568,7 +572,9 @@ export function renderParallelVerseSegments(primary: BibleData, secondary: Bible
   html += `</div></div>`;
 
   // Secondary column
-  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses">`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="secondary">&#128203;</button></h2>`;
+  html += `<div class="verses">`;
   if (ch2) {
     for (const seg of segments) {
       for (let v = seg.start; v <= seg.end; v++) {
@@ -595,10 +601,14 @@ export function renderParallelVerse(primary: BibleData, secondary: BibleData, bo
 
   const { prev, next } = getVerseNav(primary, book, chapter, verse);
   let html = navArrowsHtml(prev, next);
-  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button></h2>`;
+  html += `<div class="parallel-copy-both"><button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="both">&#128203; ${esc(t().copyBoth)}</button></div>`;
   html += `<div class="parallel-container">`;
-  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div><div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text1)}</span></div></div>`;
-  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div><div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? fmt(text2) : t().notFound}</span></div></div>`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="primary">&#128203;</button></h2>`;
+  html += `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text1)}</span></div></div>`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="secondary">&#128203;</button></h2>`;
+  html += `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? fmt(text2) : t().notFound}</span></div></div>`;
   html += `</div>`;
   html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   $("content").innerHTML = html;
