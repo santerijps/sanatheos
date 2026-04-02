@@ -3,7 +3,7 @@ import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight } 
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText, toUrl } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, renderParallelChapter, renderParallelVerse, renderParallelVerseSegments } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, renderParallelChapter, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -801,7 +801,11 @@ function applyState(s: AppState) {
       if (navRefs.length === 1) {
         renderNavRef(navRefs[0]);
       } else {
-        renderMultiNav(data, navRefs);
+        if (useParallel) {
+          renderParallelMultiNav(data, parallelData!, navRefs, currentTranslation, parallelTranslation);
+        } else {
+          renderMultiNav(data, navRefs);
+        }
       }
     } else if (/".*?"/.test(s.query)) {
       const results = search(data, s.query);

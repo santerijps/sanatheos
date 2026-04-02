@@ -641,3 +641,135 @@ export function renderParallelVerse(primary: BibleData, secondary: BibleData, bo
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }
+
+function navRefLabelFor(translationCode: string, nav: NavRef): string {
+  const { book, chapterStart, chapterEnd, verseSegments } = nav;
+  const name = displayNameFor(translationCode, book);
+  if (chapterStart !== undefined && chapterEnd !== undefined) {
+    if (verseSegments) {
+      const segLabel = verseSegments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
+      return `${name} ${chapterStart}:${segLabel}`;
+    }
+    if (chapterStart === chapterEnd) return `${name} ${chapterStart}`;
+    return `${name} ${chapterStart}-${chapterEnd}`;
+  }
+  return name;
+}
+
+function parallelNavRefHtml(primary: BibleData, secondary: BibleData, nav: NavRef, primaryLabel: string, secondaryLabel: string): string {
+  const { book, chapterStart, chapterEnd, verseSegments } = nav;
+  const bd1 = primary[book];
+  const bd2 = secondary[book];
+  if (!bd1) return '';
+
+  const pTitle = navRefLabelFor(primaryLabel, nav);
+  const sTitle = navRefLabelFor(secondaryLabel, nav);
+
+  let primaryHtml = '';
+  let secondaryHtml = '';
+
+  if (chapterStart !== undefined && chapterEnd !== undefined) {
+    if (verseSegments) {
+      const ch1 = bd1[String(chapterStart)];
+      const ch2 = bd2?.[String(chapterStart)];
+      primaryHtml += `<div class="verses">`;
+      for (const seg of verseSegments) {
+        for (let v = seg.start; v <= seg.end; v++) {
+          const text = ch1?.[String(v)];
+          if (!text) continue;
+          primaryHtml += `<span class="verse${hlClass(book, chapterStart, v)}" data-book="${esc(book)}" data-chapter="${chapterStart}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
+        }
+      }
+      primaryHtml += `</div>`;
+
+      secondaryHtml += `<div class="verses">`;
+      if (ch2) {
+        for (const seg of verseSegments) {
+          for (let v = seg.start; v <= seg.end; v++) {
+            const text = ch2[String(v)];
+            if (!text) continue;
+            secondaryHtml += `<span class="verse${hlClass(book, chapterStart, v)}" data-book="${esc(book)}" data-chapter="${chapterStart}" data-verse="${v}" data-secondary="1"><sup>${v}</sup>${fmt(text)}</span> `;
+          }
+        }
+      } else {
+        secondaryHtml += `<p class="empty">${t().notFound}</p>`;
+      }
+      secondaryHtml += `</div>`;
+    } else {
+      for (let c = chapterStart; c <= chapterEnd; c++) {
+        const ch1 = bd1[String(c)];
+        const ch2 = bd2?.[String(c)];
+        if (!ch1) continue;
+        const nums = Object.keys(ch1).map(Number).sort((a, b) => a - b);
+        if (chapterStart !== chapterEnd) {
+          primaryHtml += `<h3 class="multi-nav-subheading">${esc(displayNameFor(primaryLabel, book))} ${c}</h3>`;
+          secondaryHtml += `<h3 class="multi-nav-subheading">${esc(displayNameFor(secondaryLabel, book))} ${c}</h3>`;
+        }
+        primaryHtml += `<div class="verses">`;
+        for (const n of nums) {
+          primaryHtml += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
+        }
+        primaryHtml += `</div>`;
+
+        secondaryHtml += `<div class="verses">`;
+        if (ch2) {
+          for (const n of nums) {
+            const text = ch2[String(n)];
+            if (text) secondaryHtml += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
+          }
+        } else {
+          secondaryHtml += `<p class="empty">${t().notFound}</p>`;
+        }
+        secondaryHtml += `</div>`;
+      }
+    }
+  } else {
+    // Whole book → show chapter 1
+    const ch1 = bd1["1"];
+    const ch2 = bd2?.["1"];
+    if (!ch1) return '';
+    const nums = Object.keys(ch1).map(Number).sort((a, b) => a - b);
+    primaryHtml += `<div class="verses">`;
+    for (const n of nums) {
+      primaryHtml += `<span class="verse${hlClass(book, 1, n)}" data-book="${esc(book)}" data-chapter="1" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
+    }
+    primaryHtml += `</div>`;
+
+    secondaryHtml += `<div class="verses">`;
+    if (ch2) {
+      for (const n of nums) {
+        const text = ch2[String(n)];
+        if (text) secondaryHtml += `<span class="verse${hlClass(book, 1, n)}" data-book="${esc(book)}" data-chapter="1" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
+      }
+    } else {
+      secondaryHtml += `<p class="empty">${t().notFound}</p>`;
+    }
+    secondaryHtml += `</div>`;
+  }
+
+  let html = `<div class="parallel-container">`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(pTitle)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="primary">&#128203;</button></h2>`;
+  html += primaryHtml;
+  html += `</div>`;
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
+  html += `<h2 class="section-title">${esc(sTitle)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="secondary">&#128203;</button></h2>`;
+  html += secondaryHtml;
+  html += `</div></div>`;
+
+  return html;
+}
+
+export function renderParallelMultiNav(primary: BibleData, secondary: BibleData, refs: NavRef[], primaryLabel: string, secondaryLabel: string) {
+  let html = '';
+  for (let i = 0; i < refs.length; i++) {
+    if (i > 0) html += `<hr class="multi-nav-divider">`;
+    html += `<section class="multi-nav-section">`;
+    html += parallelNavRefHtml(primary, secondary, refs[i], primaryLabel, secondaryLabel);
+    const ch = refs[i].chapterStart ?? 1;
+    html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(refs[i].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
+    html += `</section>`;
+  }
+  $('content').innerHTML = html;
+  window.scrollTo(0, 0);
+}
