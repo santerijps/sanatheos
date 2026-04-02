@@ -130,6 +130,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
   const { prev, next } = getChapterNav(data, book, chapter);
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
   let html = navArrowsHtml(prev, next);
+  html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
   html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button></h2><div class="verses">`;
   for (const n of nums) {
     html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
@@ -145,7 +146,8 @@ export function renderBook(data: BibleData, book: string) {
   if (!bd) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const chs = Object.keys(bd).map(Number).sort((a, b) => a - b);
-  let html = `<h1 class="book-title">${esc(displayName(book))}</h1>`;
+  let html = `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
+  html += `<h1 class="book-title">${esc(displayName(book))}</h1>`;
   for (const c of chs) {
     const verses = bd[String(c)];
     const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
@@ -165,8 +167,7 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 
   const { prev, next } = getVerseNav(data, book, chapter, verse);
   $("content").innerHTML = `
-    ${navArrowsHtml(prev, next)}
-    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button></h2>
+    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button></h2>
     <div class="verses single-verse">
       <span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}</span>
     </div>
@@ -181,6 +182,7 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
   const { prev } = getChapterNav(data, book, chStart);
   const { next } = getChapterNav(data, book, chEnd);
   let html = navArrowsHtml(prev, next);
+  html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
   for (let c = chStart; c <= chEnd; c++) {
     const ch = bd[String(c)];
     if (!ch) continue;
@@ -204,7 +206,8 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
   const segLabel = segments.map(s => s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`).join(",");
   const title = `${displayName(book)} ${chapter}:${segLabel}`;
 
-  let html = `<div class="translation-label"><span class="nav-translation"></span></div>`;
+  let html = `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
+  html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
   html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button></h2><div class="verses">`;
   for (const seg of segments) {
     for (let v = seg.start; v <= seg.end; v++) {

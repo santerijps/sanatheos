@@ -904,9 +904,14 @@ function updateStaticText() {
 function updateFooter() {
   const info = TRANSLATION_NAMES[currentTranslation];
   const name = info ? info.name : currentTranslation;
-  const label = `${currentTranslation} \u2014 ${name}`;
   for (const el of document.querySelectorAll(".nav-translation")) {
-    el.textContent = label;
+    el.textContent = currentTranslation;
+    (el as HTMLElement).title = `${currentTranslation} \u2014 ${name}`;
+  }
+  for (const el of document.querySelectorAll(".parallel-translation-label")) {
+    const code = el.textContent?.trim() || "";
+    const ti = TRANSLATION_NAMES[code];
+    if (ti) (el as HTMLElement).title = `${code} \u2014 ${ti.name}`;
   }
 }
 

@@ -824,6 +824,10 @@ mark {
   margin-bottom: 12px;
 }
 
+.print-translation-label {
+  display: none;
+}
+
 /* === Copy Button === */
 .copy-btn {
   display: inline-flex;
@@ -868,11 +872,29 @@ mark {
     margin: 0;
   }
 
+  .print-translation-label {
+    display: block;
+    text-align: center;
+    font: 11px var(--sans);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+    color: #666;
+  }
+
   .verse sup {
     color: #666;
   }
 
   .verses {
     line-height: 1.8;
+  }
+
+  .parallel-container {
+    background: #ccc;
+  }
+
+  .parallel-col {
+    background: white;
   }
 }
