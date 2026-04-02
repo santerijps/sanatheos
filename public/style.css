@@ -195,6 +195,7 @@ main {
   color: var(--verse-num);
   margin-right: 2px;
   vertical-align: super;
+  user-select: none;
 }
 
 .single-verse {
