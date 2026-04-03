@@ -1,5 +1,6 @@
 import type { BibleData, VerseResult, HighlightColor } from "./types.ts";
 import type { NavRef } from "./search.ts";
+import { escapeRegex } from "./search.ts";
 import { displayName, displayNameFor } from "./bookNames.ts";
 import { t } from "./i18n.ts";
 
@@ -11,27 +12,28 @@ export function setHighlightMap(m: Map<string, HighlightColor>) {
   highlightMap = m;
 }
 
-function hlClass(book: string, chapter: number, verse: number): string {
+function getHighlightClass(book: string, chapter: number, verse: number): string {
   const color = highlightMap.get(`${book}:${chapter}:${verse}`);
   return color ? ` hl-${color}` : "";
 }
+const hlClass = getHighlightClass;
 
-function esc(s: string): string {
+function escapeHtml(s: string): string {
   const d = document.createElement("div");
   d.textContent = s;
   return d.innerHTML.replace(/"/g, "&quot;");
 }
+const esc = escapeHtml;
 
-function fmt(text: string): string {
+function formatVerseText(text: string): string {
   let open = true;
-  return esc(text)
+  return escapeHtml(text)
     .replace(/\n/g, "<br>")
     .replace(/&quot;/g, () => { const q = open ? "&ldquo;" : "&rdquo;"; open = !open; return q; });
 }
+const fmt = formatVerseText;
 
-function escRegex(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+const escRegex = escapeRegex;
 
 interface NavTarget {
   book: string;

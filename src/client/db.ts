@@ -2,7 +2,7 @@ import type { BibleData, Highlight, HighlightColor } from "./types.ts";
 
 const DB_NAME = "bible-app";
 const DB_VERSION = 2;
-const STORE = "data";
+const DATA_STORE = "data";
 const HIGHLIGHTS_STORE = "highlights";
 
 function open(): Promise<IDBDatabase> {
@@ -10,7 +10,7 @@ function open(): Promise<IDBDatabase> {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
       const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      if (!db.objectStoreNames.contains(DATA_STORE)) db.createObjectStore(DATA_STORE);
       if (!db.objectStoreNames.contains(HIGHLIGHTS_STORE)) db.createObjectStore(HIGHLIGHTS_STORE, { keyPath: "id" });
     };
     req.onsuccess = () => resolve(req.result);
@@ -22,8 +22,8 @@ export async function loadBible(key: string): Promise<BibleData | null> {
   const db = await open();
   try {
     return await new Promise((resolve, reject) => {
-      const tx = db.transaction(STORE, "readonly");
-      const req = tx.objectStore(STORE).get(key);
+      const tx = db.transaction(DATA_STORE, "readonly");
+      const req = tx.objectStore(DATA_STORE).get(key);
       req.onsuccess = () => resolve((req.result as BibleData) ?? null);
       req.onerror = () => reject(req.error);
     });
@@ -36,8 +36,8 @@ export async function saveBible(key: string, data: BibleData): Promise<void> {
   const db = await open();
   try {
     await new Promise<void>((resolve, reject) => {
-      const tx = db.transaction(STORE, "readwrite");
-      tx.objectStore(STORE).put(data, key);
+      const tx = db.transaction(DATA_STORE, "readwrite");
+      tx.objectStore(DATA_STORE).put(data, key);
       tx.oncomplete = () => resolve();
       tx.onerror = () => reject(tx.error);
     });

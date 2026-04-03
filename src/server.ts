@@ -1,49 +1,10 @@
 import { join, resolve, extname } from "node:path";
-import { readdir } from "node:fs/promises";
 
-import type { BibleData } from "./client/types.ts";
+import { loadBible, discoverTranslations } from "./shared/bible-loader.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
 const TRANSLATIONS_DIR = join(ROOT, "translations");
-
-const BOOK_ORDER = [
-  "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
-  "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
-  "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
-  "Ezra", "Nehemiah", "Esther", "Job", "Psalm", "Proverbs",
-  "Ecclesiastes", "Song Of Solomon", "Isaiah", "Jeremiah",
-  "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
-  "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah",
-  "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke",
-  "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians",
-  "Galatians", "Ephesians", "Philippians", "Colossians",
-  "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy",
-  "Titus", "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
-  "1 John", "2 John", "3 John", "Jude", "Revelation",
-];
-
-async function loadBible(code: string): Promise<string> {
-  const booksDir = join(TRANSLATIONS_DIR, code, `${code}_books`);
-  const combined: BibleData = {};
-  const files = await readdir(booksDir);
-  for (const f of files) {
-    if (!f.endsWith(".json")) continue;
-    const data: Record<string, unknown> = await Bun.file(join(booksDir, f)).json();
-    delete data.Info;
-    Object.assign(combined, data);
-  }
-  const ordered: BibleData = {};
-  for (const b of BOOK_ORDER) {
-    if (combined[b]) ordered[b] = combined[b];
-  }
-  return JSON.stringify(ordered);
-}
-
-async function discoverTranslations(): Promise<string[]> {
-  const entries = await readdir(TRANSLATIONS_DIR, { withFileTypes: true });
-  return entries.filter(e => e.isDirectory()).map(e => e.name).sort();
-}
 
 async function buildClient() {
   const result = await Bun.build({
@@ -63,10 +24,10 @@ async function buildClient() {
 await buildClient();
 
 // Pre-load all translations into memory
-const translations = await discoverTranslations();
+const translations = await discoverTranslations(TRANSLATIONS_DIR);
 const bibleCache: Record<string, string> = {};
 for (const t of translations) {
-  bibleCache[t] = await loadBible(t);
+  bibleCache[t] = await loadBible(TRANSLATIONS_DIR, t);
   console.log(`${t} loaded (${(bibleCache[t].length / 1024 / 1024).toFixed(1)} MB)`);
 }
 const translationsJson = JSON.stringify(translations);

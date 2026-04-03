@@ -18,6 +18,8 @@ sanatheos/
 │
 ├── src/
 │   ├── server.ts             # Bun HTTP server (dev mode)
+│   ├── shared/
+│   │   └── bible-loader.ts   # Shared Bible data loading (BOOK_ORDER, loadBible, discoverTranslations)
 │   └── client/
 │       ├── app.ts            # Main entry point — wires everything together
 │       ├── types.ts          # Shared TypeScript interfaces
@@ -217,9 +219,9 @@ All functions write to `$("content").innerHTML`. Functions:
 
 **Search result pagination:** `RESULTS_PAGE_SIZE = 50`. Shows first 50 results immediately, then a "Show more (N)" button that appends the next batch. The total result count is displayed above results.
 
-**Text formatting:** `fmt()` escapes HTML, converts `\n` to `<br>`, and converts straight quotes to curly quotes (alternating left/right). `esc()` is a simple HTML-entity escaper using a temporary DOM element.
+**Text formatting:** `formatVerseText()` (aliased as `fmt()`) escapes HTML, converts `\n` to `<br>`, and converts straight quotes to curly quotes (alternating left/right). `escapeHtml()` (aliased as `esc()`) is a simple HTML-entity escaper using a temporary DOM element. `escapeRegex` is imported from `search.ts` (aliased as `escRegex()`) to avoid duplication.
 
-**Highlight rendering:** `hlClass()` returns ` hl-yellow` (etc.) CSS classes based on the in-memory highlight map. Applied to each `<span class="verse">`.
+**Highlight rendering:** `getHighlightClass()` (aliased as `hlClass()`) returns ` hl-yellow` (etc.) CSS classes based on the in-memory highlight map. Applied to each `<span class="verse">`.
 
 **Index panel keyboard navigation:** Tracks focused column (0=books, 1=chapters, 2=verses). Arrow up/down moves within a column, arrow left/right or Tab switches columns. Enter clicks the focused item. Hover on books shows chapters, hover on chapters shows verse previews.
 
@@ -286,9 +288,16 @@ gen ↔ Genesis, exo ↔ Exodus, ..., jhn ↔ John, ..., rev ↔ Revelation
 
 66 entries covering all books. Numbered books use digit prefixes: `1sa` → 1 Samuel, `2co` → 2 Corinthians.
 
+## Shared Module (shared/bible-loader.ts)
+
+Exports three items used by both `server.ts` and `build-static.ts`:
+- `BOOK_ORDER` — Canonical array of 66 book names (Genesis through Revelation).
+- `loadBible(translationsDir, code)` — Reads per-book JSON files from `translations/CODE/CODE_books/`, strips `Info` keys, orders by `BOOK_ORDER`, returns stringified JSON.
+- `discoverTranslations(translationsDir)` — Lists subdirectories in the translations folder, returning sorted translation codes.
+
 ## Server (server.ts)
 
-Bun HTTP server on port 3000. On startup:
+Bun HTTP server on port 3000. Uses `loadBible` and `discoverTranslations` from the shared module. On startup:
 1. Builds the client bundle (`app.ts` → `public/bundle.js`).
 2. Loads all translations into memory from `translations/` directory.
 3. Serves:
@@ -300,7 +309,7 @@ Bun HTTP server on port 3000. On startup:
 
 ## Build Script (build-static.ts)
 
-Produces the `docs/` directory for GitHub Pages deployment:
+Produces the `docs/` directory for GitHub Pages deployment. Uses `loadBible` and `discoverTranslations` from the shared module.
 1. Cleans and recreates `docs/`.
 2. Bundles `app.ts` → `docs/bundle.js` (minified, browser target).
 3. Copies static files: `index.html`, `style.css`, `robots.txt`, `favicon.ico`, `manifest.json`, `sw.js`, `pwaicon-192.png`, `pwaicon-512.png`.
@@ -575,3 +584,8 @@ All user-facing strings are in `i18n.ts`. The single HTML `index.html` contains 
     - Rename variables, functions, classes, files if applicable to better reflect the intended use purpose.
     - Remove unused imports and other unused code paths if applicable.
     - Rebuild the app
+
+- For every code addition or change
+    - Ensure the names of variables, functions, classes, types, fields, etc. are descriptive and self-documenting.
+    - Ensure complex code logic has additional comments to explain what the code snippet does.
+    - Ensure the code is idiomatic Bun/TypeScript code.

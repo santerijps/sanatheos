@@ -15,7 +15,7 @@ let parallelTranslation = "";
 let parallelData: BibleData | null = null;
 let highlightMap = new Map<string, HighlightColor>();
 
-function withT(s: AppState): AppState {
+function withTranslationParams(s: AppState): AppState {
   return { ...s, translation: currentTranslation, parallel: parallelTranslation || undefined };
 }
 
@@ -175,7 +175,7 @@ async function init() {
 
         searchInput.value = stateToInputText(state);
         applyState(state);
-        replaceState(withT(stateForUrl(state)));
+        replaceState(withTranslationParams(stateForUrl(state)));
         updateFooter();
       } catch {
         content.innerHTML = `<p class="empty">${t().loadTranslationFailed(code)}</p>`;
@@ -238,7 +238,7 @@ async function init() {
       }
       const state = readState();
       applyState(state);
-      replaceState(withT(stateForUrl(state)));
+      replaceState(withTranslationParams(stateForUrl(state)));
     });
   }
 
@@ -266,7 +266,7 @@ async function init() {
   const state = readState();
   searchInput.value = stateToInputText(state);
   applyState(state);
-  replaceState(withT(stateForUrl(state)));
+  replaceState(withTranslationParams(stateForUrl(state)));
   updateFooter();
 
   // --- Search with debounce ---
@@ -278,11 +278,11 @@ async function init() {
       if (!q) {
         const s: AppState = {};
         applyState(s);
-        replaceState(withT(s));
+        replaceState(withTranslationParams(s));
         return;
       }
       applyState({ query: q });
-      replaceState(withT(stateForUrl({ query: q })));
+      replaceState(withTranslationParams(stateForUrl({ query: q })));
     }, 150);
   });
 
@@ -704,7 +704,7 @@ function navigate(s: AppState) {
   document.body.classList.remove("panel-open");
   document.body.style.paddingRight = "";
   applyState(s);
-  pushState(withT(s));
+  pushState(withTranslationParams(s));
 }
 
 function renderNavRef(nav: NavRef) {

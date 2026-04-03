@@ -1,49 +1,12 @@
 import { join, resolve } from "node:path";
-import { readdir, cp, mkdir, rm, readFile, writeFile } from "node:fs/promises";
-import type { BibleData } from "../src/client/types.ts";
+import { cp, mkdir, rm, readFile, writeFile } from "node:fs/promises";
+
+import { loadBible, discoverTranslations } from "../src/shared/bible-loader.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
 const TRANSLATIONS_DIR = join(ROOT, "translations");
 const OUT = join(ROOT, "docs");
-
-const BOOK_ORDER = [
-  "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
-  "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
-  "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
-  "Ezra", "Nehemiah", "Esther", "Job", "Psalm", "Proverbs",
-  "Ecclesiastes", "Song Of Solomon", "Isaiah", "Jeremiah",
-  "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
-  "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah",
-  "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke",
-  "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians",
-  "Galatians", "Ephesians", "Philippians", "Colossians",
-  "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy",
-  "Titus", "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
-  "1 John", "2 John", "3 John", "Jude", "Revelation",
-];
-
-async function loadBible(code: string): Promise<string> {
-  const booksDir = join(TRANSLATIONS_DIR, code, `${code}_books`);
-  const combined: BibleData = {};
-  const files = await readdir(booksDir);
-  for (const f of files) {
-    if (!f.endsWith(".json")) continue;
-    const data: Record<string, unknown> = await Bun.file(join(booksDir, f)).json();
-    delete data.Info;
-    Object.assign(combined, data);
-  }
-  const ordered: BibleData = {};
-  for (const b of BOOK_ORDER) {
-    if (combined[b]) ordered[b] = combined[b];
-  }
-  return JSON.stringify(ordered);
-}
-
-async function discoverTranslations(): Promise<string[]> {
-  const entries = await readdir(TRANSLATIONS_DIR, { withFileTypes: true });
-  return entries.filter(e => e.isDirectory()).map(e => e.name).sort();
-}
 
 // Clean and create output directory
 await rm(OUT, { recursive: true, force: true });
@@ -104,9 +67,9 @@ await writeFile(htmlPath, html, "utf-8");
 console.log("HTML minified.");
 
 // Discover and generate per-translation JSON files
-const translations = await discoverTranslations();
+const translations = await discoverTranslations(TRANSLATIONS_DIR);
 for (const t of translations) {
-  const json = await loadBible(t);
+  const json = await loadBible(TRANSLATIONS_DIR, t);
   // Default (WEB) also written as bible.json for backward compatibility
   if (t === "WEB") {
     await Bun.write(join(OUT, "bible.json"), json);

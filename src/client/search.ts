@@ -122,7 +122,7 @@ interface VerseSegment {
   end: number;
 }
 
-interface Ref {
+interface ParsedRef {
   book: string;
   chapterStart?: number;
   chapterEnd?: number;
@@ -147,7 +147,7 @@ function parseVerseSegments(s: string): VerseSegment[] | null {
   return segs.length ? segs : null;
 }
 
-function parseRef(term: string): Ref | null {
+function parseRef(term: string): ParsedRef | null {
   const t = term.trim();
   if (!t) return null;
   const bm = matchBook(t);
@@ -207,7 +207,7 @@ export function tryParseNav(query: string): NavRef[] | null {
   return refs;
 }
 
-function escRegex(s: string): string {
+function escapeRegex(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
@@ -223,7 +223,7 @@ function buildTextMatcher(filter: string): (text: string) => boolean {
     return (text) => text.toLowerCase().includes(lower);
   }
 
-  const pattern = (hasStart ? "\\b" : "") + escRegex(core) + (hasEnd ? "\\b" : "");
+  const pattern = (hasStart ? "\\b" : "") + escapeRegex(core) + (hasEnd ? "\\b" : "");
   const re = new RegExp(pattern, "i");
   return (text) => re.test(text);
 }
@@ -313,4 +313,4 @@ export function parseQueryBooks(query: string): ParsedQueryTerm[] {
 }
 
 // Exported for testing
-export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher, levenshtein as _levenshtein, normalizeQuery as _normalizeQuery };
+export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher, levenshtein as _levenshtein, normalizeQuery as _normalizeQuery, escapeRegex };
