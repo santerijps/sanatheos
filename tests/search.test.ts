@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
-import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein } from "../src/client/search.ts";
+import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein, _normalizeQuery } from "../src/client/search.ts";
 import { setTranslation } from "../src/client/bookNames.ts";
 
 // Minimal fixture data
@@ -1185,5 +1185,149 @@ describe("matchBook — fuzzy matching", () => {
   test("short typo prefix (< 3 chars) does not fuzzy match", () => {
     // 'zz' — too short for fuzzy, should return null
     expect(_matchBook("zz")).toBeNull();
+  });
+});
+
+// --- normalizeQuery ---
+describe("normalizeQuery", () => {
+  test("replaces en-dash with hyphen", () => {
+    expect(_normalizeQuery("Matt 27:1\u201338")).toBe("Matt 27:1-38");
+  });
+
+  test("replaces em-dash with hyphen", () => {
+    expect(_normalizeQuery("Matt 27:1\u201438")).toBe("Matt 27:1-38");
+  });
+
+  test("converts comma-separated book references to semicolons", () => {
+    expect(_normalizeQuery("Matt 1:1, John 3:16")).toBe("Matt 1:1; John 3:16");
+  });
+
+  test("converts comma-separated numbered book references", () => {
+    expect(_normalizeQuery("Gen 1:1, 2 Cor 1:1")).toBe("Gen 1:1; 2 Cor 1:1");
+  });
+
+  test("does not convert verse-segment commas (no spaces)", () => {
+    expect(_normalizeQuery("Gen 1:1,3,5")).toBe("Gen 1:1,3,5");
+  });
+
+  test("does not convert comma + space + digit (verse segments)", () => {
+    expect(_normalizeQuery("Gen 1:1-3, 5, 8-10")).toBe("Gen 1:1-3, 5, 8-10");
+  });
+
+  test("handles the full non-standard example", () => {
+    const input = "Matt. 27:1\u201338, Luuk. 23:39\u201343, Matt. 27:39\u201354, Joh. 19:31\u201337, Matt. 27:55\u201361";
+    const expected = "Matt. 27:1-38; Luuk. 23:39-43; Matt. 27:39-54; Joh. 19:31-37; Matt. 27:55-61";
+    expect(_normalizeQuery(input)).toBe(expected);
+  });
+
+  test("passes through standard semicolon-separated queries", () => {
+    expect(_normalizeQuery("Gen 1:1; John 3:16")).toBe("Gen 1:1; John 3:16");
+  });
+
+  test("handles numbered-book with period prefix after comma", () => {
+    expect(_normalizeQuery("Gen 1:1, 1. Moos 2:1")).toBe("Gen 1:1; 1. Moos 2:1");
+  });
+});
+
+// --- matchBook with abbreviation periods ---
+describe("matchBook with periods", () => {
+  test("Matt. matches Matthew", () => {
+    setTranslation("WEB");
+    const result = _matchBook("Matt. 27:1");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("Matthew");
+    expect(result!.rest).toBe("27:1");
+  });
+
+  test("Joh. matches John", () => {
+    setTranslation("WEB");
+    const result = _matchBook("Joh. 3:16");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("John");
+    expect(result!.rest).toBe("3:16");
+  });
+
+  test("Luuk. matches Luke via Finnish alias", () => {
+    setTranslation("KR38");
+    const result = _matchBook("Luuk. 23:39");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("Luke");
+    expect(result!.rest).toBe("23:39");
+    setTranslation("WEB");
+  });
+
+  test("Gen. matches Genesis", () => {
+    setTranslation("WEB");
+    const result = _matchBook("Gen. 1:1");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("Genesis");
+    expect(result!.rest).toBe("1:1");
+  });
+
+  test("book name with period and no rest", () => {
+    setTranslation("WEB");
+    const result = _matchBook("Rev.");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("Revelation");
+    expect(result!.rest).toBe("");
+  });
+
+  test("ap. t. matches Acts via normalized alias", () => {
+    setTranslation("KR38");
+    const result = _matchBook("ap. t.");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("Acts");
+    setTranslation("WEB");
+  });
+});
+
+// --- Full integration: non-standard search syntax ---
+describe("non-standard search syntax", () => {
+  test("tryParseNav with en-dashes and comma separation", () => {
+    setTranslation("WEB");
+    const result = tryParseNav("Matt. 27:1\u201338, Joh. 19:31\u201337");
+    expect(result).not.toBeNull();
+    expect(result).toHaveLength(2);
+    expect(result![0].book).toBe("Matthew");
+    expect(result![0].chapterStart).toBe(27);
+    expect(result![0].verseSegments).toEqual([{ start: 1, end: 38 }]);
+    expect(result![1].book).toBe("John");
+    expect(result![1].chapterStart).toBe(19);
+    expect(result![1].verseSegments).toEqual([{ start: 31, end: 37 }]);
+  });
+
+  test("search with the full non-standard example against fixture", () => {
+    setTranslation("WEB");
+    const results = search(fixture, "Gen. 1:1\u20133, Joh. 3:16\u201317");
+    expect(results.length).toBe(5); // Gen 1:1-3 + John 3:16-17
+    expect(results[0].book).toBe("Genesis");
+    expect(results[3].book).toBe("John");
+  });
+
+  test("parseQueryBooks with non-standard input", () => {
+    setTranslation("KR38");
+    const result = parseQueryBooks("Matt. 27:1\u201338, Luuk. 23:39\u201343");
+    expect(result).toHaveLength(2);
+    expect(result[0].book).toBe("Matthew");
+    expect(result[0].rest).toBe("27:1-38");
+    expect(result[1].book).toBe("Luke");
+    expect(result[1].rest).toBe("23:39-43");
+    setTranslation("WEB");
+  });
+
+  test("en-dash in chapter range", () => {
+    const result = tryParseNav("Genesis 1\u20133");
+    expect(result).not.toBeNull();
+    expect(result![0].chapterStart).toBe(1);
+    expect(result![0].chapterEnd).toBe(3);
+  });
+
+  test("does not break standard verse segments with commas", () => {
+    const result = tryParseNav("Genesis 1:1-3,5");
+    expect(result).not.toBeNull();
+    expect(result![0].verseSegments).toEqual([
+      { start: 1, end: 3 },
+      { start: 5, end: 5 },
+    ]);
   });
 });

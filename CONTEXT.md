@@ -151,6 +151,8 @@ The `init()` function runs on page load and orchestrates everything:
 
 **State flow:** User input → `applyState()` → rendering function → `replaceState()`/`pushState()` → URL updated. On `popstate`, the reverse: URL → `readState()` → `applyState()`.
 
+**`applyState()` dispatch:** If the query parses as pure navigation references (via `tryParseNav`) and all books exist in data, it navigates directly. Otherwise it calls `search()` and renders results — this handles both quoted text searches and unquoted reference-style queries that `tryParseNav` rejected.
+
 **Translation metadata** is hardcoded in `TRANSLATION_NAMES` and `TRANSLATION_LANG` constants:
 - `WEB` → English, `KR38` → Finnish (Suomi)
 
@@ -158,16 +160,22 @@ The `init()` function runs on page load and orchestrates everything:
 
 Operates entirely client-side on an in-memory flat array of `SearchEntry` objects (book, chapter, verse, text, lowercased text) built by `initSearch()`.
 
-**Query parsing:** Semicolon-separated terms. Each term can be:
+**Query parsing:** Semicolon-separated terms (after normalization). Each term can be:
 - A book reference (with optional chapter, chapter range, verse, verse segments)
 - A quoted text filter (`"grace"`)
 - A combined reference + text filter (`Romans "faith"`)
 
+**Query normalization (`normalizeQuery`):** Applied before splitting on semicolons in `search()`, `tryParseNav()`, and `parseQueryBooks()`:
+- Replaces en-dash (`\u2013`) and em-dash (`\u2014`) with regular hyphens.
+- Converts comma-separated book references to semicolons: `, ` followed by a letter or numbered-book start (e.g., `Matt. 27:1-38, Luuk. 23:39-43` → `Matt. 27:1-38; Luuk. 23:39-43`). Verse-segment commas (`, 5`, `, 10-15`) are left intact because they are followed by bare digits.
+
 **Book matching pipeline (`matchBook`):**
-1. Exact full-name match on English keys (longest-first to prefer "1 John" over "John").
-2. Exact/starts-with match on translation aliases (Finnish display names, abbreviations).
-3. Prefix/abbreviation match on English keys and aliases.
-4. Fuzzy match via Levenshtein distance (threshold: ≤1 edit for names ≤5 chars, ≤2 edits otherwise, minimum 3 chars).
+1. Strip abbreviation periods from input (e.g., `Matt.` → `Matt`, `Joh.` → `Joh`). Periods after digits like `1.` are preserved.
+2. Exact full-name match on English keys (longest-first to prefer "1 John" over "John").
+3. Exact/starts-with match on translation aliases (Finnish display names, abbreviations).
+4. Normalized alias match — aliases with periods are compared after stripping periods (e.g., `ap. t.` → `ap t`).
+5. Prefix/abbreviation match on English keys and aliases.
+6. Fuzzy match via Levenshtein distance (threshold: ≤1 edit for names ≤5 chars, ≤2 edits otherwise, minimum 3 chars).
 
 **Reference parsing (`parseRef`):**
 - Strips trailing incomplete operators (`-`, `,`, `:`) for progressive typing support.
@@ -413,6 +421,12 @@ The search input in the sticky header accepts multiple query formats. Input is d
 - `Romans "faith"` → scoped text search within Romans
 - `Gen 1-3 "light"` → scoped text search within chapter range
 
+**Non-standard syntax support:** The search input accepts common non-standard conventions:
+- En-dashes and em-dashes (`–`, `—`) as verse/chapter range separators (normalized to hyphens)
+- Periods after book abbreviations (`Matt.`, `Joh.`, `Luuk.`, `Gen.`, `Rev.`)
+- Comma-separated multi-book references (`Matt. 27:1–38, Luuk. 23:39–43, Joh. 19:31–37`)
+- These are normalized before parsing via `normalizeQuery()` and period stripping in `matchBook()`.
+
 **Auto-closing quotes:** Typing `"` inserts `""` and places cursor between them. Typing `"` when cursor is before an existing `"` skips over it.
 
 **Fuzzy matching:** Typos in book names are corrected via Levenshtein distance. `"genisis"` → Genesis, `"revelaton"` → Revelation.
@@ -510,14 +524,16 @@ All user-facing strings are in `i18n.ts`. The single HTML `index.html` contains 
 
 ## Testing
 
-247 tests across 3 files using `bun test`.
+267 tests across 3 files using `bun test`.
 
-**search.test.ts (~170 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
+**search.test.ts (~202 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
 - `parseVerseSegments` — single, range, comma-separated, edge cases, invalid inputs
-- `matchBook` — exact, case-insensitive, numbered books, prefix, fuzzy (Levenshtein), 3-letter codes, Finnish aliases
+- `matchBook` — exact, case-insensitive, numbered books, prefix, fuzzy (Levenshtein), 3-letter codes, Finnish aliases, abbreviation periods
 - `parseRef` — book only, chapters, verse ranges, segments, trailing operators, edge cases
 - `search` — reference queries, text queries, combined, multi-term, abbreviations, word boundary anchors, edge cases, deduplication
 - `tryParseNav` — navigation parsing, multi-term, rejection of text searches
+- `normalizeQuery` — en-dash/em-dash replacement, comma-to-semicolon conversion, edge cases
+- Non-standard syntax — full integration tests with en-dashes, periods, comma separation
 - `buildTextMatcher` — plain text, `^`/`$` anchors, regex escaping
 - `parseQueryBooks` — term extraction, alias resolution
 - `levenshtein` — distance calculations
@@ -556,5 +572,6 @@ All user-facing strings are in `i18n.ts`. The single HTML `index.html` contains 
     - Add new or update existing test cases if applicable and verify all the tests pass.
     - Add new or update existing documentation if applicable, including the project README, app usage, info help etc.
     - Add new or update existing entries in CONTEXT.md if applicable
-    - Remove unused imports and other unused code paths.
+    - Rename variables, functions, classes, files if applicable to better reflect the intended use purpose.
+    - Remove unused imports and other unused code paths if applicable.
     - Rebuild the app

@@ -40,8 +40,20 @@ function levenshtein(a: string, b: string): number {
   return dp[n];
 }
 
+function normalizeQuery(query: string): string {
+  // Replace en-dash (\u2013) and em-dash (\u2014) with hyphen
+  let q = query.replace(/[\u2013\u2014]/g, "-");
+  // Convert commas separating book references into semicolons.
+  // Matches comma + space + (letter | numbered-book start like "2 Cor").
+  // Does NOT match verse-segment commas like "1:1,3,5" (comma + digit).
+  q = q.replace(/,\s+(?=[A-Za-zÄÖÅäöå]|\d\.?\s+[A-Za-zÄÖÅäöå])/g, "; ");
+  return q;
+}
+
 function matchBook(q: string): { book: string; rest: string } | null {
-  const ql = q.toLowerCase();
+  // Strip abbreviation periods (e.g., "Matt." → "Matt", "Joh." → "Joh")
+  const nq = q.replace(/([a-zA-ZÄÖÅäöå])\./g, "$1");
+  const ql = nq.toLowerCase();
   // Sort longest-first so "1 John" matches before "John"
   const sorted = [...bookNames].sort((a, b) => b.length - a.length);
 
@@ -49,7 +61,7 @@ function matchBook(q: string): { book: string; rest: string } | null {
   for (const book of sorted) {
     const bl = book.toLowerCase();
     if (ql === bl) return { book, rest: "" };
-    if (ql.startsWith(bl + " ")) return { book, rest: q.slice(book.length + 1).trim() };
+    if (ql.startsWith(bl + " ")) return { book, rest: nq.slice(book.length + 1).trim() };
   }
 
   // Exact/starts-with match on translation aliases (Finnish display names + abbreviations)
@@ -57,11 +69,20 @@ function matchBook(q: string): { book: string; rest: string } | null {
   const sortedAliases = [...aliases.entries()].sort((a, b) => b[0].length - a[0].length);
   for (const [alias, key] of sortedAliases) {
     if (ql === alias) return { book: key, rest: "" };
-    if (ql.startsWith(alias + " ")) return { book: key, rest: q.slice(alias.length + 1).trim() };
+    if (ql.startsWith(alias + " ")) return { book: key, rest: nq.slice(alias.length + 1).trim() };
+  }
+
+  // Try normalized aliases (strip periods: "ap. t." → "ap t")
+  for (const [alias, key] of sortedAliases) {
+    const na = alias.replace(/([a-zäöå])\./g, "$1");
+    if (na === alias) continue;
+    if (ql === na) return { book: key, rest: "" };
+    if (ql.startsWith(na + " ")) return { book: key, rest: nq.slice(na.length + 1).trim() };
   }
 
   // Prefix / abbreviation match
   // Extract the name portion: optional leading digit (with optional period) + letters
+  // (periods already stripped from ql, so "Matt." becomes "Matt")
   const m = ql.match(/^(\d\.?\s+)?([a-zäöå\s]+?)(?:\s+(\d.*))?$/);
   if (!m) return null;
   const prefix = ((m[1] || "") + m[2]).trim();
@@ -170,7 +191,7 @@ export interface NavRef {
  * Returns an array of NavRef for navigation, or null if any term is a search query.
  */
 export function tryParseNav(query: string): NavRef[] | null {
-  const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
+  const terms = normalizeQuery(query).split(/;/).map(t => t.trim()).filter(Boolean);
   if (!terms.length) return null;
 
   const refs: NavRef[] = [];
@@ -208,7 +229,7 @@ function buildTextMatcher(filter: string): (text: string) => boolean {
 }
 
 export function search(data: BibleData, query: string): VerseResult[] {
-  const terms = query.split(/;/).map(t => t.trim()).filter(Boolean);
+  const terms = normalizeQuery(query).split(/;/).map(t => t.trim()).filter(Boolean);
   const results: VerseResult[] = [];
   const seen = new Set<string>();
 
@@ -280,7 +301,7 @@ interface ParsedQueryTerm {
  * Call this while the current translation is still active so aliases resolve correctly.
  */
 export function parseQueryBooks(query: string): ParsedQueryTerm[] {
-  return query.split(/;/).map(t => t.trim()).filter(Boolean).map(term => {
+  return normalizeQuery(query).split(/;/).map(t => t.trim()).filter(Boolean).map(term => {
     const qm = term.match(/"(.*?)"/);
     const quoted = qm ? qm[0] : "";
     const refPart = qm ? term.replace(/"(.*?)"/, "").trim() : term;
@@ -292,4 +313,4 @@ export function parseQueryBooks(query: string): ParsedQueryTerm[] {
 }
 
 // Exported for testing
-export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher, levenshtein as _levenshtein };
+export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher, levenshtein as _levenshtein, normalizeQuery as _normalizeQuery };

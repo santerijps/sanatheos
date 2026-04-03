@@ -807,11 +807,9 @@ function applyState(s: AppState) {
           renderMultiNav(data, navRefs);
         }
       }
-    } else if (/".*?"/.test(s.query)) {
+    } else {
       const results = search(data, s.query);
       renderResults(results, s.query);
-    } else {
-      renderResults([], s.query);
     }
   } else if (s.book && s.chapter && s.verse) {
     if (useParallel) {
