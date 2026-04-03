@@ -4,6 +4,7 @@
 :root {
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --serif: Georgia, "Times New Roman", Times, serif;
+  --mono: monospace;
   --bg: #fafafa;
   --surface: #ffffff;
   --text: #1a1a1a;
@@ -60,9 +61,9 @@ body.panel-open {
 /* === Title bar === */
 #title-bar {
   text-align: center;
-  font: 700 18px/1 var(--sans);
+  font: 700 18px/1 var(--mono);
   letter-spacing: 1ch;
-  padding: 12px 20px;
+  padding: 12px 20px 0;
   color: var(--text);
   background: var(--surface);
 }
