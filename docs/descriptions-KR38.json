@@ -1,0 +1,5154 @@
+[
+  {
+    "name": "Genesis",
+    "description": "Tämä kirja on saanut nimensä siitä, että se käsittelee syntyä, eli maailman luomista ja alkua. Heprealaiset kutsuvat sitä nimellä Beresith, kirjan ensimmäisen sanan mukaan. Se ei sisällä ainoastaan maailman luomisen historiaa, vaan myös kertomuksen sen vaiheista 2369 vuoden ajalta, eli Joosefin kuolemaan saakka.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Jumala luo taivaan ja maan ja kaiken, mitä niissä on, kuudessa päivässä."
+      },
+      {
+        "number": 2,
+        "description": "Jumala lepää seitsemäntenä päivänä ja siunaa sen. Maallinen paratiisi, johon Jumala asettaa ihmisen. Hän kieltää häntä syömästä tiedon puusta. Ja muovaa naisen hänen kylkiluustaan."
+      },
+      {
+        "number": 3,
+        "description": "Käärmeen viekkaus. Ensimmäisten vanhempiemme lankeemus. Heidän rangaistuksensa. Lupaus Lunastajasta."
+      },
+      {
+        "number": 4,
+        "description": "Kainin ja Abelin historia."
+      },
+      {
+        "number": 5,
+        "description": "Patriarkkojen sukuluettelo, ikä ja kuolema Aadamista Nooaan. Henokin taivaaseenotto."
+      },
+      {
+        "number": 6,
+        "description": "Ihmisen synti on vedenpaisumuksen syy. Nooa saa käskyn rakentaa arkin."
+      },
+      {
+        "number": 7,
+        "description": "Nooa perheineen menee arkkiin. Vedenpaisumus peittää maan."
+      },
+      {
+        "number": 8,
+        "description": "Vedenpaisumus lakkaa. Nooa lähtee arkista ja uhraa uhrin. Jumalan liitto hänen kanssaan."
+      },
+      {
+        "number": 9,
+        "description": "Jumala siunaa Nooan: kieltää veren ja lupaa, ettei koskaan enää tuhoa maailmaa vedellä. Seemin ja Jaafetin siunaus."
+      },
+      {
+        "number": 10,
+        "description": "Nooan lasten sukuluettelo, joiden kautta maailma asutettiin vedenpaisumuksen jälkeen."
+      },
+      {
+        "number": 11,
+        "description": "Baabelin torni. Kielten sekoitus. Seemin sukuluettelo Abramiin saakka."
+      },
+      {
+        "number": 12,
+        "description": "Abramin kutsumus ja hänelle annettu lupaus. Hän oleskelee Kanaaninmaassa ja menee sitten nälänhädän vuoksi Egyptiin."
+      },
+      {
+        "number": 13,
+        "description": "Abram ja Loot eroavat toisistaan. Jumalan lupaus Abramille."
+      },
+      {
+        "number": 14,
+        "description": "Neljän kuninkaan sotaretki; Abramin voitto; Melkisedek siunaa hänet."
+      },
+      {
+        "number": 15,
+        "description": "Jumala lupaa Abramille jälkeläisiä. Hänen uskonsa, uhrinsa ja näkynsä."
+      },
+      {
+        "number": 16,
+        "description": "Abram nai Hagarin, joka synnyttää Ismaelin."
+      },
+      {
+        "number": 17,
+        "description": "Ympärileikkauksen liitto."
+      },
+      {
+        "number": 18,
+        "description": "Aabraham kestitsee enkeleitä. He ennustavat Iisakin syntymän. Aabrahamin rukous Sodoman miesten puolesta."
+      },
+      {
+        "number": 19,
+        "description": "Loot, joka kestitsee enkeleitä kodissaan, pelastetaan Sodomasta, joka tuhotaan: hänen vaimonsa muuttuu suolapatsaaksi katsottuaan taakseen."
+      },
+      {
+        "number": 20,
+        "description": "Aabraham oleskelee Gerarissa: Saara viedään kuningas Abimelekin taloon, mutta Jumalan käskystä palautetaan koskemattomana."
+      },
+      {
+        "number": 21,
+        "description": "Iisak syntyy. Hagar ja Ismael karkotetaan."
+      },
+      {
+        "number": 22,
+        "description": "Aabrahamin usko ja kuuliaisuus koetellaan hänen valmiudessaan uhrata poikansa Iisak. Enkeli estää häntä. Aiemmat lupaukset uudistetaan hänelle. Hänen veljensä Nahorin jälkeläiset."
+      },
+      {
+        "number": 23,
+        "description": "Saaran kuolema ja hautaus Efronilta ostettuun peltoon."
+      },
+      {
+        "number": 24,
+        "description": "Aabrahamin palvelija, hänen lähettämänään Mesopotamiaan, tuo sieltä Rebekan, joka naitetaan Iisakille."
+      },
+      {
+        "number": 25,
+        "description": "Aabrahamin lapset Keturasta; hänen kuolemansa ja Ismaelin kuolema. Iisakille syntyy kaksoset Esau ja Jaakob. Esau myy esikoisoikeutensa Jaakobille."
+      },
+      {
+        "number": 26,
+        "description": "Iisak oleskelee Gerarissa, missä Jumala uudistaa hänelle Aabrahamille annetun lupauksen. Kuningas Abimelek tekee liiton hänen kanssaan."
+      },
+      {
+        "number": 27,
+        "description": "Jaakob saa äitinsä neuvosta isänsä siunauksen Esaun sijasta. Äitinsä neuvosta hän pakenee enoonsa Laabanin luo."
+      },
+      {
+        "number": 28,
+        "description": "Jaakobin matka Mesopotamiaan: hänen näkynsä ja lupauksensa."
+      },
+      {
+        "number": 29,
+        "description": "Jaakob palvelee Laabania seitsemän vuotta Raakelin tähden, mutta häntä petetään Lealla: hän nai myöhemmin Raakelin. Lea synnyttää hänelle neljä poikaa."
+      },
+      {
+        "number": 30,
+        "description": "Raakel, joka on hedelmätön, antaa orjattarensa Jaakobille; tämä synnyttää kaksi poikaa. Lea, joka lakkaa synnyttämästä, antaa myös orjattarensa, ja tämä synnyttää kaksi poikaa lisää. Sitten Lea synnyttää vielä kaksi poikaa ja yhden tyttären. Raakel synnyttää Joosefin. Jaakob, haluten palata kotiin, palkataan jäämään tietyllä osuudella lauman kasvusta, jolla hän rikastuu suuresti."
+      },
+      {
+        "number": 31,
+        "description": "Jaakobin lähtö: Laaban ajaa häntä takaa ja saavuttaa hänet. He tekevät liiton."
+      },
+      {
+        "number": 32,
+        "description": "Jaakobin enkelinäky; hänen viestinsä ja lahjansa Esaulle; hänen painimisensa enkelin kanssa."
+      },
+      {
+        "number": 33,
+        "description": "Jaakob ja Esau kohtaavat: Jaakob menee Salemiin, missä hän pystyttää alttarin."
+      },
+      {
+        "number": 34,
+        "description": "Diina raiskataan, minkä vuoksi sikemiläiset tuhotaan."
+      },
+      {
+        "number": 35,
+        "description": "Jaakob puhdistaa perheensä epäjumalista: menee Jumalan käskystä Beeteliin ja rakentaa sinne alttarin. Jumala ilmestyy jälleen Jaakobille, siunaa hänet ja muuttaa hänen nimensä Israeliksi. Raakel kuolee synnytykseen. Myös Iisak kuolee."
+      },
+      {
+        "number": 36,
+        "description": "Esau vaimoineen ja lapsineen eroaa Jaakobista. Kertomus hänen jälkeläisistään ja Edomin ensimmäisistä kuninkaista."
+      },
+      {
+        "number": 37,
+        "description": "Joosefin unet: hänen veljensä myyvät hänet, ja hänet viedään Egyptiin."
+      },
+      {
+        "number": 38,
+        "description": "Juudan pojat: Erin ja Onanin kuolema: Pereksen ja Serahin syntymä."
+      },
+      {
+        "number": 39,
+        "description": "Joosefille uskotaan isäntänsä talon hoito: hän torjuu emäntänsä viettelykset: häntä syytetään väärin ja hänet heitetään vankilaan, missä hänelle uskotaan kaikkien vankien valvonta."
+      },
+      {
+        "number": 40,
+        "description": "Joosef selittää kahden faraon palvelijan unet vankilassa: tapahtumat osoittavat selitykset tosiksi, mutta Joosef unohdetaan."
+      },
+      {
+        "number": 41,
+        "description": "Joosef selittää faraon kaksi unta: hänet asetetaan hallitsemaan koko Egyptiä."
+      },
+      {
+        "number": 42,
+        "description": "Jaakob lähettää kymmenen poikaansa ostamaan viljaa Egyptistä. Joosefin kohtelu heitä kohtaan."
+      },
+      {
+        "number": 43,
+        "description": "Jaakobin pojat menevät jälleen Egyptiin Benjaminin kanssa. Joosef kestitsee heitä."
+      },
+      {
+        "number": 44,
+        "description": "Joosefin juoni pysäyttääkseen veljensä. Juudan nöyrä vetoomus."
+      },
+      {
+        "number": 45,
+        "description": "Joosef paljastaa itsensä veljilleen ja lähettää hakemaan isänsä."
+      },
+      {
+        "number": 46,
+        "description": "Israel, Jumalan näyn rohkaisemana, lähtee Egyptiin koko perheensä kanssa."
+      },
+      {
+        "number": 47,
+        "description": "Jaakob ja hänen poikansa esitellään faraolle: tämä antaa heille Gossenin maan. Nälänhätä pakottaa egyptiläiset myymään kaiken omaisuutensa kuninkaalle."
+      },
+      {
+        "number": 48,
+        "description": "Joosef vierailee sairaan isänsä luona; tämä adoptoi hänen kaksi poikaansa Manassen ja Efraimin ja siunaa heidät, asettaen nuoremman vanhemman edelle."
+      },
+      {
+        "number": 49,
+        "description": "Jaakobin profeetalliset siunaukset kahdelletoista pojalleen: hänen kuolemansa."
+      },
+      {
+        "number": 50,
+        "description": "Jaakobin sureminen ja hänen hautaamisensa. Joosefin ystävällisyys veljiään kohtaan. Hänen kuolemansa."
+      }
+    ]
+  },
+  {
+    "name": "Exodus",
+    "description": "Mooseksen toinen kirja on nimeltään Exodus, kreikan sanasta exodos, joka tarkoittaa lähtöä: koska se sisältää kertomuksen Israelin lasten lähdöstä Egyptistä. Heprealaiset kutsuvat sitä nimellä Veelle Semoth, alkusanojensa mukaan: nämä ovat nimet. Se kattaa tapahtumat 145 vuoden ajalta; eli Joosefin kuolemasta pyhäkköteltan pystyttämiseen.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Israelilaisten lukumäärä kasvaa Egyptissä. Uusi kuningas sortaa heitä ja käskee tappaa kaikki heidän poikalapsensa."
+      },
+      {
+        "number": 2,
+        "description": "Mooses syntyy ja jätetään joen rannalle; faraon tytär löytää hänet ja ottaa hänet pojakseen. Hän tappaa egyptiläisen ja pakenee Midianiin, missä hän nai vaimon."
+      },
+      {
+        "number": 3,
+        "description": "Jumala ilmestyy Moosekselle palavassa pensaassa ja lähettää hänet vapauttamaan Israelin."
+      },
+      {
+        "number": 4,
+        "description": "Mooses saa valtuudet vahvistaa tehtävänsä ihmeillä: hänen veljensä Aaron määrätään hänen avukseen."
+      },
+      {
+        "number": 5,
+        "description": "Farao kieltäytyy päästämästä kansaa. Heitä sorretaan entistä enemmän."
+      },
+      {
+        "number": 6,
+        "description": "Jumala uudistaa lupauksensa. Ruubenin, Simeonin ja Leevin sukuluettelot Moosekseen ja Aaroniin saakka."
+      },
+      {
+        "number": 7,
+        "description": "Mooses ja Aaron menevät faraon luo: he muuttavat sauvan käärmeeksi ja Egyptin vedet vereksi, mikä oli ensimmäinen vitsaus. Taikurit tekevät samoin, ja faraon sydän paatuu."
+      },
+      {
+        "number": 8,
+        "description": "Toinen vitsaus on sammakot: farao lupaa päästää israelilaiset, mutta rikkoo lupauksensa. Kolmas vitsaus on sääsket. Neljäs on kärpäset. Farao lupaa jälleen päästää kansan, mutta ei tee niin."
+      },
+      {
+        "number": 9,
+        "description": "Viides vitsaus on karjarutto. Kuudes on paiseet ihmisissä ja eläimissä. Seitsemäs on raesade. Farao lupaa jälleen päästää kansan ja rikkoo sanansa."
+      },
+      {
+        "number": 10,
+        "description": "Kahdeksas vitsaus, heinäsirkat. Yhdeksäs, pimeys: farao paatuu yhä."
+      },
+      {
+        "number": 11,
+        "description": "Faraolle ja hänen kansalleen uhataan esikoisten kuolemaa."
+      },
+      {
+        "number": 12,
+        "description": "Tapa valmistaa ja syödä pääsiäislammas: Egyptin esikoiset surmataan: israelilaiset lähtevät."
+      },
+      {
+        "number": 13,
+        "description": "Pääsiäisjuhlaa tulee viettää; ja esikoiset tulee pyhittää Jumalalle. Kansaa johdetaan autiomaassa tulipatsakkaalla yöllä ja pilvipatsaalla päivällä."
+      },
+      {
+        "number": 14,
+        "description": "Farao ajaa Israelin lapsia takaa. He nurisevat Moosekselle, mutta hän rohkaisee heitä, ja he kulkevat Punaisen meren halki. Farao armeijoineen seuraa heitä ja hukkuu."
+      },
+      {
+        "number": 15,
+        "description": "Mooseksen kiitosvirsi. Marran katkerat vedet tehdään makeiksi."
+      },
+      {
+        "number": 16,
+        "description": "Kansa nurisee ruoan puutteesta: Jumala antaa heille viiriäisiä ja mannaa."
+      },
+      {
+        "number": 17,
+        "description": "Kansa nurisee jälleen juomaveden puutteesta; Herra antaa heille vettä kalliosta. Mooseksen nostaessa kätensä rukoukseen Amalek kukistetaan."
+      },
+      {
+        "number": 18,
+        "description": "Jetro tuo Moosekselle hänen vaimonsa ja lapsensa. Hänen neuvonsa."
+      },
+      {
+        "number": 19,
+        "description": "He tulevat Siinaille: kansaa käsketään pyhittäytyä. Herra tulee ukkosen ja salaman saattamana ja puhuu Moosekselle."
+      },
+      {
+        "number": 20,
+        "description": "Kymmenen käskyä."
+      },
+      {
+        "number": 21,
+        "description": "Oikeutta koskevia lakeja."
+      },
+      {
+        "number": 22,
+        "description": "Varkauden ja muiden rikkomusten rangaistus. Laki korottomasta lainaamisesta, panttien ottamisesta, esimiesten kunnioittamisesta ja kymmenyksen maksamisesta."
+      },
+      {
+        "number": 23,
+        "description": "Lakeja tuomareille; seitsemännen vuoden ja päivän lepo: kolme pääjuhlaa vietettäväksi vuosittain; lupaus enkelistä johtamaan ja suojelemaan heitä: epäjumalat on tuhottava."
+      },
+      {
+        "number": 24,
+        "description": "Mooses kirjoittaa lakinsa; uhrien jälkeen hän pirskottaa liiton verta kansan päälle: sitten nousee vuorelle, jonka Jumala peittää tulisella pilvellä."
+      },
+      {
+        "number": 25,
+        "description": "Uhriohjeet pyhäkköteltan, arkin ja kynttilänjalan valmistamiseen jne."
+      },
+      {
+        "number": 26,
+        "description": "Pyhäkköteltan muoto varusteineen."
+      },
+      {
+        "number": 27,
+        "description": "Alttari ja pyhäkköteltan esipiha verhoilmuineen ja pylväineen. Lampunöljyn varaaminen."
+      },
+      {
+        "number": 28,
+        "description": "Aaronin ja hänen poikiensa pyhät vaatteet."
+      },
+      {
+        "number": 29,
+        "description": "Aaronin ja muiden pappien vihkimistapa; päivittäisen kahden karitsan uhrin asettaminen, yksi aamulla ja toinen illalla."
+      },
+      {
+        "number": 30,
+        "description": "Suitsutusalttari: pyhäkköteltan tarpeisiin kerättävä raha: pronssinen pesuallas: pyhä voiteluöljy ja suitsutuksen koostumus."
+      },
+      {
+        "number": 31,
+        "description": "Besalel ja Oholiab määrätään Herralta rakentamaan pyhäkkötelttan ja siihen kuuluvat esineet. Sapatin viettämistä käsketään jälleen. Herra antaa Moosekselle kaksi taulua, kirjoitettuna Jumalan sormella."
+      },
+      {
+        "number": 32,
+        "description": "Kansa lankeaa epäjumalanpalvelukseen. Mooses rukoilee heidän puolestaan. Hän särkee taulut: tuhoaa epäjumalan: moittii Aaronia ja surmattaa monia epäjumalanpalvelijoita."
+      },
+      {
+        "number": 33,
+        "description": "Kansa suree syntiään. Mooses pystyttää pyhäkköteltan leirin ulkopuolelle. Hän keskustelee luottamuksellisesti Jumalan kanssa. Pyytää saada nähdä hänen kirkkautensa."
+      },
+      {
+        "number": 34,
+        "description": "Taulut uusitaan: kaikki yhteydenpito kanaanilaisten kanssa kielletään: eräitä säädöksiä esikoisista, sapatista ja muista juhlista: neljänkymmenen päivän paaston jälkeen Mooses palaa kansan luo käskyjen kanssa, ja hänen kasvonsa loistavat valon sarvien tapaan, joten hän peittää ne puhuessaan kansalle."
+      },
+      {
+        "number": 35,
+        "description": "Sapatti. Uhrilahjat pyhäkköteltan rakentamiseen. Besalel ja Oholiab kutsutaan työhön."
+      },
+      {
+        "number": 36,
+        "description": "Uhrilahjat annetaan työmiehille; verhot, päällykset, laudat, poikkitangot, väliverho, pylväät ja esirippu valmistetaan."
+      },
+      {
+        "number": 37,
+        "description": "Besalel valmistaa arkin: armoistuimen ja kerubit, pöydän, kynttilänjalan, lamput ja suitsutusalttarin sekä sekoittaa suitsutuksen."
+      },
+      {
+        "number": 38,
+        "description": "Hän valmistaa polttouhrin alttarin. Pronssisen pesualtaan. Esipihan pylväineen ja verhoineen. Yhteenveto kansan uhrilahjoista."
+      },
+      {
+        "number": 39,
+        "description": "Kaikki Aaronin ja hänen poikiensa koristeet valmistetaan. Ja koko pyhäkköteltan työ saatetaan päätökseen."
+      },
+      {
+        "number": 40,
+        "description": "Pyhäkkötelttta käsketään pystyttää ja voidella. Jumala täyttää sen majesteetillaan."
+      }
+    ]
+  },
+  {
+    "name": "Leviticus",
+    "description": "Tämä kirja on nimeltään Leviticus, koska se käsittelee pappien ja leeviläisten virkoja, palveluksia, menoja ja seremonioita. Heprealaiset kutsuvat sitä nimellä Vaicra, kirjan ensimmäisen sanan mukaan.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Polttouhrista eli kokonaan poltettavista uhreista."
+      },
+      {
+        "number": 2,
+        "description": "Jauho-uhreista ja ensi hedelmistä."
+      },
+      {
+        "number": 3,
+        "description": "Yhteysuhreista."
+      },
+      {
+        "number": 4,
+        "description": "Uhreista tietämättömyyden synneistä."
+      },
+      {
+        "number": 5,
+        "description": "Muista syntiuhreista."
+      },
+      {
+        "number": 6,
+        "description": "Uhri vääryyden synneistä: säädökset polttouhrista ja ikuisesta tulesta: pappien uhrit ja syntiuhrit."
+      },
+      {
+        "number": 7,
+        "description": "Vikauhrista ja kiitosuhreista. Rasvaa ja verta ei saa syödä."
+      },
+      {
+        "number": 8,
+        "description": "Mooses vihkii Aaronin ja hänen poikansa."
+      },
+      {
+        "number": 9,
+        "description": "Aaron uhraa itsensä ja kansan puolesta. Tuli tulee Herralta alttarille."
+      },
+      {
+        "number": 10,
+        "description": "Naadab ja Abihu poltetaan tulella vieraasta tulesta uhraamisen vuoksi. Pappeja kielletään juomasta viiniä mennessään pyhäkkötelttan. Laki pyhien ruokien syömisestä."
+      },
+      {
+        "number": 11,
+        "description": "Puhtaiden ja epäpuhtaiden eläinten erottaminen."
+      },
+      {
+        "number": 12,
+        "description": "Naisten puhdistuminen synnytyksen jälkeen."
+      },
+      {
+        "number": 13,
+        "description": "Laki spitaalista ihmisissä ja vaatteissa."
+      },
+      {
+        "number": 14,
+        "description": "Uhrimenot spitaalin puhdistamisessa. Spitaali taloissa."
+      },
+      {
+        "number": 15,
+        "description": "Muita lainmukaisia epäpuhtauksia."
+      },
+      {
+        "number": 16,
+        "description": "Milloin ja miten ylipappi saa mennä pyhäkköön. Sovituspäivän juhla."
+      },
+      {
+        "number": 17,
+        "description": "Uhreja saa tuoda vain pyhäkköteltan ovella: verikielto."
+      },
+      {
+        "number": 18,
+        "description": "Avioliitto kielletään tietyissä sukulaisuusasteissa: ja kaikki luonnonvastaiset himot."
+      },
+      {
+        "number": 19,
+        "description": "Erilaisia säädöksiä, osin moraalisia, osin seremoniallisia tai oikeudellisia."
+      },
+      {
+        "number": 20,
+        "description": "Erilaisia rikoksia rangaistaan kuolemalla."
+      },
+      {
+        "number": 21,
+        "description": "Pappeja koskevia säädöksiä."
+      },
+      {
+        "number": 22,
+        "description": "Ketkä saavat syödä pyhiä ruokia: ja mitkä eläimet kelpaavat uhreiksi."
+      },
+      {
+        "number": 23,
+        "description": "Vietettävät pyhäpäivät."
+      },
+      {
+        "number": 24,
+        "description": "Lamppujen öljy. Näkyleivät. Jumalanpilkan rangaistus."
+      },
+      {
+        "number": 25,
+        "description": "Laki seitsemännestä vuodesta ja viidennestäkymmenennestä riemuvuodesta."
+      },
+      {
+        "number": 26,
+        "description": "Jumalan lupaukset hänen käskyjensä noudattajille. Ja monet rangaistukset, joilla hän uhkaa rikkojia."
+      },
+      {
+        "number": 27,
+        "description": "Lupauksista ja kymmenyksistä."
+      }
+    ]
+  },
+  {
+    "name": "Numbers",
+    "description": "Mooseksen neljäs kirja on nimeltään Numeri, koska se alkaa kansan laskennalla. Heprealaiset kutsuvat sitä nimellä Vajedabber, alkusanojensa mukaan. Se sisältää israelilaisten tapahtumat toisen vuoden toisesta kuukaudesta Egyptistä lähdön jälkeen neljännenkymmenennen vuoden yhdennentoista kuukauden alkuun saakka; eli lähes kolmenkymmenenyhden vuoden historian.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Israelin lapset lasketaan: leeviläiset määrätään palvelemaan pyhäkötelttaa."
+      },
+      {
+        "number": 2,
+        "description": "Heimojen järjestys heidän leirissään."
+      },
+      {
+        "number": 3,
+        "description": "Leeviläiset lasketaan ja heidän tehtävänsä määritellään. Heidät otetaan Israelin lasten esikoisten sijaan."
+      },
+      {
+        "number": 4,
+        "description": "Leeviläisten palvelusikä ja -aika: heidän tehtävänsä ja kantamuksensa."
+      },
+      {
+        "number": 5,
+        "description": "Epäpuhtaat poistetaan leiristä: syntien tunnustaminen ja hyvitys: ensi hedelmät ja uhrilahjat kuuluvat papeille: mustasukkaisuuskoe."
+      },
+      {
+        "number": 6,
+        "description": "Nasiirien laki: kansan siunaamisen kaava."
+      },
+      {
+        "number": 7,
+        "description": "Ruhtinaiden uhrilahjat pyhäkköteltan vihkimisessä. Jumala puhuu Moosekselle armoistuimelta."
+      },
+      {
+        "number": 8,
+        "description": "Seitsemän lamppua asetetaan kultaiseen kynttilänjalkaan loistamaan kohti näkyleipiä: leeviläisten vihkiminen: mihin ikään saakka he palvelevat pyhäkköteltassa."
+      },
+      {
+        "number": 9,
+        "description": "Pääsiäissäädös uudistetaan: epäpuhtaat ja matkamiehet viettävät sen toisena kuukautena: pilvipatvas ohjaa leiriä."
+      },
+      {
+        "number": 10,
+        "description": "Hopeiset torvet ja niiden käyttö. He lähtevät Siinaista."
+      },
+      {
+        "number": 11,
+        "description": "Kansa nurisee ja heitä rangaistaan tulella. Jumala asettaa seitsemänkymmentä vanhinta Mooseksen avuksi. He profetoivat. Kansa saa lihaa kyllikseen, mutta kohta monet kuolevat ruttoon."
+      },
+      {
+        "number": 12,
+        "description": "Mirjam ja Aaron nurisevat Moosesta vastaan, jota Jumala ylistää muiden profeettojen yläpuolelle. Mirjam lyödään spitaalilla, Aaron tunnustaa vikansa. Mooses rukoilee hänen puolestaan, ja seitsemän päivän eristyksen jälkeen hänet palautetaan."
+      },
+      {
+        "number": 13,
+        "description": "Kaksitoista vakoojaa lähetetään tarkastelemaan maata. Heidän kertomuksensa siitä."
+      },
+      {
+        "number": 14,
+        "description": "Kansa nurisee. Jumala uhkaa tuhota heidät. Mooses lepyttää hänet, kuitenkin niin, että nurisijoilta estetään pääsy luvattuun maahan. Kapinan aiheuttajat kuolevat äkillisesti. Loput, jotka menevät taistelemaan Jumalan tahtoa vastaan, lyödään."
+      },
+      {
+        "number": 15,
+        "description": "Tiettyjä uhrisäädöksiä. Sapatin rikkomisesta rangaistaan kuolemalla. Laki tupsista vaatteissa."
+      },
+      {
+        "number": 16,
+        "description": "Koorahin ja hänen kannattajiensa kapina: heidän rangaistuksensa."
+      },
+      {
+        "number": 17,
+        "description": "Pappeutta vahvistetaan Aaronille hänen sauvansa kukkimisen ihmeellä, joka säilytetään muistomerkkinä pyhäkköteltassa."
+      },
+      {
+        "number": 18,
+        "description": "Pappien ja leeviläisten velvollisuudet ja heidän osuutensa."
+      },
+      {
+        "number": 19,
+        "description": "Laki punaisen lehmän uhrista ja puhdistusvedestä."
+      },
+      {
+        "number": 20,
+        "description": "Mooseksen sisaren Mirjamin kuolema. Kansa nurisee veden puutteesta: Jumala antaa heille vettä kalliosta. Aaronin kuolema."
+      },
+      {
+        "number": 21,
+        "description": "Kuningas Arad kukistetaan. Kansa nurisee ja heitä rangaistaan tulisilla käärmeillä: pronssinen käärme parantaa heidät. He valloittavat kuninkaat Sihonin ja Ogin."
+      },
+      {
+        "number": 22,
+        "description": "Baalak, Moabin kuningas, lähettää kahdesti hakemaan Bileamia kiroamaan Israelin. Matkalla enkeli nuhtelee Bileamia."
+      },
+      {
+        "number": 23,
+        "description": "Bileam pakotetaan Israelin kiroamisen sijaan siunaamaan heitä ja profetoimaan heille hyvää."
+      },
+      {
+        "number": 24,
+        "description": "Bileam jatkaa profetoimista Israelin hyväksi."
+      },
+      {
+        "number": 25,
+        "description": "Kansa lankeaa haureuksiin ja epäjumalanpalvelukseen; siitä kaksikymmentäneljätuhatta surmataan. Piinehaksen into."
+      },
+      {
+        "number": 26,
+        "description": "Kansa lasketaan jälleen heimoittain ja perhekunnittain."
+      },
+      {
+        "number": 27,
+        "description": "Perintölaki. Joosua määrätään Mooseksen seuraajaksi."
+      },
+      {
+        "number": 28,
+        "description": "Uhrit määrätään niin jokaiselle päivälle kuin sapateille ja muille juhlille."
+      },
+      {
+        "number": 29,
+        "description": "Seitsemännen kuukauden juhlien uhrit."
+      },
+      {
+        "number": 30,
+        "description": "Lupauksista ja valoista: ja niiden sitovuudesta."
+      },
+      {
+        "number": 31,
+        "description": "Midianilaiset surmataan, koska he johtivat Israelin kansan syntiin. Saaliin jako."
+      },
+      {
+        "number": 32,
+        "description": "Ruubenin ja Gaadin heimot sekä puolet Manassen heimoa saavat perintöosansa Jordanin itäpuolelta ehdoilla, jotka Mooses hyväksyy."
+      },
+      {
+        "number": 33,
+        "description": "Israelin lasten leirimatkat kohti luvattua maata."
+      },
+      {
+        "number": 34,
+        "description": "Kanaanin rajat; ja niiden miesten nimet, jotka suorittavat maan jaon."
+      },
+      {
+        "number": 35,
+        "description": "Leeviläisille määrätään kaupungit. Joista kuusi on turvapaikkakaupunkeja."
+      },
+      {
+        "number": 36,
+        "description": "Jotta perintöosat eivät siirtyisi heimolta toiselle, kaikkien tulee naida oman heimonsa sisältä."
+      }
+    ]
+  },
+  {
+    "name": "Deuteronomy",
+    "description": "Tämä kirja on nimeltään Deuteronomium, mikä tarkoittaa toista lakia, koska se toistaa ja painottaa aiemmin Siinain vuorella annettuja säädöksiä sekä muita aiemmin mainitsemattomia käskyjä. Heprealaiset kutsuvat sitä nimellä Elle Haddebarim, kirjan alkusanojen mukaan.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kertaus siitä, mitä tapahtui Siinailla ja Kades-Barneassa: kansan nurina ja heidän rangaistuksensa."
+      },
+      {
+        "number": 2,
+        "description": "Heitä kielletään taistelemasta edomilaisia, moabilaisia ja ammonilaisia vastaan. Heidän voittonsa Sihonista, Hesbonin kuninkaasta."
+      },
+      {
+        "number": 3,
+        "description": "Voitto Ogista, Basanin kuninkaasta. Ruuben, Gad ja puolet Manassen heimoa saavat omistuksensa Jordanin toisella puolella."
+      },
+      {
+        "number": 4,
+        "description": "Mooses kehottaa kansaa pitämään Jumalan käskyt: erityisesti karttamaan epäjumalanpalvelusta. Hän määrää kolme turvapaikkaa Jordanin tuolla puolella."
+      },
+      {
+        "number": 5,
+        "description": "Kymmenen käskyä kerrataan ja selitetään."
+      },
+      {
+        "number": 6,
+        "description": "Kehotus Jumalan rakkauteen ja hänen lakinsa noudattamiseen."
+      },
+      {
+        "number": 7,
+        "description": "Liittoa eikä yhteyttä saa solmia kanaanilaisten kanssa: Jumala lupaa kansalleen siunauksensa ja avunsa, jos he pitävät hänen käskynsä."
+      },
+      {
+        "number": 8,
+        "description": "Kansaa muistutetaan Jumalan johdatuksesta, jotta he rakastaisivat ja palvelisivat häntä."
+      },
+      {
+        "number": 9,
+        "description": "Ettei kansa lukisi voittojaan omaksi ansiokseen, heitä muistutetaan monista kapinoistaan ja muista synneistään, joiden vuoksi heidät olisi pitänyt tuhota, mutta Jumala säästi heitä Aabrahamille, Iisakille ja Jaakobille antamansa lupauksen tähden."
+      },
+      {
+        "number": 10,
+        "description": "Jumala antaa toiset laintaulut: lisäkehotus pelätä ja palvella Herraa."
+      },
+      {
+        "number": 11,
+        "description": "Jumalan rakkautta ja palvelusta painotetaan edelleen, luvataan siunaus häntä palveleville ja uhataan rangaistuksella niitä, jotka hylkäävät hänen lakinsa."
+      },
+      {
+        "number": 12,
+        "description": "Kaikki epäjumalanpalvelus on hävitettävä: uhrit, kymmenykset ja ensi hedelmät on tuotava yhteen ainoaan paikkaan: kaiken veren syöminen on kielletty."
+      },
+      {
+        "number": 13,
+        "description": "Väärät profeetat on surmattava ja epäjumalanpalvelusta harjoittavat kaupungit tuhottava."
+      },
+      {
+        "number": 14,
+        "description": "Kuolleiden suremisessa ei saa seurata pakanoiden tapoja: puhtaiden ja epäpuhtaiden ruokien erottaminen: säädökset kymmenyksistä ja ensi hedelmistä."
+      },
+      {
+        "number": 15,
+        "description": "Seitsemännen vuoden vapautuslaki. Karjan esikoiset on pyhitettävä Herralle."
+      },
+      {
+        "number": 16,
+        "description": "Kolme pääjuhlaa vietettäväksi: oikeamieliset tuomarit asetettava joka kaupunkiin: kaikki epäjumalanpalveluksen tilaisuudet vältettävä."
+      },
+      {
+        "number": 17,
+        "description": "Uhrien tulee olla virheettömiä. Epäjumalanpalvelijat surmattava. Riidat ratkaisee ylipappi ja neuvosto, joiden tuomiota on noudatettava kuolemanrangaistuksen uhalla. Kuninkaan velvollisuudet, joka saa lain papin kädestä."
+      },
+      {
+        "number": 18,
+        "description": "Herra on pappien ja leeviläisten perintöosa. Pakanoiden kauhistuksia on vältettävä. Suuri PROFEETTA KRISTUS luvataan. Väärät profeetat on surmattava."
+      },
+      {
+        "number": 19,
+        "description": "Turvapaikkana kaupungit. Tahallinen murha ja väärä todistus on rangaistava."
+      },
+      {
+        "number": 20,
+        "description": "Sotaa koskevia lakeja."
+      },
+      {
+        "number": 21,
+        "description": "Tuntemattoman murhan sovitus. Sotavangin naittaminen. Esikoisen perintöoikeutta ei saa riistää äitinsä vihaamisen vuoksi. Uppiniskainen poika kivitetään kuoliaaksi. Hirteen ripustettu on otettava alas samana päivänä ja haudattava."
+      },
+      {
+        "number": 22,
+        "description": "Inhimillisyys lähimmäisiä kohtaan. Kumpikin sukupuoli ei saa käyttää toisen vaatteita. Julmuutta on vältettävä jopa lintuja kohtaan. Kaiteet talon katolle. Eri lajien sekoittamiskielto. Rangaistus vaimonsa panettelusta sekä aviorikoksesta ja raiskauksesta."
+      },
+      {
+        "number": 23,
+        "description": "Ketkä saavat ja ketkä eivät saa tulla seurakunnan jäseniksi: epäpuhtautta on vältettävä: muita käskyjä pakolaisista, haureudesta, korosta, lupauksista sekä toisten viinirypäleistä ja viljasta."
+      },
+      {
+        "number": 24,
+        "description": "Avioero sallittu suuremman pahan välttämiseksi: vastanainut ei saa lähteä sotaan: ihmisryöstäjistä, spitaalista, panteista, työmiehen palkasta, oikeudesta ja laupeudesta köyhiä kohtaan."
+      },
+      {
+        "number": 25,
+        "description": "Lyöntejä ei saa olla yli neljäkymmentä. Härkää ei saa sitoa suuta puimisen aikana. Veljen jäclkeläisten herättäminen. Säädyttömästä naisesta. Vääristä painoista. Amalekilaisten tuhoamisesta."
+      },
+      {
+        "number": 26,
+        "description": "Sanat, joilla ensi hedelmät ja kymmenykset tulee uhrata. Jumalan liitto."
+      },
+      {
+        "number": 27,
+        "description": "Käskyt on kirjoitettava kiviin: alttari pystytettävä ja uhreja uhrattava. Käskyjen noudattajia siunataan ja niiden rikkojia kirotaan."
+      },
+      {
+        "number": 28,
+        "description": "Monia siunauksia luvataan Jumalan käskyjen noudattajille: ja kirouksia uhataan niiden rikkojille."
+      },
+      {
+        "number": 29,
+        "description": "Liitto vahvistetaan juhlallisesti Jumalan ja hänen kansansa välillä. Uhkaukset niille, jotka rikkovat sen."
+      },
+      {
+        "number": 30,
+        "description": "Suuria armonosoituksia luvataan katuville: Jumalan käsky on toteutettavissa. Elämä ja kuolema asetetaan heidän eteensä."
+      },
+      {
+        "number": 31,
+        "description": "Mooses rohkaisee kansaa ja Joosuaa, joka määrätään hänen seuraajakseen. Hän antaa lain papeille. Jumala ennustaa kansan hylkäävän hänet usein ja rankaisevansa heitä. Hän käskee Mooseksen kirjoittaa virren lain muistoksi."
+      },
+      {
+        "number": 32,
+        "description": "Virsi lain muistoksi. Mooseksen käsketään nousta vuorelle, josta hän näkee luvatun maan mutta ei pääse sinne."
+      },
+      {
+        "number": 33,
+        "description": "Mooses siunaa ennen kuolemaansa Israelin heimot."
+      },
+      {
+        "number": 34,
+        "description": "Mooses näkee luvatun maan, mutta häntä ei päästetä sinne. Hän kuolee 120 vuoden iässä. Jumala hautaa hänen ruumiinsa salaa, ja koko Israel suree häntä kolmekymmentä päivää. Joosua, täytettynä Jumalan Hengellä (Mooseksen kätten laskemisen kautta), seuraa häntä. Mutta Moosesta ylistetään kaikkien muiden profeettojen yläpuolelle hänen erityisen läheisyytensä Jumalan kanssa ja mitä ihmeellisimpien ihmeidensä vuoksi."
+      }
+    ]
+  },
+  {
+    "name": "Joshua",
+    "description": "Tämä kirja on nimeltään Joosua, koska se sisältää kertomuksen hänen aikanaan tapahtuneista asioista, ja yleisen käsityksen mukaan hän kirjoitti sen. Kreikkalaiset kutsuvat häntä nimellä Jesus: sillä Joosua ja Jeesus ovat hepreassa sama nimi ja tarkoittavat samaa, nimittäin pelastaja. Eikä ollut vailla salaisuutta, että hänen, jonka oli määrä viedä kansa luvattuun maahan, nimensä muutettiin Hooseasta (sillä niin häntä kutsuttiin aiemmin, 4. Moos. 13:17) Joosuaksi eli Jeesukseksi, antaen meille ymmärtää, että Mooses lakinsa kautta saattoi johtaa kansan vain luvatun perinnön näköetäisyydelle, mutta Vapahtajamme Jeesus oli johdattava meidät siihen.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Joosua, Herran rohkaisemana, kehottaa kansaa valmistautumaan Jordanin ylitykseen."
+      },
+      {
+        "number": 2,
+        "description": "Kaksi vakoojaa lähetetään Jerikoon, missä Raahab ottaa heidät vastaan ja piilottaa heidät."
+      },
+      {
+        "number": 3,
+        "description": "Jordanvirta kuivuu ihmeellisesti Israelin lasten ylitystä varten."
+      },
+      {
+        "number": 4,
+        "description": "Kaksitoista kiveä otetaan joesta muistomerkiksi ihmeestä; ja toiset kaksitoista asetetaan joen keskelle."
+      },
+      {
+        "number": 5,
+        "description": "Kansa ympärileikataan: he viettävät pääsiäistä. Manna lakkaa. Enkeli ilmestyy Joosualle."
+      },
+      {
+        "number": 6,
+        "description": "Seitsemän päivän kulkueiden jälkeen pappien puhaltaesa torviin Jerikon muurit sortuvat: kaupunki valloitetaan ja tuhotaan."
+      },
+      {
+        "number": 7,
+        "description": "Akanin syntien vuoksi israelilaiset kärsivät tappion Aissa. Rikoksentekijä paljastetaan ja kivitetään kuoliaaksi, ja Jumalan viha kääntyy heistä pois."
+      },
+      {
+        "number": 8,
+        "description": "Ai valloitetaan ja poltetaan, ja kaikki asukkaat surmataan. Alttari rakennetaan ja uhreja uhrataan. Laki kirjoitetaan kiviin, ja siunaukset ja kiroukset luetaan kaiken kansan edessä."
+      },
+      {
+        "number": 9,
+        "description": "Gibeonilaiset pettävät Joosuan: kun petos paljastuu, heidät tuomitaan ikuisiksi palvelijoiksi."
+      },
+      {
+        "number": 10,
+        "description": "Viisi kuningasta sotii Gibeonia vastaan. Joosua voittaa heidät: monet surmataan raesateella. Joosuan rukouksesta aurinko ja kuu pysähtyvät yhden päivän ajaksi. Viisi kuningasta hirtetään. Useat kaupungit valloitetaan."
+      },
+      {
+        "number": 11,
+        "description": "Pohjoisen kuninkaat kukistetaan: koko maa valloitetaan."
+      },
+      {
+        "number": 12,
+        "description": "Luettelo Mooseksen ja Joosuan surmaamista kuninkaista."
+      },
+      {
+        "number": 13,
+        "description": "Jumala käskee Joosuan jakaa maan: Ruubenin, Gadin ja Manassen puolikkaan heimon omistukset Jordanin takana."
+      },
+      {
+        "number": 14,
+        "description": "Kalebin anomus; Hebron annetaan hänelle ja hänen jälkeläisilleen."
+      },
+      {
+        "number": 15,
+        "description": "Juudan arpaosan rajat. Kalebin osuus ja valloitus. Juudan kaupungit."
+      },
+      {
+        "number": 16,
+        "description": "Joosefin poikien arpaosa. Efraimin heimon rajat."
+      },
+      {
+        "number": 17,
+        "description": "Manassen puolikkaan heimon arpaosa."
+      },
+      {
+        "number": 18,
+        "description": "Maanmittaajat lähetetään jakamaan jäljellä oleva maa seitsemään heimoon. Benjaminin arpaosa."
+      },
+      {
+        "number": 19,
+        "description": "Simeonin, Sebulonin, Isaskarin, Asserin, Naftalin ja Daanin heimojen arpaosa. Joosualle annetaan kaupunki."
+      },
+      {
+        "number": 20,
+        "description": "Turvapaikkana kaupungit määrätään tahattomia surmaajia varten."
+      },
+      {
+        "number": 21,
+        "description": "Kaupungit esikaupunkeineen osoitetaan papeille ja leeviläisille."
+      },
+      {
+        "number": 22,
+        "description": "Ruubenin ja Gadin heimot sekä Manassen puolikas heimoa palaavat omistuksiinsa. He rakentavat alttarin Jordanin rannalle, mikä hälyttää muut heimot. Lähetystö lähetetään heille, ja he antavat tyydyttävän vastauksen."
+      },
+      {
+        "number": 23,
+        "description": "Joosua vanhettuaan kehottaa kansaa pitämään Jumalan käskyt ja välttämään avioliittoja ja kaikkea yhteyttä pakanoiden kanssa, epäjumalanpalveluksen pelosta."
+      },
+      {
+        "number": 24,
+        "description": "Joosua kokoaa kansan ja uudistaa heidän ja Jumalan välisen liiton. Hänen kuolemansa ja hautaamisensa."
+      }
+    ]
+  },
+  {
+    "name": "Judges",
+    "description": "Tämä kirja on nimeltään Tuomarien kirja, koska se sisältää kertomuksen tuomarien hallituskaudelta, jotka hallitsivat Israelia ennen kuninkaita. Sen kirjoittaja on yleisimmän käsityksen mukaan profeetta Samuel.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Juudan sotaretki ja voitto kanaanilaisista: joita siedetään monissa paikoissa."
+      },
+      {
+        "number": 2,
+        "description": "Enkeli nuhtelee Israelia. He itkevät syntiensä vuoksi. Joosuan kuoleman jälkeen he usein lankeavat mutta katuen pelastuvat ahdistuksistaan, vaipuvat kuitenkin yhä pahempiin synteihin."
+      },
+      {
+        "number": 3,
+        "description": "Kansa lankeaa epäjumalanpalvelukseen ja joutuu vihollistensa sorrettavaksi; mutta katuen pelastuvat Otnielin, Ehudin ja Samgarin kautta."
+      },
+      {
+        "number": 4,
+        "description": "Debora ja Baarak vapauttavat Israelin Jaabinista ja Siserasta, Jaael tappaa Siseran."
+      },
+      {
+        "number": 5,
+        "description": "Deboran ja Baarakin kiitosvirsi voittonsa jälkeen."
+      },
+      {
+        "number": 6,
+        "description": "Kansa joutuu syntiensä tähden midianilaisten sorrettavaksi. Gideon kutsutaan vapauttamaan heidät."
+      },
+      {
+        "number": 7,
+        "description": "Gideon voittaa kolmensadan miehen sotajuonella midianilaiset."
+      },
+      {
+        "number": 8,
+        "description": "Gideon lepyttää efraimilaiset. Vangitsee Sebahin ja Salmunnan. Tuhoaa Sukkotin ja Penuelin. Kieltäytyy kuninkuudesta. Tekee saaliskullasta efodin ja kuolee korkeassa iässä. Kansa palaa epäjumalanpalvelukseen."
+      },
+      {
+        "number": 9,
+        "description": "Abimelek tappaa veljensä. Jootamin vertaus. Gaal liittoutuu sikemiläisten kanssa Abimelekiä vastaan mutta kukistetaan. Abimelek tuhoaa Sikemin mutta saa surmansa Tebessissä."
+      },
+      {
+        "number": 10,
+        "description": "Toola hallitsee Israelia kaksikymmentäkolme vuotta ja Jaiir kaksikymmentäkaksi. Kansa lankeaa jälleen epäjumalanpalvelukseen ja joutuu jälleen filistealaisten ja ammonilaisten ahdistamaksi. He huutavat Jumalaa avuksi, ja hän armahtaa heitä katumuksen jälkeen."
+      },
+      {
+        "number": 11,
+        "description": "Jefta tehdään Gileadin kansan johtajaksi: hän ajaa ensin asiaa ammonilaisia vastaan; sitten lupauksen tehtyään saa merkittävän voiton; hän täyttää lupauksensa."
+      },
+      {
+        "number": 12,
+        "description": "Efraimilaiset riitelevät Jeftan kanssa: neljäkymmentäkaksituhatta heistä surmataan: Ibsan, Elon ja Abdon ovat tuomareita."
+      },
+      {
+        "number": 13,
+        "description": "Kansa lankeaa jälleen epäjumalanpalvelukseen ja joutuu filistealaisten ahdistamaksi. Enkeli ennustaa Simsonin syntymän."
+      },
+      {
+        "number": 14,
+        "description": "Simson haluaa vaimon filistealaisten joukosta. Hän tappaa leijonan, jonka suusta hän myöhemmin löytää hunajaa. Hänen hääjuhlansa ja arvoituksensa, jonka hänen vaimonsa paljastaa. Hän tappaa ja ryöstää kolmekymmentä filistealaista. Hänen vaimonsa ottaa toisen miehen."
+      },
+      {
+        "number": 15,
+        "description": "Simsonilta evätään hänen vaimonsa. Hän polttaa filistealaisten viljan ja tappaa monia heistä."
+      },
+      {
+        "number": 16,
+        "description": "Delila pettää Simsonin, ja hän joutuu filistealaisten käsiin. Hänen kuolemansa."
+      },
+      {
+        "number": 17,
+        "description": "Miikan epäjumalankuvan historia ja nuori leeviläinen."
+      },
+      {
+        "number": 18,
+        "description": "Daanin miesten sotaretki Laista vastaan: matkallaan he ryöstävät Miikalta hänen pappinsa ja jumalansa."
+      },
+      {
+        "number": 19,
+        "description": "Leeviläinen on matkalla kotiin vaimonsa kanssa ja majoittuu vanhuksen luona Gibeassa Benjaminin heimoalueella. Hänen vaimoaan pahoinpidellään jumalattomien miesten toimesta, ja aamulla hänet löydetään kuolleena. Hänen miehensä leikkaa hänen ruumiinsa kappaleiksi ja lähettää joka heimolle Israeliin vaatien kostoa julmasta teosta."
+      },
+      {
+        "number": 20,
+        "description": "Israelilaiset taistelevat Benjaminia vastaan ja kärsivät kahdesti tappion; mutta kolmannessa taistelussa benjaminilaiset surmataan kuuttasataa miestä lukuun ottamatta."
+      },
+      {
+        "number": 21,
+        "description": "Benjaminin heimo pelastetaan täydelliseltä tuholta hankkimalla vaimot kuudensadan jäljellä olevalle miehelle."
+      }
+    ]
+  },
+  {
+    "name": "Ruth",
+    "description": "Tämä kirja on saanut nimensä henkilöstä, jonka historiaa se kertoo: hän oli pakana, joka kääntyi todelliseen uskoon ja nai Boaksen, Daavidin isoisän isän, ja oli yksi niistä, joista Kristus lihan puolesta polveutui, ja merkittävä esikuva pakanojen kirkosta. Tämän kirjan on todennäköisesti kirjoittanut profeetta Samuel.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Elimelech Betlehemistä menee vaimonsa Noomin ja kahden poikansa kanssa Moabin maahan ja kuolee siellä. Hänen poikansa naiavat sikäläisiä naisia ja kuolevat ilman jälkeläisiä. Noomi palaa kotiin miniänsä Ruutin kanssa, joka kieltäytyy eroamasta hänestä."
+      },
+      {
+        "number": 2,
+        "description": "Ruut tähkäpäitä poimimassa Boaksen pellolla, joka osoittaa hänelle suosiota."
+      },
+      {
+        "number": 3,
+        "description": "Ruut, anoppinsa neuvomana, käy Boaksen jalkoihin vaatien häntä aviomiehekseen sukulunastuksen lain mukaan: hän saa suosiollisen vastauksen ja kuusi mittaa ohraa."
+      },
+      {
+        "number": 4,
+        "description": "Lähemmän sukulunastajan kieltäydyttyä Boas nai Ruutin, joka synnyttää Obedin, Daavidin isoisän."
+      }
+    ]
+  },
+  {
+    "name": "1 Samuel",
+    "description": "Heprealaiset kutsuvat tätä ja seuraavaa kirjaa Samuelin kirjoiksi, koska ne sisältävät Samuelin sekä kahden hänen voitelemansa kuninkaan, Saulin ja Daavidin, historian. Kirkkoisät kutsuvat niitä yleisemmin ensimmäiseksi ja toiseksi kuninkaiden kirjaksi. Kirjoittajasta on yleinen käsitys, että Samuel kirjoitti ensimmäisen kirjan 25. lukuun saakka; ja profeetat Natan ja Gad viimeistelivät ensimmäisen ja kirjoittivat toisen kirjan. Ks. 1. Aik. 29:29.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Hanna, Elkanan vaimo, joka on hedelmätön, saa lupauksella ja rukouksella pojan, jonka hän nimeää Samueliksi, ja lahjoittaa hänet Jumalan palvelukseen Silossa lupauksensa mukaan."
+      },
+      {
+        "number": 2,
+        "description": "Hannan kiitosvirsi. Eelin poikien jumalattomuus: siitä heitä ei asianmukaisesti nuhdella isänsä toimesta. Profetia Eelin huonetta vastaan."
+      },
+      {
+        "number": 3,
+        "description": "Samuel kutsutaan neljästi Herran toimesta: joka ilmoittaa hänelle onnettomuuden, joka kohtaa Eeliä ja hänen huonettaan."
+      },
+      {
+        "number": 4,
+        "description": "Israelilaiset kärsivät tappion filistealaisille ja lähettävät hakemaan Jumalan arkin: mutta heidät lyödään jälleen, Eelin pojat surmataan ja arkki otetaan: kuullessaan uutiset Eeli kaatuu taaksepäin ja kuolee."
+      },
+      {
+        "number": 5,
+        "description": "Daagon kaatuu kahdesti liitonarkin edessä. Filistealaiset kärsivät ankarasti kaikkialla, minne arkki tulee."
+      },
+      {
+        "number": 6,
+        "description": "Arkki lähetetään takaisin Betsemekseen: missä monet surmataan, koska he uteliaasti katsoivat sen sisään."
+      },
+      {
+        "number": 7,
+        "description": "Arkki tuodaan Kirjat-Jearimiin. Samuelin kehotuksesta kansa hylkää epäjumalansa ja palvelee Jumalaa yksin. Herra kukistaa filistealaiset Samuelin uhratessa uhria."
+      },
+      {
+        "number": 8,
+        "description": "Samuel vanhenee ja hänen poikansa eivät vaella hänen teillään, joten kansa pyytää kuningasta."
+      },
+      {
+        "number": 9,
+        "description": "Saul etsii isänsä aaseja ja tulee Samuelin luo, joka kestitsee häntä."
+      },
+      {
+        "number": 10,
+        "description": "Saul voidellaan. Hän profetoi ja muuttuu toiseksi mieheksi. Samuel kutsuu kansan koolle valitsemaan kuningasta: arpa osuu Sauliin."
+      },
+      {
+        "number": 11,
+        "description": "Saul lyö ammonilaiset ja vapauttaa Jabes-Gileadin."
+      },
+      {
+        "number": 12,
+        "description": "Samuelin rehellisyys tunnustetaan. Jumala osoittaa taivaan merkillä, että he tekivät väärin pyytäessään kuningasta."
+      },
+      {
+        "number": 13,
+        "description": "Sota Saulin ja filistealaisten välillä. Israelilaisten ahdinko. Saul uhraa uhrin ennen Samuelin tuloa: mistä häntä nuhdellaan."
+      },
+      {
+        "number": 14,
+        "description": "Joonatan hyökkää filistealaisten kimppuun. Ihmeellinen voitto. Saulin harkitsematon vala, joka saattaa Joonatanin hengenvaaraan, mutta kansa pelastaa hänet."
+      },
+      {
+        "number": 15,
+        "description": "Saul lähetetään tuhoamaan Amalek: hän säästää heidän kuninkaansa ja parhaan karjansa: tästä tottelemattomuudesta Herra hylkää hänet."
+      },
+      {
+        "number": 16,
+        "description": "Samuel lähetetään Betlehemiin, missä hän voitelee Daavidin: joka otetaan Saulin palvelukseen."
+      },
+      {
+        "number": 17,
+        "description": "Sota filistealaisten kanssa. Goljat haastaa Israelin. Daavid surmaa hänet."
+      },
+      {
+        "number": 18,
+        "description": "Joonatanin ja Daavidin ystävyys. Saulin kateus ja suunnitelma Daavidin henkeä vastaan. Hän naittaa hänet tyttärelleen Miikalille."
+      },
+      {
+        "number": 19,
+        "description": "Muita Saulin yrityksiä Daavidin henkeä vastaan. Hän tulee Samuelin luo. Saulin lähettit ja Saul itse profetoivat."
+      },
+      {
+        "number": 20,
+        "description": "Saul on itsepintaisesti päättänyt tappaa Daavidin, ja Joonatan lähettää hänet pois."
+      },
+      {
+        "number": 21,
+        "description": "Daavid saa pyhää leipää pappi Ahimelekiltä ja teeskentelee hullua Akisin, Gatin kuninkaan edessä."
+      },
+      {
+        "number": 22,
+        "description": "Monet liittyvät Daavidiin. Doeg syyttää Ahimelekiä Saulille. Tämä käskee surmata hänet ja kaikki muut Nobin papit. Abjatar pakenee."
+      },
+      {
+        "number": 23,
+        "description": "Daavid vapauttaa Keilan, jota filistealaiset piirittävät. Hän pakenee Siifin autiomaahan. Joonatan ja hän vahvistavat aiemman liittonsa. Siifit paljastavat hänet Saulille, joka häntä tiiviisti takaa ajaessaan kutsutaan pois filistealaisten hyökkäyksen vuoksi."
+      },
+      {
+        "number": 24,
+        "description": "Saul etsii Daavidia Ein-Gedin erämaasta: hän menee luolaan, jossa Daavid pitää häntä vallassaan."
+      },
+      {
+        "number": 25,
+        "description": "Samuelin kuolema. Daavid, Naabalin provosoimana, uhkaa tuhota hänet: mutta Abigail lepyttää hänet."
+      },
+      {
+        "number": 26,
+        "description": "Saul lähtee jälleen Daavidin perään, joka tulee yöllä paikalle, missä Saul ja hänen miehensä nukkuvat, mutta ei anna koskea häneen. Saul tunnustaa jälleen vikansa ja lupaa rauhaa."
+      },
+      {
+        "number": 27,
+        "description": "Daavid menee jälleen Akisin, Gatin kuninkaan luokse ja saa häneltä Siklagin kaupungin."
+      },
+      {
+        "number": 28,
+        "description": "Filistealaiset lähtevät sotaan Israelia vastaan. Jumalan hylkäämä Saul turvautuu noidannaiseen. Samuel ilmestyy hänelle."
+      },
+      {
+        "number": 29,
+        "description": "Daavid menee filistealaisten mukana mutta filistealaisten ruhtinaat lähettävät hänet takaisin."
+      },
+      {
+        "number": 30,
+        "description": "Amalekilaiset polttavat Siklagin ja vievät saaliin: Daavid ajaa heitä takaa ja ottaa kaiken takaisin heidän käsistään."
+      },
+      {
+        "number": 31,
+        "description": "Israel kärsii tappion filistealaisille: Saul ja hänen poikansa surmataan."
+      }
+    ]
+  },
+  {
+    "name": "2 Samuel",
+    "description": "Tämä kirja kertoo tapahtumista Saulin kuolemasta Daavidin hallituskauden loppuun, kattaen noin neljänkymmenenkuuden vuoden historian.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Daavid suree Saulin ja Joonatanin kuolemaa: hän käskee surmata miehen, joka väitti tappaneensa Saulin."
+      },
+      {
+        "number": 2,
+        "description": "Daavid vastaanotetaan ja voidellaan Juudan kuninkaaksi. Isbeset, Saulin poika, hallitsee muuta Israelia. Taistelu Abnerin ja Joabin välillä."
+      },
+      {
+        "number": 3,
+        "description": "Daavid vahvistuu päivä päivältä. Abner siirtyy hänen puolelleen: Joab surmaa hänet petollisesti."
+      },
+      {
+        "number": 4,
+        "description": "Isbeset murhataan kahden palvelijansa toimesta. Daavid rankaisee murhaajat."
+      },
+      {
+        "number": 5,
+        "description": "Daavid voidellaan koko Israelin kuninkaaksi. Hän valloittaa Jerusalemin ja asuu siellä. Hän lyö filistealaiset."
+      },
+      {
+        "number": 6,
+        "description": "Daavid noutaa arkin Kirjat-Jearimista. Ussa kuolee kosketettuaan arkkia. Se talletetaan Obed-Edomin taloon: ja sieltä tuodaan Daavidin taloon."
+      },
+      {
+        "number": 7,
+        "description": "Daavidin aikomus rakentaa temppeli palkitaan suurenmoisilla lupauksilla hänen jälkeläistensä kautta: hänen rukouksensa ja kiitoksensa."
+      },
+      {
+        "number": 8,
+        "description": "Daavidin voitot ja hänen ylimmät virkamiehensä."
+      },
+      {
+        "number": 9,
+        "description": "Daavidin ystävällisyys Mefibosettia kohtaan hänen isänsä Joonatanin muiston vuoksi."
+      },
+      {
+        "number": 10,
+        "description": "Ammonilaiset häpäisevät Daavidin lähettiläitä: he palkkaavat syyrialaisia avukseen mutta heidät ja heidän liittolaisensa kukistetaan."
+      },
+      {
+        "number": 11,
+        "description": "Daavid lankeaa aviorikokseen Batseba kanssa: eikä muuta keinoa löytäen peittää se, hän järjestää hänen miehensä Urian surman. Sitten hän nai hänet, ja hänelle syntyy poika."
+      },
+      {
+        "number": 12,
+        "description": "Naatanin vertaus. Daavid tunnustaa syntinsä ja saa anteeksi: kuitenkin niin, että hänelle langetetaan ankarat ajalliset rangaistukset. Lapsen kuolema. Salomon syntymä. Rabban valloitus."
+      },
+      {
+        "number": 13,
+        "description": "Amnon raiskaa Taamarin. Tämän vuoksi Absalom tappaa hänet ja pakenee Gessuriin."
+      },
+      {
+        "number": 14,
+        "description": "Joab järjestää Absalomin paluun ja hänen pääsynsä kuninkaan eteen."
+      },
+      {
+        "number": 15,
+        "description": "Absalomin politikointi ja salaliitto. Daavid pakotetaan pakenemaan."
+      },
+      {
+        "number": 16,
+        "description": "Siiba tuo muonaa Daavidille. Simei kiroaa häntä. Absalom häpäisee isänsä vaimot."
+      },
+      {
+        "number": 17,
+        "description": "Ahitofeelin neuvo torjutaan Huusain kautta: joka lähettää tiedon Daavidille. Ahitofel hirttäytyy."
+      },
+      {
+        "number": 18,
+        "description": "Absalom kukistetaan ja Joab surmaa hänet. Daavid suree häntä."
+      },
+      {
+        "number": 19,
+        "description": "Joabin huomautusten jälkeen Daavid lopettaa surunsa. Häntä kutsutaan takaisin; Simei ja Mefiboset tulevat vastaan: kiista Juudan ja Israelin miesten välillä."
+      },
+      {
+        "number": 20,
+        "description": "Seban kapina. Amasa surmataan Joabin toimesta. Abelaa piiritetään, mutta asukkaiden heittäessä Seban pään muurin yli Joab lähtee armeijoineen pois."
+      },
+      {
+        "number": 21,
+        "description": "Kolmen vuoden nälänhätä Saulin gibeonilaisille tekemän synnin vuoksi; joiden pyynnöstä seitsemän Saulin jälkeläistä ristiinnaulitaan. Jälleen sota filistealaisten kanssa."
+      },
+      {
+        "number": 22,
+        "description": "Kuningas Daavidin kiitospsalmi vapautuksestaan kaikista vihollistaan."
+      },
+      {
+        "number": 23,
+        "description": "Daavidin viimeiset sanat. Luettelo hänen urhoollisista miehistään."
+      },
+      {
+        "number": 24,
+        "description": "Daavid laskee kansan: Jumala lähettää ruton, joka pysäytetään Daavidin rukouksen ja uhrin kautta."
+      }
+    ]
+  },
+  {
+    "name": "1 Kings",
+    "description": "Kirkkoisät kutsuvat tätä ja seuraavaa kirjaa kolmanneksi ja neljänneksi kuninkaiden kirjaksi; mutta heprealaiset ensimmäiseksi ja toiseksi. Ne sisältävät Israelin ja Juudan kuningaskuntien historian Salomon hallituskauden alusta pakkosiirtolaisuuteen. Kirjoittajasta näyttää todennäköisimmältä, etteivät ne ole yhden miehen kirjoittamia eivätkä yhdeltä ajalta, vaan koska Israelissa oli jatkuva profeettojen perimys, jotka jumalallisesta innoituksesta kirjasivat merkittävimmät aikanaan tapahtuneet asiat, nämä kirjat näyttävät olevan näiden profeettojen kirjoittamia. Ks. 2. Aik. 9:29; 12:15; 13:22; 20:34; 26:22; 32:32.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kuningas Daavid vanhenee, Abisag suunemilaisnainen tuodaan hänen luokseen. Adonia yrittää hallita, Naatan ja Batseba saavat aikaan Salomon julistamisen ja voitelemisen kuninkaaksi."
+      },
+      {
+        "number": 2,
+        "description": "Daavid antaa viimeiset ohjeensa Salomolle ja kuolee. Adonia surmataan: Abjatar karkotetaan: Joab ja Simei surmataan."
+      },
+      {
+        "number": 3,
+        "description": "Salomo nai faraon tyttären. Hän uhraa Gibeonissa: Jumalan tarjotessa valintaa hän valitsee viisauden. Hänen viisas tuomionsa kahden naisen välillä."
+      },
+      {
+        "number": 4,
+        "description": "Salomon ylimmät virkamiehet. Hänen rikkautensa ja viisautensa."
+      },
+      {
+        "number": 5,
+        "description": "Hiiram, Tyron kuningas, suostuu toimittamaan puutavaraa ja työmiehiä temppelin rakentamiseen: työmiesten ja työnjohtajien lukumäärä."
+      },
+      {
+        "number": 6,
+        "description": "Salomon temppelin rakentaminen."
+      },
+      {
+        "number": 7,
+        "description": "Salomon palatsi, hänen talonsa metsässä ja kuningattaren talo: kahden pylvään työ: meriallas ja muut astiat."
+      },
+      {
+        "number": 8,
+        "description": "Temppelin vihkiminen: Salomon rukous ja uhrit."
+      },
+      {
+        "number": 9,
+        "description": "Herra ilmestyy jälleen Salomolle: hän rakentaa kaupunkeja: hän lähettää laivaston Ofiriin."
+      },
+      {
+        "number": 10,
+        "description": "Saban kuningatar tulee kuningas Salomon luokse: hänen rikkautensa ja kunniansa."
+      },
+      {
+        "number": 11,
+        "description": "Salomo lankeaa vaimojensa kautta epäjumalanpalvelukseen: Jumala nostattaa hänelle vastustajia, Hadadin, Resonin ja Jerobeamin: Salomo kuolee."
+      },
+      {
+        "number": 12,
+        "description": "Rehabeam noudattaa nuorten miesten neuvoa ja vieraannuttaa kansan. He tekevät Jerobeamista kymmenen heimon kuninkaan: hän perustaa epäjumalanpalveluksen."
+      },
+      {
+        "number": 13,
+        "description": "Profeetta, Juudasta lähetetty Beeteliin, ennustaa Joosian syntymän ja Jerobeamin alttarin tuhon. Jerobeamin käsi, joka uhkaa profeettaa, kuihtuu mutta paranee profeetan rukouksesta: sama profeetta petetään toisen profeetan toimesta ja leijona surmaa hänet."
+      },
+      {
+        "number": 14,
+        "description": "Ahia ennustaa Jerobeamin perheen tuhon. Hän kuolee ja hänen poikansa Naadab seuraa häntä. Egyptin kuningas ryöstää Jerusalemin. Rehabeam kuolee ja hänen poikansa Abia seuraa häntä."
+      },
+      {
+        "number": 15,
+        "description": "Abian ja Asan, Juudan kuninkaiden, teot. Sekä Naadabin ja Baessan, Israelin kuninkaiden."
+      },
+      {
+        "number": 16,
+        "description": "Jehu profetoi Baessaa vastaan: hänen poikansa Eela surmataan ja koko hänen perheensä tuhotaan Simrin toimesta. Omrin, Ahabin isän, hallituskausi."
+      },
+      {
+        "number": 17,
+        "description": "Elia sulkee taivaan sateelta. Korpit ruokkivat hänet ja myöhemmin leskinainen Sareptasta. Hän herättää leskinaisen pojan henkiin."
+      },
+      {
+        "number": 18,
+        "description": "Elia tulee Ahabin eteen. Hän voittaa väärät profeetat tuoden tulen taivaasta: hän saa sateen rukouksellaan."
+      },
+      {
+        "number": 19,
+        "description": "Elia pakenee Iisebelia; enkeli ruokkii hänet autiomaassa; tuon ruoan voimalla hän vaeltaa neljäkymmentä päivää Horebille, missä hän saa näyn Jumalasta."
+      },
+      {
+        "number": 20,
+        "description": "Syyrlaiset piirittävät Samarian: Ahab voittaa heidät kahdesti: profeetta nuhtele häntä Benhadadin vapauttamisesta."
+      },
+      {
+        "number": 21,
+        "description": "Naabot kieltäytyy luovuttamasta viinitarhaansa kuningas Ahabille, ja Iisebelin käskystä häntä syytetään väärin ja kivitetään kuoliaaksi. Tästä rikoksesta Elia julistaa Ahabille Jumalan tuomiot: hänen nöyrtyessään tuomio lievennetään."
+      },
+      {
+        "number": 22,
+        "description": "Ahab uskoo vääriin profeetteihinsa Miikan sijasta ja saa surmansa Ramot-Gileadissa. Ahasia seuraa häntä. Hyvä kuningas Josafat kuolee, ja hänen poikansa Jooram seuraa häntä."
+      }
+    ]
+  },
+  {
+    "name": "2 Kings",
+    "description": "",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Ahasia lähettää kysymään Baal-Sebubia: Elia ennustaa hänen kuolemansa ja saa tulen laskeutumaan taivaasta kahden päällikön ja heidän joukkojensa päälle."
+      },
+      {
+        "number": 2,
+        "description": "Elisa ei eroa Eliasta. Jordanin vesi jaetaan Elian viitalla. Elia otetaan tuliseen vaunuun, ja hänen kaksinkertainen henkensä annetaan Elisalle. Elisa parantaa vedet heittämällä niihin suolaa. Karhut raatelevat poikia, jotka pilkkasivat Elisaa."
+      },
+      {
+        "number": 3,
+        "description": "Israelin, Juudan ja Edomin kuninkaat taistelevat Moabin kuningasta vastaan. Heillä on vesipula, jonka Elisa täyttää ilman sadetta ja ennustaa voiton. Moabin kuningas kukistetaan, hänen kaupunkinsa piiritetään; hän uhraa esikoispoikansa, ja israelilaiset luopuvat piiritykestä."
+      },
+      {
+        "number": 4,
+        "description": "Elisan ihmeitä. Hän herättää kuolleen lapsen henkiin."
+      },
+      {
+        "number": 5,
+        "description": "Syyrialainen Naaman puhdistetaan spitaalistaan. Hän tunnustaa uskovan yhteen Jumalaan ja lupaa palvella häntä. Geehasi ottaa lahjoja Naamanilta ja lyödään spitaalilla."
+      },
+      {
+        "number": 6,
+        "description": "Elisa saa raudan kellumaan veden pinnalla: hän johdattaa häntä vangitsemaan lähetetyt syyrlaiset Samariaan, missä heidän silmänsä avataan ja heitä kestitään ystävällisesti. Syyrlaiset piirittävät Samarian: nälänhätä saa naisen syömään oman lapsensa. Tämän vuoksi kuningas käskee surmata Elisan."
+      },
+      {
+        "number": 7,
+        "description": "Elisa ennustaa suuren yltäkylläisyyden, joka seuraakin syyrialaisten äkillisestä paosta; neljä spitaalista tuo uutisen kaupunkiin. Epäuskoinen ylimys tallataan kuoliaaksi."
+      },
+      {
+        "number": 8,
+        "description": "Elisan ennustaman seitsemän vuoden nälänhädän jälkeen suunemilaisnainen palaa kotiin ja saa takaisin maansa ja tulonsa. Elisa ennustaa Syyrian kuninkaan Benhadadin kuoleman ja Hasaelin hallituskauden. Jooramin jumalaton hallituskausi Juudassa. Hän kuolee ja hänen poikansa Ahasia seuraa häntä."
+      },
+      {
+        "number": 9,
+        "description": "Jehu voidellaan Israelin kuninkaaksi tuhoamaan Ahabin ja Iisebelin huoneen. Hän tappaa Jooramin, Israelin kuninkaan, ja Ahasian, Juudan kuninkaan. Iisebelin syövät koirat."
+      },
+      {
+        "number": 10,
+        "description": "Jehu tuhoaa Ahabin huoneen: lakkauttaa Baalin palveluksen ja tappaa sen palvojat: mutta pitäytyy Jerobeamin vasikoissa. Syyrlaiset ahdistvelevat Israelia."
+      },
+      {
+        "number": 11,
+        "description": "Atalian anastus ja tyrannia. Joas tehdään kuninkaaksi. Atalia surmataan."
+      },
+      {
+        "number": 12,
+        "description": "Temppeliä korjataan. Hasael ostetaan pois hyökkäämästä Jerusalemiin. Joas surmataan."
+      },
+      {
+        "number": 13,
+        "description": "Joahaksen ja Joaksen, Israelin kuninkaiden, hallituskaudet. Profeetta Elisan viimeiset teot ja kuolema: kuollut mies herätetään henkiin hänen luittensa koskettamisella."
+      },
+      {
+        "number": 14,
+        "description": "Amasia hallitsee Juudassa: hän voittaa edomilaiset mutta joutuu Joaksen, Israelin kuninkaan, voittamaksi. Jerobeam toinen hallitsee Israelissa."
+      },
+      {
+        "number": 15,
+        "description": "Asarian ja Jootamin hallituskaudet Juudassa: sekä Sakarjan, Sallumin, Menahhemin, Pekahjan ja Pekan hallituskaudet Israelissa."
+      },
+      {
+        "number": 16,
+        "description": "Ahaksen jumalaton hallituskausi: Syyrian ja Israelin kuninkaat sotivat häntä vastaan: hän palkkaa avukseen Assyrian kuninkaan: hän teettää alttarin Damaskoksen alttarin mallin mukaan."
+      },
+      {
+        "number": 17,
+        "description": "Hoosean hallituskausi. Israelilaiset viedään syntinsä tähden pakkosiirtolaisuuteen: muita asukkaita lähetetään Samariaan, ja uskonto sekoittuu."
+      },
+      {
+        "number": 18,
+        "description": "Hiskian hallituskausi: hän hävittää epäjumalanpalveluksen ja menestyy. Sanheribia hyökkää häntä vastaan: Rabsake yrittää houkutella kansaa kapinaan ja pilkkaa Herraa."
+      },
+      {
+        "number": 19,
+        "description": "Jesaja profeetta lupaa Hiskialle Jumalan apua. Assyrian kuningas uhkailee ja pilkkaa edelleen. Hiskia rukoilee, ja Jumala lupaa suojella Jerusalemia. Enkeli tuhoaa assyrialaisten armeijan, ja kuningas palaa Niiniveen, missä hänen kaksi poikaansa surmaavat hänet."
+      },
+      {
+        "number": 20,
+        "description": "Hiskia sairastuu ja Jesaja kertoo hänen kuolevan; mutta rukoillen Jumalaa hän saa elämälleen pidennyksen, minkä vahvistukseksi aurinko perääntyy. Hän näyttää kaikki aarteensa Babylonian kuninkaan lähettiläille: Jesaja nuhtele häntä siitä ja ennustaa Babylonian pakkosiirtolaisuuden."
+      },
+      {
+        "number": 21,
+        "description": "Manassen jumalattomuus: Jumalan uhkaukset profeettojensa kautta. Hänen jumalaton poikansa Amon seuraa häntä ja palvelijansa surmaavat hänet."
+      },
+      {
+        "number": 22,
+        "description": "Josia korjauttaa temppelin. Lakikirja löydetään, minkä johdosta he kysyvät Herraa, ja heille kerrotaan, että suuria onnettomuuksia kohtaa heitä, mutta ei Joosian aikana."
+      },
+      {
+        "number": 23,
+        "description": "Josia lukee lain koko kansan edessä. He lupaavat noudattaa sitä. Hän hävittää kaiken epäjumalanpalveluksen, viettää pääsiäistä: kaatuu taistelussa Egyptin kuningasta vastaan. Joahaksen lyhyt hallituskausi, jonka tilalle Joojakim tehdään kuninkaaksi."
+      },
+      {
+        "number": 24,
+        "description": "Joojakimin, Joojakinin ja Sidkian hallituskaudet."
+      },
+      {
+        "number": 25,
+        "description": "Nebukadnessar piirittää ja valloittaa Jerusalemin: Sidkia vangitaan: kaupunki ja temppeli tuhotaan. Gedalja, joka jätetään maaherraksi, murhataan. Joojakin korotetaan Evilmerodakin toimesta."
+      }
+    ]
+  },
+  {
+    "name": "1 Chronicles",
+    "description": "Kreikankieliset kääntäjät kutsuvat näitä kirjoja nimellä Paralipomenon, eli pois jätetyistä tai unohdetuista asioista; koska ne ovat eräänlainen täydennys kuninkaiden kirjoissa ohitetuista asioista. Heprealaiset kutsuvat niitä nimellä Dibre Haijamim, eli päivien sanat tai aikakirjat. Ne eivät kuitenkaan ole samat kirjat, joita kuninkaiden kirjoissa usein lainataan nimellä Israelin kuninkaiden tai Juudan kuninkaiden päivien sanat: sillä aikakirjat kirjoitettiin kuninkaiden kirjojen jälkeen, mutta ne on todennäköisesti lyhennetty noista muinaisista päivien sanoista Esran tai jonkin muun pyhän kirjoittajan toimesta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Patriarkkojen sukuluettelo Aabrahamiin saakka: Aabrahamin ja Esaun jälkeläiset."
+      },
+      {
+        "number": 2,
+        "description": "Israelin kaksitoista heimoa. Juudan sukuluettelo Daavidiin saakka. Muita Juudan heimon sukuluetteloita."
+      },
+      {
+        "number": 3,
+        "description": "Daavidin huoneen sukuluettelo."
+      },
+      {
+        "number": 4,
+        "description": "Muita Juudan ja Simeonin sukuluetteloita ja heidän voittojaan."
+      },
+      {
+        "number": 5,
+        "description": "Ruubenin ja Gaadin sukuluettelot: heidän voittonsa hagarilaisista: heidän pakkosiirtolaisuutensa."
+      },
+      {
+        "number": 6,
+        "description": "Leevin ja Aaronin sukuluettelot: leeviläisten kaupungit."
+      },
+      {
+        "number": 7,
+        "description": "Isaskarin, Benjaminin, Naftalin, Manassen, Efraimin ja Asserin sukuluettelot."
+      },
+      {
+        "number": 8,
+        "description": "Benjaminin jälkeläiset esitetään tarkemmin Sauliin saakka. Hänen jälkeläisensä."
+      },
+      {
+        "number": 9,
+        "description": "Israelilaiset, papit ja leeviläiset, jotka ensin asuivat Jerusalemissa pakkosiirtolaisuuden jälkeen. Saulin sukuluettelon kertaus."
+      },
+      {
+        "number": 10,
+        "description": "Saul kaatuu syntiensä vuoksi: Jabesin miehet hautaavat hänet."
+      },
+      {
+        "number": 11,
+        "description": "Daavid tehdään kuninkaaksi. Hän valloittaa Siionin linnan. Luettelo hänen urhoollisista miehistään."
+      },
+      {
+        "number": 12,
+        "description": "Ketkä seurasivat Daavidia hänen paetessaan Saulia. Ja ketkä tulivat Hebroniin tekemään hänet kuninkaaksi."
+      },
+      {
+        "number": 13,
+        "description": "Arkki tuodaan Kirjat-Jearimista. Ussa kuolee kosketettuaan sitä."
+      },
+      {
+        "number": 14,
+        "description": "Daavidin talo ja lapset: hänen voittonsa filistealaisista."
+      },
+      {
+        "number": 15,
+        "description": "Arkki tuodaan Daavidin kaupunkiin suurella juhlallisuudella. Miikal pilkkaa Daavidin hartautta."
+      },
+      {
+        "number": 16,
+        "description": "Arkki asetetaan pyhäkkötelttaan. Uhri uhrataan. Daavid siunaa kansan, järjestää leeviläisten virat ja sepittää Jumalaa ylistävän psalmin."
+      },
+      {
+        "number": 17,
+        "description": "Daavidin aikomus rakentaa temppeli palkitaan mitä runsaimmin lupauksin: Daavidin kiitosrukous."
+      },
+      {
+        "number": 18,
+        "description": "Daavidin voitot. Hänen ylimmät virkamiehensä."
+      },
+      {
+        "number": 19,
+        "description": "Ammonilaiset häpäisevät Daavidin lähettiläitä: sekä he että heidän liittolaisensa kukistetaan."
+      },
+      {
+        "number": 20,
+        "description": "Rabba valloitetaan. Muita voittoja filistealaisista."
+      },
+      {
+        "number": 21,
+        "description": "Daavidin synti kansan laskemisessa rangaistaan rutolla: joka lakkaa hänen uhratessaan Ornanin puimatantereella."
+      },
+      {
+        "number": 22,
+        "description": "Daavid valmistaa kaiken tarpeellisen ja antaa Salomolle tehtäväksi rakentaa temppelin ja ruhtinaita avustamaan häntä."
+      },
+      {
+        "number": 23,
+        "description": "Daavid nimittää Salomon kuninkaaksi. Leeviläisten jako ja heidän tehtävänsä."
+      },
+      {
+        "number": 24,
+        "description": "Pappien jako kahdeksikymmeneksineljäksi vuoroon palvelemaan temppelissä: leeviläisten päälliköt."
+      },
+      {
+        "number": 25,
+        "description": "Soittajien lukumäärä ja jako."
+      },
+      {
+        "number": 26,
+        "description": "Ovenvartijain jaot. Muiden leeviläisten virat."
+      },
+      {
+        "number": 27,
+        "description": "Kaksitoista päällikköä kullekin kuukaudelle; heimojen kaksitoista ruhtinasta. Daavidin eri virkamiehet."
+      },
+      {
+        "number": 28,
+        "description": "Daavidin puhe juhlallisessa kokouksessa: hänen kehotuksensa Salomolle. Hän antaa hänelle temppelin piirustukset."
+      },
+      {
+        "number": 29,
+        "description": "Daavid rohkaisee sanoin ja esimerkein ruhtinaita antamaan anteliaasti temppelin rakentamiseen. Hänen kiitos- ja rukouksensa sekä uhrinsa: hänen kuolemansa."
+      }
+    ]
+  },
+  {
+    "name": "2 Chronicles",
+    "description": "",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Salomo uhraa Gibeonissa. Hänen valintansa viisaudesta, jonka Jumala hänelle antaa."
+      },
+      {
+        "number": 2,
+        "description": "Salomon lähetystö Hiiramille, joka lähettää hänelle taitavan työmiehen ja puutavaraa."
+      },
+      {
+        "number": 3,
+        "description": "Temppelin suunnitelma ja koristeet: kerubit, väliverho ja pylväät."
+      },
+      {
+        "number": 4,
+        "description": "Pronssialttari, valettu meriallas kahdentoista härän päällä, kymmenen pesuallasta, kynttilänjalkoja ja muita temppelin astioita ja koristeita."
+      },
+      {
+        "number": 5,
+        "description": "Arkki tuodaan suurella juhlallisuudella temppeliin: temppeli täyttyy Jumalan kirkkaudesta."
+      },
+      {
+        "number": 6,
+        "description": "Salomon siunaukset ja rukous."
+      },
+      {
+        "number": 7,
+        "description": "Tuli taivaasta kuluttaa uhrit. Temppelin vihkiäisjuhlan juhlallisuus. Jumala ilmoittaa kuulleensa Salomon rukouksen: kuitenkin niin, että hän jatkaa hänen palvelustaan."
+      },
+      {
+        "number": 8,
+        "description": "Salomon rakennukset ja muut teot."
+      },
+      {
+        "number": 9,
+        "description": "Saban kuningatar ihailee Salomon viisautta. Hänen rikkautensa ja kunniansa. Hänen kuolemansa."
+      },
+      {
+        "number": 10,
+        "description": "Rehabeam vastaa kansalle ankarasti: tämän johdosta kymmenen heimoa kapinoi."
+      },
+      {
+        "number": 11,
+        "description": "Rehabeamin hallituskausi. Hänen valtakuntansa vahvistuu."
+      },
+      {
+        "number": 12,
+        "description": "Rehabeam luovutetaan syntiensä vuoksi Egyptin kuninkaan käsiin: joka vie kaikki temppelin aarteet."
+      },
+      {
+        "number": 13,
+        "description": "Abian hallituskausi: hänen voittonsa Jerobeamista."
+      },
+      {
+        "number": 14,
+        "description": "Asan hallituskausi: hänen voittonsa etiopialaisista."
+      },
+      {
+        "number": 15,
+        "description": "Asarjan profetia. Asan liitto Jumalan kanssa. Hän erottaa äitinsä."
+      },
+      {
+        "number": 16,
+        "description": "Asaa nuhdellaan avun hakemisesta syyrialaisilta: hänen viimeiset tekonsa ja kuolemansa."
+      },
+      {
+        "number": 17,
+        "description": "Josafatin hallituskausi: hänen huolensa kansansa opettamisesta: hänen lukuisat joukkonsa."
+      },
+      {
+        "number": 18,
+        "description": "Josafat liittyy Ahabin sotaretkelle Ramot-Gileadia vastaan; missä Ahab kaatuu, kuten Miika oli ennustanut."
+      },
+      {
+        "number": 19,
+        "description": "Josafatin ohje tuomareille ja leeviläisille."
+      },
+      {
+        "number": 20,
+        "description": "Ammonilaiset, moabilaiset ja syyrlaiset liittoutuvat Josafatia vastaan: hän etsii Jumalan apua julkisella rukouksella ja paastolla. Profeetta ennustaa, että Jumala taistelee kansansa puolesta: viholliset tuhoavat toisensa. Josafat miehineen kerää saaliit. Hän hallitsee rauhassa, mutta hänen laivuttonsa tuhoutuu hänen yhteytensä jumalattoman Ahasian kanssa vuoksi."
+      },
+      {
+        "number": 21,
+        "description": "Jooramin jumalaton hallituskausi: hänen rangaistuksensa ja kuolemansa."
+      },
+      {
+        "number": 22,
+        "description": "Ahasian hallituskausi ja kuolema. Atalian tyrannia."
+      },
+      {
+        "number": 23,
+        "description": "Ylipappi Joojada teettää Joaksen kuninkaaksi: Atalia surmataan ja epäjumalanpalvelus hävitetään."
+      },
+      {
+        "number": 24,
+        "description": "Joas hallitsee hyvin koko Joojadan elinajan: lankeaa sitten epäjumalanpalvelukseen ja surmattaa Sakarjan. Hänen omat palvelijansa surmaavat hänet."
+      },
+      {
+        "number": 25,
+        "description": "Amasian hallituskausi: hän alkaa hyvin mutta päätyy huonosti: Joaksen, Israelin kuninkaan, voittama ja kansansa surmaama."
+      },
+      {
+        "number": 26,
+        "description": "Ussia hallitsee menestyksekkäästi, kunnes tunkeutuu pappien virkaan, mistä hän lyödään spitaalilla."
+      },
+      {
+        "number": 27,
+        "description": "Jootamin hyvä hallituskausi."
+      },
+      {
+        "number": 28,
+        "description": "Ahaksen jumalaton ja onneton hallituskausi."
+      },
+      {
+        "number": 29,
+        "description": "Hiskia puhdistaa temppelin ja palauttaa uskontoa."
+      },
+      {
+        "number": 30,
+        "description": "Hiskia kutsuu koko Israelin viettämään pääsiäistä; juhlallisuutta vietetään neljätoista päivää."
+      },
+      {
+        "number": 31,
+        "description": "Epäjumalanpalvelus hävitetään; ja papiston toimeentulosta huolehditaan."
+      },
+      {
+        "number": 32,
+        "description": "Sanherib hyökkää Juudaan: hänen armeijansa tuhoutuu enkelin toimesta. Hiskia paranee sairaudestaan: hänen muut tekonsa."
+      },
+      {
+        "number": 33,
+        "description": "Manasse moninaisine jumalattomuuksineen viedään vankina Babyloniin: hän katuu ja palautetaan valtakuntaansa sekä tuhoaa epäjumalanpalveluksen: hänen seuraajansa Amon murhataan palvelijoidensa toimesta."
+      },
+      {
+        "number": 34,
+        "description": "Josia tuhoaa epäjumalanpalveluksen, korjauttaa temppelin ja uudistaa liiton Jumalan ja kansan välillä."
+      },
+      {
+        "number": 35,
+        "description": "Josia viettää mitä juhlallisimman pääsiäisen. Hän kaatuu Egyptin kuninkaan toimesta."
+      },
+      {
+        "number": 36,
+        "description": "Joahaksen, Joojakimin, Joojakinin ja Sidkian hallituskaudet: Babylonian pakkosiirtolaisuus, joka viimein vapautetaan Kyyroksen toimesta."
+      }
+    ]
+  },
+  {
+    "name": "Ezra",
+    "description": "Tämä kirja on saanut nimensä kirjoittajaltaan: joka oli pyhä pappi ja lainopettaja. Heprealaiset kutsuvat häntä nimellä Esra.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kyyros, Persian kuningas, vapauttaa Jumalan kansan heidän pakkosiirtolaisuudestaan ja antaa luvan palata ja rakentaa temppeli Jerusalemiin: ja palauttaa pyhät astiat, jotka Nebukadnessar oli vienyt sieltä."
+      },
+      {
+        "number": 2,
+        "description": "Juudaan palanneiden lukumäärä: heidän uhrilahjanansa."
+      },
+      {
+        "number": 3,
+        "description": "Alttari rakennetaan uhreja varten, lehtimajanjuhlaa vietetään juhlallisesti ja temppelin perustukset lasketaan."
+      },
+      {
+        "number": 4,
+        "description": "Samarialaiset estävät kirjeellään kuninkaalle temppelin rakentamisen."
+      },
+      {
+        "number": 5,
+        "description": "Haggain ja Sakarjan kehotuksesta kansa jatkaa temppelin rakentamista. Heidän vihollisenasa yrittävät turhaan estää sitä."
+      },
+      {
+        "number": 6,
+        "description": "Kuningas Dareios suosii rakentamista ja osallistuu siihen."
+      },
+      {
+        "number": 7,
+        "description": "Esra lähtee Jerusalemiin opettamaan ja auttamaan kansaa, Artakserkseen armollisella asetuksella."
+      },
+      {
+        "number": 8,
+        "description": "Esran matkakumppanit. Hänen määräämänsä paasto. He tuovat pyhät astiat temppeliin."
+      },
+      {
+        "number": 9,
+        "description": "Esra suree kansan rikkomusta: hänen tunnustuksensa ja rukouksensa."
+      },
+      {
+        "number": 10,
+        "description": "Käsky erottaa vieraat vaimot: syyllisten nimet."
+      }
+    ]
+  },
+  {
+    "name": "Nehemiah",
+    "description": "Tämä kirja on saanut nimensä kirjoittajaltaan, joka oli Artakserkseen (lisänimeltään Longimanus) juomanlaskija, Persian kuningas, ja joka lähetettiin hänen toimestaan valtuutuksin rakentamaan Jerusalemin muurit uudelleen. Sitä kutsutaan myös Esran toiseksi kirjaksi; koska se on jatkoa Esran aloittamalle kertomukselle Jumalan kansan tilasta pakkosiirtolaisuuden jälkeiseltä ajalta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Nehemia kuulee maanmiestensä kurjan tilan Juudassa, valittaa, paastoaa ja rukoilee Jumalaa heidän avukseen."
+      },
+      {
+        "number": 2,
+        "description": "Nehemia tulee kuningas Artakserkseen valtuutuksin Jerusalemiin ja kehottaa juutalaisia rakentamaan muurit uudelleen."
+      },
+      {
+        "number": 3,
+        "description": "He alkavat rakentaa muureja: rakentajien nimet ja järjestys."
+      },
+      {
+        "number": 4,
+        "description": "Rakentamista jatketaan vihollisten vastustuksesta huolimatta."
+      },
+      {
+        "number": 5,
+        "description": "Nehemia moittii rikkaita köyhien sortamisesta. Hänen kehotuksensa ja anteliaisuutensa maanmiehiään kohtaan."
+      },
+      {
+        "number": 6,
+        "description": "Viholliset yrittävät pelotella Nehemiaa. Hän jatkaa ja saattaa muurin valmiiksi."
+      },
+      {
+        "number": 7,
+        "description": "Nehemia asettaa vahdit Jerusalemiin. Luettelo niistä, jotka ensin palasivat Babylonista."
+      },
+      {
+        "number": 8,
+        "description": "Esra lukee lain kansan edessä. Nehemia lohduttaa heitä. He viettävät lehtimajanjuhlaa."
+      },
+      {
+        "number": 9,
+        "description": "Kansa katuu paastoten ja säkkipukuun pukeutuneena. Leeviläiset tunnustavat Jumalan hyvät teot ja kansan kiittämättömyyden: he rukoilevat heidän puolestaan ja tekevät liiton Jumalan kanssa."
+      },
+      {
+        "number": 10,
+        "description": "Liiton allekirjoittajien nimet ja sen sisältö."
+      },
+      {
+        "number": 11,
+        "description": "Ketkä asuivat Jerusalemissa ja muissa kaupungeissa."
+      },
+      {
+        "number": 12,
+        "description": "Papit ja leeviläiset, jotka tulivat Serubbabelin kanssa. Ylipappien peräkkäisyys: muurin vihkiäisjuhlan juhlallisuus."
+      },
+      {
+        "number": 13,
+        "description": "Erilaisia epäkohtia korjataan."
+      }
+    ]
+  },
+  {
+    "name": "Esther",
+    "description": "Tämä kirja on saanut nimensä kuningatar Esteristä, jonka historia tässä kerrotaan. Lähes kaikkien Raamatun selittäjien yleinen käsitys pitää Mordokaita sen kirjoittajana: mikä voidaan myös johtaa luvun 9, jakeen 20 alta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Mordokain uni."
+      },
+      {
+        "number": 2,
+        "description": "Mordokai paljastaa kahden hoviherran salaliiton."
+      },
+      {
+        "number": 3,
+        "description": "Kuningas Artakserkses järjestää suuret pidot. Kuningatar Vasti kieltäytyy kutsuttaessa saapumasta: tästä tottelemattomuudesta hänet erotetaan virastaan."
+      },
+      {
+        "number": 4,
+        "description": "Ester korotetaan kuningattareksi. Mordokai paljastaa salaliiton kuningasta vastaan."
+      },
+      {
+        "number": 5,
+        "description": "Haman, kuninkaan korottama, loukkaantuu Mordokaista ja hankkii kuninkaan asetuksen tuhotakseen koko juutalaisten kansan."
+      },
+      {
+        "number": 6,
+        "description": "Kopio Hamanin kirjeestä juutalaisten tuhoamiseksi."
+      },
+      {
+        "number": 7,
+        "description": "Mordokain rukous kansan puolesta. Mordokai pyytää Esteriä anomaan kuninkaalta armoa juutalaisille. He liittyvät paastoon ja rukoukseen."
+      },
+      {
+        "number": 8,
+        "description": "Esterin rukous itsensä ja kansansa puolesta."
+      },
+      {
+        "number": 9,
+        "description": "Ester tulee kuninkaan eteen: hän kauhistuu, mutta Jumala kääntää kuninkaan sydämen: Ester vastaanotetaan armollisesti: hän kutsuu kuninkaan ja Hamanin päivälliselle: Haman valmistaa hirsipuun Mordokaita varten."
+      },
+      {
+        "number": 10,
+        "description": "Kuningas kuultuaan Mordokain hänelle tekemästä hyvästä palveluksesta käskee Hamanin kunnioittaa häntä kuninkaan jälkeen toisena, minkä tämä suorittaa."
+      }
+    ]
+  },
+  {
+    "name": "Job",
+    "description": "Tämä kirja on saanut nimensä pyhästä miehestä, jota se käsittelee: hänen uskotaan todennäköisimmin olleen Esaun jälkeläinen ja sama henkilö kuin Jobab, Edomin kuningas, joka mainitaan 1. Moos. 36:33. On epävarmaa, kuka kirjoitti tämän kirjan. Jotkut arvelevat, että Job itse; toiset, että Mooses tai joku profeetoista. Hepreaksi se on kirjoitettu runomittaan kolmannen luvun alusta ainakin neljänteenkymmenenteentoiseen lukuun saakka.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Jobin hyveellisyys ja rikkaus. Saatana saa Jumalan luvalla riistää häneltä kaiken omaisuutensa. Hänen kärsivällisyytensä."
+      },
+      {
+        "number": 2,
+        "description": "Saatana lyö Jumalan luvalla Jobin haavaumilla päästä jalkoihin: hänen kärsivällisyytensä on horjumaton."
+      },
+      {
+        "number": 3,
+        "description": "Job ilmaisee tunteensa ihmisen elämän kurjuudesta kiroamalla syntymäpäivänsä."
+      },
+      {
+        "number": 4,
+        "description": "Elifas syyttää Jobia kärsimättömyydestä ja väittää, ettei Jumala koskaan vaivaa viatonta."
+      },
+      {
+        "number": 5,
+        "description": "Elifas jatkaa syytöstään ja kehottaa Jobia tunnustamaan syntinsä."
+      },
+      {
+        "number": 6,
+        "description": "Job pitää kiinni viattomuudestaan ja valittaa ystävistään."
+      },
+      {
+        "number": 7,
+        "description": "Job kuvaa ihmisen elämän kurjuuksia ja kääntyy Jumalan puoleen."
+      },
+      {
+        "number": 8,
+        "description": "Bildad puolustaessaan Jumalan oikeudenmukaisuutta syyttää Jobia ja kehottaa häntä palaamaan Jumalan luo."
+      },
+      {
+        "number": 9,
+        "description": "Job tunnustaa Jumalan oikeudenmukaisuuden: vaikka hän usein koettelee viatonta."
+      },
+      {
+        "number": 10,
+        "description": "Job valittaa ahdistuksiaan ja pyytää päästä vapaaksi."
+      },
+      {
+        "number": 11,
+        "description": "Soofar moittii Jobia itsensä oikeuttamisesta ja kutsuu häntä katumukseen."
+      },
+      {
+        "number": 12,
+        "description": "Jobin vastaus Soofarille. Hän ylistää Jumalan voimaa ja viisautta."
+      },
+      {
+        "number": 13,
+        "description": "Job pitää kiinni viattomuudestaan ja nuhtelee ystäviään."
+      },
+      {
+        "number": 14,
+        "description": "Job toteaa ihmisen päivien lyhyyden ja tunnustaa uskonsa ylösnousemukseen."
+      },
+      {
+        "number": 15,
+        "description": "Elifas palaa syytöksiinsä Jobia vastaan ja kuvailee jumalattoman kurjaa tilaa."
+      },
+      {
+        "number": 16,
+        "description": "Job puhuu ystäviensä kanssa ja vetoaa Jumalan tuomioon."
+      },
+      {
+        "number": 17,
+        "description": "Jobin toivo Jumalassa: hän odottaa lepoa kuolemassa."
+      },
+      {
+        "number": 18,
+        "description": "Bildad nuhtelee jälleen Jobia ja kuvailee jumalattoman kurjuuksia."
+      },
+      {
+        "number": 19,
+        "description": "Job valittaa ystäviensä julmuutta; hän kuvailee kärsimyksiään ja tunnustaa uskonsa tulevaan ylösnousemukseen."
+      },
+      {
+        "number": 20,
+        "description": "Soofar toteaa jumalattoman vaurauden lyhytaikaisuuden ja hänen äkillisen tuhonsa."
+      },
+      {
+        "number": 21,
+        "description": "Job osoittaa, että jumalattomat usein menestyvät tässä maailmassa elämänsä loppuun saakka: mutta heidän tuomionsa on toisessa maailmassa."
+      },
+      {
+        "number": 22,
+        "description": "Elifas syyttää väärin Jobia monista rikoksista, mutta lupaa hänelle vaurautta, jos hän katuu."
+      },
+      {
+        "number": 23,
+        "description": "Job toivoo saavansa tulla tuomituksi Jumalan tuomioistuimessa."
+      },
+      {
+        "number": 24,
+        "description": "Jumalan kaitselmus sallii usein jumalattomien jatkavan pitkään synneissään: mutta rankaisee heitä toisessa elämässä."
+      },
+      {
+        "number": 25,
+        "description": "Jumalan kaitselmus sallii usein jumalattomien jatkavan pitkään synneissään: mutta rankaisee heitä toisessa elämässä."
+      },
+      {
+        "number": 26,
+        "description": "Job ilmaisee näkemyksensä Jumalan viisaudesta ja vallasta."
+      },
+      {
+        "number": 27,
+        "description": "Job pitää kiinni viattomuudestaan ja väittää, että tekopyhät lopulta rangaistaan."
+      },
+      {
+        "number": 28,
+        "description": "Ihmisen tarmokuuus löytää monia asioita: todellista viisautta opettaa yksin Jumala."
+      },
+      {
+        "number": 29,
+        "description": "Job muistelee aikaisempaa onneaan ja kaikkien hänelle osoittamaa kunnioitusta."
+      },
+      {
+        "number": 30,
+        "description": "Job osoittaa ajallisen asemansa ihmeellisen muutoksen hyvinvoinnista suureen kurjuuteen."
+      },
+      {
+        "number": 31,
+        "description": "Job puolustaakseen itseään ystäviensä epäoikeudenmukaisilta tuomioilta antaa vilpittömän kertomuksen omista hyveistään."
+      },
+      {
+        "number": 32,
+        "description": "Elihu suuttuu Jobille ja hänen ystävilleen. Hän kehuskelee."
+      },
+      {
+        "number": 33,
+        "description": "Elihu moittii Jobia hänen viattomuutensa väittämisestä."
+      },
+      {
+        "number": 34,
+        "description": "Elihu syyttää Jobia jumalanpilkasta ja ylistää Jumalan valtaa ja oikeudenmukaisuutta."
+      },
+      {
+        "number": 35,
+        "description": "Elihu toteaa, ettei ihmisen tekemä hyvä tai paha voi ulottua Jumalaam."
+      },
+      {
+        "number": 36,
+        "description": "Elihu jatkaa Jumalan oikeudenmukaisuuden ja vallan esittelyä."
+      },
+      {
+        "number": 37,
+        "description": "Elihu jatkaa puhettaan osoittaen Jumalan viisauden ja vallan hänen ihmellisten tekojensa kautta."
+      },
+      {
+        "number": 38,
+        "description": "Jumala puhuu ja osoittaa luomistöidensä kautta, ettei ihminen voi käsittää hänen valtaansa ja viisauttaan."
+      },
+      {
+        "number": 39,
+        "description": "Jumalan vallan ja kaitselmuksen ihmeet monissa hänen luoduissaan."
+      },
+      {
+        "number": 40,
+        "description": "Jumalan vallasta behemotsisa ja leviatanissa."
+      },
+      {
+        "number": 41,
+        "description": "Tarkempi kuvaus leviatanista."
+      },
+      {
+        "number": 42,
+        "description": "Job alistuu. Jumala antaa tuomion hänen hyväkseen. Job uhraa ystäviensä puolesta. Hän siunataan rikkauksin ja lapsin ja kuolee onnellisena."
+      }
+    ]
+  },
+  {
+    "name": "Psalm",
+    "description": "Psalmeja heprealaiset kutsuvat nimellä TEHILLIM, eli ylistysvirret. Suuren osan niistä kirjoitti kuningas Daavid: mutta monet ovat sitä mieltä, että osan kirjoittivat Asaf ja muut, joiden nimet mainitaan otsikoissa.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Vanhurskaan onni ja jumalattoman kurja tila."
+      },
+      {
+        "number": 2,
+        "description": "Vainoojien turhut yritykset Kristusta ja hänen kirkkoaan vastaan."
+      },
+      {
+        "number": 3,
+        "description": "Profeetan vaara ja pelastuminen pojaltaan Absalom: salaperäisesti Kristuksen kärsimys ja ylösnousemus."
+      },
+      {
+        "number": 4,
+        "description": "Profeetta opettaa meitä pakenemaan Jumalan luo ahdistuksessa, luottaen häneen."
+      },
+      {
+        "number": 5,
+        "description": "Rukous Jumalalle ihmisten vääryyksiä vastaan."
+      },
+      {
+        "number": 6,
+        "description": "Katumuksellisen syntisen rukous Jumalan ruoskan alla. Ensimmäinen katumpsalmi."
+      },
+      {
+        "number": 7,
+        "description": "Daavid luottaen asiansa oikeuteen rukoilee Jumalan apua vihollisiaan vastaan."
+      },
+      {
+        "number": 8,
+        "description": "Jumala on ihmeellinen teoksissaan; erityisesti ihmiskunnassa, jota Kristuksen ihmiseksitulo on erityisesti korottanut."
+      },
+      {
+        "number": 9,
+        "description": "Kirkko ylistää Jumalaa hänen suojeluksestaan vihollisiaan vastaan."
+      },
+      {
+        "number": 10,
+        "description": "Oikeamielisen luottamus Jumalaan vainojen keskellä."
+      },
+      {
+        "number": 11,
+        "description": "Profeetta huutaa Jumalan apua jumalattomia vastaan."
+      },
+      {
+        "number": 12,
+        "description": "Rukous ahdistuksessa."
+      },
+      {
+        "number": 13,
+        "description": "Ihmisen yleinen turmelus ennen lunastustamme Kristuksen kautta."
+      },
+      {
+        "number": 14,
+        "description": "Millaiset ihmiset saavat asua taivaallisessa Siionissa."
+      },
+      {
+        "number": 15,
+        "description": "Kristuksen tuleva voitto ja riemukulkue maailman ja kuoleman yli."
+      },
+      {
+        "number": 16,
+        "description": "Vanhurskaan rukous ahdistuksessa vihollisen pahuutta vastaan."
+      },
+      {
+        "number": 17,
+        "description": "Daavidin kiitos Jumalalle vapautuksesta kaikista vihollistaan."
+      },
+      {
+        "number": 18,
+        "description": "Jumalan teot julistavat hänen kunniaansa: hänen lakiaan tulee suuresti arvostaa ja rakastaa."
+      },
+      {
+        "number": 19,
+        "description": "Rukous kuninkaan puolesta."
+      },
+      {
+        "number": 20,
+        "description": "Ylistys Jumalalle Kristuksen korottamisesta hänen kärsimyksensä jälkeen."
+      },
+      {
+        "number": 21,
+        "description": "Kristuksen kärsimys ja pakanoiden kääntyminen."
+      },
+      {
+        "number": 22,
+        "description": "Jumalan hengelliset lahjat uskollisille sieluille."
+      },
+      {
+        "number": 23,
+        "description": "Ketkä saavat nousta taivaaseen: Kristuksen riemukas taivaaseen astuminen."
+      },
+      {
+        "number": 24,
+        "description": "Rukous armosta, laupeudesta ja suojeluksesta vihollisiamme vastaan."
+      },
+      {
+        "number": 25,
+        "description": "Daavidin rukous Jumalalle hädässään, pelastuakseen ja voidakseen tulla palvelemaanhäntä pyhäköönssä."
+      },
+      {
+        "number": 26,
+        "description": "Daavidin usko ja toivo Jumalaan."
+      },
+      {
+        "number": 27,
+        "description": "Daavidin rukous, etteivät viholliset saisi hänestä voittoa."
+      },
+      {
+        "number": 28,
+        "description": "Kehotus Jumalan ylistämiseen ja muistio hänen mahtavista teoistaan."
+      },
+      {
+        "number": 29,
+        "description": "Daavid ylistää Jumalaa pelastumisestaan ja Jumalan armollisesta kohtelustaan."
+      },
+      {
+        "number": 30,
+        "description": "Vanhurskaan rukous ahdistukseen keskellä."
+      },
+      {
+        "number": 31,
+        "description": "Toinen katumpsalmi."
+      },
+      {
+        "number": 32,
+        "description": "Kehotus ylistää Jumalaa ja luottaa häneen."
+      },
+      {
+        "number": 33,
+        "description": "Kehotus Jumalan ylistämiseen ja palvelemiseen."
+      },
+      {
+        "number": 34,
+        "description": "Daavid Kristuksen hahmossa rukoilee vainoajiaan vastaan: ennustaen profeetallisesti rangaistukset, jotka kohtaavat heitä."
+      },
+      {
+        "number": 35,
+        "description": "Syntisten pahuus ja Jumalan hyvyys."
+      },
+      {
+        "number": 36,
+        "description": "Kehotus halveksimaan tätä maailmaa ja jumalattomien lyhytaikaista vaurautta ja luottamaan kaitselmukseen."
+      },
+      {
+        "number": 37,
+        "description": "Katuvan rukous syntiensä anteeksisaamiseksi. Kolmas katumpsalmi."
+      },
+      {
+        "number": 38,
+        "description": "Vanhurskaan rauha ja kärsivällisyys kärsimyksissään; pohdiskellen maailman turhuutta ja Jumalan kaitselmusta."
+      },
+      {
+        "number": 39,
+        "description": "Kristuksen tuleminen ja ihmiskunnan lunastaminen."
+      },
+      {
+        "number": 40,
+        "description": "Sen onni, joka uskoo Kristukseen; hänen nöyryydestään ja köyhyydestään huolimatta: vihollisten pahuus, erityisesti petturi Juudaksen."
+      },
+      {
+        "number": 41,
+        "description": "Vanhurskaan palava halu Jumalaa kohtaan: toivo ahdistuksessa."
+      },
+      {
+        "number": 42,
+        "description": "Profeetta kaipaa temppeliä ja Jumalan alttaria."
+      },
+      {
+        "number": 43,
+        "description": "Kirkko muistelee entisiä siounauksia ja nykyisiä ahdistuksia; joiden alla se rukoilee apua."
+      },
+      {
+        "number": 44,
+        "description": "Kristuksen valtakunnan erinomaisuus ja hänen kirkkonsa lahjat."
+      },
+      {
+        "number": 45,
+        "description": "Kirkko vainojen keskellä luottaa Jumalan suojelukseen."
+      },
+      {
+        "number": 46,
+        "description": "Pakanat kutsutaan ylistämään Jumalaa Kristuksen valtakunnan perustamisesta."
+      },
+      {
+        "number": 47,
+        "description": "Jumalaa on suuresti ylistettävä hänen kirkkonsa perustamisesta."
+      },
+      {
+        "number": 48,
+        "description": "Maailmallisten mielettömyys, jotka elävät synnissä ajattelematta kuolemaa tai helvettiä."
+      },
+      {
+        "number": 49,
+        "description": "Kristuksen tuleminen: joka asettaa hyveen ja sisäisen puhtauden uhriveren edelle."
+      },
+      {
+        "number": 50,
+        "description": "Daavidin katumus ja tunnustus syntinsä jälkeen. Neljäs katumpsalmi."
+      },
+      {
+        "number": 51,
+        "description": "Daavid tuomitsee Doegin jumalattomuuden ja ennustaa hänen tuhonsa."
+      },
+      {
+        "number": 52,
+        "description": "Ihmisen yleinen turmelus ennen Kristuksen tulemista."
+      },
+      {
+        "number": 53,
+        "description": "Rukous avusta hädässä."
+      },
+      {
+        "number": 54,
+        "description": "Vanhurskaan rukous jumalattoman vainon alla. Soveltuu Kristukseen, jota juutalaiset vainosivat ja Juudas petti."
+      },
+      {
+        "number": 55,
+        "description": "Daavidin rukous vaarassa ja ahdistuksessa."
+      },
+      {
+        "number": 56,
+        "description": ""
+      },
+      {
+        "number": 57,
+        "description": "Daavid nuhdtelee jumalattomia ja ennustaa heidän rangaistuksensa."
+      },
+      {
+        "number": 58,
+        "description": "Rukous pelastuksesta jumalattomilta, luottaen Jumalan apuun ja suojelukseen. Soveltuu Kristukseen ja hänen viholisiinsa juutalaisiin."
+      },
+      {
+        "number": 59,
+        "description": "Monien ahdistusten jälkeen Kristuksen kirkko voittaa."
+      },
+      {
+        "number": 60,
+        "description": "Rukous Kristuksen ikuisen valtakunnan tulemisesta."
+      },
+      {
+        "number": 61,
+        "description": "Profeetta rohkaisee itseään ja muita luottamaan Jumalaan ja palvelemaan häntä."
+      },
+      {
+        "number": 62,
+        "description": "Profeetta kaipaa Jumalaa."
+      },
+      {
+        "number": 63,
+        "description": "Rukous ahdistuksessa, luottaen Jumalaan, joka tekee tyhjäksi vainoojien juonet."
+      },
+      {
+        "number": 64,
+        "description": "Jumalaa on ylistettävä hänen kirkossaan, johon kaikki kansat kutsutaan."
+      },
+      {
+        "number": 65,
+        "description": "Kehotus ylistää Jumalaa."
+      },
+      {
+        "number": 66,
+        "description": "Rukous kirkon levittämiseksi."
+      },
+      {
+        "number": 67,
+        "description": "Uuden testamentin kirkon loistava perustaminen, jota Israelin kansalle suodut suosionetkätkevät."
+      },
+      {
+        "number": 68,
+        "description": "Kristus kuvailee kärsimyksissään kärsimystensä suuruutta ja vainoajiensa juutalaisten pahuutta; ja ennustaa heidän hylkäämisensä."
+      },
+      {
+        "number": 69,
+        "description": "Rukous vainossa."
+      },
+      {
+        "number": 70,
+        "description": "Rukous kestävyyden puolesta."
+      },
+      {
+        "number": 71,
+        "description": "Profetia Kristuksen tulemisesta ja hänen valtakunnastaan: jota Salomo ja hänen onnellinen hallituskautensa ennakoi."
+      },
+      {
+        "number": 72,
+        "description": "Heikkojen kiusaus jumalattomien vaurauden näkemisestä voitetaan pohtimalla Jumalan oikeudenmukaisuutta, joka pian antaa jokaiselle tekojensa mukaan."
+      },
+      {
+        "number": 73,
+        "description": "Kirkon rukous ankarien vainojen alla."
+      },
+      {
+        "number": 74,
+        "description": "Oikeudenmukainen tuomio on tulossa: jumalattomien tulee varoa."
+      },
+      {
+        "number": 75,
+        "description": "Jumala tunnetaan kirkossaan ja osoittaa valtansa sen suojelemisessa. Viittaa assyrialaisten teurastukseen kuningas Hiskian aikana."
+      },
+      {
+        "number": 76,
+        "description": "Uskolliset turvautuvat Jumalaan mielen ahdistuksessa, luottaen hänen armoonsa ja valtaansa."
+      },
+      {
+        "number": 77,
+        "description": "Jumalan suuret hyväteot Israelin kansalle heidän kiittämättömyydestään huolimatta."
+      },
+      {
+        "number": 78,
+        "description": "Kirkko vainon aikana rukoilee helpotusta. Se näyttää kuuluvan makkabealaisaikaan."
+      },
+      {
+        "number": 79,
+        "description": "Rukous kirkon puolesta ahdistuksessa, muistellen Jumalan entisiä suosionosoituksia."
+      },
+      {
+        "number": 80,
+        "description": "Kehotus juhlalliseen Jumalan ylistämiseen."
+      },
+      {
+        "number": 81,
+        "description": "Kehotus tuomareille ja vallassaoleville."
+      },
+      {
+        "number": 82,
+        "description": "Rukous Jumalan kirkon vihollisia vastaan."
+      },
+      {
+        "number": 83,
+        "description": "Sielu kaipaa taivasta; iloiten sillä välin kuulumisesta Jumalan kirkon yhteyteen maan päällä."
+      },
+      {
+        "number": 84,
+        "description": "Kristuksen tuleminen tuomaan rauhaa ja pelastusta ihmiselle."
+      },
+      {
+        "number": 85,
+        "description": "Rukous Jumalan armosta avustamaan meitä loppuun saakka."
+      },
+      {
+        "number": 86,
+        "description": "Kristuksen kirkon kunnia."
+      },
+      {
+        "number": 87,
+        "description": "Ankaran ahdistuksen alla olevan rukous: soveltuu Kristukseen hänen kärsimyksessään ja viittaa hänen kuolemaansa ja hautaamiseen."
+      },
+      {
+        "number": 88,
+        "description": "Kristuksen kirkon ikuisyys Jumalan lupauksen mukaan: mutta Jumala sallii hänen joskus kärsiä mitä hirveimmistä ahdistuksista."
+      },
+      {
+        "number": 89,
+        "description": "Rukous Jumalan armosta: ihmisen päivien lyhyyden ja kurjuuden muistaminen."
+      },
+      {
+        "number": 90,
+        "description": "Vanhurskas on turvassa Jumalan suojeluksessa."
+      },
+      {
+        "number": 91,
+        "description": "Jumalaa on ylistettävä hänen ihmeellisistä teoistaan."
+      },
+      {
+        "number": 92,
+        "description": "Valtakunnan, eli Kristuksen kirkon, kunnia ja vakaus."
+      },
+      {
+        "number": 93,
+        "description": "Jumala tuomitsee ja rankaisee kansansa sortajat."
+      },
+      {
+        "number": 94,
+        "description": "Kehotus kumartaa ja palvella Jumalaa ja kuulla hänen äänensä."
+      },
+      {
+        "number": 95,
+        "description": "Kehotus ylistää Jumalaa Kristuksen tulemisen ja hänen valtakuntansa vuoksi."
+      },
+      {
+        "number": 96,
+        "description": "Kaikkia kutsutaan iloitsemaan Kristuksen kunniakkaasta tulemisesta ja hallituksesta."
+      },
+      {
+        "number": 97,
+        "description": "Kaikkia kutsutaan jälleen ylistämään Herraa Kristuksen voittojen vuoksi."
+      },
+      {
+        "number": 98,
+        "description": "Herran hallitus Siionissa: eli Kristuksen kirkossaan."
+      },
+      {
+        "number": 99,
+        "description": "Kaikkia kutsutaan iloitsemaan Jumalassa, kaiken Luojassa."
+      },
+      {
+        "number": 100,
+        "description": "Profeetta kehottaa kaikkia esimerkillään seuraamaan armoa ja oikeutta."
+      },
+      {
+        "number": 101,
+        "description": "Ahdistuksessa olevan rukous: viides katumpsalmi."
+      },
+      {
+        "number": 102,
+        "description": "Kiitollisuus Jumalalle hänen armonsa vuoksi."
+      },
+      {
+        "number": 103,
+        "description": "Jumalaa on ylistettävä hänen mahtavista teoistaan ja ihmeellisestä kaitselmicest."
+      },
+      {
+        "number": 104,
+        "description": "Kiitos Jumalalle hänen hyvistä teoistaan kansaansa Israelia kohtaan."
+      },
+      {
+        "number": 105,
+        "description": "Israelilaisten monien syntien ja kiittämättömyyden tunnustaminen."
+      },
+      {
+        "number": 106,
+        "description": "Kaikkia kehotetaan kiittämään Jumalaa hänen ikuisesta kaitselmuksestaan ihmisten yli."
+      },
+      {
+        "number": 107,
+        "description": "Profeetta ylistää JUmalaa saaduista suosionosoituksista."
+      },
+      {
+        "number": 108,
+        "description": "Daavid Kristuksen hahmossa rukoilee vainoajiaan vastaan; erityisesti petturi Juudasta: ennustaen ja hyväksyen hänen oikeudenmukaisen rangaistuksensa synnin itsepintaisuudesta ja katumuksen puutteesta."
+      },
+      {
+        "number": 109,
+        "description": "Kristuksen korottaminen ja ikuinen pappeus."
+      },
+      {
+        "number": 110,
+        "description": "Jumalaa on ylistettävä hänen armoistaan ja suosionosoituksistaan kirkolleen."
+      },
+      {
+        "number": 111,
+        "description": "Hyvä ihminen on onnellinen."
+      },
+      {
+        "number": 112,
+        "description": "Jumalaa on ylistettävä hänen huolenpidostaan köyhiä ja nöyriä kohtaan."
+      },
+      {
+        "number": 113,
+        "description": "Jumala on osoittanut valtansa vapauttaen kansansa: epäjumalat ovat turhia. Heprealaiset jakavat tämän kahteen psalmiin."
+      },
+      {
+        "number": 114,
+        "description": "Vanhurskaan rukous ahdistuksessa, elävin luottamuksin Jumalaan."
+      },
+      {
+        "number": 115,
+        "description": "Tämä on hepreaksi yhdistetty edelliseen psalmiin ja jatkaa psalminlaulajan uskon ja kiitollisuuden ilmaisemista."
+      },
+      {
+        "number": 116,
+        "description": "Kaikkia kansoja kehotetaan ylistämään Jumalaa hänen armonsa ja totuutensa vuoksi."
+      },
+      {
+        "number": 117,
+        "description": "Psalminlaulaja ylistää Jumalaa pelastumisestaan pahoilta: luottaa kokonaan häneen ja ennustaa Kristuksen tulemisen."
+      },
+      {
+        "number": 118,
+        "description": "Hyveen erinomaisuus, joka on Jumalan käskyjen rakkautta ja noudattamista."
+      },
+      {
+        "number": 119,
+        "description": "Rukous ahdistuksessa.\\f + \\fr 119:0 \\fk Pyhiinvaelluslaulu: \\ft Seuraavat viisitoista psalmia kutsutaan pyhiinvaelluslauluiksi tai astevirsiksik latinan sanasta gradus, joka tarkoittaa askelmia, nousuja tai asteita: joko siksi, että ne oli määrätty laulettaviksi viidellätoista portaalla, joita pitkin kansa nousi temppeliin; tai että laulettaessa ääntä tuli nostaa tietyittäin askelin; tai että ne oli tarkoitettu kansan laulettaviksi heidän palatessaan pakkosiirtolaisuudesta ja noustessaan Jerusalemiin, joka sijaitsi vuorien keskellä. Pyhät isät ymmärtävät mystisessä mielessä nämä askelmat kristittyjen hengellisiksi asteiksi, joilla he nousevat hyveeseen ja täydellisyyteen sekä todelliseen Jumalan temppeliin taivaallisessa Jerusalemissa.\\fl (Challoner)\\f*"
+      },
+      {
+        "number": 120,
+        "description": "Jumala on palvelijoidensa vartija."
+      },
+      {
+        "number": 121,
+        "description": "Oikeamielisen halu ja toivo Jumalan valtakunnan tulemisesta ja hänen kirkkonsa rauhasta."
+      },
+      {
+        "number": 122,
+        "description": "Rukous ahdistuksessa, luottaen Jumalaan."
+      },
+      {
+        "number": 123,
+        "description": "Kirkko antaa kunnian Jumalalle vapautumisestaan vihollistensa käsistä."
+      },
+      {
+        "number": 124,
+        "description": "Vanhurskaat ovat aina Jumalan suojeluksessa."
+      },
+      {
+        "number": 125,
+        "description": "Jumalan kansa iloitsee pakkosiirtolaisuudesta vapautumisesta."
+      },
+      {
+        "number": 126,
+        "description": "Mitään ei voi tehdä ilman Jumalan armoa ja siunausta."
+      },
+      {
+        "number": 127,
+        "description": "Jumalan pelko on tie onneen."
+      },
+      {
+        "number": 128,
+        "description": "Jumalan kirkko on voittamaton: sen vainoajat raukeavat tyhjiin."
+      },
+      {
+        "number": 129,
+        "description": "Syntisen rukous, luottaen Jumalan armoon. Kuudes katumpsalmi."
+      },
+      {
+        "number": 130,
+        "description": "Profeetan nöyryys."
+      },
+      {
+        "number": 131,
+        "description": "Rukous Daavidille annetun lupauksen täyttämiseksi."
+      },
+      {
+        "number": 132,
+        "description": "Veljellisen rakkauden ja yksimielisyyden onni."
+      },
+      {
+        "number": 133,
+        "description": "Kehotus ylistää Jumalaa alituisesti."
+      },
+      {
+        "number": 134,
+        "description": "Kehotus ylistää Jumalaa: epäjumalien turhuus."
+      },
+      {
+        "number": 135,
+        "description": "Jumalaa on ylistettävä hänen ihmeellisistä teoistaan."
+      },
+      {
+        "number": 136,
+        "description": "Jumalan kansan valitusvirsi pakkosiirtolaisuudessaan Babylonissa."
+      },
+      {
+        "number": 137,
+        "description": "Kiitos Jumalalle hänen suosionosoituksistaan."
+      },
+      {
+        "number": 138,
+        "description": "Jumalan erityinen kaitselmus palvelijoistaan."
+      },
+      {
+        "number": 139,
+        "description": "Rukous pelastuksesta jumalattomilta."
+      },
+      {
+        "number": 140,
+        "description": "Rukous syntisiä sanoja ja petollisia imarttelijoita vastaan."
+      },
+      {
+        "number": 141,
+        "description": "Daavidin rukous äärimmäisessä vaarassa."
+      },
+      {
+        "number": 142,
+        "description": "Psalminlaulaja huutaa ahdistuksessa Jumalaa avukseen. Seitsemäs katumpsalmi."
+      },
+      {
+        "number": 143,
+        "description": "Profeetta ylistää Jumalaa ja rukoilee pelastusta vihollistoiltaan. Mikään maailmallinen onni ei ole verrattavissa Jumalan palvelemiseen."
+      },
+      {
+        "number": 144,
+        "description": "Ylistyspsalmi Jumalan äärettömälle majesteetille."
+      },
+      {
+        "number": 145,
+        "description": "Ihmisiin ei pidä luottaa, vaan yksin Jumalaan."
+      },
+      {
+        "number": 146,
+        "description": "Kehotus ylistää Jumalaa hänen suosionosoituksistaan."
+      },
+      {
+        "number": 147,
+        "description": "Kirkkoa kehotetaan ylistämään Jumalaa hänen erityisistä armoistaan ja suosionosoituksistaan kansalleen. Hepreaksi tämä psalmi on yhdistetty edelliseen."
+      },
+      {
+        "number": 148,
+        "description": "Kaikkia luomakuntia kutsutaan ylistämään Luojaansa."
+      },
+      {
+        "number": 149,
+        "description": "Kirkko on erityisesti velvollinen ylistämään Jumalaa."
+      },
+      {
+        "number": 150,
+        "description": "Kehotus ylistää Jumalaa kaikenlaisin soittimin."
+      }
+    ]
+  },
+  {
+    "name": "Proverbs",
+    "description": "Sananlaskut ovat opettavaisia lauselmia ja moraaliohjeita, jotka esitetään lyhyesti ja ytimekkäästi.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Sananlaskujen tarkoitus: viisauden kehotus."
+      },
+      {
+        "number": 2,
+        "description": "Viisauden palkinnot: sen hyödyt."
+      },
+      {
+        "number": 3,
+        "description": "Kehotus luottamaan Jumalaan: pyrkiä viisauteen ja vältyttävä pahuudelta."
+      },
+      {
+        "number": 4,
+        "description": "Isällinen kehotus viisauteen ja oikeamielismyyteen."
+      },
+      {
+        "number": 5,
+        "description": "Varoitus siveettömyyttä ja petollisuutta vastaan: avioliiton ylistys."
+      },
+      {
+        "number": 6,
+        "description": "Varoituksia vieraan takaamista, laiskuutta, petollisuutta ja haureutta vastaan."
+      },
+      {
+        "number": 7,
+        "description": "Varoitus huoran viekkaudesta."
+      },
+      {
+        "number": 8,
+        "description": "Viisaus kutsuu ihmisiä, esittäen itsensä kunnian ja rikkauden: osoittaa etuoikeutensa ikuisena Jumalan Poikana."
+      },
+      {
+        "number": 9,
+        "description": "Viisaus rakentaa kirkon: kutsu ja turmeltuneiden naisten vastainen kehotus."
+      },
+      {
+        "number": 10,
+        "description": "Erilaisia sananlaskuja ja viisauden opetuksia."
+      },
+      {
+        "number": 11,
+        "description": ""
+      },
+      {
+        "number": 12,
+        "description": ""
+      },
+      {
+        "number": 13,
+        "description": ""
+      },
+      {
+        "number": 14,
+        "description": ""
+      },
+      {
+        "number": 15,
+        "description": ""
+      },
+      {
+        "number": 16,
+        "description": ""
+      },
+      {
+        "number": 17,
+        "description": ""
+      },
+      {
+        "number": 18,
+        "description": ""
+      },
+      {
+        "number": 19,
+        "description": ""
+      },
+      {
+        "number": 20,
+        "description": ""
+      },
+      {
+        "number": 21,
+        "description": ""
+      },
+      {
+        "number": 22,
+        "description": ""
+      },
+      {
+        "number": 23,
+        "description": ""
+      },
+      {
+        "number": 24,
+        "description": ""
+      },
+      {
+        "number": 25,
+        "description": ""
+      },
+      {
+        "number": 26,
+        "description": ""
+      },
+      {
+        "number": 27,
+        "description": ""
+      },
+      {
+        "number": 28,
+        "description": ""
+      },
+      {
+        "number": 29,
+        "description": ""
+      },
+      {
+        "number": 30,
+        "description": "Agurin sanat, Jakeen pojan."
+      },
+      {
+        "number": 31,
+        "description": "Kehotus kuningas Lemuelille. Kelpo vaimon ylistys."
+      }
+    ]
+  },
+  {
+    "name": "Ecclesiastes",
+    "description": "Saarnaaja, jota hepreaksi kutsutaan KOHELETH, tarkoittaa Saarnaajaa. Salomon voimalla näytetään kaiken ajallisen turhuus, ja päätellään, että ihmisen tulee pelätä Jumalaa ja pitää hänen käskynsä.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kaiken ajallisen turhuus."
+      },
+      {
+        "number": 2,
+        "description": "Maallisten nautintojen turhuus."
+      },
+      {
+        "number": 3,
+        "description": "Kaiken aikansa; ei lepo ajallisissa: vaan iankaikkisissa asioissa."
+      },
+      {
+        "number": 4,
+        "description": "Muita turhuuksia ja ahdistuksia."
+      },
+      {
+        "number": 5,
+        "description": "Varoitus uhrausten, lupausten ja rikkauksien suhteen."
+      },
+      {
+        "number": 6,
+        "description": "Maallisen vaurauden turhuus ilman Jumalan pelkoa."
+      },
+      {
+        "number": 7,
+        "description": "Erilaisia viisauden ohjeita."
+      },
+      {
+        "number": 8,
+        "description": "Oikea viisaus. Menestys ei aina seuraa ansioita tässä elämässä."
+      },
+      {
+        "number": 9,
+        "description": "Ihmisen varmuudenilmaan puutteesta koskien Jumalan suosiota: vaunottaa, ettei tilaisuutta hyvän tekemiseen pidä jättää käyttämättä."
+      },
+      {
+        "number": 10,
+        "description": "Viisauden ylistys ja mielettömyyden tuomitseminen."
+      },
+      {
+        "number": 11,
+        "description": "Kehotuksia hyväntekeväisyyteen, koska Jumalan tuomio on varma."
+      },
+      {
+        "number": 12,
+        "description": "Kehotus nuorille: kaiken turhuus paitsi Jumalan pelon."
+      }
+    ]
+  },
+  {
+    "name": "Song of Songs",
+    "description": "Tätä kirjaa kutsutaan Laulujen lauluksi eli Korkeaksi veisuksi, sillä se on Salomon lauluista ylevimmäksi pidetty. Se on mystinen jumalallinen laulu Kristuksen ja hänen puolisonsa eli kirkon liitosta: kuvattuna sulhasen ja morsiamen päivittäisten puheiden ja kielikuvien alla.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kirkon rakkaus Kristusta kohtaan. Hän rukoilee tullakseen vedetyksi hänen luokseen."
+      },
+      {
+        "number": 2,
+        "description": "Kristus hoitaa kirkkoaan. Hänen ylösnousemuksensa."
+      },
+      {
+        "number": 3,
+        "description": "Kirkon rakkaus Kristusta kohtaan."
+      },
+      {
+        "number": 4,
+        "description": "Kristus ylistää kirkkonsa armoja. Hänen rakkautensa häntä kohtaan."
+      },
+      {
+        "number": 5,
+        "description": "Kristus kutsuu puolisoaan. Hän vetäytyy. Hän etsii häntä."
+      },
+      {
+        "number": 6,
+        "description": "Puoliso etsii ja löytää rakkaimman."
+      },
+      {
+        "number": 7,
+        "description": "Kristuksen ja hänen kirkkonsa keskinäinen rakkaus."
+      },
+      {
+        "number": 8,
+        "description": "Kirkon rakkaus Kristusta kohtaan."
+      }
+    ]
+  },
+  {
+    "name": "Isaiah",
+    "description": "Jesaja, jota jotkut pitävät suurimpana profeettana, oli kuninkaallista sukua ja profetoi noin 60 vuotta. Hän ennusti erityisen selvästi Kristuksen tulemisen, pakanoiden kutsumisen ja uuden liiton perustamisen. Häntä kutsutaan perinteisesti enemmän evankelistaksi kuin profeetaksi profetioittensa selkeyden vuoksi.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Jesaja moittii juutalaisten syntejä ja kehottaa heitä katumaan."
+      },
+      {
+        "number": 2,
+        "description": "Kaikki kansat kutsutaan kirkkoon. Juutalaisten hylkääminen syntien vuoksi. Epäjumalanpalvelijoiden tuomio."
+      },
+      {
+        "number": 3,
+        "description": "Juutalaisten rangaistus: erityisesti naisten turhamaisuuden vuoksi."
+      },
+      {
+        "number": 4,
+        "description": "Kristuksen valtakunnan kunnia."
+      },
+      {
+        "number": 5,
+        "description": "Jumalan rangaistukset juudalaisten lukuisten syntien vuoksi."
+      },
+      {
+        "number": 6,
+        "description": "Jesajan kutsuminen. Kansan sokeuden profetointi."
+      },
+      {
+        "number": 7,
+        "description": "Profeetta rauhoittaa Ahasta. Immanuel-ennustus."
+      },
+      {
+        "number": 8,
+        "description": "Assyrian hävityksen ennustus. Hätä ja pimeys tulevat Israelille."
+      },
+      {
+        "number": 9,
+        "description": "Suuri valo tulee Galilealle: Rauhan Ruhtinaan syntymä."
+      },
+      {
+        "number": 10,
+        "description": "Voi Assyrialle. Jäännös palaa."
+      },
+      {
+        "number": 11,
+        "description": "Vesa Iisain kannosta. Messiaan valtakunnan rauha."
+      },
+      {
+        "number": 12,
+        "description": "Kiitoslaulu pelastuksesta."
+      },
+      {
+        "number": 13,
+        "description": "Babylonin tuhon profetointi."
+      },
+      {
+        "number": 14,
+        "description": "Israelin palautus. Babylonin kuninkaan tuho. Filistealaisten tuomio."
+      },
+      {
+        "number": 15,
+        "description": "Moabin tuomio."
+      },
+      {
+        "number": 16,
+        "description": "Moabin hävitys jatkuu. Messiaan valtaistuin."
+      },
+      {
+        "number": 17,
+        "description": "Damaskoksen ja Israelin tuomio."
+      },
+      {
+        "number": 18,
+        "description": "Varoitus Etiopian maalle. Kansojen kääntyminen."
+      },
+      {
+        "number": 19,
+        "description": "Egyptin tuomio ja kääntyminen."
+      },
+      {
+        "number": 20,
+        "description": "Merkki Egyptiä ja Etiopiaa vastaan."
+      },
+      {
+        "number": 21,
+        "description": "Babylonin tuhon näky. Tuomio Edomille ja Arabialle."
+      },
+      {
+        "number": 22,
+        "description": "Jerusalemin laakson näky. Sebnan ja Eliakimin ennustus."
+      },
+      {
+        "number": 23,
+        "description": "Tyroksen tuomio."
+      },
+      {
+        "number": 24,
+        "description": "Herran suuri tuomio maailman yli."
+      },
+      {
+        "number": 25,
+        "description": "Kiitoslaulu Jumalalle pelastuksesta ja kuoleman voittamisesta."
+      },
+      {
+        "number": 26,
+        "description": "Juudan voittolaulu."
+      },
+      {
+        "number": 27,
+        "description": "Israelin vapautus. Viinitarhan laulu."
+      },
+      {
+        "number": 28,
+        "description": "Voi Efraimin. Kulmaakivi Siionissa. Jumalan ihmeellinen työ."
+      },
+      {
+        "number": 29,
+        "description": "Voi Arielille, Jerusalemille."
+      },
+      {
+        "number": 30,
+        "description": "Voi kapinallisille lapsille, jotka luottavat Egyptiin."
+      },
+      {
+        "number": 31,
+        "description": "Voi heille, jotka kääntyvät Egyptin puoleen. Herra suojelee Jerusalemia."
+      },
+      {
+        "number": 32,
+        "description": "Oikeamielisen kuninkaan valtakunta. Varoitus huolettomille naisille."
+      },
+      {
+        "number": 33,
+        "description": "Voi hävittäjälle. Herra on tuomarimme ja kuningas."
+      },
+      {
+        "number": 34,
+        "description": "Herran kosto kansoille. Edomin tuomio."
+      },
+      {
+        "number": 35,
+        "description": "Erämaan kukoistus. Lunastettujen ilo."
+      },
+      {
+        "number": 36,
+        "description": "Sanherib hyökkää Juudaan. Rabsaken pilkkapuhe."
+      },
+      {
+        "number": 37,
+        "description": "Hiskian rukous. Jesajan vastaus. Sanheribin armeijan tuho."
+      },
+      {
+        "number": 38,
+        "description": "Hiskian sairaus ja paraneminen. Hänen kiitoslaulunsa."
+      },
+      {
+        "number": 39,
+        "description": "Hiskian mieletön ylpistyminen Babylonin lähettiläiden edessä."
+      },
+      {
+        "number": 40,
+        "description": "Lupaus pelastuksesta. Jumalan suuruus ja kansojen turhuus."
+      },
+      {
+        "number": 41,
+        "description": "Jumala kutsuu pakanat. Epäjumalien turhuus."
+      },
+      {
+        "number": 42,
+        "description": "Kristus, Herran palvelija. Herran ylistys. Israelin sokeus."
+      },
+      {
+        "number": 43,
+        "description": "Herra on yksin Jumala ja Pelastaja. Israelin vapautus."
+      },
+      {
+        "number": 44,
+        "description": "Israelin siunaus. Jumala yksin Luoja. Epäjumalien turhuus. Kyyros nimetään."
+      },
+      {
+        "number": 45,
+        "description": "Kyyros, Herran voideltu. Ei ole muuta Jumalaa."
+      },
+      {
+        "number": 46,
+        "description": "Babylonin epäjumalat kaatuvat. Jumala yksin tuntee tulevaisuuden."
+      },
+      {
+        "number": 47,
+        "description": "Babylonin tyttären tuho."
+      },
+      {
+        "number": 48,
+        "description": "Jumala ennusti etukäteen Israelin uppiniskaisuuden vuoksi."
+      },
+      {
+        "number": 49,
+        "description": "Kristus, kansojen valo, kokoaa Israelin."
+      },
+      {
+        "number": 50,
+        "description": "Herran palvelijan kuuliaisuus ja kärsivällisyys."
+      },
+      {
+        "number": 51,
+        "description": "Lohdutus Siionille. Herran käsivarsi herää."
+      },
+      {
+        "number": 52,
+        "description": "Siion herää. Herran palvelijan korottaminen."
+      },
+      {
+        "number": 53,
+        "description": "Kristuksen kärsimys ja kuolema meidän syntiemme sovitukseksi."
+      },
+      {
+        "number": 54,
+        "description": "Kirkon kunnia ja kasvu pakanoiden keskuudessa."
+      },
+      {
+        "number": 55,
+        "description": "Kutsu armoon. Jumalan sanan voima."
+      },
+      {
+        "number": 56,
+        "description": "Pakanat kutsutaan Jumalan huoneeseen. Voi kelvottomille paimenille."
+      },
+      {
+        "number": 57,
+        "description": "Vanhurskaan kuolema. Varoitus epäjumalanpalvelijoille."
+      },
+      {
+        "number": 58,
+        "description": "Todellinen paasto. Sapattia vietetään oikein."
+      },
+      {
+        "number": 59,
+        "description": "Kansan synnit estävät pelastuksen. Lunastaja tulee Siioniin."
+      },
+      {
+        "number": 60,
+        "description": "Kirkon kunnia. Pakanoiden ja kuninkaitten kääntyminen."
+      },
+      {
+        "number": 61,
+        "description": "Herran henki on minun ylläni. Ilovuosi. Vanhurskauden vaatteet."
+      },
+      {
+        "number": 62,
+        "description": "Siionin kunnia ja pelastus."
+      },
+      {
+        "number": 63,
+        "description": "Kristuksen voitto. Jumalan entiset armoteot."
+      },
+      {
+        "number": 64,
+        "description": "Rukous armosta ja pelastuksesta."
+      },
+      {
+        "number": 65,
+        "description": "Pakanoiden kutsuminen. Juutalaisten hylkääminen."
+      },
+      {
+        "number": 66,
+        "description": "Herran suuruus. Uudet taivaat ja uusi maa."
+      }
+    ]
+  },
+  {
+    "name": "Jeremiah",
+    "description": "Jeremia, pappissukuinen profeetta Anatotista, kutsuttiin hyvin nuorena profeetaksi ja profetoi noin 40 vuotta, Joosian 13. hallitusvuodesta alkaen Jerusalemin tuhoon asti. Hän ennusti erityisesti Babylonin pakkosiirtolaisuutta, Jerusalemin hävitystä ja uutta liittoa.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Jeremian kutsuminen profeetaksi. Kaksi näkyä."
+      },
+      {
+        "number": 2,
+        "description": "Jumala moittiii kansaansa hylkäämisestä. Heidän epäjumalanpalveluksensa."
+      },
+      {
+        "number": 3,
+        "description": "Jumala kutsuu Israelia katumukseen."
+      },
+      {
+        "number": 4,
+        "description": "Kehotus todelliseen katumukseen. Vihollisen tulo pohjoisesta."
+      },
+      {
+        "number": 5,
+        "description": "Jumalan oikeudenmukainen tuomio: kansan turmelus ja tottelemattomuus."
+      },
+      {
+        "number": 6,
+        "description": "Vihollinen ympäröi Jerusalemin. Turhaan kutsutaan katumukseen."
+      },
+      {
+        "number": 7,
+        "description": "Turha luottamus temppeliin. Kansan epäjumalanpalvelus."
+      },
+      {
+        "number": 8,
+        "description": "Vihollisen koston uhka. Paimenet ja kansa ovat turmeltuneita."
+      },
+      {
+        "number": 9,
+        "description": "Profeetta valittaa kansansa syntejä ja tulevia kärsimyksiä."
+      },
+      {
+        "number": 10,
+        "description": "Epäjumalien turhuus. Jumala yksin Luoja. Tuleva rangaistus."
+      },
+      {
+        "number": 11,
+        "description": "Liiton rikkominen. Juoni Jeremiaa vastaan."
+      },
+      {
+        "number": 12,
+        "description": "Jumalattomien menestyksen arvoitus. Naapurikansojen tuomio."
+      },
+      {
+        "number": 13,
+        "description": "Pilaantunut vyöhön vertaus. Ylpeyden tuomio. Jerusalemin häpeä."
+      },
+      {
+        "number": 14,
+        "description": "Kuivuus ja nälänhätä. Turhien profeettojen tuomitseminen."
+      },
+      {
+        "number": 15,
+        "description": "Kansa hylätään. Jeremia lujitetaan."
+      },
+      {
+        "number": 16,
+        "description": "Profeetan elämä merkkinä tulevasta tuhosta."
+      },
+      {
+        "number": 17,
+        "description": "Juudan synti kaiverettu. Sapatti. Saviastian vertaus."
+      },
+      {
+        "number": 18,
+        "description": "Savenvalajan vertaus. Jumalan oikeus muuttaa tuomionsa."
+      },
+      {
+        "number": 19,
+        "description": "Rikotun saviastian vertaus Jerusalemin tuhon merkkinä."
+      },
+      {
+        "number": 20,
+        "description": "Pashur rankaisee Jeremiaa. Profeetan valitus."
+      },
+      {
+        "number": 21,
+        "description": "Vastaus kuningas Sidkialle: Babylon valtaa kaupungin."
+      },
+      {
+        "number": 22,
+        "description": "Tuomio Juudan kuninkaille: Sallum, Joojakim, Konja."
+      },
+      {
+        "number": 23,
+        "description": "Varoitus kelvottomille paimenille. Vanhurskauden Verso. Vaarat vääriltä profeetoilta."
+      },
+      {
+        "number": 24,
+        "description": "Kahden viikunakorin vertaus: hyvät ja pahat viikunat."
+      },
+      {
+        "number": 25,
+        "description": "Profetia 70 vuoden pakkosiirtolaisuudesta. Jumalan tuomio kansoille."
+      },
+      {
+        "number": 26,
+        "description": "Jeremia uhattuna kuolemalla saarnansa vuoksi. Ahikam pelastaa hänet."
+      },
+      {
+        "number": 27,
+        "description": "Ikeiden vertaus: alistuminen Babylonille."
+      },
+      {
+        "number": 28,
+        "description": "Väärä profeetta Hananja. Hänen kuolemansa."
+      },
+      {
+        "number": 29,
+        "description": "Jeremian kirje pakkosiirtolaisille Babylonissa."
+      },
+      {
+        "number": 30,
+        "description": "Lupaus palauttamisesta ja Daavidin valtaistuimesta."
+      },
+      {
+        "number": 31,
+        "description": "Israelin palauttaminen. Uusi liitto."
+      },
+      {
+        "number": 32,
+        "description": "Jeremia ostaa pellon piirityksen aikana merkkinä tulevasta palauttamisesta."
+      },
+      {
+        "number": 33,
+        "description": "Lupaus palauttamisesta. Daavidin Verso."
+      },
+      {
+        "number": 34,
+        "description": "Profetia Sidkian kohtalosta ja kansasta."
+      },
+      {
+        "number": 35,
+        "description": "Rekabilaisten uskollisuus esimerkkinä."
+      },
+      {
+        "number": 36,
+        "description": "Barukin kirjakäärö poltetaan Joojakimin toimesta; uusi kirjoitetaan."
+      },
+      {
+        "number": 37,
+        "description": "Jeremia vangitaan väitetystä karkuruudesta."
+      },
+      {
+        "number": 38,
+        "description": "Jeremia savellikuoppaan. Ebed-Melek pelastaa hänet."
+      },
+      {
+        "number": 39,
+        "description": "Jerusalemin valloitus. Jeremia vapautetaan."
+      },
+      {
+        "number": 40,
+        "description": "Jeremia jää Gealjan luo Juudaan."
+      },
+      {
+        "number": 41,
+        "description": "Ismael murhaa Gealjan. Johanan pelastaa kansan."
+      },
+      {
+        "number": 42,
+        "description": "Kansa kysyy Jeremialta neuvoa ja vannoo tottelevansa."
+      },
+      {
+        "number": 43,
+        "description": "Kansa ei tottele vaan pakenee Egyptiin vieden Jeremian mukanaan."
+      },
+      {
+        "number": 44,
+        "description": "Jeremia moittii Egyptissä olevia juutalaisia epäjumalanpalveluksesta."
+      },
+      {
+        "number": 45,
+        "description": "Lohdutus Barukille."
+      },
+      {
+        "number": 46,
+        "description": "Profetia Egyptiä vastaan."
+      },
+      {
+        "number": 47,
+        "description": "Profetia filistealaisia vastaan."
+      },
+      {
+        "number": 48,
+        "description": "Profetia Moabia vastaan."
+      },
+      {
+        "number": 49,
+        "description": "Profetia Ammonia, Edomia, Damaskosta, Kedaria ja Elamia vastaan."
+      },
+      {
+        "number": 50,
+        "description": "Profetia Babylonia vastaan: Israelin palautus."
+      },
+      {
+        "number": 51,
+        "description": "Babylonin tuhon jatkaminen. Serajan tehtävä."
+      },
+      {
+        "number": 52,
+        "description": "Jerusalemin valloitus ja hävitys. Joojakinin vapauttaminen."
+      }
+    ]
+  },
+  {
+    "name": "Lamentations",
+    "description": "Valitusvirret sisältävät viisi Jeremian kirjoittamaa surullista valituslaulua Jerusalemin ja temppelin hävityksen johdosta, jotka Nebukadnessar aiheutti. Neljä ensimmäistä lukua ovat aakkosellisia runoja.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": ""
+      },
+      {
+        "number": 2,
+        "description": ""
+      },
+      {
+        "number": 3,
+        "description": ""
+      },
+      {
+        "number": 4,
+        "description": ""
+      },
+      {
+        "number": 5,
+        "description": ""
+      }
+    ]
+  },
+  {
+    "name": "Ezekiel",
+    "description": "Hesekiel, pappissukuinen profeetta, vietiin Babyloniin toisessa pakkosiirtolaisuudessa kuningas Jojakinin aikana vuonna 597 eKr. Hän aloitti profetoimisen noin 593 eKr. Kebarinvirran varrella pakkosiirtolaisten keskuudessa. Hänen profetioissaan on suuria näkyjä ja vertauskuvia.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Hesekielin näky neljästä olennosta ja rattaista."
+      },
+      {
+        "number": 2,
+        "description": "Profeetta kutsutaan ja lähetetään Israeliin."
+      },
+      {
+        "number": 3,
+        "description": "Profeetta syö kirjakäärön. Hänet asetetaan vartijaksi."
+      },
+      {
+        "number": 4,
+        "description": "Jerusalemin piirityksen merkkikuva."
+      },
+      {
+        "number": 5,
+        "description": "Tuomio Jerusalemille: miekka, nälänhätä ja rutto."
+      },
+      {
+        "number": 6,
+        "description": "Tuomio Israelin vuorille epäjumalanpalveluksen vuoksi."
+      },
+      {
+        "number": 7,
+        "description": "Loppu on tullut: Herran vihan päivä."
+      },
+      {
+        "number": 8,
+        "description": "Näky temppelin kauhistuksista Jerusalemissa."
+      },
+      {
+        "number": 9,
+        "description": "Merkintä uskollisille. Muiden teurastus."
+      },
+      {
+        "number": 10,
+        "description": "Tuliset hiilet heitetään kaupungille. Kerubien näky."
+      },
+      {
+        "number": 11,
+        "description": "Jumalattomien neuvosten tuomio. Lupaus palauttamisesta."
+      },
+      {
+        "number": 12,
+        "description": "Pakkosiirtolaisuuden vertaus. Profeetta muuttaa tavaroita merkkinä."
+      },
+      {
+        "number": 13,
+        "description": "Vääriä profeettoja ja profeettareja vastaan."
+      },
+      {
+        "number": 14,
+        "description": "Varoitus epäjumalanpalvelijoille. Nooa, Daniel ja Job eivät pelasta muita."
+      },
+      {
+        "number": 15,
+        "description": "Jerusalem turha viinipuun vertaus."
+      },
+      {
+        "number": 16,
+        "description": "Jerusalemin historia vertauskuvallisena: Jumalan armo ja kansan uskottomuus."
+      },
+      {
+        "number": 17,
+        "description": "Vertaus kahdesta kotkasta ja viinipuusta."
+      },
+      {
+        "number": 18,
+        "description": "Jokainen vastaa omista synneistään. Jumala tahtoo syntisen kääntymistä."
+      },
+      {
+        "number": 19,
+        "description": "Valituslaulu Israelin ruhtinaista."
+      },
+      {
+        "number": 20,
+        "description": "Muistutus Israelin kapinallisuudesta ja lupaus palauttamisesta."
+      },
+      {
+        "number": 21,
+        "description": "Herran miekka Jerusalemia ja Ammonia vastaan."
+      },
+      {
+        "number": 22,
+        "description": "Jerusalemin verenvuodatuksen ja monenlaisten syntien tuomio."
+      },
+      {
+        "number": 23,
+        "description": "Vertaus Oholasta ja Oholibasta: Samarian ja Jerusalemin uskottomuus."
+      },
+      {
+        "number": 24,
+        "description": "Kiehuva pata: Jerusalemin piiritys alkaa. Profeetan vaimon kuolema merkkinä."
+      },
+      {
+        "number": 25,
+        "description": "Profetia Ammonia, Moabia, Edomia ja filistealaisia vastaan."
+      },
+      {
+        "number": 26,
+        "description": "Profetia Tyrosta vastaan."
+      },
+      {
+        "number": 27,
+        "description": "Valituslaulu Tyroksen loistokkuudesta ja tuhosta."
+      },
+      {
+        "number": 28,
+        "description": "Tuomio Tyroksen ruhtinaalle ja Siidonille."
+      },
+      {
+        "number": 29,
+        "description": "Profetia Egyptiä ja faaraota vastaan."
+      },
+      {
+        "number": 30,
+        "description": "Egyptin tuomion jatko. Faraon käsivarsi murretaan."
+      },
+      {
+        "number": 31,
+        "description": "Vertaus Assyriasta suurena seetripuuna: Egyptin tuho."
+      },
+      {
+        "number": 32,
+        "description": "Valituslaulu faarosta. Egyptin lasku tuonelaan."
+      },
+      {
+        "number": 33,
+        "description": "Profeetta asetetaan jälleen vartijaksi. Jokainen vastaa itsestään."
+      },
+      {
+        "number": 34,
+        "description": "Jumalattomia paimenia vastaan. Jumala itse kaitsee laumaansa."
+      },
+      {
+        "number": 35,
+        "description": "Profetia Seirin vuorta eli Edomia vastaan."
+      },
+      {
+        "number": 36,
+        "description": "Lupaus Israelin vuorille: palauttaminen ja uusi sydän."
+      },
+      {
+        "number": 37,
+        "description": "Kuivien luiden näky: Israelin ylösnousemus. Kaksi sauvaa yhdistetään."
+      },
+      {
+        "number": 38,
+        "description": "Profetia Googia ja Magogia vastaan."
+      },
+      {
+        "number": 39,
+        "description": "Googin tuho ja Israelin palauttaminen."
+      },
+      {
+        "number": 40,
+        "description": "Näky uudesta temppelistä: sen mittaaminen."
+      },
+      {
+        "number": 41,
+        "description": "Temppelin sisämitat."
+      },
+      {
+        "number": 42,
+        "description": "Pappien huoneet."
+      },
+      {
+        "number": 43,
+        "description": "Herran kirkkaus palaa temppeliin. Alttarin mitat ja vihkiminen."
+      },
+      {
+        "number": 44,
+        "description": "Itäinen portti suljettuna. Leeviläisten ja pappien säädökset."
+      },
+      {
+        "number": 45,
+        "description": "Pyhä alue. Ruhtinaan osuus. Juhla-ajat."
+      },
+      {
+        "number": 46,
+        "description": "Ruhtinaan uhrit sapattina ja juhlapäivinä."
+      },
+      {
+        "number": 47,
+        "description": "Näky tempplistä virtaavasta vedestä, joka parantaa kaiken."
+      },
+      {
+        "number": 48,
+        "description": "Maan jako heimoille. Kaupungin portit."
+      }
+    ]
+  },
+  {
+    "name": "Daniel",
+    "description": "Daniel, kuninkaallista sukua oleva nuorukainen, vietiin Babyloniin ensimmäisessä pakkosiirtolaisuudessa kuningas Jojakimin aikana. Hän palveli Babylonin ja Persian kuninkaita ja tunnetaan profetioistaan maailmanvaltakunnista, Messiaan tulemisen ajasta sekä viimeisistä ajoista.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Daniel ja hänen toverinsa Babylonin hovissa. Heidän uskollisuntensa ruokasäädöksissä."
+      },
+      {
+        "number": 2,
+        "description": "Nebukadnessarin uni kuvapatsaasta. Daniel selittää sen: neljä valtakuntaa ja Jumalan ikuinen valtakunta."
+      },
+      {
+        "number": 3,
+        "description": "Kultainen kuvapatsas ja tulinen pätsi. Kolmen nuorukaisen pelastuminen."
+      },
+      {
+        "number": 4,
+        "description": "Nebukadnessarin uni suuresta puusta. Hänen mielenvikansa ja palautumisensa."
+      },
+      {
+        "number": 5,
+        "description": "Belsassarin pidot. Kirjoitus seinässä. Babylonin kukistuminen."
+      },
+      {
+        "number": 6,
+        "description": "Daniel leijonien luolassa Dariuksen aikana."
+      },
+      {
+        "number": 7,
+        "description": "Näky neljästä pedosta ja Ihmisen Pojasta."
+      },
+      {
+        "number": 8,
+        "description": "Näky oinaasta ja vuohipukista: Meedian-Persian ja Kreikan valtakunnat."
+      },
+      {
+        "number": 9,
+        "description": "Danielin rukous ja Gabrielin ilmestys: profetia seitsemästäkymmenestä vuosiviikosta."
+      },
+      {
+        "number": 10,
+        "description": "Danielin näky miehestä virran rannalla."
+      },
+      {
+        "number": 11,
+        "description": "Pohjolan ja etelän kuninkaiden vaiheet."
+      },
+      {
+        "number": 12,
+        "description": "Lopun ajat. Ylösnousemus. Autuaat ja kadotetut."
+      }
+    ]
+  },
+  {
+    "name": "Hosea",
+    "description": "Hoosea, ensimmäinen kahdestatoista pienestä profeetasta, profetoi Israelin pohjoisessa valtakunnassa noin 40 vuotta, alkaen Jerobeam II:n ajasta. Hänen profetioissaan on vertauskuvallinen avioliitto merkkinä Israelin uskottomuudesta Jumalaa kohtaan.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Profeetan vertauskuvallinen avioliitto. Israelin uskottomuus ja tuleva palautus."
+      },
+      {
+        "number": 2,
+        "description": "Israelin rangaistus uskottomuudestaan. Lupaus tulevasta sovinnosta."
+      },
+      {
+        "number": 3,
+        "description": "Toinen vertauskuvallinen teko: Israelin tuleva palutus."
+      },
+      {
+        "number": 4,
+        "description": "Jumala syyttää kansaa tietämättömyydestä ja turmeluksesta. Pappien synti."
+      },
+      {
+        "number": 5,
+        "description": "Tuomio papeille, kansalle ja kuninkaanhuoneelle."
+      },
+      {
+        "number": 6,
+        "description": "Kehotus katumukseen. Kansa on uskoton."
+      },
+      {
+        "number": 7,
+        "description": "Israelin synti ja tuomio. Hallitsijat ovat turmeltuneita."
+      },
+      {
+        "number": 8,
+        "description": "Tuomio Israelin epäjumalanpalveluksen ja vieraiden liittojen vuoksi."
+      },
+      {
+        "number": 9,
+        "description": "Israelin rangaistus. Pakkosiirtolaisuuden ennustus."
+      },
+      {
+        "number": 10,
+        "description": "Israelin rankaiseminen epäjumalanpalveluksen vuoksi."
+      },
+      {
+        "number": 11,
+        "description": "Jumalan rakkaus Israelia kohtaan lapsuudesta asti. Jumalan armo."
+      },
+      {
+        "number": 12,
+        "description": "Israelin ja Juudan syyttäminen. Jaakobin historiaa muistetaan."
+      },
+      {
+        "number": 13,
+        "description": "Efraimin turmiollinen epäjumalanpalvelus. Jumala yksin pelastaa."
+      },
+      {
+        "number": 14,
+        "description": "Kehotus katumukseen ja parantumisen lupaus."
+      }
+    ]
+  },
+  {
+    "name": "Joel",
+    "description": "Joel, Petuelin poika, profetoi Juudassa. Hänen profetioissaan on heinäsirkkaitskunnan kuvaus, kutsu katumukseen, Pyhän Hengen vuodattamisen ennustus ja Herran päivä.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Hirveä heinäsirkkaitsiskunta ja kuivuus. Kutsu katumukseen ja rukoukseen."
+      },
+      {
+        "number": 2,
+        "description": "Herran päivä. Kutsu katumukseen. Lupaus siunauksesta ja Hengen vuodattamisesta."
+      },
+      {
+        "number": 3,
+        "description": "Tuomio kansoille Joosafatin laaksossa. Juudan siunaus."
+      }
+    ]
+  },
+  {
+    "name": "Amos",
+    "description": "Aamos, lammaspaimen Tekoasta Juudassa, kutsuttiin profeetaksi ja lähetettiin Israelin pohjoiseen valtakuntaan Jerobeam II:n aikana. Hän julisti sosiaalista oikeudenmukaisuutta ja tuomiota kansoille.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tuomio Damaskokselle, Gazalle, Tyrokselle, Edomille ja Ammonille."
+      },
+      {
+        "number": 2,
+        "description": "Tuomio Moabille, Juudalle ja Israelille."
+      },
+      {
+        "number": 3,
+        "description": "Jumalan tuomio Israelille, jonka hän on valinnut."
+      },
+      {
+        "number": 4,
+        "description": "Israelin naisten tuomio. Kansan paatuminen rangaistuksista huolimatta."
+      },
+      {
+        "number": 5,
+        "description": "Valituslaulu Israelille. Kehotus etsiä Herraa. Herran päivä on pimeys."
+      },
+      {
+        "number": 6,
+        "description": "Voi huolettomille Siionissa ja Samariassa."
+      },
+      {
+        "number": 7,
+        "description": "Kolme näkyä: heinäsirkat, tuli ja luotisuora. Amasia karkotsaa Aamoksen."
+      },
+      {
+        "number": 8,
+        "description": "Näky kypsien hedelmien korista: loppu on tullut."
+      },
+      {
+        "number": 9,
+        "description": "Tuomionäky. Daavidin majan nostaminen. Palautuksen lupaus."
+      }
+    ]
+  },
+  {
+    "name": "Obadiah",
+    "description": "Obadja, lyhin profeetallinen kirja, käsittelee Edomin tuomiota ja Israelin palautusta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Edomin tuomio sen ylpeydestä ja vihollisuudesta Israelia kohtaan. Israelin tuleva voitto."
+      }
+    ]
+  },
+  {
+    "name": "Jonah",
+    "description": "Joona, Amittain poika, Gat-Heferistä, lähetettiin saarnaamaan Niniveen suureen kaupunkiin. Hänen kertomuksensa opettaa Jumalan armoa ja katumuksen voimaa.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Joona pakenee Herraa. Myrsky merellä. Joona heitetään mereen."
+      },
+      {
+        "number": 2,
+        "description": "Joonan rukous kalan vatsasta. Hänet oksennetaan maalle."
+      },
+      {
+        "number": 3,
+        "description": "Joona saarnaa Ninivessä. Kaupunki tekee parannuksen."
+      },
+      {
+        "number": 4,
+        "description": "Joonan viha ja Jumalan opetus armosta risiinikasvin kautta."
+      }
+    ]
+  },
+  {
+    "name": "Micah",
+    "description": "Miika, Mooresetilainen, profetoi Juudassa Jotamin, Ahaan ja Hiskian aikana. Hän julisti tuomiota Samarialle ja Jerusalemille ja ennusti Messiaan syntymän Betlehemissä.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tuomio Samarialle ja Juudalle."
+      },
+      {
+        "number": 2,
+        "description": "Voi niille, jotka suunnittelevat pahuutta. Sortajien tuomio."
+      },
+      {
+        "number": 3,
+        "description": "Kuuukaa, Israelin päämiehet! Tuomio johtajille ja väärille profeetoille."
+      },
+      {
+        "number": 4,
+        "description": "Herran vuoren korottaminen. Kansojen rauha. Siionin palautus."
+      },
+      {
+        "number": 5,
+        "description": "Hallitsija Betlehemistä. Jäännös ja voitto."
+      },
+      {
+        "number": 6,
+        "description": "Herran oikeudenkäynti kansansa kanssa. Mitä Herra vaatii."
+      },
+      {
+        "number": 7,
+        "description": "Profeetan valitus kansan turmeluksen vuoksi. Luottamus Jumalaan. Lupaus armosta."
+      }
+    ]
+  },
+  {
+    "name": "Nahum",
+    "description": "Naahum, Elkosista, profetoi Niniven tuhon, joka toteutui noin 612 eKr. Hänen profetiansa on voimakas ja runollinen kuvaus Jumalan tuomiosta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Herran viha ja hyvyys. Niniven tuho ennustetaan."
+      },
+      {
+        "number": 2,
+        "description": "Niniven piiritys ja valloitus kuvataan dramaattisesti."
+      },
+      {
+        "number": 3,
+        "description": "Voi verikaupungille! Niniven täydellinen tuho."
+      }
+    ]
+  },
+  {
+    "name": "Habakkuk",
+    "description": "Habakuk profetoi ennen Babylonin pakkosiirtolaisuutta. Hän käsittelee oikeudenmukaisuuden ongelmaa: miksi Jumala sallii jumalattomien menestyä. Vastaus on usko ja luottamus Jumalaan.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Profeetan valitus väkivallasta. Jumala nostaa kaldeaalaiset rangaistukseksi."
+      },
+      {
+        "number": 2,
+        "description": "Vanhurskas elää uskostaan. Viisi varoitusta jumalattomille."
+      },
+      {
+        "number": 3,
+        "description": ""
+      }
+    ]
+  },
+  {
+    "name": "Zephaniah",
+    "description": "Sefanja profetoi kuningas Joosian aikana, ennen suuria uskonpuhdistuksia. Hän julisti Herran suurta päivää ja tuomiota kansoille sekä lupausta jäännökselle.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Herran suuri päivä: tuomio Juudalle ja Jerusalemille."
+      },
+      {
+        "number": 2,
+        "description": "Kehotus katumokseen. Tuomio filistealaisille, Moabille, Ammonille, Etiopialle ja Assyriale."
+      },
+      {
+        "number": 3,
+        "description": "Voi Jerusalemille. Kansojen tuomio. Jäännöksen siunaus ja ilo."
+      }
+    ]
+  },
+  {
+    "name": "Haggai",
+    "description": "Haggai profetoi pakkosiirtolaisuuden jälkeen vuonna 520 eKr. Hän kehotti kansaa rakentamaan temppelin uudelleen ja lupasi tulevan kirkkaudne.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kehotus temppelin jälleenrakentamiseen. Kansa tottelee."
+      },
+      {
+        "number": 2,
+        "description": "Uuden temppelin kunnia on suurempi kuin edellisen. Siunauksen lupaus."
+      }
+    ]
+  },
+  {
+    "name": "Zechariah",
+    "description": "Sakarja profetoi Haggain kanssa samaan aikaan pakkosiirtolaisuuden jälkeen. Hän rohkaisi kansaa temppelin rakentamisessa ja ennusti Messiaan tulemisen yksityiskohtaisesti. Hänen kirjansa sisältää kahdeksan yönäkyä ja merkittäviä messiaanisia profetioita.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kutsu katumukseen. Ensimmäinen näky: ratsastajat myrttien keskellä."
+      },
+      {
+        "number": 2,
+        "description": "Toinen näky: neljä sarvea ja neljä seppää. Kolmas näky: mies mittanuoran kanssa."
+      },
+      {
+        "number": 3,
+        "description": "Neljäs näky: ylipappi Joosua saatanan edessä. Verso-lupaus."
+      },
+      {
+        "number": 4,
+        "description": "Viides näky: kultainen lampunjalka ja kaksi öljypuuta."
+      },
+      {
+        "number": 5,
+        "description": "Kuudes näky: lentävä kirjakäärö. Seitsemäs näky: nainen tynnyrisssä."
+      },
+      {
+        "number": 6,
+        "description": "Kahdeksas näky: neljät vaunut. Joosuan kruunaaminen."
+      },
+      {
+        "number": 7,
+        "description": "Paaston kysymys. Herran vastaus: oikeudenmukaisuus on tärkeämpi kuin paasto."
+      },
+      {
+        "number": 8,
+        "description": "Lupauksia Jerusalemille. Siunaus kansoille."
+      },
+      {
+        "number": 9,
+        "description": "Tuomio ympäröiville kansoille. Messiaskuningas saapuu nöyränä aasin selässä."
+      },
+      {
+        "number": 10,
+        "description": "Herra yksin antaa sateen. Tuomio väärille paimenille. Juudan vahvistaminen."
+      },
+      {
+        "number": 11,
+        "description": "Hylätyn paimenen vertaus. Kolmekymmentä hopearahaa."
+      },
+      {
+        "number": 12,
+        "description": "Jerusalemin pelastus. He katsovat häneen, jonka ovat lävistäneet."
+      },
+      {
+        "number": 13,
+        "description": "Lähde synnistä puhdistamiseksi. Paimen lyödään ja lampaat hajoavat."
+      },
+      {
+        "number": 14,
+        "description": "Herran päivä. Jerusalem valloitetaan ja pelastetaan. Herra on kaikkien kuningas."
+      }
+    ]
+  },
+  {
+    "name": "Malachi",
+    "description": "Malakia on Vanhan testamentin viimeinen profeetta. Hän profetoi pakkosiirtolaisuuden jälkeen ja moitti kansaa ja pappeja välinpitämättömyydestä. Hän ennusti Messiaan sanansaattajan tulemisen ja puhdistavan tuomion.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Jumalan rakkaus Israelia kohtaan. Pappien moittiminen kelvottomista uhreista."
+      },
+      {
+        "number": 2,
+        "description": "Varoitus papeille. Moite epäuskollisista avioliitoista ja avioeroista."
+      },
+      {
+        "number": 3,
+        "description": "Herran sanansaattaja valmistaa tien. Herran puhdistava tuleminen. Kymmenykset."
+      },
+      {
+        "number": 4,
+        "description": "Herran suuri ja pelottava päivä. Vanhurskauden aurinko. Elian tulo."
+      }
+    ]
+  },
+  {
+    "name": "Matthew",
+    "description": "Pyhän Matteuksen evankeliumi, ensimmäinen neljästä evankeliumista, kirjoitettiin erityisesti juutalaisille osoittaen, että Jeesus on luvattu Messias. Matteus oli publikaani, jonka Jeesus kutsui opetuslapsekseen.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Jeesuksen Kristuksen sukuluettelo. Hänen syntymänsä."
+      },
+      {
+        "number": 2,
+        "description": "Tietäjien vierailu. Pako Egyptiin. Viattomien lasten surmaaminen. Paluu Nasarettiin."
+      },
+      {
+        "number": 3,
+        "description": "Johannes Kastaja saarnaa erämaassa. Jeesuksen kaste."
+      },
+      {
+        "number": 4,
+        "description": "Jeesuksen kiusaus erämaassa. Hän aloittaa julkisen toimintansa Galileassa. Ensimmäiset opetuslapset."
+      },
+      {
+        "number": 5,
+        "description": "Vuorisaarna: autuaaksijulistukset. Maan suola ja maailman valo. Lain täyttäminen."
+      },
+      {
+        "number": 6,
+        "description": "Vuorisaarna jatkuu: almut, rukous, Isä meidän, paasto. Taivaan aarteet."
+      },
+      {
+        "number": 7,
+        "description": "Vuorisaarnan loppu: älkää tuomitko, ahdas portti, hedelmistään puu tunnetaan, talo kalliolle."
+      },
+      {
+        "number": 8,
+        "description": "Spitaalisen parantaminen. Sadanpäällikön palvelija. Myrskyn tynnyttäminen. Gerasan riivatut."
+      },
+      {
+        "number": 9,
+        "description": "Halvaantuneen parantaminen. Matteuksen kutsu. Uusi ja vanha. Jairuksen tytär ja muu parantaminen."
+      },
+      {
+        "number": 10,
+        "description": "Kaksitoista apostolia lähetetään. Ohjeet heille."
+      },
+      {
+        "number": 11,
+        "description": "Johanneksen lähettiläät. Katumattomat kaupungit. Isän ja Pojan suhde."
+      },
+      {
+        "number": 12,
+        "description": "Sapattikiistat. Jumalan palvelija. Beeksebul-syytös. Joonan merkki."
+      },
+      {
+        "number": 13,
+        "description": "Vertauksia valtakunnasta: kylväjä, rikkavilja, sinapinsiemen, hapate, aarre, helmi, nuotta."
+      },
+      {
+        "number": 14,
+        "description": "Johannes Kastajan mestaaminen. Viidentuhannen ruokkiminen. Jeesus kävelee veden päällä."
+      },
+      {
+        "number": 15,
+        "description": "Perinteet ja Jumalan käsky. Kanaanilaisen naisen usko. Neljäntuhannen ruokkiminen."
+      },
+      {
+        "number": 16,
+        "description": "Fariseukset vaativat merkkiä. Pietarin tunnustus. Ensimmäinen kärsimyksen ennustus."
+      },
+      {
+        "number": 17,
+        "description": "Kirkastuminen vuorella. Kuunvaivaisen pojan parantaminen. Toinen kärsimyksen ennustus. Temppelivero."
+      },
+      {
+        "number": 18,
+        "description": "Kuka on suurin? Pahennukset. Eksynyt lammas. Velkaa anteeksi antamaton palvelija."
+      },
+      {
+        "number": 19,
+        "description": "Avioero. Lapset ja valtakunta. Rikas nuori mies. Palkka seuraajille."
+      },
+      {
+        "number": 20,
+        "description": "Vertaus viinitarhan työntekijöistä. Kolmas kärsimyksen ennustus. Sebedeuksen poikien pyyntö. Kaksi sokeaa."
+      },
+      {
+        "number": 21,
+        "description": "Riemukulkue Jerusalemiin. Temppelin puhdistus. Viikunapuu. Kahden pojan vertaus. Pahat viinitarhurit."
+      },
+      {
+        "number": 22,
+        "description": "Häävierasvertaus. Keisarin vero. Ylösnousemus. Suurin käsky. Daavidin poika."
+      },
+      {
+        "number": 23,
+        "description": "Voi fariseuksille ja kirjanoppineille! Valitus Jerusalemin yli."
+      },
+      {
+        "number": 24,
+        "description": "Maailman lopun merkit. Suuri ahdistus. Ihmisen Pojan tuleminen."
+      },
+      {
+        "number": 25,
+        "description": "Kymmenen neitsyttä. Talenttien vertaus. Viimeinen tuomio."
+      },
+      {
+        "number": 26,
+        "description": "Juoni Jeesusta vastaan. Voitelu Betaniassa. Juudaksen petos. Viimeinen ehtoollinen. Getsemane. Vangitseminen. Suuren neuvoston edessä."
+      },
+      {
+        "number": 27,
+        "description": "Jeesuksen tuomitseminen. Juudaksen kuolema. Pilatus. Ristiinnaulitseminen. Kuolema ja hautaus."
+      },
+      {
+        "number": 28,
+        "description": "Ylösnousemus. Naisten todistus. Vartijoiden lahjominen. Suuri lähetystehtävä."
+      }
+    ]
+  },
+  {
+    "name": "Mark",
+    "description": "Pyhän Markuksen evankeliumi on lyhin evankeliumeista. Markus, joka tunnettiin myös nimellä Johannes Markus, kirjoitti sen Pietarin opetuksen pohjalta. Se korostaa Jeesuksen tekoja ja voimallisia ihmetekoja.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Johannes Kastaja. Jeesuksen kaste ja kiusaaminen. Ensimmäiset opetuslapset. Opetus ja parantaminen Kapernaumissa."
+      },
+      {
+        "number": 2,
+        "description": "Halvaantuneen parantaminen. Leevin kutsu. Paastokysymys. Tähkäpäiden katkominen sapattina."
+      },
+      {
+        "number": 3,
+        "description": "Kuivettuneen käden parantaminen. Kahdentoista valitseminen. Beelsebul-syytös."
+      },
+      {
+        "number": 4,
+        "description": "Vertaus kylväjästä. Lamppu vakan alla. Sinapinsiemen. Myrskyn tyynnyttäminen."
+      },
+      {
+        "number": 5,
+        "description": "Gerasan riivattu. Jairuksen tytär. Verenvuotoa sairastava nainen."
+      },
+      {
+        "number": 6,
+        "description": "Jeesuksen hylkääminen Nasaretissa. Apostolien lähettäminen. Johannes Kastajan kuolema. Viidentuhannen ruokkiminen. Veden päällä käveleminen."
+      },
+      {
+        "number": 7,
+        "description": "Perinteet ja Jumalan käsky. Syyrialais-foinialialaisen naisen usko. Kuuromykän parantaminen."
+      },
+      {
+        "number": 8,
+        "description": "Neljäntuhannen ruokkiminen. Fariseukset vaativat merkkiä. Sokean parantaminen Betsaidassa. Pietarin tunnustus. Kärsimyksen ennustus."
+      },
+      {
+        "number": 9,
+        "description": "Kirkastuminen. Riivattun pojan parantaminen. Toinen kärsimyksen ennustus. Kuka on suurin. Joka ei ole meitä vastaan."
+      },
+      {
+        "number": 10,
+        "description": "Avioero. Lapset. Rikas mies. Kärsimysennustus. Jaakob ja Johannes. Sokea Bartimeus."
+      },
+      {
+        "number": 11,
+        "description": "Riemukulkue. Viikunapuu. Temppelin puhdistus:"
+      },
+      {
+        "number": 12,
+        "description": "Pahat viinitarhurit. Keisarin vero. Ylösnousemus. Suurin käsky. Daavidin poika. Lesken ropo."
+      },
+      {
+        "number": 13,
+        "description": "Maailman lopun merkit. Suuri ahdistus. Ihmisen Pojan tuleminen. Valvokaa."
+      },
+      {
+        "number": 14,
+        "description": "Juoni Jeesusta vastaan. Voitelu. Ehtoollinen. Getsemane. Vangitseminen. Neuvoston edessä. Pietarin kieltäminen."
+      },
+      {
+        "number": 15,
+        "description": "Pilatus. Tuomitseminen. Ristiinnaulitseminen. Kuolema. Hautaus."
+      },
+      {
+        "number": 16,
+        "description": "Ylösnousemus. Ilmestymiset. Taivaaseen astuminen."
+      }
+    ]
+  },
+  {
+    "name": "Luke",
+    "description": "Pyhän Luukkaan evankeliumi kirjoitettiin erityisesti pakanoille. Luukas, lääkäri ja Paavalin työtoveri, kirjoitti huolellisen ja järjestelmällisen kertomuksen Jeesuksen elämästä, korostaen hänen armoaan kaikkia kohtaan.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Esipuhe. Enkeliilmestys Sakariaalle. Marian ilmestys. Marian vierailu Elisabetin luona. Johannes Kastajan syntymä. Sakariaan ylistyslaulu."
+      },
+      {
+        "number": 2,
+        "description": "Jeesuksen syntymä Betlehemissä. Paimenet. Ympärileikkaus. Esittely temppelissä. Simeon ja Hanna. Poika temppelissä."
+      },
+      {
+        "number": 3,
+        "description": "Johannes Kastaja. Jeesuksen kaste. Jeesuksen sukuluettelo."
+      },
+      {
+        "number": 4,
+        "description": "Kiusaus erämaassa. Jeesus Nasaretin synagogassa. Ihmeitä Kapernaumissa."
+      },
+      {
+        "number": 5,
+        "description": "Ihmeellinen kalansaalis. Spitaalisen puhdistaminen. Halvaannuneen parantaminen. Leevin kutsu."
+      },
+      {
+        "number": 6,
+        "description": "Sapattikiistat. Kahdentoista valitseminen. Saarna tasangolla: autuaaksijulistukset ja varoitukset."
+      },
+      {
+        "number": 7,
+        "description": "Sadanpäällikön palvelija. Nainilaisen lesken poika. Johanneksen lähettiläät. Syntinen nainen."
+      },
+      {
+        "number": 8,
+        "description": "Palvelevat naiset. Kylväjävertaus. Jeesuksen äiti ja veljet. Myrskyn tyynnyttäminen. Gerasan riivattu. Jairuksen tytär."
+      },
+      {
+        "number": 9,
+        "description": "Apostolien lähettäminen. Viisihentuhannen ruokkiminen. Pietarin tunnustus. Kärsimyksen ennustus. Kirkastuminen. Kuka on suurin."
+      },
+      {
+        "number": 10,
+        "description": "Seitsemänkymmenen lähettäminen. Laupias samarialainen. Maria ja Martta."
+      },
+      {
+        "number": 11,
+        "description": "Isä meidän -rukous. Käskijä pyytämään. Beelsebul-syytös. Joonan merkki."
+      },
+      {
+        "number": 12,
+        "description": "Varoitus tekopyhyydestä. Maallisuutta vastaan. Valppaus. Uskollinen palvelija."
+      },
+      {
+        "number": 13,
+        "description": "Kutsu katumukseen. Viikunapuuvertaus. Kyyristyneen naisen parantaminen. Sinapinsiemen ja hapate. Ahdas ovi."
+      },
+      {
+        "number": 14,
+        "description": "Vesipöhöisen parantaminen. Nöyryys pidoissa. Suuren pidot vertaus."
+      },
+      {
+        "number": 15,
+        "description": "Eksynyt lammas. Kadotettu raha. Tuhlaajapoika."
+      },
+      {
+        "number": 16,
+        "description": "Väärä taloudenhoitaja. Rikkaus ja köyhyys. Rikas mies ja Lasarus."
+      },
+      {
+        "number": 17,
+        "description": "Pahennukset. Anteeksianto. Usko. Kymmenen spitaalista."
+      },
+      {
+        "number": 18,
+        "description": "Vertaus tuomarista ja leskestä. Fariseus ja publikaani. Lapset. Rikas hallitsija. Kärsimysennustus. Sokea Jerikon luona."
+      },
+      {
+        "number": 19,
+        "description": "Sakkeus. Vertaus kuninkaaksi lähtevästä miehestä. Riemukulkue. Valitus Jerusalemin yli. Temppelin puhdistus."
+      },
+      {
+        "number": 20,
+        "description": "Jeesuksen valtuutus. Pahat viinitarhurit. Keisarin vero. Ylösnousemus. Daavidin poika."
+      },
+      {
+        "number": 21,
+        "description": "Lesken ropo. Temppelin tuhon ennustus. Maailman lopun merkit."
+      },
+      {
+        "number": 22,
+        "description": "Juudaksen petos. Ehtoollisen asettaminen. Getsemane. Vangitseminen. Pietarin kieltäminen. Neuvoston edessä."
+      },
+      {
+        "number": 23,
+        "description": "Pilatus. Herodes. Tuomitseminen. Ristiinnaulitseminen. Ryövärit. Kuolema. Hautaus."
+      },
+      {
+        "number": 24,
+        "description": "Ylösnousemus. Emmauksen tiellä. Ilmestyminen opetuslapsille. Taivaaseen astuminen."
+      }
+    ]
+  },
+  {
+    "name": "John",
+    "description": "Pyhän Johanneksen evankeliumi, neljäs evankeliumi, kirjoitetteiin viimeisenä ja korostaa Jeesuksen jumaluutta. Johannes, rakastettu opetuslapsi, kirjoitti sen täydentämään muita evankeliumeja, keskittyen erityisesti Jeesuksen puheisiin ja teologisiin teemoihin.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Sana tuli lihaksi. Johannes Kastajan todistus. Ensimmäiset opetuslapset."
+      },
+      {
+        "number": 2,
+        "description": "Kaanan häät. Temppelin puhdistus."
+      },
+      {
+        "number": 3,
+        "description": "Nikodemos. Uudestisyntyminen. Jumala rakasti maailmaa. Johanneksen todistus."
+      },
+      {
+        "number": 4,
+        "description": "Samarialainen nainen kaivolla. Kuninkaan virkamiehen poika parannetaan."
+      },
+      {
+        "number": 5,
+        "description": "Bethesdan lammiikon sairas. Pojan valta. Todistus Jeesuksesta."
+      },
+      {
+        "number": 6,
+        "description": "Viidentuhannen ruokkiminen. Jeesus kävelee veden päällä. Elämän leipä -puhe."
+      },
+      {
+        "number": 7,
+        "description": "Lehtimajanjuhlassa. Kiistat Jeesuksesta. Elävän veden virrat."
+      },
+      {
+        "number": 8,
+        "description": "Aviorikoksesta tavattu nainen. Jeesus maailman valo. Kiistat juutalaisten kanssa. Ennen Aabrahamia minä olen."
+      },
+      {
+        "number": 9,
+        "description": "Sokeana syntyneen parantaminen."
+      },
+      {
+        "number": 10,
+        "description": "Hyvä paimen. Jeesus ja Isä ovat yhtä."
+      },
+      {
+        "number": 11,
+        "description": "Lasaruksen kuolema ja herättäminen. Neuvosto päättää tappaa Jeesuksen."
+      },
+      {
+        "number": 12,
+        "description": "Voitelu Betaniassa. Riemukulkue. Kreikkalaiset haluavat nähdä Jeesuksen. Vehnänjyvä. Kirkastuksen ääni."
+      },
+      {
+        "number": 13,
+        "description": "Jalkojen peseminen. Petturi ilmoitetaan. Uusi käsky. Pietarin kieltämisen ennustus."
+      },
+      {
+        "number": 14,
+        "description": "Isän huoneessa on monta asuinsijaa. Tie, totuus ja elämä. Lupaus Pyhästä Hengestä."
+      },
+      {
+        "number": 15,
+        "description": "Viinipui ja oksat. Maailman viha. Puolustajan lupaus."
+      },
+      {
+        "number": 16,
+        "description": "Vainon ennustus. Puolustajan tehtävä. Murhe muuttuu iloksi."
+      },
+      {
+        "number": 17,
+        "description": "Jeesuksen ylimmäispapillinen rukous."
+      },
+      {
+        "number": 18,
+        "description": "Getsemane. Vangitseminen. Hannaksen ja Kaifaksen edessä. Pietarin kiletäminen. Pilatuksen edessä."
+      },
+      {
+        "number": 19,
+        "description": "Ruoskinta. Piikiseppele. Ristiinnaulitseminen. Kuolema. Kyljen lävistäminen. Hautaus."
+      },
+      {
+        "number": 20,
+        "description": "Ylösnousemus. Magdalan Maria haudalla. Ilmestyminen opetuslapsille. Tuomas."
+      },
+      {
+        "number": 21,
+        "description": "Ilmestyminen Tiberiaan järvellä. Ihmeellinen kalansaalis. Pietarin tehtävä. Rakastetun opetuslapsen todistus."
+      }
+    ]
+  },
+  {
+    "name": "Acts of the Apostles",
+    "description": "Apostolien teot, Luukkaan kirjoittama, kertoo alkuseurakunnan historian Jeesuksen taivaaseenastumisesta Paavalin Rooman-vankeuteen. Se kuvaa Pyhän Hengen vuodatuksen, kirkon leviämisen ja erityisesti Pietarin ja Paavalin toiminnan.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Jeesuksen taivaaseenastuminen. Matias valitaan Juudaksen tilalle."
+      },
+      {
+        "number": 2,
+        "description": "Helluntai: Pyhän Hengen vuodatus. Pietarin saarna. Kolmetuhatta kääntyy. Alkuseurakunnan elämä."
+      },
+      {
+        "number": 3,
+        "description": "Rampa paranee temppelin portilla. Pietarin saarna."
+      },
+      {
+        "number": 4,
+        "description": "Pietari ja Johannes neuvoston edessä. Seurakunnan rukous. Yhteen omaisuus."
+      },
+      {
+        "number": 5,
+        "description": "Ananias ja Safira. Apostolien ihmeet. Vangitseminen ja vapauttaminen."
+      },
+      {
+        "number": 6,
+        "description": "Seitsemän diakonia valitaan. Stefanos."
+      },
+      {
+        "number": 7,
+        "description": "Stefanoksen puhe ja marttyyrikuolema."
+      },
+      {
+        "number": 8,
+        "description": "Vaino ja hajaantuminen. Filippus Samariassa. Simon taikuri. Etiopialainen hoviherra."
+      },
+      {
+        "number": 9,
+        "description": "Saulin kääntyminen. Ananias. Saul Damaskossa ja Jerusalemissa. Pietari parantaa Aineaan ja herättää Tabitan."
+      },
+      {
+        "number": 10,
+        "description": "Kornelius ja Pietarin näky. Evankeliumi pakanoille."
+      },
+      {
+        "number": 11,
+        "description": "Pietari selittää toimintansa Jerusalemin seurakunnalle. Antiokian seurakunta."
+      },
+      {
+        "number": 12,
+        "description": "Jaakobin marttyyrikuolema. Pietari vangitaan ja pelastetaan. Herodeksen kuolema."
+      },
+      {
+        "number": 13,
+        "description": "Barnabas ja Saul lähetetään. Ensimmäinen lähetysmatka: Kypros ja Pisidian Antiokia."
+      },
+      {
+        "number": 14,
+        "description": "Ikonium, Lystra ja Derbe. Paluu Antiokiaan."
+      },
+      {
+        "number": 15,
+        "description": "Jerusalemin kokous: pakanoita ei vaadita ympärileikkaukseen."
+      },
+      {
+        "number": 16,
+        "description": "Toinen lähetysmatka: Timoteus liittyy. Makedonian kutsu. Filippin seurakunta. Lydia. Vankila."
+      },
+      {
+        "number": 17,
+        "description": "Tessalonika ja Berea. Paavali Ateenassa: puhe Areopagilla."
+      },
+      {
+        "number": 18,
+        "description": "Paavali Korintissa. Akvila ja Priskilla. Gallio. Kolmas lähetysmatka alkaa."
+      },
+      {
+        "number": 19,
+        "description": "Paavali Efesossa. Demetriuksen kapina."
+      },
+      {
+        "number": 20,
+        "description": "Paavali Makedoniassa ja Kreikassa. Eutykus Trooassa. Hyvästit Miletoksessa."
+      },
+      {
+        "number": 21,
+        "description": "Matka Jerusalemiin. Paavali pidätetään temppelissä."
+      },
+      {
+        "number": 22,
+        "description": "Paavalin puolustuspuhe kansalle."
+      },
+      {
+        "number": 23,
+        "description": "Paavali neuvoston edessä. Juoni häntä vastaan. Siirto Kesareaan."
+      },
+      {
+        "number": 24,
+        "description": "Paavali Feliksin edessä."
+      },
+      {
+        "number": 25,
+        "description": "Paavali vetoo keisariin. Festus ja Agrippa."
+      },
+      {
+        "number": 26,
+        "description": "Paavali puolustautuu kuningas Agrippan edessä."
+      },
+      {
+        "number": 27,
+        "description": "Matka Roomaan. Haaksirikko."
+      },
+      {
+        "number": 28,
+        "description": "Malta. Saapuminen Roomaan. Paavali saarnaa Roomassa."
+      }
+    ]
+  },
+  {
+    "name": "Romans",
+    "description": "Paavalin kirje roomalaisille on hänen teologisesti merkittävin kirjeensä. Se käsittelee vanhurskauttamista uskosta, lain ja armon suhdetta sekä Israelin asemaa Jumalan pelastussuunnitelmassa.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Evankeliumin voima. Pakanoiden synti ja rangaistus."
+      },
+      {
+        "number": 2,
+        "description": "Jumalan oikeudenmukainen tuomio. Hän tuomitsee jokaisen tekojensa mukaan. Juutalaiset ja laki."
+      },
+      {
+        "number": 3,
+        "description": "Juutalaisten etuoikeudet. Kaikki ovat syntisiä. Vanhurskauttaminen uskon kautta."
+      },
+      {
+        "number": 4,
+        "description": "Aabraham vanhurskautettiin uskosta, ei teoista tai ympärileikkauksesta."
+      },
+      {
+        "number": 5,
+        "description": "Vanhurskauttamisen hedelmhät: rauha, sovitus. Aadamin synti ja Kristuksen armo."
+      },
+      {
+        "number": 6,
+        "description": "Kastettu on kuollut synnille. Armo ei ole synnin lupa. Synnin orjuus ja vanhurskauden vapaus."
+      },
+      {
+        "number": 7,
+        "description": "Kristityt ovat vapaita laista. Lain tarkoitus. Lihan ja hengen taistelu."
+      },
+      {
+        "number": 8,
+        "description": "Ei kadotustuomiota niille, jotka ovat Kristuksessa. Hengen elämä. Lapseusn Henki. Kärsimys ja kirkkaus. Mikään ei erota Jumalan rakkaudesta."
+      },
+      {
+        "number": 9,
+        "description": "Paavalin suru Israelin vuoksi. Jumalan valinta. Saven valajan vertaus."
+      },
+      {
+        "number": 10,
+        "description": "Israel hylkäsi uskonvanhurskauden. Uskontunnustus ja pelastus."
+      },
+      {
+        "number": 11,
+        "description": "Jäännös Israelista. Öljypuun vertaus. Koko Israel pelastuu. Jumalan viisauden syvyys."
+      },
+      {
+        "number": 12,
+        "description": "Elävä uhri. Armolahjat. Kristityn elämänohjeet."
+      },
+      {
+        "number": 13,
+        "description": "Alamaisuus esivallalle. Rakkauden velka. Herätys unesta."
+      },
+      {
+        "number": 14,
+        "description": "Heikkojen ja vahvojen keskinäinen suvaitsevaisuus."
+      },
+      {
+        "number": 15,
+        "description": "Kristuksen esimerkki. Paavalin tehtävä pakanoiden apostolina. Matkasuunnitelmat."
+      },
+      {
+        "number": 16,
+        "description": "Tervehdykset. Varoitukset hajaanuksen lietsojia vastaan. Loppusiunaus."
+      }
+    ]
+  },
+  {
+    "name": "1 Corinthians",
+    "description": "Paavalin ensimmäinen kirje korinttilaisille käsittelee seurakunnan ongelmia: hajaannusta, moraalittomuutta, oikeudenkäyntejä, avioliittoa, epäjumalanpalvelusta, jumalanpalvelusta ja ylösnousemusta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Kehotus yksimielisyyteen. Ristin hulluus on Jumalan viisautta."
+      },
+      {
+        "number": 2,
+        "description": "Paavalin saarna ei perustunut ihmisviisauteen vaan Hengen voimaan."
+      },
+      {
+        "number": 3,
+        "description": "Korinttilaiset ovat vielä lihaallisia. Seurakunnan perustus on Kristus."
+      },
+      {
+        "number": 4,
+        "description": "Apostolien asema Kristuksen palvelijoina. Varoitus ylpeydestä."
+      },
+      {
+        "number": 5,
+        "description": "Siveettömyyden tuomitseminen. Pahan poistaminen keskuudesta."
+      },
+      {
+        "number": 6,
+        "description": "Oikeudenkäynnit uskovien välillä. Ruumis on Pyhän Hengen temppeli."
+      },
+      {
+        "number": 7,
+        "description": "Avioliitto ja naimattomuus. Ohjeet erilaisiin elämäntilanteisiin."
+      },
+      {
+        "number": 8,
+        "description": "Epäjumalille uhratusta lihasta. Vapaus ja heikkojen huomioiminen."
+      },
+      {
+        "number": 9,
+        "description": "Apostolin oikeudet. Paavali luopuu oikeuksistaaan evankeliumin vuoksi."
+      },
+      {
+        "number": 10,
+        "description": "Varoituksia Israelin historiasta. Epäjumalanpalveluksen välttäminen. Herran pöytä."
+      },
+      {
+        "number": 11,
+        "description": "Naisen peittäminen. Herran ehtoollisen viettäminen arvollisesti."
+      },
+      {
+        "number": 12,
+        "description": "Hengelliset lahjat. Yksi ruumis, monta jäsentä."
+      },
+      {
+        "number": 13,
+        "description": "Rakkauden ylistys."
+      },
+      {
+        "number": 14,
+        "description": "Profetoiminen on kielilläpuhumista arvokkaampaa. Jumalanpalveluksen järjestys."
+      },
+      {
+        "number": 15,
+        "description": "Kristuksen ylösnousemus ja meidän ylösnousemuksemme. Kuoleman voittaminen."
+      },
+      {
+        "number": 16,
+        "description": "Keräys Jerusalemin seurakunnalle. Matkasuunnitelmat. Tervehdykset."
+      }
+    ]
+  },
+  {
+    "name": "2 Corinthians",
+    "description": "Paavalin toinen kirje korinttilaisille on henkilökohtaisin hänen kirjeistään. Se käsittelee apostolin palvelutyötä, kärsimyksiä ja puolustautumista vääriin syytöksiin.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Lohdutuksen Jumala. Paavalin kärsimykset ja lohdutus."
+      },
+      {
+        "number": 2,
+        "description": "Anteeksianto katuvalle syntiselle. Uuden liiton tuoksu."
+      },
+      {
+        "number": 3,
+        "description": "Hengen palveluviren kunnia ylittää kirjaimen palveluvirkan. Herran kirkkaus muuttaa meitä."
+      },
+      {
+        "number": 4,
+        "description": "Aarre saviastioissa. Ulkoinen ihminen murenee mutta sisäinen uudistuu."
+      },
+      {
+        "number": 5,
+        "description": "Taivaallinen asumus. Sovituksen palveluvirka. Kristuksessa uusi luomus."
+      },
+      {
+        "number": 6,
+        "description": "Kehotus ottaa armo vastaan turhaan. Älkää antautuko epäuskoisten ikeeseen."
+      },
+      {
+        "number": 7,
+        "description": "Kehotus puhtauteen. Paavalin ilo korinttilaisten katumuksesta."
+      },
+      {
+        "number": 8,
+        "description": "Keräys Jerusalemin seurakunnan hyväksi. Makedonian seurakuntien esimerkki."
+      },
+      {
+        "number": 9,
+        "description": "Anteliaisuus ja sen siunakset."
+      },
+      {
+        "number": 10,
+        "description": "Paavali puolustaa apostolinvaltuuttaan."
+      },
+      {
+        "number": 11,
+        "description": "Paavalin kärsimykset ja vaivat apostolina."
+      },
+      {
+        "number": 12,
+        "description": "Paavalin näyt ja ilmestykset. Piikki lihassa. Voima tulee täydelliseksi heikkoudessa."
+      },
+      {
+        "number": 13,
+        "description": "Viimeiset varoitukset ja kehotukset. Kolminaisuuden siunaus."
+      }
+    ]
+  },
+  {
+    "name": "Galatians",
+    "description": "Paavalin kirje galatalaisille puolustaa vanhurskauttamista uskosta ilman lain tekoja. Se on kirjoitettu Galatian seurakunille, jotka olivat vaarassa palata lain orjuuteen.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Ei ole muuta evankeliumia. Paavalin kutsumuksen jumalallinen alkuperä."
+      },
+      {
+        "number": 2,
+        "description": "Paavalin hyväksyminen Jerusalemissa. Pietarin nuhteleminen Antiokiassa. Vanhurskauttaminen uskosta."
+      },
+      {
+        "number": 3,
+        "description": "Lain kirouksesta vapauttaminen. Lupaus Aabrahamille. Laki oli kasvattaja Kristukseen."
+      },
+      {
+        "number": 4,
+        "description": "Orjuudesta vapauteen. Haagarin ja Saaran vertaus."
+      },
+      {
+        "number": 5,
+        "description": "Vapaus Kristuksessa. Lihan teot ja Hengen hedelmä."
+      },
+      {
+        "number": 6,
+        "description": "Toistenne kuormien kantaminen. Kylväminen ja niittäminen. Uusi luomus."
+      }
+    ]
+  },
+  {
+    "name": "Ephesians",
+    "description": "Paavalin kiirje efesolaisille käsittelee Jumalan suurta pelastussuunnitelmaa Kristuksessa, kirkon salaisuutta ja kristityn elämää. Se on kirjoitettu vankeudesta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Ylistys Jumalan siunauksista Kristuksessa. Valinta ja lunastus. Rukous."
+      },
+      {
+        "number": 2,
+        "description": "Kuolleista eläväksi armosta. Juutalaiset ja pakanat yhdistetty Kristuksessa."
+      },
+      {
+        "number": 3,
+        "description": "Salaisuus paljastettu: pakanat ovat kanssaperillisiä. Paavalin rukous."
+      },
+      {
+        "number": 4,
+        "description": "Yksi ruumis, yksi usko. Armolahjat. Uusi ihminen."
+      },
+      {
+        "number": 5,
+        "description": "Vaeltakaa valossa. Aviomiesten ja vaimojen suhteet: Kristuksen ja kirkon salaisuus."
+      },
+      {
+        "number": 6,
+        "description": "Lasten ja vanhempien suhteet. Orjat ja isännät. Jumalan taisteluvannusteet."
+      }
+    ]
+  },
+  {
+    "name": "Philippians",
+    "description": "Paavalin kirje filippiläisille on ilon kirje, kirjoitettu vankeudesta Roomasta. Se ilmaisee Paavalin rakkautta seurakuntaa kohtaan ja kehottaa iloon, nöyryyteen ja Kristuksen mieleen.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Kiitos ja rukous. Elämä on Kristus, kuolema on voitto."
+      },
+      {
+        "number": 2,
+        "description": "Kristuksen nöyryys ja korottaminen. Työskentelkää pelastuksenne eteen. Timoteus ja Epafroditos."
+      },
+      {
+        "number": 3,
+        "description": "Todellinen vanhurskaus on Kristuksessa, ei laissa. Taivaallises kansalaisuus."
+      },
+      {
+        "number": 4,
+        "description": "Iloitkaa Herrassa. Jumalan rauha. Kiitos avusta."
+      }
+    ]
+  },
+  {
+    "name": "Colossians",
+    "description": "Paavalin kirje kolossalaisille puolustaa Kristuksen ainutlaatuisuutta ja ylivertaisuutta kaiken luodun yli. Se varoittaa vääristä opetuksista ja kehottaa elämään Kristuksessa.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Kiitos. Kristus on kaiken yläpuolella, kaiken Luoja ja sovittaja."
+      },
+      {
+        "number": 2,
+        "description": "Varoitus vääriä filosofioita ja ihmisten perinteitä vastaan. Kristuksessa asuu jumaluuden täyteys."
+      },
+      {
+        "number": 3,
+        "description": "Uusi elämä Kristuksessa. Pois vanha ihminen. Puekaa ylenne uusi ihminen. Kodin säännöt."
+      },
+      {
+        "number": 4,
+        "description": "Kehotuksia rukoukseen ja viisaaseen vaellukseen. Tervehdykset."
+      }
+    ]
+  },
+  {
+    "name": "1 Thessalonians",
+    "description": "Paavalin ensimmäinen kirje tessalonikalaisille, yksi hänen varhaisimmista kirjeistään, käsittelee seurakunnan uskoa, rakkautta ja toivoa sekä Kristuksen toista tulemista.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Kiitos tessalonikalaisten uskosta. Heidän esimerkillinen kääntymisensä."
+      },
+      {
+        "number": 2,
+        "description": "Paavalin toiminta Tessalonikassa. Hänen rakkautensa seurakuntaa kohtaan."
+      },
+      {
+        "number": 3,
+        "description": "Timoteuksen lähettäminen ja hänen tuomansa hyvät uutiset."
+      },
+      {
+        "number": 4,
+        "description": "Kehotus pyhyyteen ja rakkauteen. Kuolleiden ylösnousemus Krisuksen tullessa."
+      },
+      {
+        "number": 5,
+        "description": "Herran päivä tulee kuin varas yöllä. Kehotuksia valppauteen ja kristilliseen elämään."
+      }
+    ]
+  },
+  {
+    "name": "2 Thessalonians",
+    "description": "Paavalin toinen kirje tessalonikalaisille selventää Kristuksen toisen tulemisen ajankohtaa ja varoittaa laittomuudn ihmisestä.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Kiitos heidän uskostaan. Oikeudenmukainen tuomio vainoojille."
+      },
+      {
+        "number": 2,
+        "description": "Herran päivää edeltää luopumus ja laittomuuden ihmisen ilmestyminen."
+      },
+      {
+        "number": 3,
+        "description": "Kehotus rukoukseen, järjestykseen ja työn tekoon."
+      }
+    ]
+  },
+  {
+    "name": "1 Timothy",
+    "description": "Paavalin ensimmäinen kirje Timoteukselle, nuorelle paimenelleen Efesossa, antaa ohjeita seurakunnan järjestyksestä, väärrien opetusten torjumisesta ja paimenen elämäntavasta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Varoitus vääristä opettajista. Lain oikea käyttö. Paavalin kiitos armosta."
+      },
+      {
+        "number": 2,
+        "description": "Rukous kaikkien puolesta. Naisten asema jumalanpalveluksessa."
+      },
+      {
+        "number": 3,
+        "description": "Seurakunnan kaitsijan ja diakonin vaatimukset."
+      },
+      {
+        "number": 4,
+        "description": "Varoitus tulevasta luopumuksesta. Timoteuksen kehotus uskollisuuteen."
+      },
+      {
+        "number": 5,
+        "description": "Ohjeet lesken, vanhimpien ja orjien kohtelusta."
+      },
+      {
+        "number": 6,
+        "description": "Varoitus rahanhalusta. Hyvä kilvoitus. Kehotus rikkaile."
+      }
+    ]
+  },
+  {
+    "name": "2 Timothy",
+    "description": "Paavalin toinen kirje Timoteukselle on hänen viimeinen kirjeensä, kirjoitettu vankeudesta Roomasta. Se on henkilökohtainen testamentti, joka kehottaa Timoteusta kestävyyteen ja uskollisuuteen.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Kehotus rohkeuteen ja uskollisuuteen. Onesforoksen esimerkki."
+      },
+      {
+        "number": 2,
+        "description": "Vahvistu armossa. Hyvä sotilas. Oikein jakamaan totuuden sanaa."
+      },
+      {
+        "number": 3,
+        "description": "Viimeisten aikojen vaarat. Pyhien kirjoitusten merkitys."
+      },
+      {
+        "number": 4,
+        "description": "Julista sanaa. Paavalin testamentti. Hänen odotuksensa kruunusta."
+      }
+    ]
+  },
+  {
+    "name": "Titus",
+    "description": "Paavalin kirje Titukselle, hänen työtoverilleen Kreetassa, antaa ohjeita seurakunnan järjestämisestä ja terveestä opetuksesta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Vanhimpien asettaminen. Varoitus vääristä opettajista Kreetassa."
+      },
+      {
+        "number": 2,
+        "description": "Terve opetus eri ryhmille. Jumalan armon kasvattava voima."
+      },
+      {
+        "number": 3,
+        "description": "Alamaisuus esivallalle. Pelastus armosta. Viimeiset ohjeet."
+      }
+    ]
+  },
+  {
+    "name": "Philemon",
+    "description": "Paavalin kirje Filemonille on lyhyt henkilökohtainen kirje, jossa Paavali pyytää Filemonia ottamaan takaisin karanneen orjansa Onesimoksen, nyt uskossa veljenä.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Paavali pyytää Filemonia ottamaan Onesimuksen vastaan rakkaudella veljenä Kristuksessa."
+      }
+    ]
+  },
+  {
+    "name": "Hebrews",
+    "description": "Kirje heprealaisille osoittaa Kristuksen ylivertaisuuden enkeleiden, Mooseksen ja vanhan liiton pappeyden yli. Kristus on uuden liiton ainoa ja täydellinen ylimmäinen pappi Melkisedekin järjestyksen mukaan.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Poika on enkeleitä ylempi. Hän on Jumalan kirkkauden säteily."
+      },
+      {
+        "number": 2,
+        "description": "Pelastuksen suuruus. Kristus tuli ihmiseksi veljiensä tähden."
+      },
+      {
+        "number": 3,
+        "description": "Kristus on Moosesta suurempi. Varoitus epäuskosta."
+      },
+      {
+        "number": 4,
+        "description": "Jumalan lepo. Jumalan sana on elävä ja voimallinen."
+      },
+      {
+        "number": 5,
+        "description": "Kristuksen pappeus. Hän oppi kuuliaisuutta kärsimyksistään."
+      },
+      {
+        "number": 6,
+        "description": "Kehotus kypsyyteen. Jumalan lupauksen varmuus."
+      },
+      {
+        "number": 7,
+        "description": "Melkisedek. Kristuksen pappeus on Leevin pappeutta ylempi."
+      },
+      {
+        "number": 8,
+        "description": "Uusi liitto on vanhaa parempi."
+      },
+      {
+        "number": 9,
+        "description": "Vanhan liiton jumalanpalvelusjärjestys ja Kristuksen täydellinen uhri."
+      },
+      {
+        "number": 10,
+        "description": "Lain uhrit eivät voi tehdä täydelliseksi. Kristuksen ainoa uhri riittää. Kehotus kestävyyteen."
+      },
+      {
+        "number": 11,
+        "description": "Usko: uskon sankarien luettelo Aabrahamista lähtien."
+      },
+      {
+        "number": 12,
+        "description": "Juoskaamme kestäen kilpailumme. Jumalan kuritus. Pyhyys. Siionin vuori."
+      },
+      {
+        "number": 13,
+        "description": "Erilaisia kehotuksia. Uhrimme Jumaalalle. Siunaus."
+      }
+    ]
+  },
+  {
+    "name": "James",
+    "description": "Jaakobin kirje korostaa uskon ja tekojen yhteyttä. Se on käytännöllinen kirja, joka käsittelee kiusauksia, kielen hillitsemistä, viisautta ja rukousta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kiusausten kestäminen. Jumala antaa viisautta. Sanan tekijät."
+      },
+      {
+        "number": 2,
+        "description": "Varoitus henkilöiden suosimisesta. Usko ilman tekoja on kuollut."
+      },
+      {
+        "number": 3,
+        "description": "Kielen valta ja vaara. Ylhäältä tuleva viisaus."
+      },
+      {
+        "number": 4,
+        "description": "Varoituksia maailmallisuudesta ja ylpeydestä."
+      },
+      {
+        "number": 5,
+        "description": "Varoitus rikkaille. Kärsivällisyys. Sairaiden voitelu. Rukouksen voima."
+      }
+    ]
+  },
+  {
+    "name": "1 Peter",
+    "description": "Pietarin ensimmäinen kirje on kirjoitettu hajallaan oleville kristityille rohkaisuksi kärsimysten keskellä ja kehotukseksi pyhään elämään.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Elävä toivo. Pyhyys. Lunastus Kristuksen kalliilla verellä."
+      },
+      {
+        "number": 2,
+        "description": "Hylätyt kivet ja elävät kivet. Kristillinen vaellus pakanoiden keskellä."
+      },
+      {
+        "number": 3,
+        "description": "Aviopuolisoiden suhteet. Kärsimys vanhurskauden vuoksi. Kristus saarnasi vangeille hengille."
+      },
+      {
+        "number": 4,
+        "description": "Kärsiminen Kristuksen tähden. Olkaa raittiita ja rukoilkaa."
+      },
+      {
+        "number": 5,
+        "description": "Kehotus vanhimmille. Nöyryys. Varoitus Saatanasta."
+      }
+    ]
+  },
+  {
+    "name": "2 Peter",
+    "description": "Pietarin toinen kirje varoittaa vääristä opettajista ja muistuttaa Kristuksen toisen tulemisen lupauksesta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Tervehdys. Jumala on antanut kaiken elämää ja jumalanpalvelusta varten. Kirkastumisen todistus."
+      },
+      {
+        "number": 2,
+        "description": "Väärät opettajat ja heidän tuomionsa."
+      },
+      {
+        "number": 3,
+        "description": "Herran päivä tulee. Uudet taivaat ja uusi maa."
+      }
+    ]
+  },
+  {
+    "name": "1 John",
+    "description": "Johanneksen ensimmäinen kirje korostaa vaeltamista valossa, rakkautta ja oikean opin merkitystä. Se varoittaa antikristuksista ja opettaa rakkauden olevan Jumalan tuntemisen merkki.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Elämän Sana. Vaeltaminen valossa. Syntien tunnustaminen."
+      },
+      {
+        "number": 2,
+        "description": "Kristus on meidän puolustajamme. Rakkauden käsky. Varoitus antikristuksista."
+      },
+      {
+        "number": 3,
+        "description": "Jumalan lapset ja paholaisen lapset. Veljesrakkauden vaatimus."
+      },
+      {
+        "number": 4,
+        "description": "Henkien koetteleminen. Jumala on rakkaus."
+      },
+      {
+        "number": 5,
+        "description": "Usko voittaa maailman. Todistus Pojasta. Iankaikkinen elämä."
+      }
+    ]
+  },
+  {
+    "name": "2 John",
+    "description": "Johanneksen toinen kirje on lyhyt kirje, joka kehottaa vaeltamaan totuudessa ja rakkaudessa sekä varoittaa vääristä opettajista.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Vaeltakaa totuudessa ja rakkaudessa. Varoitu eksyttäjistä."
+      }
+    ]
+  },
+  {
+    "name": "3 John",
+    "description": "Johanneksen kolmas kirje on henkilökohtainen kirje Gaiukselle, jossa ylistetään hänen vieraanvaraisuuttaan ja moititaan Diotrefeen ylimielisyyttä.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": ""
+      }
+    ]
+  },
+  {
+    "name": "Jude",
+    "description": "Juudaksen kirje varoittaa vääristä opettajista, jotka ovat tunkeutuneet seurakuntaan, ja kehottaa taistelemaan uskon puolesta.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Kehotus taistella uskon puolesta. Väärien opettajien tuomio. Säilyttäkää itsenne Jumalan rakkaudessa."
+      }
+    ]
+  },
+  {
+    "name": "Revelation",
+    "description": "Johanneksen ilmestys eli Apokalypsi on Uuden testamentin viimeinen kirja. Se sisältää näkyjä ja profetioita maailman lopun tapahtumista, Kristuksen voitosta ja uudesta taivaasta ja maasta. Se on kirjoitettu Patmoksen saarella vainon aikana.",
+    "chapters": [
+      {
+        "number": 1,
+        "description": "Johannes Patmoksella. Näky kirkastuneesta Kristuksesta seitsemän kynttiläjalan keskellä."
+      },
+      {
+        "number": 2,
+        "description": "Kirjeet Efesoksen, Smyrnan, Pergamonin ja Tyatiran seurakunnille."
+      },
+      {
+        "number": 3,
+        "description": "Kirjeet Sardeksen, Filadelfian ja Laodikean seurakunnille."
+      },
+      {
+        "number": 4,
+        "description": "Näky taivaallisesta valtaistuimesta. Neljä olentoa ja kaksikymmentäneljä vanhinta."
+      },
+      {
+        "number": 5,
+        "description": "Kirja seitsemällä sinetillä. Karitsa on ainoa, joka voi avata sen."
+      },
+      {
+        "number": 6,
+        "description": "Kuusi sinettiä avataan: neljä ratsumiestä, marttyyrien huuto, maanjäristys."
+      },
+      {
+        "number": 7,
+        "description": "Sadan neljänkymmenen neljän tuhannen sinetöiminen. Suuri joukko valkeissa vaatteissa."
+      },
+      {
+        "number": 8,
+        "description": "Seitsemäs sinetti. Neljä ensimmäistä pasuunaa."
+      },
+      {
+        "number": 9,
+        "description": "Viides ja kuudes pasuuna. Heinäsirkkaitsitskunnan ja ratsuvaunjojen vaivat."
+      },
+      {
+        "number": 10,
+        "description": "Väkevä enkeli ja pieni kirja. Johannes syö kirjan."
+      },
+      {
+        "number": 11,
+        "description": "Kaksi todistajaa. Seitsemäs pasuuna."
+      },
+      {
+        "number": 12,
+        "description": "Nainen ja lohikäärme. Sota taivaassa. Miikael voittaa lohikäärmeen."
+      },
+      {
+        "number": 13,
+        "description": "Peto merestä ja peto maasta. Pedon luku 666."
+      },
+      {
+        "number": 14,
+        "description": "Karitsa ja sadan neljänkymmenen neljän tuhatta Siionin vuorella. Kolme enkeliä. Maan leikkuu."
+      },
+      {
+        "number": 15,
+        "description": "Seitsemän enkeliä seitsemällä viimeisellä vitsauksella. Lasimerensijaus."
+      },
+      {
+        "number": 16,
+        "description": "Seitsemän vihan malja vuodatetaan maan päälle."
+      },
+      {
+        "number": 17,
+        "description": "Suuri Babylon, portto, joka istuu pedon selässä."
+      },
+      {
+        "number": 18,
+        "description": "Babylonin tuho. Kuninkaat, kauppiaat ja merkankulkijat valittavat."
+      },
+      {
+        "number": 19,
+        "description": "Voitonriemu taivaassa. Kristus, kuningasten Kuningas, voittaa pedon."
+      },
+      {
+        "number": 20,
+        "description": "Tuhatvuotinen valtakunta. Saatana sidotaan ja päästetään. Viimeinen tuomio."
+      },
+      {
+        "number": 21,
+        "description": "Uusi taivas ja uusi maa. Uusi Jerusalem laskeutuu taivaasta."
+      },
+      {
+        "number": 22,
+        "description": "Elämän veden virta. Kristuksen tulo on lähellä. Amen, tule, Herra Jeesus."
+      }
+    ]
+  }
+]

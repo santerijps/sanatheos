@@ -1,4 +1,5 @@
 import { join, resolve, extname } from "node:path";
+import { existsSync } from "node:fs";
 
 import { loadBible, discoverTranslations } from "./shared/bible-loader.ts";
 
@@ -32,6 +33,16 @@ for (const t of translations) {
 }
 const translationsJson = JSON.stringify(translations);
 
+// Pre-load descriptions for each translation
+const descriptionsCache: Record<string, string> = {};
+for (const t of translations) {
+  const descPath = join(TRANSLATIONS_DIR, t, "descriptions.json");
+  if (existsSync(descPath)) {
+    descriptionsCache[t] = await Bun.file(descPath).text();
+    console.log(`${t} descriptions loaded`);
+  }
+}
+
 const MIME: Record<string, string> = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -58,6 +69,20 @@ Bun.serve({
       const t = bibleMatch[1].toUpperCase();
       const json = bibleCache[t];
       if (!json) return new Response("Translation not found", { status: 404 });
+      return new Response(json, {
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "public, max-age=86400",
+        },
+      });
+    }
+
+    // Match /descriptions-CODE.json (e.g. /descriptions-WEB.json)
+    const descMatch = path.match(/^\/descriptions-([A-Z0-9]+)\.json$/i);
+    if (descMatch) {
+      const t = descMatch[1].toUpperCase();
+      const json = descriptionsCache[t];
+      if (!json) return new Response("[]", { headers: { "Content-Type": "application/json" } });
       return new Response(json, {
         headers: {
           "Content-Type": "application/json",

@@ -140,6 +140,7 @@ main {
   margin-bottom: 32px;
   font-family: var(--sans);
   letter-spacing: -0.5px;
+  text-align: center;
 }
 
 .section-title {
@@ -160,7 +161,8 @@ main {
   color: var(--accent);
   margin-bottom: 12px;
   cursor: pointer;
-  display: inline-block;
+  display: block;
+  text-align: center;
   transition: color 0.12s;
 }
 
@@ -170,6 +172,17 @@ main {
 
 .chapter-block {
   margin-bottom: 48px;
+}
+
+/* === Descriptions === */
+.description {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  text-align: center;
 }
 
 /* === Verses === */
@@ -684,6 +697,11 @@ mark {
 
 #footer a:hover {
   color: var(--text);
+}
+
+/* === Wide screens — larger index panel === */
+@media (min-width: 1200px) {
+  .idx-col { width: 320px; }
 }
 
 /* === Responsive === */

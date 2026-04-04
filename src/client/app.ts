@@ -1,9 +1,9 @@
-import type { BibleData, AppState, HighlightColor } from "./types.ts";
+import type { BibleData, AppState, HighlightColor, DescriptionData } from "./types.ts";
 import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight } from "./db.ts";
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, renderParallelChapter, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -36,6 +36,16 @@ async function fetchTranslations(): Promise<string[]> {
     return await res.json();
   } catch {
     return [DEFAULT_TRANSLATION];
+  }
+}
+
+async function fetchDescriptions(code: string): Promise<DescriptionData> {
+  try {
+    const res = await fetch(`./descriptions-${encodeURIComponent(code)}.json`);
+    if (!res.ok) return [];
+    return await res.json();
+  } catch {
+    return [];
   }
 }
 
@@ -118,6 +128,10 @@ async function init() {
     return;
   }
 
+  // Load descriptions for the current translation
+  const desc = await fetchDescriptions(currentTranslation);
+  setDescriptions(desc);
+
   localStorage.setItem("bible-translation", currentTranslation);
   initSearch(data);
 
@@ -149,6 +163,10 @@ async function init() {
         setTranslation(code);
         localStorage.setItem("bible-translation", code);
         initSearch(data);
+
+        // Reload descriptions for the new translation
+        const newDesc = await fetchDescriptions(code);
+        setDescriptions(newDesc);
 
         // Auto-switch UI language to match translation
         const newLang = TRANSLATION_LANG[code];
@@ -216,6 +234,7 @@ async function init() {
         parallelTranslation = savedParallel;
         parallelData = await fetchTranslation(savedParallel);
         localStorage.setItem("bible-parallel", savedParallel);
+        setSecondaryDescriptions(await fetchDescriptions(savedParallel));
       } catch { parallelTranslation = ""; parallelData = null; parallelSelect.value = ""; }
     }
 
@@ -224,12 +243,14 @@ async function init() {
       if (!code) {
         parallelTranslation = "";
         parallelData = null;
+        setSecondaryDescriptions([]);
         localStorage.removeItem("bible-parallel");
       } else {
         try {
           parallelData = await fetchTranslation(code);
           parallelTranslation = code;
           localStorage.setItem("bible-parallel", code);
+          setSecondaryDescriptions(await fetchDescriptions(code));
         } catch {
           parallelTranslation = "";
           parallelData = null;
@@ -416,12 +437,14 @@ async function init() {
     const arrow = (e.target as HTMLElement).closest(".nav-arrow") as HTMLElement;
     if (arrow && !arrow.classList.contains("nav-disabled")) {
       const b = arrow.dataset.book!;
-      const c = +arrow.dataset.chapter!;
+      const c = arrow.dataset.chapter;
       const v = arrow.dataset.verse;
       if (v !== undefined) {
-        navigate({ book: b, chapter: c, verse: +v });
+        navigate({ book: b, chapter: +c!, verse: +v });
+      } else if (c !== undefined) {
+        navigate({ book: b, chapter: +c });
       } else {
-        navigate({ book: b, chapter: c });
+        navigate({ book: b });
       }
       return;
     }
@@ -682,11 +705,13 @@ async function init() {
       if (!urlParallel) {
         parallelTranslation = "";
         parallelData = null;
+        setSecondaryDescriptions([]);
       } else {
         try {
           parallelData = await fetchTranslation(urlParallel);
           parallelTranslation = urlParallel;
-        } catch { parallelTranslation = ""; parallelData = null; }
+          setSecondaryDescriptions(await fetchDescriptions(urlParallel));
+        } catch { parallelTranslation = ""; parallelData = null; setSecondaryDescriptions([]); }
       }
       localStorage.setItem("bible-parallel", parallelTranslation);
       if (parallelSelect) parallelSelect.value = parallelTranslation;
@@ -824,7 +849,11 @@ function applyState(s: AppState) {
       renderChapter(data, s.book, s.chapter);
     }
   } else if (s.book) {
-    renderBook(data, s.book);
+    if (useParallel) {
+      renderParallelBook(data, parallelData!, s.book, currentTranslation, parallelTranslation);
+    } else {
+      renderBook(data, s.book);
+    }
   } else {
     if (useParallel) {
       renderParallelChapter(data, parallelData!, "Genesis", 1, currentTranslation, parallelTranslation);
@@ -896,7 +925,7 @@ function updateStaticText() {
   // Footer
   const footer = document.getElementById("footer");
   if (footer) {
-    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerFavicon}</p>`;
+    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerDescriptions}</p><p>${s.footerFavicon}</p>`;
   }
 
   // HTML lang attribute

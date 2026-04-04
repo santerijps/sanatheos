@@ -1,4 +1,4 @@
-import type { BibleData, VerseResult, HighlightColor } from "./types.ts";
+import type { BibleData, VerseResult, HighlightColor, DescriptionData } from "./types.ts";
 import type { NavRef } from "./search.ts";
 import { escapeRegex } from "./search.ts";
 import { displayName, displayNameFor } from "./bookNames.ts";
@@ -10,6 +10,47 @@ let highlightMap = new Map<string, HighlightColor>();
 
 export function setHighlightMap(m: Map<string, HighlightColor>) {
   highlightMap = m;
+}
+
+let descriptions: DescriptionData = [];
+let secondaryDescriptions: DescriptionData = [];
+
+export function setDescriptions(d: DescriptionData) {
+  descriptions = d;
+}
+
+export function setSecondaryDescriptions(d: DescriptionData) {
+  secondaryDescriptions = d;
+}
+
+/** Look up the book-level description from a given description dataset. */
+function bookDescFrom(descs: DescriptionData, book: string): string {
+  const entry = descs.find(b => b.name === book);
+  return entry?.description ?? "";
+}
+
+/** Look up the chapter-level description from a given description dataset. */
+function chapterDescFrom(descs: DescriptionData, book: string, chapter: number): string {
+  const entry = descs.find(b => b.name === book);
+  if (!entry) return "";
+  const ch = entry.chapters.find(c => c.number === chapter);
+  return ch?.description ?? "";
+}
+
+/** Look up the book-level description for a given English book key. */
+function getBookDescription(book: string): string {
+  return bookDescFrom(descriptions, book);
+}
+
+/** Look up the chapter-level description for a given book and chapter number. */
+function getChapterDescription(book: string, chapter: number): string {
+  return chapterDescFrom(descriptions, book, chapter);
+}
+
+/** Render a description paragraph (book or chapter) as HTML, or empty string if none. */
+function descriptionHtml(text: string): string {
+  if (!text) return "";
+  return `<p class="description">${esc(text)}</p>`;
 }
 
 function getHighlightClass(book: string, chapter: number, verse: number): string {
@@ -41,6 +82,14 @@ interface NavTarget {
   verse?: number;
   label: string;
   shortLabel: string;
+}
+
+function getBookNav(data: BibleData, book: string): { prev: NavTarget | null; next: NavTarget | null } {
+  const books = Object.keys(data);
+  const bi = books.indexOf(book);
+  const prev = bi > 0 ? { book: books[bi - 1], chapter: 0, label: displayName(books[bi - 1]), shortLabel: displayName(books[bi - 1]) } : null;
+  const next = bi < books.length - 1 ? { book: books[bi + 1], chapter: 0, label: displayName(books[bi + 1]), shortLabel: displayName(books[bi + 1]) } : null;
+  return { prev, next };
 }
 
 function getChapterNav(data: BibleData, book: string, chapter: number): { prev: NavTarget | null; next: NavTarget | null } {
@@ -117,10 +166,10 @@ function getVerseNav(data: BibleData, book: string, chapter: number, verse: numb
 
 function navArrowsHtml(prev: NavTarget | null, next: NavTarget | null, showTranslation = true): string {
   const prevBtn = prev
-    ? `<a class="nav-arrow nav-prev" title="${esc(prev.label)}" data-book="${esc(prev.book)}" data-chapter="${prev.chapter}"${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&DoubleLeftArrow;</a>`
+    ? `<a class="nav-arrow nav-prev" title="${esc(prev.label)}" data-book="${esc(prev.book)}"${prev.chapter ? ` data-chapter="${prev.chapter}"` : ""}${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&DoubleLeftArrow;</a>`
     : `<span class="nav-arrow nav-prev nav-disabled">&DoubleLeftArrow;</span>`;
   const nextBtn = next
-    ? `<a class="nav-arrow nav-next" title="${esc(next.label)}" data-book="${esc(next.book)}" data-chapter="${next.chapter}"${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&DoubleRightArrow;</a>`
+    ? `<a class="nav-arrow nav-next" title="${esc(next.label)}" data-book="${esc(next.book)}"${next.chapter ? ` data-chapter="${next.chapter}"` : ""}${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&DoubleRightArrow;</a>`
     : `<span class="nav-arrow nav-next nav-disabled"></span>`;
   const mid = showTranslation ? `<span class="nav-translation">&DoubleRightArrow;</span>` : "";
   return `<nav class="chapter-nav">${prevBtn}${mid}${nextBtn}</nav>`;
@@ -134,7 +183,10 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
   let html = navArrowsHtml(prev, next);
   html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button></h2><div class="verses">`;
+  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button></h2>`;
+  if (chapter === 1) html += descriptionHtml(getBookDescription(book));
+  html += descriptionHtml(getChapterDescription(book, chapter));
+  html += `<div class="verses">`;
   for (const n of nums) {
     html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
   }
@@ -149,17 +201,23 @@ export function renderBook(data: BibleData, book: string) {
   if (!bd) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const chs = Object.keys(bd).map(Number).sort((a, b) => a - b);
-  let html = `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
+  const { prev, next } = getBookNav(data, book);
+  let html = navArrowsHtml(prev, next);
+  html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
   html += `<h1 class="book-title">${esc(displayName(book))}</h1>`;
+  html += descriptionHtml(getBookDescription(book));
   for (const c of chs) {
     const verses = bd[String(c)];
     const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
-    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2><div class="verses">`;
+    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
+    html += descriptionHtml(getChapterDescription(book, c));
+    html += `<div class="verses">`;
     for (const n of nums) {
       html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
     }
     html += `</div></div>`;
   }
+  html += navArrowsHtml(prev, next, false);
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }
@@ -190,7 +248,10 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
     const ch = bd[String(c)];
     if (!ch) continue;
     const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
-    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(displayName(book))} ${c}</h2><div class="verses">`;
+    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(displayName(book))} ${c}</h2>`;
+    if (c === chStart) html += descriptionHtml(getBookDescription(book));
+    html += descriptionHtml(getChapterDescription(book, c));
+    html += `<div class="verses">`;
     for (const n of nums) {
       html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
     }
@@ -413,6 +474,7 @@ export function renderIndex(
       const text = data[book][String(chapter)][String(v)];
       const p = text.substring(0, 50).replace(/\n/g, " ");
       vEl.textContent = `${v}. ${p}${text.length > 50 ? "\u2026" : ""}`;
+      vEl.title = text.replace(/\n/g, " ");
       vEl.addEventListener("click", (e) => { e.stopPropagation(); callbacks.onVerse(book, chapter, v); });
       versesCol.appendChild(vEl);
     }
@@ -435,9 +497,12 @@ export function renderIndex(
       chEl.className = "idx-item idx-chapter";
       chEl.dataset.chapter = String(c);
       chEl.tabIndex = -1;
-      const first = data[book][String(c)]?.["1"] || "";
-      const preview = first.substring(0, 60).replace(/\n/g, " ");
-      chEl.innerHTML = `<strong>${t().chapter} ${c}</strong><small>${esc(preview)}${first.length > 60 ? "\u2026" : ""}</small>`;
+      const chDesc = getChapterDescription(book, c);
+      const preview = chDesc || (data[book][String(c)]?.["1"] || "").substring(0, 60).replace(/\n/g, " ");
+      const ellipsis = chDesc ? (chDesc.length > 60 ? "\u2026" : "") : ((data[book][String(c)]?.["1"] || "").length > 60 ? "\u2026" : "");
+      const displayPreview = chDesc ? chDesc.substring(0, 60) : preview;
+      chEl.innerHTML = `<strong>${t().chapter} ${c}</strong><small>${esc(displayPreview)}${ellipsis}</small>`;
+      if (chDesc) chEl.title = chDesc;
 
       chEl.addEventListener("mouseenter", () => {
         chapsCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
@@ -598,6 +663,8 @@ export function renderParallelChapter(primary: BibleData, secondary: BibleData, 
   // Primary column
   html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
   html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="primary">&#128203;</button></h2>`;
+  if (chapter === 1) html += descriptionHtml(getBookDescription(book));
+  html += descriptionHtml(getChapterDescription(book, chapter));
   html += `<div class="verses">`;
   for (const n of nums) {
     html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
@@ -607,6 +674,8 @@ export function renderParallelChapter(primary: BibleData, secondary: BibleData, 
   // Secondary column
   html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
   html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="secondary">&#128203;</button></h2>`;
+  if (chapter === 1) html += descriptionHtml(bookDescFrom(secondaryDescriptions, book));
+  html += descriptionHtml(chapterDescFrom(secondaryDescriptions, book, chapter));
   html += `<div class="verses">`;
   if (ch2) {
     for (const n of nums) {
@@ -620,6 +689,61 @@ export function renderParallelChapter(primary: BibleData, secondary: BibleData, 
 
   html += `</div>`;
   html += navArrowsHtml(prev, next);
+  $("content").innerHTML = html;
+  window.scrollTo(0, 0);
+}
+
+export function renderParallelBook(primary: BibleData, secondary: BibleData, book: string, primaryLabel: string, secondaryLabel: string) {
+  const bd1 = primary[book];
+  if (!bd1) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
+  const bd2 = secondary[book];
+
+  const chs = Object.keys(bd1).map(Number).sort((a, b) => a - b);
+  const { prev, next } = getBookNav(primary, book);
+  let html = navArrowsHtml(prev, next);
+  html += `<div class="parallel-container">`;
+
+  // Primary column
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
+  html += `<h1 class="book-title">${esc(displayNameFor(primaryLabel, book))}</h1>`;
+  html += descriptionHtml(bookDescFrom(descriptions, book));
+  for (const c of chs) {
+    const verses = bd1[String(c)];
+    const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
+    html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
+    html += descriptionHtml(chapterDescFrom(descriptions, book, c));
+    html += `<div class="verses">`;
+    for (const n of nums) {
+      html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
+    }
+    html += `</div></div>`;
+  }
+  html += `</div>`;
+
+  // Secondary column
+  html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
+  html += `<h1 class="book-title">${esc(displayNameFor(secondaryLabel, book))}</h1>`;
+  html += descriptionHtml(bookDescFrom(secondaryDescriptions, book));
+  if (bd2) {
+    for (const c of chs) {
+      const verses = bd2[String(c)];
+      if (!verses) { html += `<div class="chapter-block"><h2 class="chapter-heading">${t().chapter} ${c}</h2><p class="empty">${t().notFound}</p></div>`; continue; }
+      const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
+      html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
+      html += descriptionHtml(chapterDescFrom(secondaryDescriptions, book, c));
+      html += `<div class="verses">`;
+      for (const n of nums) {
+        html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
+      }
+      html += `</div></div>`;
+    }
+  } else {
+    html += `<p class="empty">${t().notFound}</p>`;
+  }
+  html += `</div>`;
+
+  html += `</div>`;
+  html += navArrowsHtml(prev, next, false);
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
 }

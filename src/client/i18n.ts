@@ -56,6 +56,7 @@ interface Strings {
 
   // Footer
   footerLine1: string;
+  footerDescriptions: string;
   footerFavicon: string;
 
   // New features
@@ -131,6 +132,7 @@ const EN: Strings = {
   infoFeaturesItems: [
     "<strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.",
     "<strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.",
+    "<strong>Descriptions</strong> &mdash; When reading a full chapter or book, a short description is shown below the title summarizing the content.",
     "<strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.",
     "<strong>Print</strong> &mdash; Use <kbd>Ctrl+P</kbd> for a clean, print-optimized layout.",
     "<strong>Install as app</strong> &mdash; Sanatheos is a Progressive Web App. Use your browser\u2019s \u201cInstall\u201d or \u201cAdd to Home Screen\u201d option to install it for quick, offline access.",
@@ -142,6 +144,7 @@ const EN: Strings = {
   newTestament: "New Testament",
 
   footerLine1: "All available Bible translations are in the public domain.",
+  footerDescriptions: 'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> (CPDV).',
   footerFavicon: 'Application icon: &ldquo;Jesus Christ from Hagia Sophia&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Copied!",
@@ -216,6 +219,7 @@ const FI: Strings = {
   infoFeaturesItems: [
     "<strong>Korostus</strong> &mdash; Napsauta hiiren oikealla jaenumeroa ja valitse korostusväri (keltainen, vihreä, sininen, pinkki, oranssi). Valitse &ldquo;Poista korostus&rdquo; poistaaksesi sen.",
     "<strong>Kopioi</strong> &mdash; Napsauta <strong>&#128203;</strong>-painiketta otsikon vieressä kopioidaksesi näytetyt jakeet. Rinnakkaisnäkymässä molemmat käännökset kopioidaan.",
+    "<strong>Kuvaukset</strong> &mdash; Lukiessasi kokonaista lukua tai kirjaa otsikon alla näkyy lyhyt kuvaus sisällöstä.",
     "<strong>Pyyhkäisynavigaatio</strong> &mdash; Kosketuslaitteilla pyyhkäise vasemmalle tai oikealle siirtyäksesi lukujen välillä.",
     "<strong>Tulostus</strong> &mdash; Käytä <kbd>Ctrl+P</kbd> saadaksesi siistin tulostusnäkymän.",
     "<strong>Asenna sovelluksena</strong> &mdash; Sanatheos on progressiivinen verkkosovellus (PWA). Käytä selaimesi \u201cAsenna\u201d- tai \u201cLisää aloitusnäytölle\u201d-toimintoa asentaaksesi sen nopeaa offline-käyttöä varten.",
@@ -227,6 +231,7 @@ const FI: Strings = {
   newTestament: "Uusi testamentti",
 
   footerLine1: "Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
+  footerDescriptions: 'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä (CPDV).',
   footerFavicon: 'Sivustokuvake: &ldquo;Jesus Christ from Hagia Sophia&rdquo;, Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Kopioitu!",

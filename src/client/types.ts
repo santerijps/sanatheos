@@ -30,3 +30,16 @@ export interface Highlight {
   verse: number;
   color: HighlightColor;
 }
+
+export interface ChapterDescription {
+  number: number;
+  description: string;
+}
+
+export interface BookDescription {
+  name: string;
+  description: string;
+  chapters: ChapterDescription[];
+}
+
+export type DescriptionData = BookDescription[];

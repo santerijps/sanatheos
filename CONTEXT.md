@@ -49,6 +49,8 @@ sanatheos/
 │   ├── bible.json            # WEB translation (backward compat alias)
 │   ├── bible-WEB.json        # WEB translation (~4 MB)
 │   ├── bible-KR38.json       # KR38 translation (~4.1 MB)
+│   ├── descriptions-WEB.json # WEB book/chapter descriptions
+│   ├── descriptions-KR38.json# KR38 book/chapter descriptions
 │   ├── translations.json     # ["KR38","WEB"] — available translations list
 │   ├── manifest.json         # PWA manifest (copied)
 │   ├── sw.js                 # Service worker (copied)
@@ -65,11 +67,13 @@ sanatheos/
 │
 ├── translations/             # Raw Bible text source files
 │   ├── WEB/
+│   │   ├── descriptions.json # Book and chapter descriptions (English)
 │   │   └── WEB_books/        # 66 JSON files, one per book
 │   │       ├── Genesis.json
 │   │       ├── Exodus.json
 │   │       └── ... (66 files)
 │   └── KR38/
+│       ├── descriptions.json # Book and chapter descriptions (Finnish)
 │       └── KR38_books/       # 66 JSON files (Finnish)
 │           ├── Genesis.json
 │           └── ... (66 files)
@@ -77,7 +81,7 @@ sanatheos/
 └── tests/
     ├── search.test.ts        # Search engine tests (~170 tests)
     ├── state.test.ts         # URL state & book code tests (~18 tests)
-    └── features.test.ts      # Feature i18n, highlights, PWA, copy tests (~59 tests)
+    └── features.test.ts      # Feature i18n, highlights, descriptions, PWA, copy tests (~80 tests)
 ```
 
 ## Bible Data Format
@@ -100,6 +104,25 @@ Keys are: `{ [bookName: string]: { [chapter: string]: { [verse: string]: string 
 
 The build script combines all 66 per-book files into a single `bible-CODE.json` per translation, ordered canonically (Genesis through Revelation). An `Info` key present in some source files is stripped during combining. A `translations.json` manifest lists available translation codes as a JSON array.
 
+## Description Data Format
+
+Each translation can have a `descriptions.json` file in `translations/CODE/descriptions.json` with the structure:
+
+```json
+[
+  {
+    "name": "Genesis",
+    "description": "This book is so called from its treating of the generation...",
+    "chapters": [
+      { "number": 1, "description": "God creates Heaven and Earth, and all things therein, in six days." },
+      { "number": 2, "description": "God rests on the seventh day and blesses it..." }
+    ]
+  }
+]
+```
+
+Book names use English keys (matching Bible data keys). Descriptions are displayed in the UI when viewing full chapters or books. The build script copies `descriptions.json` to `docs/descriptions-CODE.json` for each translation. The server serves them at `/descriptions-CODE.json`.
+
 ## TypeScript Interfaces (types.ts)
 
 ```typescript
@@ -121,6 +144,16 @@ type HighlightColor = "yellow" | "green" | "blue" | "pink" | "orange";
 interface Highlight {
   book: string; chapter: number; verse: number; color: HighlightColor;
 }
+
+interface ChapterDescription {
+  number: number; description: string;
+}
+
+interface BookDescription {
+  name: string; description: string; chapters: ChapterDescription[];
+}
+
+type DescriptionData = BookDescription[];
 ```
 
 ## Module-by-Module Description
@@ -213,6 +246,7 @@ All functions write to `$("content").innerHTML`. Functions:
 | `renderParallelVerseSegments` | Two-column verse segments view |
 | `renderParallelMultiNav` | Two-column multi-reference view |
 | `setHighlightMap` | Updates the highlight color map for rendering |
+| `setDescriptions` | Updates the description data for rendering |
 | `navRefLabel` | Generates display labels for NavRef objects |
 
 **Navigation arrows:** Computed by `getChapterNav()` and `getVerseNav()` which walk the book/chapter/verse structure to find prev/next targets, crossing book boundaries. Arrows show full labels on desktop, abbreviated on mobile.
@@ -222,6 +256,8 @@ All functions write to `$("content").innerHTML`. Functions:
 **Text formatting:** `formatVerseText()` (aliased as `fmt()`) escapes HTML, converts `\n` to `<br>`, and converts straight quotes to curly quotes (alternating left/right). `escapeHtml()` (aliased as `esc()`) is a simple HTML-entity escaper using a temporary DOM element. `escapeRegex` is imported from `search.ts` (aliased as `escRegex()`) to avoid duplication.
 
 **Highlight rendering:** `getHighlightClass()` (aliased as `hlClass()`) returns ` hl-yellow` (etc.) CSS classes based on the in-memory highlight map. Applied to each `<span class="verse">`.
+
+**Description rendering:** `setDescriptions()` stores an in-memory `DescriptionData` array. `getBookDescription()` and `getChapterDescription()` look up descriptions by English book name and chapter number. `descriptionHtml()` renders a `<p class="description">` paragraph. Descriptions appear in `renderChapter`, `renderBook`, `renderChapterRange`, and `renderParallelChapter` — below titles, above verses. Not shown in single verse, verse segment, search result, or multi-nav views.
 
 **Index panel keyboard navigation:** Tracks focused column (0=books, 1=chapters, 2=verses). Arrow up/down moves within a column, arrow left/right or Tab switches columns. Enter clicks the focused item. Hover on books shows chapters, hover on chapters shows verse previews.
 
@@ -302,6 +338,7 @@ Bun HTTP server on port 3000. Uses `loadBible` and `discoverTranslations` from t
 2. Loads all translations into memory from `translations/` directory.
 3. Serves:
    - `/bible-CODE.json` — combined Bible data for a translation (from memory cache).
+   - `/descriptions-CODE.json` — book and chapter descriptions for a translation (from memory cache, or empty array if not available).
    - `/translations.json` — array of available translation codes.
    - Static files from `public/` with MIME type mapping.
    - SPA fallback: unknown paths serve `index.html`.
@@ -317,8 +354,9 @@ Produces the `docs/` directory for GitHub Pages deployment. Uses `loadBible` and
 5. Minifies HTML by stripping comments, collapsing whitespace, removing inter-tag spaces.
 6. Discovers translations from `translations/` directory.
 7. Generates combined `bible-CODE.json` for each translation (+ `bible.json` for WEB backward compat).
-8. Writes `translations.json` manifest.
-9. Creates `.nojekyll` marker file.
+8. Copies `descriptions.json` to `descriptions-CODE.json` for each translation that has one.
+9. Writes `translations.json` manifest.
+10. Creates `.nojekyll` marker file.
 
 ## PWA (Progressive Web App)
 
@@ -396,6 +434,7 @@ The page is a single HTML file with this DOM structure:
 **Key CSS components:**
 - `.verse` — Inline spans with superscript verse numbers. Cursor pointer on `sup` elements.
 - `.hl-{color}` — Highlight background colors on verses.
+- `.description` — Italic, centered, muted-color paragraph for book/chapter descriptions.
 - `.chapter-nav` — Flex row with prev/next arrow links.
 - `.nav-arrow` — Navigation arrows with hover states. `.nav-disabled` for greyed-out state.
 - `.parallel-container` — CSS Grid two-column layout for parallel translations.
@@ -468,7 +507,19 @@ Highlights persist in IndexedDB and are loaded into memory on startup. The highl
 
 Long-press (500ms) on touch devices triggers the same menu.
 
-### 5. Copy to Clipboard
+### 5. Book & Chapter Descriptions
+
+Each translation can include a `descriptions.json` file with summaries for books and chapters. When viewing a full chapter (single or parallel), chapter range, or entire book, a short italic description is displayed below the title and above the verses. When viewing chapter 1 (or the first chapter in a range), the book-level description is also shown above the chapter description. Descriptions are not shown for single verse views, verse segments, search results, or multi-reference navigation.
+
+In the book index panel, the chapter column shows chapter descriptions (when available) instead of the first verse preview text.
+
+Descriptions are sourced from the Catholic Public Domain Version (CPDV), attributed in the footer.
+
+Descriptions are loaded via `fetchDescriptions(code)` in `app.ts` and stored in render.ts via `setDescriptions()`. They are re-fetched when switching translations. If no descriptions file exists for a translation, an empty array is used gracefully.
+
+The description paragraph uses the `.description` CSS class: italic, sans-serif, muted color, centered.
+
+### 6. Copy to Clipboard
 
 **Section copy (heading button):** Copies all displayed verses with a header line showing translation label, book name, and chapter/verse reference. In parallel mode, three buttons appear: copy primary only, copy secondary only, copy both (separated by blank line).
 
@@ -476,13 +527,13 @@ Long-press (500ms) on touch devices triggers the same menu.
 
 Both actions show a toast notification ("Copied!" / "Kopioitu!").
 
-### 6. Chapter Navigation
+### 7. Chapter Navigation
 
 Arrow links at top and bottom of chapter/verse views. `getChapterNav()` and `getVerseNav()` compute previous/next targets by walking the ordered book/chapter/verse structure, crossing book boundaries. Disabled arrows are greyed out spans (no link).
 
 **Swipe navigation:** On touch devices, horizontal swipes (>80px, <500ms, more horizontal than vertical) trigger the corresponding nav arrow click.
 
-### 7. Themes
+### 8. Themes
 
 Three options via `data-theme` attribute on `<html>`:
 - **Light** — White/off-white background, dark text.
@@ -491,11 +542,11 @@ Three options via `data-theme` attribute on `<html>`:
 
 Saved in `localStorage` as `bible-theme`.
 
-### 8. Font Size
+### 9. Font Size
 
 Five levels via `data-font-size` attribute: small (15px), medium (17px), large (19px), xl (21px), xxl (24px). Affects `#content` font-size. Saved in `localStorage` as `bible-font-size`.
 
-### 9. Shareable URLs
+### 10. Shareable URLs
 
 Every navigation state is encoded in URL query parameters. Examples:
 - `?t=WEB&book=jhn&chapter=3&verse=16` → John 3:16 in WEB
@@ -504,15 +555,15 @@ Every navigation state is encoded in URL query parameters. Examples:
 
 Book names use 3-character codes (`bookCodes.ts`) for compact URLs. Translation and parallel translation are included in every URL.
 
-### 10. Print View
+### 11. Print View
 
 `@media print` CSS hides all interactive UI (header, footer, overlays, nav arrows, copy buttons, verse menu, toast). Shows a `.print-translation-label` that's hidden in screen mode. Verse text renders cleanly for printing.
 
-### 11. Progressive Web App
+### 12. Progressive Web App
 
 Installable via browser's "Install" / "Add to Home Screen". Service worker pre-caches the app shell for instant offline startup. JSON data uses network-first with cache fallback to stay current while supporting offline use.
 
-### 12. Internationalization
+### 13. Internationalization
 
 The UI language can be set independently of the Bible translation. When switching Bible translations, the UI language auto-switches to match (WEB→English, KR38→Finnish). The info modal content is rebuilt from i18n strings on language change.
 
@@ -533,7 +584,7 @@ All user-facing strings are in `i18n.ts`. The single HTML `index.html` contains 
 
 ## Testing
 
-267 tests across 3 files using `bun test`.
+278 tests across 3 files using `bun test`.
 
 **search.test.ts (~202 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
 - `parseVerseSegments` — single, range, comma-separated, edge cases, invalid inputs
@@ -549,7 +600,7 @@ All user-facing strings are in `i18n.ts`. The single HTML `index.html` contains 
 
 **state.test.ts (~18 tests):** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping, `toUrl` generation.
 
-**features.test.ts (~59 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions.
+**features.test.ts (~80 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, WEB/KR38 descriptions.json structure checks (entries, chapter ordering, book descriptions). Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions.
 
 ## Design Choices
 
@@ -589,3 +640,4 @@ All user-facing strings are in `i18n.ts`. The single HTML `index.html` contains 
     - Ensure the names of variables, functions, classes, types, fields, etc. are descriptive and self-documenting.
     - Ensure complex code logic has additional comments to explain what the code snippet does.
     - Ensure the code is idiomatic Bun/TypeScript code.
+    - Ensure every test case passes. If not, fix the cases.
