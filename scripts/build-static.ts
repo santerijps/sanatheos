@@ -36,6 +36,7 @@ const staticFiles = [
   "sw.js",
   "pwaicon-192.png",
   "pwaicon-512.png",
+  "styleguide.json",
 ];
 
 // Copy static files (HTML, CSS, PWA)

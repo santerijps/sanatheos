@@ -217,6 +217,35 @@ main {
   line-height: 2.2;
 }
 
+/* === Styleguide: paragraphs, poetry, stanza breaks === */
+.para-break {
+  display: block;
+  margin-top: 0.6em;
+}
+
+.stanza-break {
+  display: block;
+  margin-top: 0.8em;
+}
+
+.verse.poetry-q1 {
+  display: block;
+  padding-left: 1.5em;
+  text-indent: -1em;
+}
+
+.verse.poetry-q2 {
+  display: block;
+  padding-left: 2.5em;
+  text-indent: -1em;
+}
+
+.verse.poetry-q3 {
+  display: block;
+  padding-left: 3.5em;
+  text-indent: -1em;
+}
+
 /* === Loading / Empty === */
 .loading, .empty {
   text-align: center;

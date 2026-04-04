@@ -23,6 +23,20 @@ export function setSecondaryDescriptions(d: DescriptionData) {
   secondaryDescriptions = d;
 }
 
+interface ChapterStyle {
+  paragraphs: number[];
+  poetry: Record<string, number>;
+  stanzaBreaks: number[];
+}
+
+type StyleguideData = Record<string, Record<string, ChapterStyle>>;
+
+let styleguide: StyleguideData = {};
+
+export function setStyleguide(sg: StyleguideData) {
+  styleguide = sg;
+}
+
 /** Look up the book-level description from a given description dataset. */
 function bookDescFrom(descs: DescriptionData, book: string): string {
   const entry = descs.find(b => b.name === book);
@@ -75,6 +89,38 @@ function formatVerseText(text: string): string {
 const fmt = formatVerseText;
 
 const escRegex = escapeRegex;
+
+function renderStyledVerses(book: string, chapter: number, nums: number[], ch: Record<string, string>, secondary = false): string {
+  const sg = styleguide[book]?.[String(chapter)];
+  let html = "";
+  let mode: "prose" | "poetry" = "prose";
+  let poetryLevel = 1;
+
+  for (let i = 0; i < nums.length; i++) {
+    const n = nums[i];
+    const text = ch[String(n)];
+    if (!text) continue;
+
+    if (sg) {
+      if (sg.stanzaBreaks.includes(n)) {
+        html += `<span class="stanza-break"></span>`;
+      }
+      if (sg.paragraphs.includes(n)) {
+        if (i > 0) html += `<span class="para-break"></span>`;
+        mode = "prose";
+      } else if (sg.poetry[String(n)]) {
+        poetryLevel = sg.poetry[String(n)];
+        mode = "poetry";
+      }
+    }
+
+    const poetryClass = (sg && mode === "poetry") ? ` poetry-q${poetryLevel}` : "";
+    const secAttr = secondary ? ` data-secondary="1"` : "";
+    html += `<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}</span> `;
+  }
+
+  return html;
+}
 
 interface NavTarget {
   book: string;
@@ -187,9 +233,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
   if (chapter === 1) html += descriptionHtml(getBookDescription(book));
   html += descriptionHtml(getChapterDescription(book, chapter));
   html += `<div class="verses">`;
-  for (const n of nums) {
-    html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
-  }
+  html += renderStyledVerses(book, chapter, nums, ch);
   html += `</div>`;
   html += navArrowsHtml(prev, next, false);
   $("content").innerHTML = html;
@@ -212,9 +256,7 @@ export function renderBook(data: BibleData, book: string) {
     html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
     html += descriptionHtml(getChapterDescription(book, c));
     html += `<div class="verses">`;
-    for (const n of nums) {
-      html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
-    }
+    html += renderStyledVerses(book, c, nums, verses);
     html += `</div></div>`;
   }
   html += navArrowsHtml(prev, next, false);
@@ -252,9 +294,7 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
     if (c === chStart) html += descriptionHtml(getBookDescription(book));
     html += descriptionHtml(getChapterDescription(book, c));
     html += `<div class="verses">`;
-    for (const n of nums) {
-      html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
-    }
+    html += renderStyledVerses(book, c, nums, ch);
     html += `</div></div>`;
   }
   html += navArrowsHtml(prev, next, false);
@@ -327,9 +367,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
           html += `<h3 class="multi-nav-subheading">${esc(displayName(book))} ${c}</h3>`;
         }
         html += `<div class="verses">`;
-        for (const n of nums) {
-          html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
-        }
+        html += renderStyledVerses(book, c, nums, ch);
         html += `</div>`;
       }
     }
@@ -339,9 +377,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
     if (!ch) return '';
     const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
     html += `<div class="verses">`;
-    for (const n of nums) {
-      html += `<span class="verse${hlClass(book, 1, n)}" data-book="${esc(book)}" data-chapter="1" data-verse="${n}"><sup>${n}</sup>${fmt(ch[String(n)])}</span> `;
-    }
+    html += renderStyledVerses(book, 1, nums, ch);
     html += `</div>`;
   }
 
@@ -666,9 +702,7 @@ export function renderParallelChapter(primary: BibleData, secondary: BibleData, 
   if (chapter === 1) html += descriptionHtml(getBookDescription(book));
   html += descriptionHtml(getChapterDescription(book, chapter));
   html += `<div class="verses">`;
-  for (const n of nums) {
-    html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
-  }
+  html += renderStyledVerses(book, chapter, nums, ch1);
   html += `</div></div>`;
 
   // Secondary column
@@ -678,10 +712,7 @@ export function renderParallelChapter(primary: BibleData, secondary: BibleData, 
   html += descriptionHtml(chapterDescFrom(secondaryDescriptions, book, chapter));
   html += `<div class="verses">`;
   if (ch2) {
-    for (const n of nums) {
-      const text = ch2[String(n)];
-      if (text) html += `<span class="verse${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
-    }
+    html += renderStyledVerses(book, chapter, nums, ch2, true);
   } else {
     html += `<p class="empty">${t().notFound}</p>`;
   }
@@ -713,9 +744,7 @@ export function renderParallelBook(primary: BibleData, secondary: BibleData, boo
     html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
     html += descriptionHtml(chapterDescFrom(descriptions, book, c));
     html += `<div class="verses">`;
-    for (const n of nums) {
-      html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
-    }
+    html += renderStyledVerses(book, c, nums, verses);
     html += `</div></div>`;
   }
   html += `</div>`;
@@ -732,9 +761,7 @@ export function renderParallelBook(primary: BibleData, secondary: BibleData, boo
       html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
       html += descriptionHtml(chapterDescFrom(secondaryDescriptions, book, c));
       html += `<div class="verses">`;
-      for (const n of nums) {
-        html += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(verses[String(n)])}</span> `;
-      }
+      html += renderStyledVerses(book, c, nums, verses, true);
       html += `</div></div>`;
     }
   } else {

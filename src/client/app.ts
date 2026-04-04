@@ -3,7 +3,7 @@ import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight } 
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -131,6 +131,12 @@ async function init() {
   // Load descriptions for the current translation
   const desc = await fetchDescriptions(currentTranslation);
   setDescriptions(desc);
+
+  // Load styleguide (formatting data)
+  try {
+    const sgRes = await fetch("./styleguide.json");
+    if (sgRes.ok) setStyleguide(await sgRes.json());
+  } catch {}
 
   localStorage.setItem("bible-translation", currentTranslation);
   initSearch(data);
@@ -925,7 +931,7 @@ function updateStaticText() {
   // Footer
   const footer = document.getElementById("footer");
   if (footer) {
-    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerDescriptions}</p><p>${s.footerFavicon}</p>`;
+    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerDescriptions}</p><p>${s.footerStyleguide}</p><p>${s.footerFavicon}</p>`;
   }
 
   // HTML lang attribute
