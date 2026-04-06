@@ -366,7 +366,7 @@ Database: `bible-app`, version 2. Two object stores:
 
 Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`.
 
-Internal `getHighlights()` retrieves all highlights; `getHighlightMap()` converts them to a `Map<string, HighlightColor>` for fast lookup.
+`getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup.
 
 ### i18n.ts — Internationalization
 
@@ -695,7 +695,7 @@ Subheadings are shown in chapter, book, and chapter range views. They are not sh
 
 343 tests across 3 files using `bun test`.
 
-**search.test.ts (~250 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
+**search.test.ts (~230 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
 - `parseVerseSegments` — single, range, comma-separated, edge cases, invalid inputs, overlapping ranges, inverted ranges
 - `matchBook` — exact, case-insensitive, numbered books, prefix, fuzzy (Levenshtein), 3-letter codes, Finnish aliases, abbreviation periods, empty/whitespace inputs
 - `parseRef` — book only, chapters, verse ranges, segments, trailing operators, edge cases, chapter 0, verse 0, very large numbers
@@ -708,9 +708,9 @@ Subheadings are shown in chapter, book, and chapter range views. They are not sh
 - `levenshtein` — distance calculations
 - `escapeRegex` — all special regex characters, normal text, empty string
 
-**state.test.ts (~28 tests):** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping (including empty strings, uniqueness, code length), `toUrl` generation (including parallel param, special characters, verse omission).
+**state.test.ts (~25 tests):** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping (including empty strings, uniqueness, code length), `toUrl` generation (including parallel param, special characters, verse omission).
 
-**features.test.ts (~120 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, WEB/KR38 descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN and FI: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness).
+**features.test.ts (~88 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, WEB/KR38 descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN and FI: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness).
 
 ## Design Choices
 
@@ -723,7 +723,7 @@ Subheadings are shown in chapter, book, and chapter range views. They are not sh
 7. **No build dependencies:** Only `@types/bun` as a devDependency. No runtime npm packages.
 8. **Static deployment:** The `docs/` output is a self-contained static site. GitHub Pages serves it directly. The Bun server is dev-only.
 9. **CSS custom properties:** All theming via CSS variables, toggled by `data-theme` attribute. No CSS-in-JS.
-10. **Biome linting:** Some pre-existing lint warnings in `state.ts` (unused `basePath` import) and `server.ts` are accepted.
+10. **Biome linting:** Some pre-existing lint warnings in `server.ts` are accepted.
 
 ## Adding a New Translation
 

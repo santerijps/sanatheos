@@ -22,8 +22,8 @@ export async function loadBible(translationsDir: string, code: string): Promise<
   const combined: BibleData = {};
   const glob = new Bun.Glob("*.json");
   for await (const f of glob.scan(booksDir)) {
-    const data: Record<string, unknown> = await Bun.file(join(booksDir, f)).json();
-    delete data.Info;
+    const raw: Record<string, unknown> = await Bun.file(join(booksDir, f)).json();
+    const { Info: _, ...data } = raw;
     Object.assign(combined, data);
   }
   const ordered: BibleData = {};

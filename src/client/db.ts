@@ -52,15 +52,18 @@ function highlightId(book: string, chapter: number, verse: number): string {
   return `${book}:${chapter}:${verse}`;
 }
 
-async function getHighlights(): Promise<Highlight[]> {
+export async function getHighlightMap(): Promise<Map<string, HighlightColor>> {
   const db = await open();
   try {
-    return await new Promise((resolve, reject) => {
+    const all: Highlight[] = await new Promise((resolve, reject) => {
       const tx = db.transaction(HIGHLIGHTS_STORE, "readonly");
       const req = tx.objectStore(HIGHLIGHTS_STORE).getAll();
       req.onsuccess = () => resolve(req.result as Highlight[]);
       req.onerror = () => reject(req.error);
     });
+    const map = new Map<string, HighlightColor>();
+    for (const h of all) map.set(highlightId(h.book, h.chapter, h.verse), h.color);
+    return map;
   } finally {
     db.close();
   }
@@ -92,11 +95,4 @@ export async function removeHighlight(book: string, chapter: number, verse: numb
   } finally {
     db.close();
   }
-}
-
-export async function getHighlightMap(): Promise<Map<string, HighlightColor>> {
-  const all = await getHighlights();
-  const map = new Map<string, HighlightColor>();
-  for (const h of all) map.set(highlightId(h.book, h.chapter, h.verse), h.color);
-  return map;
 }
