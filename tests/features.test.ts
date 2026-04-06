@@ -804,3 +804,15 @@ describe("CSS — dark mode highlight brightness", () => {
     }
   });
 });
+
+// ---------------------------------------------------------------------------
+// HTML — bundle script uses defer attribute
+// ---------------------------------------------------------------------------
+
+describe("HTML — bundle script defer", () => {
+  const html = readFileSync(join(PUBLIC, "index.html"), "utf-8");
+
+  test("bundle.js script tag has defer attribute", () => {
+    expect(html).toMatch(/<script\s+defer\s+src="\.\/bundle\.js"><\/script>/);
+  });
+});

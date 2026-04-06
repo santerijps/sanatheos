@@ -1,27 +1,12 @@
 import type { BibleData, VerseResult } from "./types.ts";
-import { getAliases } from "./bookNames.ts";
+import { getSortedAliases } from "./bookNames.ts";
 
-interface SearchEntry {
-  book: string;
-  chapter: number;
-  verse: number;
-  text: string;
-  lower: string;
-}
-
-let entries: SearchEntry[] = [];
+let searchData: BibleData = {};
 let bookNames: string[] = [];
 
 export function initSearch(data: BibleData) {
+  searchData = data;
   bookNames = Object.keys(data);
-  entries = [];
-  for (const book of bookNames) {
-    for (const [ch, verses] of Object.entries(data[book])) {
-      for (const [v, text] of Object.entries(verses)) {
-        entries.push({ book, chapter: +ch, verse: +v, text, lower: text.toLowerCase() });
-      }
-    }
-  }
 }
 
 function levenshtein(a: string, b: string): number {
@@ -65,8 +50,7 @@ function matchBook(q: string): { book: string; rest: string } | null {
   }
 
   // Exact/starts-with match on translation aliases (Finnish display names + abbreviations)
-  const aliases = getAliases();
-  const sortedAliases = [...aliases.entries()].sort((a, b) => b[0].length - a[0].length);
+  const sortedAliases = getSortedAliases();
   for (const [alias, key] of sortedAliases) {
     if (ql === alias) return { book: key, rest: "" };
     if (ql.startsWith(alias + " ")) return { book: key, rest: nq.slice(alias.length + 1).trim() };
@@ -240,12 +224,16 @@ export function search(data: BibleData, query: string): VerseResult[] {
     const textMatch = rawFilter ? buildTextMatcher(rawFilter) : null;
     const refPart = quotedMatch ? term.replace(/"(.*?)"/, "").trim() : term;
 
-    // Pure text search — entire term is just a quoted string
+    // Pure text search — iterate BibleData directly (no intermediate array)
     if (textMatch && !refPart) {
-      for (const e of entries) {
-        if (textMatch(e.text)) {
-          const k = `${e.book}:${e.chapter}:${e.verse}`;
-          if (!seen.has(k)) { seen.add(k); results.push({ book: e.book, chapter: e.chapter, verse: e.verse, text: e.text }); }
+      for (const book of bookNames) {
+        for (const [c, verses] of Object.entries(searchData[book])) {
+          for (const [v, text] of Object.entries(verses)) {
+            if (textMatch(text)) {
+              const k = `${book}:${c}:${v}`;
+              if (!seen.has(k)) { seen.add(k); results.push({ book, chapter: +c, verse: +v, text }); }
+            }
+          }
         }
       }
       continue;

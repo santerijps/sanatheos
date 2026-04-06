@@ -144,9 +144,14 @@ const WEB: Record<string, BookEntry> = {
 const TRANSLATIONS: Record<string, Record<string, BookEntry>> = { KR38, WEB };
 
 let currentCode = "WEB";
+let aliasCache: Map<string, string> | null = null;
+let sortedAliasCache: [string, string][] | null = null;
 
 export function setTranslation(code: string) {
   currentCode = code;
+  // Invalidate alias caches when translation changes
+  aliasCache = null;
+  sortedAliasCache = null;
 }
 
 export function displayName(book: string): string {
@@ -157,8 +162,9 @@ export function displayNameFor(code: string, book: string): string {
   return TRANSLATIONS[code]?.[book]?.display ?? book;
 }
 
-/** Returns aliases for all translations merged (current translation wins on conflicts) */
+/** Returns aliases for all translations merged (current translation wins on conflicts). Cached until setTranslation() is called. */
 export function getAliases(): Map<string, string> {
+  if (aliasCache) return aliasCache;
   const map = new Map<string, string>();
   // Load all translations first
   for (const [code, entries] of Object.entries(TRANSLATIONS)) {
@@ -180,5 +186,13 @@ export function getAliases(): Map<string, string> {
       }
     }
   }
+  aliasCache = map;
   return map;
+}
+
+/** Returns aliases sorted by key length (longest-first) for matching. Cached alongside getAliases(). */
+export function getSortedAliases(): [string, string][] {
+  if (sortedAliasCache) return sortedAliasCache;
+  sortedAliasCache = [...getAliases().entries()].sort((a, b) => b[0].length - a[0].length);
+  return sortedAliasCache;
 }

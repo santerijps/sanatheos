@@ -129,22 +129,16 @@ async function init() {
     return;
   }
 
-  // Load descriptions for the current translation
-  const desc = await fetchDescriptions(currentTranslation);
-  setDescriptions(desc);
-
-  // Load styleguide (formatting data)
-  try {
-    const sgRes = await fetch("./data/styleguide.json");
-    if (sgRes.ok) setStyleguide(await sgRes.json());
-  } catch {}
-
-  // Load subheadings for the current translation's language
+  // Load descriptions, styleguide, and subheadings in parallel
   const shLang = TRANSLATION_LANG[currentTranslation] || "en";
-  try {
-    const shRes = await fetch(`./data/subheadings-${shLang}.json`);
-    if (shRes.ok) setSubheadings(await shRes.json());
-  } catch {}
+  const [desc, sgData, shData] = await Promise.all([
+    fetchDescriptions(currentTranslation),
+    fetch("./data/styleguide.json").then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(`./data/subheadings-${shLang}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
+  ]);
+  setDescriptions(desc);
+  if (sgData) setStyleguide(sgData);
+  if (shData) setSubheadings(shData);
 
   localStorage.setItem("bible-translation", currentTranslation);
   initSearch(data);

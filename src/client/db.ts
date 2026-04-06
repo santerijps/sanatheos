@@ -5,7 +5,11 @@ const DB_VERSION = 2;
 const DATA_STORE = "data";
 const HIGHLIGHTS_STORE = "highlights";
 
+/** Persistent connection — opened once on first use, reused for all subsequent operations. */
+let dbInstance: IDBDatabase | null = null;
+
 function open(): Promise<IDBDatabase> {
+  if (dbInstance) return Promise.resolve(dbInstance);
   return new Promise((resolve, reject) => {
     const req = indexedDB.open(DB_NAME, DB_VERSION);
     req.onupgradeneeded = () => {
@@ -13,37 +17,34 @@ function open(): Promise<IDBDatabase> {
       if (!db.objectStoreNames.contains(DATA_STORE)) db.createObjectStore(DATA_STORE);
       if (!db.objectStoreNames.contains(HIGHLIGHTS_STORE)) db.createObjectStore(HIGHLIGHTS_STORE, { keyPath: "id" });
     };
-    req.onsuccess = () => resolve(req.result);
+    req.onsuccess = () => {
+      dbInstance = req.result;
+      // Re-open on unexpected close (e.g. browser pressure)
+      dbInstance.onclose = () => { dbInstance = null; };
+      resolve(dbInstance);
+    };
     req.onerror = () => reject(req.error);
   });
 }
 
 export async function loadBible(key: string): Promise<BibleData | null> {
   const db = await open();
-  try {
-    return await new Promise((resolve, reject) => {
-      const tx = db.transaction(DATA_STORE, "readonly");
-      const req = tx.objectStore(DATA_STORE).get(key);
-      req.onsuccess = () => resolve((req.result as BibleData) ?? null);
-      req.onerror = () => reject(req.error);
-    });
-  } finally {
-    db.close();
-  }
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DATA_STORE, "readonly");
+    const req = tx.objectStore(DATA_STORE).get(key);
+    req.onsuccess = () => resolve((req.result as BibleData) ?? null);
+    req.onerror = () => reject(req.error);
+  });
 }
 
 export async function saveBible(key: string, data: BibleData): Promise<void> {
   const db = await open();
-  try {
-    await new Promise<void>((resolve, reject) => {
-      const tx = db.transaction(DATA_STORE, "readwrite");
-      tx.objectStore(DATA_STORE).put(data, key);
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  } finally {
-    db.close();
-  }
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(DATA_STORE, "readwrite");
+    tx.objectStore(DATA_STORE).put(data, key);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
 }
 
 // --- Highlights ---
@@ -54,45 +55,33 @@ function highlightId(book: string, chapter: number, verse: number): string {
 
 export async function getHighlightMap(): Promise<Map<string, HighlightColor>> {
   const db = await open();
-  try {
-    const all: Highlight[] = await new Promise((resolve, reject) => {
-      const tx = db.transaction(HIGHLIGHTS_STORE, "readonly");
-      const req = tx.objectStore(HIGHLIGHTS_STORE).getAll();
-      req.onsuccess = () => resolve(req.result as Highlight[]);
-      req.onerror = () => reject(req.error);
-    });
-    const map = new Map<string, HighlightColor>();
-    for (const h of all) map.set(highlightId(h.book, h.chapter, h.verse), h.color);
-    return map;
-  } finally {
-    db.close();
-  }
+  const all: Highlight[] = await new Promise((resolve, reject) => {
+    const tx = db.transaction(HIGHLIGHTS_STORE, "readonly");
+    const req = tx.objectStore(HIGHLIGHTS_STORE).getAll();
+    req.onsuccess = () => resolve(req.result as Highlight[]);
+    req.onerror = () => reject(req.error);
+  });
+  const map = new Map<string, HighlightColor>();
+  for (const h of all) map.set(highlightId(h.book, h.chapter, h.verse), h.color);
+  return map;
 }
 
 export async function setHighlight(h: Highlight): Promise<void> {
   const db = await open();
-  try {
-    await new Promise<void>((resolve, reject) => {
-      const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
-      tx.objectStore(HIGHLIGHTS_STORE).put({ ...h, id: highlightId(h.book, h.chapter, h.verse) });
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  } finally {
-    db.close();
-  }
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
+    tx.objectStore(HIGHLIGHTS_STORE).put({ ...h, id: highlightId(h.book, h.chapter, h.verse) });
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
 }
 
 export async function removeHighlight(book: string, chapter: number, verse: number): Promise<void> {
   const db = await open();
-  try {
-    await new Promise<void>((resolve, reject) => {
-      const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
-      tx.objectStore(HIGHLIGHTS_STORE).delete(highlightId(book, chapter, verse));
-      tx.oncomplete = () => resolve();
-      tx.onerror = () => reject(tx.error);
-    });
-  } finally {
-    db.close();
-  }
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
+    tx.objectStore(HIGHLIGHTS_STORE).delete(highlightId(book, chapter, verse));
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
 }

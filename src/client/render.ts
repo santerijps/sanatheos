@@ -106,7 +106,7 @@ function renderStyledVerses(book: string, chapter: number, nums: number[], ch: R
   const sg = styleguide[book]?.[String(chapter)];
   const shSource = secondary ? secondarySubheadings : subheadings;
   const sh = showSubheadings ? shSource[book]?.[String(chapter)] : undefined;
-  let html = "";
+  const parts: string[] = [];
   let mode: "prose" | "poetry" = "prose";
   let poetryLevel = 1;
 
@@ -119,17 +119,17 @@ function renderStyledVerses(book: string, chapter: number, nums: number[], ch: R
     if (sh) {
       for (const entry of sh) {
         if (entry.v === n) {
-          html += `<h4 class="subheading">${esc(entry.t)}</h4>`;
+          parts.push(`<h3 class="subheading">${esc(entry.t)}</h3>`);
         }
       }
     }
 
     if (sg) {
       if (sg.stanzaBreaks.includes(n)) {
-        html += `<span class="stanza-break"></span>`;
+        parts.push(`<span class="stanza-break"></span>`);
       }
       if (sg.paragraphs.includes(n)) {
-        if (i > 0) html += `<span class="para-break"></span>`;
+        if (i > 0) parts.push(`<span class="para-break"></span>`);
         mode = "prose";
       } else if (sg.poetry[String(n)]) {
         poetryLevel = sg.poetry[String(n)];
@@ -139,10 +139,10 @@ function renderStyledVerses(book: string, chapter: number, nums: number[], ch: R
 
     const poetryClass = (sg && mode === "poetry") ? ` poetry-q${poetryLevel}` : "";
     const secAttr = secondary ? ` data-secondary="1"` : "";
-    html += `<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}</span> `;
+    parts.push(`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}</span> `);
   }
 
-  return html;
+  return parts.join("");
 }
 
 interface NavTarget {
@@ -452,15 +452,15 @@ export function renderResults(results: VerseResult[], query: string) {
     const container = document.querySelector(".results");
     if (!container) return;
     const end = Math.min(shown + RESULTS_PAGE_SIZE, results.length);
-    let html = "";
+    const parts: string[] = [];
     for (let i = shown; i < end; i++) {
-      html += renderResultItem(results[i]);
+      parts.push(renderResultItem(results[i]));
     }
     // Remove existing "Show more" button if present
     const existingBtn = document.getElementById("show-more-btn");
     if (existingBtn) existingBtn.remove();
 
-    container.insertAdjacentHTML("beforeend", html);
+    container.insertAdjacentHTML("beforeend", parts.join(""));
     shown = end;
 
     if (shown < results.length) {
@@ -475,20 +475,20 @@ export function renderResults(results: VerseResult[], query: string) {
     }
   }
 
-  let html = `<p class="results-info">${t().resultCount(results.length)}</p><div class="results">`;
+  const parts: string[] = [`<p class="results-info">${t().resultCount(results.length)}</p><div class="results">`];
   const end = Math.min(RESULTS_PAGE_SIZE, results.length);
   for (let i = 0; i < end; i++) {
-    html += renderResultItem(results[i]);
+    parts.push(renderResultItem(results[i]));
   }
-  html += `</div>`;
+  parts.push(`</div>`);
   shown = end;
 
   if (shown < results.length) {
     const remaining = results.length - shown;
-    html += `<button id="show-more-btn" class="show-more-btn">${t().showMore} (${remaining})</button>`;
+    parts.push(`<button id="show-more-btn" class="show-more-btn">${t().showMore} (${remaining})</button>`);
   }
 
-  $("content").innerHTML = html;
+  $("content").innerHTML = parts.join("");
 
   // Wire up the "Show more" button if it was rendered
   const btn = document.getElementById("show-more-btn");

@@ -90,9 +90,9 @@ sanatheos/
 │   └── bible-gateway.py      # Python scraper to download translations
 │
 └── tests/
-    ├── search.test.ts        # Search engine tests (~170 tests)
-    ├── state.test.ts         # URL state & book code tests (~18 tests)
-    └── features.test.ts      # Feature i18n, highlights, descriptions, PWA, copy tests (~80 tests)
+    ├── search.test.ts        # Search engine tests (~237 tests)
+    ├── state.test.ts         # URL state & book code tests (~21 tests)
+    └── features.test.ts      # Feature i18n, highlights, descriptions, PWA, copy tests (~89 tests)
 ```
 
 ## Bible Data Format
@@ -233,11 +233,10 @@ The `init()` function runs on page load and orchestrates everything:
 
 1. **Reads initial state** from URL query parameters via `readState()`.
 2. **Loads Bible data** — checks IndexedDB cache first, then fetches `bible-CODE.json` from the server. Stores in IndexedDB for offline use.
-3. **Loads styleguide** — fetches `data/styleguide.json` and passes it to `setStyleguide()` in render.ts for paragraph/poetry formatting.
-4. **Loads subheadings** — fetches `data/subheadings-LANG.json` (based on current language) and passes to `setSubheadings()` in render.ts. For parallel translations, also loads secondary subheadings via `setSecondarySubheadings()`.
-5. **Initializes the search engine** with the loaded data.
-6. **Populates settings selectors** — translation, parallel, language, theme, font size — from `localStorage` and URL state.
-7. **Renders initial content** based on URL state.
+3. **Loads metadata in parallel** — fetches `data/styleguide.json`, `data/descriptions-LANG.json`, and `data/subheadings-LANG.json` concurrently via `Promise.all()` and passes them to their respective setters in render.ts. For parallel translations, also loads secondary subheadings via `setSecondarySubheadings()`.
+4. **Initializes the search engine** with the loaded data.
+5. **Populates settings selectors** — translation, parallel, language, theme, font size — from `localStorage` and URL state.
+6. **Renders initial content** based on URL state.
 8. **Wires up all event listeners:**
    - Search input with 150ms debounce and auto-closing double quotes.
    - Index panel open/close with scroll locking.
@@ -264,7 +263,7 @@ The `init()` function runs on page load and orchestrates everything:
 
 ### search.ts — Search Engine
 
-Operates entirely client-side on an in-memory flat array of `SearchEntry` objects (book, chapter, verse, text, lowercased text) built by `initSearch()`.
+Operates entirely client-side on the in-memory `BibleData` object. `initSearch()` stores a reference to the data and extracts `bookNames` — it does not create any intermediate arrays or duplicate verse text, keeping memory usage minimal.
 
 **Query parsing:** Semicolon-separated terms (after normalization). Each term can be:
 - A book reference (with optional chapter, chapter range, verse, verse segments)
@@ -334,7 +333,7 @@ All functions write to `$("content").innerHTML`. Functions:
 
 **Subheadings rendering:** `setSubheadings()` stores the primary translation's subheadings. `setSecondarySubheadings()` stores the secondary translation's subheadings for parallel views. `renderStyledVerses()` selects the appropriate subheadings source based on the `secondary` parameter and renders `<div class="subheading">` elements above the relevant verses.
 
-**Styleguide rendering:** `setStyleguide()` stores an in-memory `StyleguideData` object (type `Record<string, Record<string, ChapterStyle>>`). `renderStyledVerses(book, chapter, nums, ch, secondary?, showSubheadings?)` is a shared helper used by `renderChapter`, `renderBook`, `renderChapterRange`, `renderVerseSegments`, `navRefVersesHtml`, `renderParallelChapter`, `renderParallelBook`, `renderParallelVerseSegments`, and `parallelNavRefHtml`. It tracks prose/poetry mode per-verse and emits: `<span class="stanza-break">` for stanza breaks, `<span class="para-break">` for paragraph breaks, and `.poetry-q1`/`.poetry-q2`/`.poetry-q3` CSS classes on verse spans for poetry indentation.
+**Styleguide rendering:** `setStyleguide()` stores an in-memory `StyleguideData` object (type `Record<string, Record<string, ChapterStyle>>`). `renderStyledVerses(book, chapter, nums, ch, secondary?, showSubheadings?)` is a shared helper used by `renderChapter`, `renderBook`, `renderChapterRange`, `renderVerseSegments`, `navRefVersesHtml`, `renderParallelChapter`, `renderParallelBook`, `renderParallelVerseSegments`, and `parallelNavRefHtml`. It uses `parts.push()` + `.join("")` (instead of `html +=`) to build HTML efficiently in O(n) time. It tracks prose/poetry mode per-verse and emits: `<span class="stanza-break">` for stanza breaks, `<span class="para-break">` for paragraph breaks, and `.poetry-q1`/`.poetry-q2`/`.poetry-q3` CSS classes on verse spans for poetry indentation.
 
 **Description rendering:** `setDescriptions()` stores an in-memory `DescriptionData` array. `getBookDescription()` and `getChapterDescription()` look up descriptions by English book name and chapter number. `descriptionHtml()` renders a `<p class="description">` paragraph. Descriptions appear in `renderChapter`, `renderBook`, `renderChapterRange`, and `renderParallelChapter` — below titles, above verses. Not shown in single verse, verse segment, search result, or multi-nav views.
 
@@ -364,6 +363,8 @@ Database: `bible-app`, version 2. Two object stores:
 - `data` — Bible translation data keyed by translation code (e.g., `"WEB"`).
 - `highlights` — Highlight records with compound key `book:chapter:verse`.
 
+Uses a persistent connection — opened once on first use and reused for all subsequent operations. The connection automatically re-opens if the browser closes it under memory pressure.
+
 Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`.
 
 `getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup.
@@ -389,7 +390,7 @@ Contains full display names and aliases for all 66 books in two translations:
 - **WEB (English):** Display names match English keys. Aliases include common abbreviations (`gen`, `exod`, `ex`, `rev`, `1 cor`, etc.).
 - **KR38 (Finnish):** Full Finnish names (e.g., "1. Mooseksen kirja" for Genesis) and Finnish abbreviations (`1 moos`, `joh`, `room`, `ilm`, etc.).
 
-`getAliases()` merges aliases from all translations into a single `Map<string, string>` (alias → English key), with the current translation's aliases taking priority on conflicts.
+`getAliases()` merges aliases from all translations into a single `Map<string, string>` (alias → English key), with the current translation's aliases taking priority on conflicts. The map is cached in module scope and only rebuilt when `setTranslation()` is called. `getSortedAliases()` returns a cached longest-first sorted array of alias entries for efficient matching in `matchBook()`.
 
 `displayName(book)` / `displayNameFor(code, book)` returns the display name for the current (or specified) translation.
 
@@ -495,7 +496,7 @@ The page is a single HTML file with this DOM structure:
 
   <footer #footer>    — Translation info, descriptions attribution, styleguide attribution, favicon attribution
 
-  <script src="./bundle.js">
+  <script defer src="./bundle.js">
   <script> — Service worker registration
 </body>
 ```
@@ -693,9 +694,9 @@ Subheadings are shown in chapter, book, chapter range, and verse segment views. 
 
 ## Testing
 
-343 tests across 3 files using `bun test`.
+351 tests across 3 files using `bun test`.
 
-**search.test.ts (~230 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
+**search.test.ts (~237 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
 - `parseVerseSegments` — single, range, comma-separated, edge cases, invalid inputs, overlapping ranges, inverted ranges
 - `matchBook` — exact, case-insensitive, numbered books, prefix, fuzzy (Levenshtein), 3-letter codes, Finnish aliases, abbreviation periods, empty/whitespace inputs
 - `parseRef` — book only, chapters, verse ranges, segments, trailing operators, edge cases, chapter 0, verse 0, very large numbers
@@ -707,16 +708,18 @@ Subheadings are shown in chapter, book, chapter range, and verse segment views. 
 - `parseQueryBooks` — term extraction, alias resolution, empty string, only semicolons, quoted string without book
 - `levenshtein` — distance calculations
 - `escapeRegex` — all special regex characters, normal text, empty string
+- Alias caching — `getAliases()` and `getSortedAliases()` return cached instances, cache invalidation on `setTranslation()`, sorted order, entry consistency
+- `initSearch` optimization — pure text search iterates BibleData directly, no data duplication
 
-**state.test.ts (~25 tests):** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping (including empty strings, uniqueness, code length), `toUrl` generation (including parallel param, special characters, verse omission).
+**state.test.ts (~21 tests):** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping (including empty strings, uniqueness, code length), `toUrl` generation (including parallel param, special characters, verse omission).
 
-**features.test.ts (~88 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, WEB/KR38 descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN and FI: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness).
+**features.test.ts (~89 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, WEB/KR38 descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN and FI: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness). HTML bundle script defer attribute.
 
 ## Design Choices
 
 1. **No framework:** Vanilla TypeScript for minimal bundle size and full control. DOM manipulation via innerHTML and template strings.
 2. **Bun runtime:** Used for HTTP server, bundler, test runner, and file operations. No separate webpack/rollup/jest tooling.
-3. **Client-side search:** All Bible data loaded into memory (~4MB per translation). Search is instant substring matching or regex, no server round-trips.
+3. **Client-side search:** All Bible data loaded into memory (~4MB per translation). Search operates directly on the `BibleData` object with no intermediate arrays — instant substring matching or regex, no server round-trips.
 4. **IndexedDB caching:** Bible data fetched once and persisted. Subsequent visits load from IndexedDB, making the app work fully offline.
 5. **Canonical English keys:** Internal book keys are always English (e.g., "Genesis"). Translation-specific display names and aliases are layered on top via `bookNames.ts`.
 6. **3-character URL codes:** URL book parameters use compact codes (`gen`, `jhn`, `rev`) to keep URLs short and language-independent.

@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
 import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein, _normalizeQuery, escapeRegex } from "../src/client/search.ts";
-import { setTranslation } from "../src/client/bookNames.ts";
+import { setTranslation, getAliases, getSortedAliases } from "../src/client/bookNames.ts";
 
 // Minimal fixture data
 const fixture: BibleData = {
@@ -1534,5 +1534,78 @@ describe("search with empty data", () => {
     if (result) {
       expect(result[0].book).toBe("Genesis");
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Alias caching — getAliases() and getSortedAliases()
+// ---------------------------------------------------------------------------
+
+describe("alias caching", () => {
+  test("getAliases returns the same Map instance on repeated calls", () => {
+    setTranslation("WEB");
+    const a = getAliases();
+    const b = getAliases();
+    expect(a).toBe(b); // same reference, not just equal
+  });
+
+  test("getSortedAliases returns the same array on repeated calls", () => {
+    setTranslation("WEB");
+    const a = getSortedAliases();
+    const b = getSortedAliases();
+    expect(a).toBe(b);
+  });
+
+  test("setTranslation invalidates the alias cache", () => {
+    setTranslation("WEB");
+    const a = getAliases();
+    setTranslation("KR38");
+    const b = getAliases();
+    expect(a).not.toBe(b); // different reference after invalidation
+  });
+
+  test("getSortedAliases is sorted longest-first", () => {
+    setTranslation("WEB");
+    const sorted = getSortedAliases();
+    for (let i = 1; i < sorted.length; i++) {
+      expect(sorted[i - 1][0].length).toBeGreaterThanOrEqual(sorted[i][0].length);
+    }
+  });
+
+  test("getSortedAliases entries match getAliases entries", () => {
+    setTranslation("WEB");
+    const aliases = getAliases();
+    const sorted = getSortedAliases();
+    expect(sorted.length).toBe(aliases.size);
+    for (const [key, val] of sorted) {
+      expect(aliases.get(key)).toBe(val);
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// initSearch — lightweight initialization
+// ---------------------------------------------------------------------------
+
+describe("initSearch optimization", () => {
+  test("pure text search iterates BibleData directly", () => {
+    setTranslation("WEB");
+    initSearch(fixture);
+    // A text search should still find results from all books
+    const results = search(fixture, '"beginning"');
+    expect(results.length).toBeGreaterThanOrEqual(2); // Genesis 1:1 and John 1:1/1:2
+    const books = new Set(results.map(r => r.book));
+    expect(books.has("Genesis")).toBe(true);
+    expect(books.has("John")).toBe(true);
+  });
+
+  test("initSearch allows immediate search with no data duplication", () => {
+    const smallData: BibleData = {
+      TestBook: { "1": { "1": "Alpha and Omega" } },
+    };
+    initSearch(smallData);
+    const results = search(smallData, '"Alpha"');
+    expect(results).toHaveLength(1);
+    expect(results[0].text).toBe("Alpha and Omega");
   });
 });
