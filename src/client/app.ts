@@ -3,7 +3,7 @@ import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight } 
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, setSubheadings, setSecondarySubheadings, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -40,8 +40,9 @@ async function fetchTranslations(): Promise<string[]> {
 }
 
 async function fetchDescriptions(code: string): Promise<DescriptionData> {
+  const lang = TRANSLATION_LANG[code] || "en";
   try {
-    const res = await fetch(`./descriptions-${encodeURIComponent(code)}.json`);
+    const res = await fetch(`./data/descriptions-${encodeURIComponent(lang)}.json`);
     if (!res.ok) return [];
     return await res.json();
   } catch {
@@ -134,8 +135,15 @@ async function init() {
 
   // Load styleguide (formatting data)
   try {
-    const sgRes = await fetch("./styleguide.json");
+    const sgRes = await fetch("./data/styleguide.json");
     if (sgRes.ok) setStyleguide(await sgRes.json());
+  } catch {}
+
+  // Load subheadings for the current translation's language
+  const shLang = TRANSLATION_LANG[currentTranslation] || "en";
+  try {
+    const shRes = await fetch(`./data/subheadings-${shLang}.json`);
+    if (shRes.ok) setSubheadings(await shRes.json());
   } catch {}
 
   localStorage.setItem("bible-translation", currentTranslation);
@@ -173,6 +181,13 @@ async function init() {
         // Reload descriptions for the new translation
         const newDesc = await fetchDescriptions(code);
         setDescriptions(newDesc);
+
+        // Reload subheadings for the new translation's language
+        const newShLang = TRANSLATION_LANG[code] || "en";
+        try {
+          const shRes = await fetch(`./data/subheadings-${newShLang}.json`);
+          if (shRes.ok) setSubheadings(await shRes.json());
+        } catch {}
 
         // Auto-switch UI language to match translation
         const newLang = TRANSLATION_LANG[code];
@@ -241,6 +256,11 @@ async function init() {
         parallelData = await fetchTranslation(savedParallel);
         localStorage.setItem("bible-parallel", savedParallel);
         setSecondaryDescriptions(await fetchDescriptions(savedParallel));
+        const secShLang = TRANSLATION_LANG[savedParallel] || "en";
+        try {
+          const shRes = await fetch(`./data/subheadings-${secShLang}.json`);
+          if (shRes.ok) setSecondarySubheadings(await shRes.json());
+        } catch {}
       } catch { parallelTranslation = ""; parallelData = null; parallelSelect.value = ""; }
     }
 
@@ -250,6 +270,7 @@ async function init() {
         parallelTranslation = "";
         parallelData = null;
         setSecondaryDescriptions([]);
+        setSecondarySubheadings({});
         localStorage.removeItem("bible-parallel");
       } else {
         try {
@@ -257,6 +278,11 @@ async function init() {
           parallelTranslation = code;
           localStorage.setItem("bible-parallel", code);
           setSecondaryDescriptions(await fetchDescriptions(code));
+          const secShLang = TRANSLATION_LANG[code] || "en";
+          try {
+            const shRes = await fetch(`./data/subheadings-${secShLang}.json`);
+            if (shRes.ok) setSecondarySubheadings(await shRes.json());
+          } catch {}
         } catch {
           parallelTranslation = "";
           parallelData = null;
@@ -712,12 +738,18 @@ async function init() {
         parallelTranslation = "";
         parallelData = null;
         setSecondaryDescriptions([]);
+        setSecondarySubheadings({});
       } else {
         try {
           parallelData = await fetchTranslation(urlParallel);
           parallelTranslation = urlParallel;
           setSecondaryDescriptions(await fetchDescriptions(urlParallel));
-        } catch { parallelTranslation = ""; parallelData = null; setSecondaryDescriptions([]); }
+          const secShLang = TRANSLATION_LANG[urlParallel] || "en";
+          try {
+            const shRes = await fetch(`./data/subheadings-${secShLang}.json`);
+            if (shRes.ok) setSecondarySubheadings(await shRes.json());
+          } catch {}
+        } catch { parallelTranslation = ""; parallelData = null; setSecondaryDescriptions([]); setSecondarySubheadings({}); }
       }
       localStorage.setItem("bible-parallel", parallelTranslation);
       if (parallelSelect) parallelSelect.value = parallelTranslation;

@@ -43,3 +43,14 @@ export interface BookDescription {
 }
 
 export type DescriptionData = BookDescription[];
+
+export interface SubheadingEntry {
+  v: number;
+  t: string;
+}
+
+export type SubheadingsData = {
+  [book: string]: {
+    [chapter: string]: SubheadingEntry[];
+  };
+};

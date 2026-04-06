@@ -1,6 +1,5 @@
 import { join, resolve } from "node:path";
 import { cp, mkdir, rm, readFile, writeFile } from "node:fs/promises";
-import { existsSync } from "node:fs";
 
 import { loadBible, discoverTranslations } from "../src/shared/bible-loader.ts";
 
@@ -34,14 +33,19 @@ const staticFiles = [
   "favicon.ico",
   "manifest.json",
   "sw.js",
-  "pwaicon-192.png",
-  "pwaicon-512.png",
-  "styleguide.json",
+];
+
+const staticDirs = [
+  "icons",
+  "data",
 ];
 
 // Copy static files (HTML, CSS, PWA)
 for (const name of staticFiles) {
   await cp(join(PUBLIC, name), join(OUT, name));
+}
+for (const dir of staticDirs) {
+  await cp(join(PUBLIC, dir), join(OUT, dir), { recursive: true });
 }
 console.log("Static files copied.");
 
@@ -78,13 +82,6 @@ for (const t of translations) {
   }
   await Bun.write(join(OUT, `bible-${t}.json`), json);
   console.log(`bible-${t}.json written (${(json.length / 1024 / 1024).toFixed(1)} MB).`);
-
-  // Copy descriptions file if it exists
-  const descPath = join(TRANSLATIONS_DIR, t, "descriptions.json");
-  if (existsSync(descPath)) {
-    await cp(descPath, join(OUT, `descriptions-${t}.json`));
-    console.log(`descriptions-${t}.json written.`);
-  }
 }
 
 // Write translations manifest

@@ -33,13 +33,14 @@ for (const t of translations) {
 }
 const translationsJson = JSON.stringify(translations);
 
-// Pre-load descriptions for each translation
+// Pre-load descriptions by language
 const descriptionsCache: Record<string, string> = {};
-for (const t of translations) {
-  const descPath = join(TRANSLATIONS_DIR, t, "descriptions.json");
+const langFiles = ["en", "fi"];
+for (const lang of langFiles) {
+  const descPath = join(PUBLIC, "data", `descriptions-${lang}.json`);
   if (existsSync(descPath)) {
-    descriptionsCache[t] = await Bun.file(descPath).text();
-    console.log(`${t} descriptions loaded`);
+    descriptionsCache[lang] = await Bun.file(descPath).text();
+    console.log(`descriptions-${lang} loaded`);
   }
 }
 
@@ -77,11 +78,11 @@ Bun.serve({
       });
     }
 
-    // Match /descriptions-CODE.json (e.g. /descriptions-WEB.json)
-    const descMatch = path.match(/^\/descriptions-([A-Z0-9]+)\.json$/i);
+    // Match /data/descriptions-LANG.json (e.g. /data/descriptions-en.json)
+    const descMatch = path.match(/^\/data\/descriptions-([a-z]+)\.json$/i);
     if (descMatch) {
-      const t = descMatch[1].toUpperCase();
-      const json = descriptionsCache[t];
+      const lang = descMatch[1].toLowerCase();
+      const json = descriptionsCache[lang];
       if (!json) return new Response("[]", { headers: { "Content-Type": "application/json" } });
       return new Response(json, {
         headers: {

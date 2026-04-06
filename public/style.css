@@ -185,6 +185,16 @@ main {
   text-align: center;
 }
 
+/* === Subheadings === */
+.subheading {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--muted);
+  margin: 20px 0 4px;
+  line-height: 1.5;
+}
+
 /* === Verses === */
 .verses {
   font-size: 17px;

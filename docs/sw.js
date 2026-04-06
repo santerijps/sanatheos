@@ -5,8 +5,8 @@ const SHELL_ASSETS = [
     "./bundle.js",
     "./favicon.ico",
     "./manifest.json",
-    "./pwaicon-192.png",
-    "./pwaicon-512.png",
+    "./icons/pwaicon-192.png",
+    "./icons/pwaicon-512.png",
 ];
 
 self.addEventListener("install", (event) => {

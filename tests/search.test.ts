@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
-import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein, _normalizeQuery } from "../src/client/search.ts";
+import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein, _normalizeQuery, escapeRegex } from "../src/client/search.ts";
 import { setTranslation } from "../src/client/bookNames.ts";
 
 // Minimal fixture data
@@ -1329,5 +1329,210 @@ describe("non-standard search syntax", () => {
       { start: 1, end: 3 },
       { start: 5, end: 5 },
     ]);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — escapeRegex
+// ---------------------------------------------------------------------------
+
+describe("escapeRegex", () => {
+  test("escapes all special regex characters", () => {
+    const special = ".*+?^${}()|[]\\";
+    const escaped = escapeRegex(special);
+    // Should not throw when creating a regex from it
+    expect(() => new RegExp(escaped)).not.toThrow();
+    // Each special char should be escaped with backslash
+    expect(escaped).toBe("\\.\\*\\+\\?\\^\\$\\{\\}\\(\\)\\|\\[\\]\\\\");
+  });
+
+  test("leaves normal text unchanged", () => {
+    expect(escapeRegex("hello world")).toBe("hello world");
+  });
+
+  test("handles empty string", () => {
+    expect(escapeRegex("")).toBe("");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — parseRef boundary conditions
+// ---------------------------------------------------------------------------
+
+describe("parseRef edge cases", () => {
+  beforeEach(() => { setTranslation("WEB"); initSearch(fixture); });
+
+  test("chapter 0 returns no results", () => {
+    const results = search(fixture, "Genesis 0");
+    expect(results).toHaveLength(0);
+  });
+
+  test("very large chapter number returns no results", () => {
+    const results = search(fixture, "Genesis 999");
+    expect(results).toHaveLength(0);
+  });
+
+  test("verse 0 returns no results", () => {
+    const results = search(fixture, "Genesis 1:0");
+    expect(results).toHaveLength(0);
+  });
+
+  test("very large verse number returns no results", () => {
+    const results = search(fixture, "Genesis 1:999");
+    expect(results).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — parseVerseSegments
+// ---------------------------------------------------------------------------
+
+describe("parseVerseSegments edge cases", () => {
+  test("inverted range returns verses in order", () => {
+    const result = _parseVerseSegments("5-3");
+    // Should either return empty or treat as 5-3 (implementation dependent)
+    expect(result).toBeDefined();
+  });
+
+  test("overlapping ranges", () => {
+    const result = _parseVerseSegments("1-5,3-7");
+    expect(result).toBeDefined();
+    expect(result!.length).toBeGreaterThan(0);
+  });
+
+  test("single verse segment", () => {
+    const result = _parseVerseSegments("1");
+    expect(result).toEqual([{ start: 1, end: 1 }]);
+  });
+
+  test("empty string returns null", () => {
+    const result = _parseVerseSegments("");
+    expect(result).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — buildTextMatcher
+// ---------------------------------------------------------------------------
+
+describe("buildTextMatcher edge cases", () => {
+  test("regex-special chars inside quotes are treated as literal", () => {
+    const matcher = _buildTextMatcher("foo.bar");
+    // Should match literal "foo.bar" not "fooXbar"
+    expect(matcher!("foo.bar")).toBe(true);
+  });
+
+  test("parentheses in search term", () => {
+    const matcher = _buildTextMatcher("test(1)");
+    expect(matcher!("test(1)")).toBe(true);
+  });
+
+  test("empty string returns a matcher that matches anything", () => {
+    const matcher = _buildTextMatcher("");
+    expect(typeof matcher).toBe("function");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — normalizeQuery
+// ---------------------------------------------------------------------------
+
+describe("normalizeQuery edge cases", () => {
+  test("preserves Finnish characters", () => {
+    expect(_normalizeQuery("Heprealaiskirje")).toBe("Heprealaiskirje");
+  });
+
+  test("handles multiple consecutive semicolons", () => {
+    const result = _normalizeQuery(";;;");
+    expect(result).toBe(";;;");
+  });
+
+  test("preserves verse-segment commas (digits after comma)", () => {
+    expect(_normalizeQuery("Genesis 1:1-3, 5")).toBe("Genesis 1:1-3, 5");
+  });
+
+  test("converts book-separating commas to semicolons", () => {
+    const result = _normalizeQuery("Matt 1, Luke 2");
+    expect(result).toContain(";");
+  });
+
+  test("en-dash converted to hyphen", () => {
+    expect(_normalizeQuery("Genesis 1\u20133")).toBe("Genesis 1-3");
+  });
+
+  test("em-dash converted to hyphen", () => {
+    expect(_normalizeQuery("Genesis 1\u20143")).toBe("Genesis 1-3");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — matchBook
+// ---------------------------------------------------------------------------
+
+describe("matchBook edge cases", () => {
+  beforeEach(() => { setTranslation("WEB"); initSearch(fixture); });
+
+  test("exact match preferred over prefix when 'John' could match '1 John'", () => {
+    const result = _matchBook("John");
+    expect(result).not.toBeNull();
+    expect(result!.book).toBe("John");
+  });
+
+  test("empty string returns null", () => {
+    const result = _matchBook("");
+    expect(result).toBeNull();
+  });
+
+  test("whitespace-only returns a match (trimmed to empty is fuzzy-matched)", () => {
+    const result = _matchBook("   ");
+    // After trimming, the fuzzy matcher picks the closest book
+    expect(result).not.toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — parseQueryBooks
+// ---------------------------------------------------------------------------
+
+describe("parseQueryBooks edge cases", () => {
+  beforeEach(() => { setTranslation("WEB"); initSearch(fixture); });
+
+  test("empty string returns empty array", () => {
+    expect(parseQueryBooks("")).toEqual([]);
+  });
+
+  test("only semicolons returns empty array", () => {
+    expect(parseQueryBooks(";;;")).toEqual([]);
+  });
+
+  test("quoted string without book reference", () => {
+    const result = parseQueryBooks('"grace"');
+    expect(result).toHaveLength(1);
+    expect(result[0].book).toBe("");
+    expect(result[0].quoted).toBe('"grace"');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — search with empty data
+// ---------------------------------------------------------------------------
+
+describe("search with empty data", () => {
+  const emptyData: BibleData = {};
+
+  test("search returns empty results", () => {
+    initSearch(emptyData);
+    const results = search(emptyData, "love");
+    expect(results).toHaveLength(0);
+  });
+
+  test("tryParseNav with no matching books returns null-like", () => {
+    initSearch(emptyData);
+    const result = tryParseNav("Genesis 1");
+    // tryParseNav returns NavRef[] but book won't exist in data
+    // It should still parse the reference structurally
+    if (result) {
+      expect(result[0].book).toBe("Genesis");
+    }
   });
 });

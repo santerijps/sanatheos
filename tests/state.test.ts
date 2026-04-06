@@ -109,4 +109,72 @@ describe("toUrl", () => {
   test("falls back to raw book name if no code exists", () => {
     expect(toUrl({ book: "UnknownBook", chapter: 1 })).toBe("/?book=UnknownBook&chapter=1");
   });
+
+  test("includes parallel param", () => {
+    const url = toUrl({ book: "Genesis", chapter: 1, parallel: "KR38" });
+    expect(url).toContain("p=KR38");
+    expect(url).toContain("book=gen");
+    expect(url).toContain("chapter=1");
+  });
+
+  test("chapter without verse does not include verse param", () => {
+    const url = toUrl({ book: "John", chapter: 3 });
+    expect(url).not.toContain("verse");
+  });
+
+  test("query with special characters is encoded", () => {
+    const url = toUrl({ query: "love & faith" });
+    expect(url).toContain("q=");
+    // The URL should be parseable
+    const params = new URLSearchParams(url.split("?")[1]);
+    expect(params.get("q")).toBe("love & faith");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Edge cases — bookCodes
+// ---------------------------------------------------------------------------
+
+describe("bookCodes edge cases", () => {
+  test("bookToCode returns undefined for empty string", () => {
+    expect(bookToCode("")).toBeUndefined();
+  });
+
+  test("bookFromCode returns undefined for empty string", () => {
+    expect(bookFromCode("")).toBeUndefined();
+  });
+
+  test("no duplicate codes in CODE_TO_BOOK", () => {
+    // Verify round-trip uniqueness: each book maps to a unique code
+    const seen = new Set<string>();
+    const books = [
+      "Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
+      "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
+      "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
+      "Ezra", "Nehemiah", "Esther", "Job", "Psalm", "Proverbs",
+      "Ecclesiastes", "Song Of Solomon", "Isaiah", "Jeremiah",
+      "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
+      "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah",
+      "Haggai", "Zechariah", "Malachi", "Matthew", "Mark", "Luke",
+      "John", "Acts", "Romans", "1 Corinthians", "2 Corinthians",
+      "Galatians", "Ephesians", "Philippians", "Colossians",
+      "1 Thessalonians", "2 Thessalonians", "1 Timothy", "2 Timothy",
+      "Titus", "Philemon", "Hebrews", "James", "1 Peter", "2 Peter",
+      "1 John", "2 John", "3 John", "Jude", "Revelation",
+    ];
+    for (const b of books) {
+      const code = bookToCode(b)!;
+      expect(seen.has(code)).toBe(false);
+      seen.add(code);
+    }
+  });
+
+  test("codes are 3–4 characters", () => {
+    const books = ["Genesis", "1 Thessalonians", "Psalm", "3 John"];
+    for (const b of books) {
+      const code = bookToCode(b)!;
+      expect(code.length).toBeGreaterThanOrEqual(3);
+      expect(code.length).toBeLessThanOrEqual(4);
+    }
+  });
 });

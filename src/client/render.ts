@@ -1,4 +1,4 @@
-import type { BibleData, VerseResult, HighlightColor, DescriptionData } from "./types.ts";
+import type { BibleData, VerseResult, HighlightColor, DescriptionData, SubheadingsData } from "./types.ts";
 import type { NavRef } from "./search.ts";
 import { escapeRegex } from "./search.ts";
 import { displayName, displayNameFor } from "./bookNames.ts";
@@ -35,6 +35,18 @@ let styleguide: StyleguideData = {};
 
 export function setStyleguide(sg: StyleguideData) {
   styleguide = sg;
+}
+
+let subheadings: SubheadingsData = {};
+
+export function setSubheadings(sh: SubheadingsData) {
+  subheadings = sh;
+}
+
+let secondarySubheadings: SubheadingsData = {};
+
+export function setSecondarySubheadings(sh: SubheadingsData) {
+  secondarySubheadings = sh;
 }
 
 /** Look up the book-level description from a given description dataset. */
@@ -90,8 +102,10 @@ const fmt = formatVerseText;
 
 const escRegex = escapeRegex;
 
-function renderStyledVerses(book: string, chapter: number, nums: number[], ch: Record<string, string>, secondary = false): string {
+function renderStyledVerses(book: string, chapter: number, nums: number[], ch: Record<string, string>, secondary = false, showSubheadings = true): string {
   const sg = styleguide[book]?.[String(chapter)];
+  const shSource = secondary ? secondarySubheadings : subheadings;
+  const sh = showSubheadings ? shSource[book]?.[String(chapter)] : undefined;
   let html = "";
   let mode: "prose" | "poetry" = "prose";
   let poetryLevel = 1;
@@ -100,6 +114,15 @@ function renderStyledVerses(book: string, chapter: number, nums: number[], ch: R
     const n = nums[i];
     const text = ch[String(n)];
     if (!text) continue;
+
+    // Insert subheading before this verse if one exists
+    if (sh) {
+      for (const entry of sh) {
+        if (entry.v === n) {
+          html += `<h4 class="subheading">${esc(entry.t)}</h4>`;
+        }
+      }
+    }
 
     if (sg) {
       if (sg.stanzaBreaks.includes(n)) {

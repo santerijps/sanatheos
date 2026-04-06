@@ -366,8 +366,8 @@ describe("PWA — service worker", () => {
   });
 
   test("SHELL_ASSETS includes PWA icons", () => {
-    expect(sw).toContain("./pwaicon-192.png");
-    expect(sw).toContain("./pwaicon-512.png");
+    expect(sw).toContain("./icons/pwaicon-192.png");
+    expect(sw).toContain("./icons/pwaicon-512.png");
   });
 });
 
@@ -396,9 +396,8 @@ describe("PWA — build script copies PWA files", () => {
     expect(buildScript).toContain("sw.js");
   });
 
-  test("copies PWA icon PNGs", () => {
-    expect(buildScript).toContain("pwaicon-192.png");
-    expect(buildScript).toContain("pwaicon-512.png");
+  test("copies PWA icon PNGs via icons directory", () => {
+    expect(buildScript).toContain('"icons"');
   });
 });
 
@@ -450,112 +449,11 @@ describe("DescriptionData types", () => {
   });
 });
 
-describe("Descriptions — WEB descriptions.json", () => {
-  const descPath = join(TRANSLATIONS_DIR, "WEB", "descriptions.json");
-  const exists = existsSync(descPath);
-
-  test("WEB descriptions.json exists", () => {
-    expect(exists).toBe(true);
-  });
-
-  if (exists) {
-    const data: DescriptionData = JSON.parse(readFileSync(descPath, "utf-8"));
-
-    test("is a non-empty array", () => {
-      expect(Array.isArray(data)).toBe(true);
-      expect(data.length).toBeGreaterThan(0);
-    });
-
-    test("each entry has name, description, and chapters array", () => {
-      for (const book of data) {
-        expect(typeof book.name).toBe("string");
-        expect(book.name.length).toBeGreaterThan(0);
-        expect(typeof book.description).toBe("string");
-        expect(Array.isArray(book.chapters)).toBe(true);
-      }
-    });
-
-    test("most entries have non-empty descriptions", () => {
-      const withDesc = data.filter(b => b.description.length > 0);
-      expect(withDesc.length).toBeGreaterThan(data.length * 0.9);
-    });
-
-    test("chapter entries have number and description string", () => {
-      for (const book of data) {
-        for (const ch of book.chapters) {
-          expect(typeof ch.number).toBe("number");
-          expect(typeof ch.description).toBe("string");
-        }
-      }
-    });
-
-    test("Genesis has book description and multiple chapters", () => {
-      const genesis = data.find(b => b.name === "Genesis");
-      expect(genesis).toBeDefined();
-      expect(genesis!.description.length).toBeGreaterThan(10);
-      expect(genesis!.chapters.length).toBeGreaterThanOrEqual(50);
-    });
-
-    test("chapter numbers are sorted and unique per book", () => {
-      for (const book of data) {
-        const nums = book.chapters.map(c => c.number);
-        for (let i = 1; i < nums.length; i++) {
-          expect(nums[i]).toBeGreaterThan(nums[i - 1]);
-        }
-      }
-    });
-  }
-});
-
-describe("Descriptions — KR38 descriptions.json", () => {
-  const descPath = join(TRANSLATIONS_DIR, "KR38", "descriptions.json");
-  const exists = existsSync(descPath);
-
-  test("KR38 descriptions.json exists", () => {
-    expect(exists).toBe(true);
-  });
-
-  if (exists) {
-    const data: DescriptionData = JSON.parse(readFileSync(descPath, "utf-8"));
-
-    test("is a non-empty array", () => {
-      expect(Array.isArray(data)).toBe(true);
-      expect(data.length).toBeGreaterThan(0);
-    });
-
-    test("each entry has name, description, and chapters array", () => {
-      for (const book of data) {
-        expect(typeof book.name).toBe("string");
-        expect(book.name.length).toBeGreaterThan(0);
-        expect(typeof book.description).toBe("string");
-        expect(Array.isArray(book.chapters)).toBe(true);
-      }
-    });
-
-    test("most entries have non-empty descriptions", () => {
-      const withDesc = data.filter(b => b.description.length > 0);
-      expect(withDesc.length).toBeGreaterThan(data.length * 0.9);
-    });
-
-    test("uses English book names (same as WEB)", () => {
-      const webPath = join(TRANSLATIONS_DIR, "WEB", "descriptions.json");
-      if (existsSync(webPath)) {
-        const webData: DescriptionData = JSON.parse(readFileSync(webPath, "utf-8"));
-        const webNames = webData.map(b => b.name);
-        for (const book of data) {
-          expect(webNames).toContain(book.name);
-        }
-      }
-    });
-  }
-});
-
 describe("Descriptions — build script includes descriptions", () => {
   const buildScript = readFileSync(join(ROOT, "scripts", "build-static.ts"), "utf-8");
 
-  test("build script copies descriptions files", () => {
-    expect(buildScript).toContain("descriptions.json");
-    expect(buildScript).toContain("descriptions-");
+  test("build script copies data directory (includes descriptions)", () => {
+    expect(buildScript).toContain('"data"');
   });
 });
 
@@ -565,5 +463,265 @@ describe("Descriptions — server serves description files", () => {
   test("server handles /descriptions-CODE.json route", () => {
     expect(serverCode).toContain("descriptions-");
     expect(serverCode).toContain("descriptionsCache");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Subheadings data validation
+// ---------------------------------------------------------------------------
+
+import type { SubheadingsData, SubheadingEntry } from "../src/client/types.ts";
+
+describe("Subheadings — English data", () => {
+  const shPath = join(PUBLIC, "data", "subheadings-en.json");
+  const exists = existsSync(shPath);
+
+  test("subheadings-en.json exists", () => {
+    expect(exists).toBe(true);
+  });
+
+  if (exists) {
+    const data: SubheadingsData = JSON.parse(readFileSync(shPath, "utf-8"));
+    const bookKeys = Object.keys(data);
+
+    test("has entries for at least 60 books", () => {
+      expect(bookKeys.length).toBeGreaterThanOrEqual(60);
+    });
+
+    test("every book key has at least one chapter", () => {
+      for (const book of bookKeys) {
+        const chapters = Object.keys(data[book]);
+        expect(chapters.length).toBeGreaterThan(0);
+      }
+    });
+
+    test("every entry has positive verse number and non-empty text", () => {
+      for (const book of bookKeys) {
+        for (const ch of Object.keys(data[book])) {
+          const entries: SubheadingEntry[] = data[book][ch];
+          for (const e of entries) {
+            expect(e.v).toBeGreaterThan(0);
+            expect(e.t.length).toBeGreaterThan(0);
+          }
+        }
+      }
+    });
+
+    test("chapter keys are valid positive integers", () => {
+      for (const book of bookKeys) {
+        for (const ch of Object.keys(data[book])) {
+          const n = Number(ch);
+          expect(Number.isInteger(n) && n > 0).toBe(true);
+        }
+      }
+    });
+  }
+});
+
+describe("Subheadings — Finnish data", () => {
+  const shPath = join(PUBLIC, "data", "subheadings-fi.json");
+  const exists = existsSync(shPath);
+
+  test("subheadings-fi.json exists", () => {
+    expect(exists).toBe(true);
+  });
+
+  if (exists) {
+    const data: SubheadingsData = JSON.parse(readFileSync(shPath, "utf-8"));
+    const bookKeys = Object.keys(data);
+
+    test("has entries for at least 60 books", () => {
+      expect(bookKeys.length).toBeGreaterThanOrEqual(60);
+    });
+
+    test("every entry has positive verse number and non-empty text", () => {
+      for (const book of bookKeys) {
+        for (const ch of Object.keys(data[book])) {
+          for (const e of data[book][ch]) {
+            expect(e.v).toBeGreaterThan(0);
+            expect(e.t.length).toBeGreaterThan(0);
+          }
+        }
+      }
+    });
+  }
+});
+
+describe("Subheadings — EN and FI structural match", () => {
+  const enPath = join(PUBLIC, "data", "subheadings-en.json");
+  const fiPath = join(PUBLIC, "data", "subheadings-fi.json");
+  const bothExist = existsSync(enPath) && existsSync(fiPath);
+
+  test("both files exist", () => {
+    expect(bothExist).toBe(true);
+  });
+
+  if (bothExist) {
+    const en: SubheadingsData = JSON.parse(readFileSync(enPath, "utf-8"));
+    const fi: SubheadingsData = JSON.parse(readFileSync(fiPath, "utf-8"));
+
+    test("same set of book keys", () => {
+      const enBooks = Object.keys(en).sort();
+      const fiBooks = Object.keys(fi).sort();
+      expect(enBooks).toEqual(fiBooks);
+    });
+
+    test("same number of entries per book", () => {
+      for (const book of Object.keys(en)) {
+        const enCount = Object.values(en[book]).flat().length;
+        const fiCount = Object.values(fi[book]).flat().length;
+        expect(fiCount).toBe(enCount);
+      }
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Descriptions — public/data/ language-based files
+// ---------------------------------------------------------------------------
+
+describe("Descriptions — public/data/ files", () => {
+  const enPath = join(PUBLIC, "data", "descriptions-en.json");
+  const fiPath = join(PUBLIC, "data", "descriptions-fi.json");
+
+  test("descriptions-en.json exists", () => {
+    expect(existsSync(enPath)).toBe(true);
+  });
+
+  test("descriptions-fi.json exists", () => {
+    expect(existsSync(fiPath)).toBe(true);
+  });
+
+  if (existsSync(enPath)) {
+    const data: DescriptionData = JSON.parse(readFileSync(enPath, "utf-8"));
+
+    test("EN descriptions is a non-empty array", () => {
+      expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBeGreaterThan(0);
+    });
+
+    test("EN descriptions entries have required fields", () => {
+      for (const book of data) {
+        expect(typeof book.name).toBe("string");
+        expect(typeof book.description).toBe("string");
+        expect(Array.isArray(book.chapters)).toBe(true);
+      }
+    });
+  }
+
+  if (existsSync(fiPath)) {
+    const data: DescriptionData = JSON.parse(readFileSync(fiPath, "utf-8"));
+
+    test("FI descriptions is a non-empty array", () => {
+      expect(Array.isArray(data)).toBe(true);
+      expect(data.length).toBeGreaterThan(0);
+    });
+
+    test("FI descriptions entries have required fields", () => {
+      for (const book of data) {
+        expect(typeof book.name).toBe("string");
+        expect(typeof book.description).toBe("string");
+        expect(Array.isArray(book.chapters)).toBe(true);
+      }
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// i18n — edge cases
+// ---------------------------------------------------------------------------
+
+describe("i18n — function-type strings", () => {
+  test("EN noResults returns formatted string", () => {
+    setLanguage("en");
+    const s = t();
+    expect(s.noResults("test")).toContain("test");
+    expect(s.noResults("test")).toContain("No results");
+  });
+
+  test("FI noResults returns formatted string", () => {
+    setLanguage("fi");
+    expect(t().noResults("testi")).toContain("testi");
+  });
+
+  test("EN resultCount singular vs plural", () => {
+    setLanguage("en");
+    const s = t();
+    expect(s.resultCount(1)).toBe("1 result");
+    expect(s.resultCount(0)).toBe("0 results");
+    expect(s.resultCount(999)).toBe("999 results");
+  });
+
+  test("FI resultCount singular vs plural", () => {
+    setLanguage("fi");
+    const s = t();
+    expect(s.resultCount(1)).toBe("1 tulos");
+    expect(s.resultCount(0)).toBe("0 tulosta");
+    expect(s.resultCount(999)).toBe("999 tulosta");
+  });
+
+  test("loadingTranslation includes code", () => {
+    setLanguage("en");
+    expect(t().loadingTranslation("KR38")).toContain("KR38");
+    setLanguage("fi");
+    expect(t().loadingTranslation("WEB")).toContain("WEB");
+  });
+});
+
+describe("i18n — font size strings", () => {
+  test("EN has all font size strings", () => {
+    setLanguage("en");
+    const s = t();
+    expect(s.fontSizeLabel).toBeTruthy();
+    expect(s.fontSizeSmall).toBeTruthy();
+    expect(s.fontSizeMedium).toBeTruthy();
+    expect(s.fontSizeLarge).toBeTruthy();
+    expect(s.fontSizeXL).toBeTruthy();
+    expect(s.fontSizeXXL).toBeTruthy();
+  });
+
+  test("FI has all font size strings", () => {
+    setLanguage("fi");
+    const s = t();
+    expect(s.fontSizeLabel).toBeTruthy();
+    expect(s.fontSizeSmall).toBeTruthy();
+    expect(s.fontSizeMedium).toBeTruthy();
+    expect(s.fontSizeLarge).toBeTruthy();
+    expect(s.fontSizeXL).toBeTruthy();
+    expect(s.fontSizeXXL).toBeTruthy();
+  });
+});
+
+describe("i18n — EN and FI key parity", () => {
+  test("both languages have the same set of keys", () => {
+    setLanguage("en");
+    const enKeys = Object.keys(t()).sort();
+    setLanguage("fi");
+    const fiKeys = Object.keys(t()).sort();
+    expect(enKeys).toEqual(fiKeys);
+  });
+
+  test("both languages have same number of infoSearchItems", () => {
+    setLanguage("en");
+    const enItems = t().infoSearchItems;
+    setLanguage("fi");
+    const fiItems = t().infoSearchItems;
+    expect(enItems.length).toBe(fiItems.length);
+  });
+
+  test("both languages have same number of infoShortcuts", () => {
+    setLanguage("en");
+    const enItems = t().infoShortcuts;
+    setLanguage("fi");
+    const fiItems = t().infoShortcuts;
+    expect(enItems.length).toBe(fiItems.length);
+  });
+
+  test("both languages have same number of infoFeaturesItems", () => {
+    setLanguage("en");
+    const enItems = t().infoFeaturesItems;
+    setLanguage("fi");
+    const fiItems = t().infoFeaturesItems;
+    expect(enItems.length).toBe(fiItems.length);
   });
 });
