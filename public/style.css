@@ -217,7 +217,7 @@ main {
   font-family: var(--sans);
   font-weight: 600;
   color: var(--verse-num);
-  margin-right: 2px;
+  margin-right: 4px;
   vertical-align: super;
   user-select: none;
 }
