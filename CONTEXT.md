@@ -534,7 +534,7 @@ The page is a single HTML file with this DOM structure:
 - `.toast` — Fixed-position notification that slides in from bottom.
 - Settings/info modals — Centered cards with close buttons.
 - `@media print` — Hides header, overlays, nav arrows, buttons. Shows `.print-translation-label`.
-- `@media (max-width: 600px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels.
+- `@media (max-width: 800px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels, smaller section titles.
 
 ## Features in Detail
 
@@ -624,7 +624,7 @@ Arrow links at top and bottom of chapter/verse views. `getChapterNav()` and `get
 
 Three options via `data-theme` attribute on `<html>`:
 - **Light** — White/off-white background, dark text.
-- **Dark** — Dark grey background, light text. Highlight colors have lower opacity.
+- **Dark** — Dark grey background, light text. Highlight colors use 0.35 opacity (vs 0.4 in light mode) for visible highlighting on dark backgrounds.
 - **System** — Follows `prefers-color-scheme` media query, updating on OS changes.
 
 Saved in `localStorage` as `bible-theme`.
@@ -694,7 +694,7 @@ Subheadings are shown in chapter, book, and chapter range views. They are not sh
 
 ## Testing
 
-348 tests across 3 files using `bun test`.
+343 tests across 3 files using `bun test`.
 
 **search.test.ts (~250 tests):** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
 - `parseVerseSegments` — single, range, comma-separated, edge cases, invalid inputs, overlapping ranges, inverted ranges
@@ -711,7 +711,7 @@ Subheadings are shown in chapter, book, and chapter range views. They are not sh
 
 **state.test.ts (~28 tests):** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping (including empty strings, uniqueness, code length), `toUrl` generation (including parallel param, special characters, verse omission).
 
-**features.test.ts (~120 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, WEB/KR38 descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN and FI: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI key parity, array length parity).
+**features.test.ts (~120 tests):** Feature string verification for EN/FI (themes, parallel, copy, highlights). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, WEB/KR38 descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN and FI: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness).
 
 ## Design Choices
 

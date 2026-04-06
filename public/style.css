@@ -33,11 +33,11 @@
   --accent: #cccccc;
   --muted: #999999;
   --mark-bg: #78650a;
-  --hl-yellow: rgba(253, 230, 138, 0.2);
-  --hl-green: rgba(134, 239, 172, 0.2);
-  --hl-blue: rgba(147, 197, 253, 0.2);
-  --hl-pink: rgba(249, 168, 212, 0.2);
-  --hl-orange: rgba(253, 186, 116, 0.2);
+  --hl-yellow: rgba(253, 230, 138, 0.35);
+  --hl-green: rgba(134, 239, 172, 0.35);
+  --hl-blue: rgba(147, 197, 253, 0.35);
+  --hl-pink: rgba(249, 168, 212, 0.35);
+  --hl-orange: rgba(253, 186, 116, 0.35);
 }
 
 html { height: 100%; }
@@ -753,6 +753,8 @@ mark {
   .parallel-col { border-right: none; border-bottom: 1px solid var(--border); }
   .nav-full { display: none; }
   .nav-short { display: inline; }
+  .section-title { font-size: 18px; }
+  .parallel-col .section-title { font-size: 14px; }
 }
 
 /* === Verse Context Menu === */

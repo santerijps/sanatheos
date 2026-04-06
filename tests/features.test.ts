@@ -725,3 +725,82 @@ describe("i18n — EN and FI key parity", () => {
     expect(enItems.length).toBe(fiItems.length);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Favicon attribution — Wikimedia Commons link
+// ---------------------------------------------------------------------------
+
+describe("i18n — favicon attribution", () => {
+  test("EN footerFavicon links to Wikimedia Commons source", () => {
+    setLanguage("en");
+    expect(t().footerFavicon).toContain("commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg");
+  });
+
+  test("EN footerFavicon links to CC BY-SA 3.0 license", () => {
+    setLanguage("en");
+    expect(t().footerFavicon).toContain("creativecommons.org/licenses/by-sa/3.0");
+  });
+
+  test("FI footerFavicon links to Wikimedia Commons source", () => {
+    setLanguage("fi");
+    expect(t().footerFavicon).toContain("commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg");
+  });
+
+  test("FI footerFavicon links to CC BY-SA 3.0 license", () => {
+    setLanguage("fi");
+    expect(t().footerFavicon).toContain("creativecommons.org/licenses/by-sa/3.0");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// CSS — responsive section-title and dark mode highlights
+// ---------------------------------------------------------------------------
+
+describe("CSS — responsive section-title", () => {
+  const css = readFileSync(join(ROOT, "public", "style.css"), "utf-8");
+
+  test("section-title has smaller font in mobile media query", () => {
+    // Find the @media (max-width: 800px) block — it ends at the next unindented }
+    const start = css.indexOf("@media (max-width: 800px)");
+    expect(start).not.toBe(-1);
+    // Extract everything from this media query to its closing brace
+    let depth = 0;
+    let end = start;
+    for (let i = css.indexOf("{", start); i < css.length; i++) {
+      if (css[i] === "{") depth++;
+      if (css[i] === "}") depth--;
+      if (depth === 0) { end = i + 1; break; }
+    }
+    const block = css.slice(start, end);
+    expect(block).toContain(".section-title");
+    expect(block).toContain("font-size");
+  });
+});
+
+describe("CSS — dark mode highlight brightness", () => {
+  const css = readFileSync(join(ROOT, "public", "style.css"), "utf-8");
+
+  test("dark mode highlight opacity is between 0.25 and 0.5", () => {
+    // Extract dark theme block
+    const darkBlock = css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/);
+    expect(darkBlock).not.toBeNull();
+    const hlMatches = darkBlock![1].match(/--hl-\w+:\s*rgba\([^)]+,\s*([\d.]+)\)/g);
+    expect(hlMatches).not.toBeNull();
+    for (const m of hlMatches!) {
+      const opacity = parseFloat(m.match(/,\s*([\d.]+)\)/)![1]);
+      expect(opacity).toBeGreaterThanOrEqual(0.25);
+      expect(opacity).toBeLessThanOrEqual(0.5);
+    }
+  });
+
+  test("dark mode highlights are brighter than 0.2 opacity", () => {
+    const darkBlock = css.match(/\[data-theme="dark"\]\s*\{([^}]+)\}/);
+    expect(darkBlock).not.toBeNull();
+    const hlMatches = darkBlock![1].match(/--hl-\w+:\s*rgba\([^)]+,\s*([\d.]+)\)/g);
+    expect(hlMatches).not.toBeNull();
+    for (const m of hlMatches!) {
+      const opacity = parseFloat(m.match(/,\s*([\d.]+)\)/)![1]);
+      expect(opacity).toBeGreaterThan(0.2);
+    }
+  });
+});
