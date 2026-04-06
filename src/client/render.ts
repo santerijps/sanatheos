@@ -335,14 +335,10 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
 
   let html = `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
   html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
+  const segNums: number[] = [];
+  for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
   html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button></h2><div class="verses">`;
-  for (const seg of segments) {
-    for (let v = seg.start; v <= seg.end; v++) {
-      const text = ch[String(v)];
-      if (!text) continue;
-      html += `<span class="verse${hlClass(book, chapter, v)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
-    }
-  }
+  html += renderStyledVerses(book, chapter, segNums, ch);
   html += `</div>`;
   html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   $("content").innerHTML = html;
@@ -372,14 +368,10 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
     if (verseSegments) {
       const ch = bd[String(chapterStart)];
       if (!ch) return '';
+      const segNums: number[] = [];
+      for (const seg of verseSegments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
       html += `<div class="verses">`;
-      for (const seg of verseSegments) {
-        for (let v = seg.start; v <= seg.end; v++) {
-          const text = ch[String(v)];
-          if (!text) continue;
-          html += `<span class="verse${hlClass(book, chapterStart, v)}" data-book="${esc(book)}" data-chapter="${chapterStart}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
-        }
-      }
+      html += renderStyledVerses(book, chapterStart, segNums, ch);
       html += `</div>`;
     } else {
       for (let c = chapterStart; c <= chapterEnd; c++) {
@@ -811,14 +803,10 @@ export function renderParallelVerseSegments(primary: BibleData, secondary: Bible
   // Primary column
   html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
   html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="primary">&#128203;</button></h2>`;
+  const segNums: number[] = [];
+  for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
   html += `<div class="verses">`;
-  for (const seg of segments) {
-    for (let v = seg.start; v <= seg.end; v++) {
-      const text = ch1[String(v)];
-      if (!text) continue;
-      html += `<span class="verse${hlClass(book, chapter, v)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
-    }
-  }
+  html += renderStyledVerses(book, chapter, segNums, ch1);
   html += `</div></div>`;
 
   // Secondary column
@@ -826,13 +814,7 @@ export function renderParallelVerseSegments(primary: BibleData, secondary: Bible
   html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="secondary">&#128203;</button></h2>`;
   html += `<div class="verses">`;
   if (ch2) {
-    for (const seg of segments) {
-      for (let v = seg.start; v <= seg.end; v++) {
-        const text = ch2[String(v)];
-        if (!text) continue;
-        html += `<span class="verse${hlClass(book, chapter, v)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${v}" data-secondary="1"><sup>${v}</sup>${fmt(text)}</span> `;
-      }
-    }
+    html += renderStyledVerses(book, chapter, segNums, ch2, true);
   } else {
     html += `<p class="empty">${t().notFound}</p>`;
   }
@@ -895,25 +877,15 @@ function parallelNavRefHtml(primary: BibleData, secondary: BibleData, nav: NavRe
     if (verseSegments) {
       const ch1 = bd1[String(chapterStart)];
       const ch2 = bd2?.[String(chapterStart)];
+      const segNums: number[] = [];
+      for (const seg of verseSegments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
       primaryHtml += `<div class="verses">`;
-      for (const seg of verseSegments) {
-        for (let v = seg.start; v <= seg.end; v++) {
-          const text = ch1?.[String(v)];
-          if (!text) continue;
-          primaryHtml += `<span class="verse${hlClass(book, chapterStart, v)}" data-book="${esc(book)}" data-chapter="${chapterStart}" data-verse="${v}"><sup>${v}</sup>${fmt(text)}</span> `;
-        }
-      }
+      primaryHtml += renderStyledVerses(book, chapterStart, segNums, ch1 ?? {});
       primaryHtml += `</div>`;
 
       secondaryHtml += `<div class="verses">`;
       if (ch2) {
-        for (const seg of verseSegments) {
-          for (let v = seg.start; v <= seg.end; v++) {
-            const text = ch2[String(v)];
-            if (!text) continue;
-            secondaryHtml += `<span class="verse${hlClass(book, chapterStart, v)}" data-book="${esc(book)}" data-chapter="${chapterStart}" data-verse="${v}" data-secondary="1"><sup>${v}</sup>${fmt(text)}</span> `;
-          }
-        }
+        secondaryHtml += renderStyledVerses(book, chapterStart, segNums, ch2, true);
       } else {
         secondaryHtml += `<p class="empty">${t().notFound}</p>`;
       }

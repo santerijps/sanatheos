@@ -334,7 +334,7 @@ All functions write to `$("content").innerHTML`. Functions:
 
 **Subheadings rendering:** `setSubheadings()` stores the primary translation's subheadings. `setSecondarySubheadings()` stores the secondary translation's subheadings for parallel views. `renderStyledVerses()` selects the appropriate subheadings source based on the `secondary` parameter and renders `<div class="subheading">` elements above the relevant verses.
 
-**Styleguide rendering:** `setStyleguide()` stores an in-memory `StyleguideData` object (type `Record<string, Record<string, ChapterStyle>>`). `renderStyledVerses(book, chapter, nums, ch, secondary?, showSubheadings?)` is a shared helper used by `renderChapter`, `renderBook`, `renderChapterRange`, `navRefVersesHtml`, `renderParallelChapter`, and `renderParallelBook`. It tracks prose/poetry mode per-verse and emits: `<span class="stanza-break">` for stanza breaks, `<span class="para-break">` for paragraph breaks, and `.poetry-q1`/`.poetry-q2`/`.poetry-q3` CSS classes on verse spans for poetry indentation.
+**Styleguide rendering:** `setStyleguide()` stores an in-memory `StyleguideData` object (type `Record<string, Record<string, ChapterStyle>>`). `renderStyledVerses(book, chapter, nums, ch, secondary?, showSubheadings?)` is a shared helper used by `renderChapter`, `renderBook`, `renderChapterRange`, `renderVerseSegments`, `navRefVersesHtml`, `renderParallelChapter`, `renderParallelBook`, `renderParallelVerseSegments`, and `parallelNavRefHtml`. It tracks prose/poetry mode per-verse and emits: `<span class="stanza-break">` for stanza breaks, `<span class="para-break">` for paragraph breaks, and `.poetry-q1`/`.poetry-q2`/`.poetry-q3` CSS classes on verse spans for poetry indentation.
 
 **Description rendering:** `setDescriptions()` stores an in-memory `DescriptionData` array. `getBookDescription()` and `getChapterDescription()` look up descriptions by English book name and chapter number. `descriptionHtml()` renders a `<p class="description">` paragraph. Descriptions appear in `renderChapter`, `renderBook`, `renderChapterRange`, and `renderParallelChapter` — below titles, above verses. Not shown in single verse, verse segment, search result, or multi-nav views.
 
@@ -676,7 +676,7 @@ Subheadings are loaded on app startup based on the current UI language and store
 
 **Parallel mode:** In parallel views, each column displays subheadings in its own language. The primary translation uses `setSubheadings()` and the secondary translation uses `setSecondarySubheadings()`. `renderStyledVerses()` selects the appropriate source based on its `secondary` parameter.
 
-Subheadings are shown in chapter, book, and chapter range views. They are not shown in single verse, verse segment, or search result views.
+Subheadings are shown in chapter, book, chapter range, and verse segment views. They are not shown in single verse or search result views.
 
 ## Storage
 
