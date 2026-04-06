@@ -5,7 +5,7 @@ import { loadBible, discoverTranslations } from "./shared/bible-loader.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
-const TRANSLATIONS_DIR = join(ROOT, "translations");
+const TRANSLATIONS_DIR = join(PUBLIC, "translations");
 
 async function buildClient() {
   const result = await Bun.build({

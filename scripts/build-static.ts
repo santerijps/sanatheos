@@ -5,7 +5,7 @@ import { loadBible, discoverTranslations } from "../src/shared/bible-loader.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
-const TRANSLATIONS_DIR = join(ROOT, "translations");
+const TRANSLATIONS_DIR = join(PUBLIC, "translations");
 const OUT = join(ROOT, "docs");
 
 // Clean and create output directory

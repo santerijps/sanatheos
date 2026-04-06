@@ -421,7 +421,7 @@ describe("i18n — PWA feature in info items", () => {
 // Descriptions — type validation and file structure
 // ---------------------------------------------------------------------------
 
-const TRANSLATIONS_DIR = join(ROOT, "translations");
+const TRANSLATIONS_DIR = join(ROOT, "public", "translations");
 
 describe("DescriptionData types", () => {
   test("BookDescription has required fields", () => {

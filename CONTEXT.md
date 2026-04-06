@@ -42,12 +42,24 @@ sanatheos/
 │   ├── icons/
 │   │   ├── pwaicon-192.png   # PWA icon 192×192
 │   │   └── pwaicon-512.png   # PWA icon 512×512
-│   └── data/
-│       ├── styleguide.json   # Paragraph/poetry formatting data (generated)
-│       ├── subheadings-en.json # Verse subheadings (English)
-│       ├── subheadings-fi.json # Verse subheadings (Finnish)
-│       ├── descriptions-en.json # Book/chapter descriptions (English)
-│       └── descriptions-fi.json # Book/chapter descriptions (Finnish)
+│   ├── data/
+│   │   ├── styleguide.json   # Paragraph/poetry formatting data (generated)
+│   │   ├── subheadings-en.json # Verse subheadings (English)
+│   │   ├── subheadings-fi.json # Verse subheadings (Finnish)
+│   │   ├── descriptions-en.json # Book/chapter descriptions (English)
+│   │   └── descriptions-fi.json # Book/chapter descriptions (Finnish)
+│   └── translations/             # Raw Bible text source files
+│       ├── WEB/
+│       │   ├── descriptions.json # Book and chapter descriptions (English)
+│       │   └── WEB_books/        # 66 JSON files, one per book
+│       │       ├── Genesis.json
+│       │       ├── Exodus.json
+│       │       └── ... (66 files)
+│       └── KR38/
+│           ├── descriptions.json # Book and chapter descriptions (Finnish)
+│           └── KR38_books/       # 66 JSON files (Finnish)
+│               ├── Genesis.json
+│               └── ... (66 files)
 │
 ├── docs/                     # Built static site output (deployed to GitHub Pages)
 │   ├── index.html            # Minified HTML
@@ -77,19 +89,6 @@ sanatheos/
 │   ├── generate-icons.ts     # Generates PWA icon PNGs (gold cross on dark bg)
 │   └── bible-gateway.py      # Python scraper to download translations
 │
-├── translations/             # Raw Bible text source files
-│   ├── WEB/
-│   │   ├── descriptions.json # Book and chapter descriptions (English)
-│   │   └── WEB_books/        # 66 JSON files, one per book
-│   │       ├── Genesis.json
-│   │       ├── Exodus.json
-│   │       └── ... (66 files)
-│   └── KR38/
-│       ├── descriptions.json # Book and chapter descriptions (Finnish)
-│       └── KR38_books/       # 66 JSON files (Finnish)
-│           ├── Genesis.json
-│           └── ... (66 files)
-│
 └── tests/
     ├── search.test.ts        # Search engine tests (~170 tests)
     ├── state.test.ts         # URL state & book code tests (~18 tests)
@@ -118,7 +117,7 @@ The build script combines all 66 per-book files into a single `bible-CODE.json` 
 
 ## Description Data Format
 
-Description files live in `public/data/` named by language: `descriptions-en.json`, `descriptions-fi.json`. Source copies also exist at `translations/CODE/descriptions.json` for reference.
+Description files live in `public/data/` named by language: `descriptions-en.json`, `descriptions-fi.json`. Source copies also exist at `public/translations/CODE/descriptions.json` for reference.
 
 ```json
 [
@@ -408,14 +407,14 @@ gen ↔ Genesis, exo ↔ Exodus, ..., jhn ↔ John, ..., rev ↔ Revelation
 
 Exports three items used by both `server.ts` and `build-static.ts`:
 - `BOOK_ORDER` — Canonical array of 66 book names (Genesis through Revelation).
-- `loadBible(translationsDir, code)` — Reads per-book JSON files from `translations/CODE/CODE_books/`, strips `Info` keys, orders by `BOOK_ORDER`, returns stringified JSON.
+- `loadBible(translationsDir, code)` — Reads per-book JSON files from `public/translations/CODE/CODE_books/`, strips `Info` keys, orders by `BOOK_ORDER`, returns stringified JSON.
 - `discoverTranslations(translationsDir)` — Lists subdirectories in the translations folder, returning sorted translation codes.
 
 ## Server (server.ts)
 
 Bun HTTP server on port 3000. Uses `loadBible` and `discoverTranslations` from the shared module. On startup:
 1. Builds the client bundle (`app.ts` → `public/bundle.js`).
-2. Loads all translations into memory from `translations/` directory.
+2. Loads all translations into memory from `public/translations/` directory.
 3. Serves:
    - `/bible-CODE.json` — combined Bible data for a translation (from memory cache).
    - `/descriptions-CODE.json` — book and chapter descriptions for a translation (from memory cache, or empty array if not available).
@@ -433,7 +432,7 @@ Produces the `docs/` directory for GitHub Pages deployment. Uses `loadBible` and
 4. Copies static directories recursively: `icons/` (PWA icons), `data/` (styleguide, subheadings, descriptions).
 5. Minifies CSS using Bun's bundler.
 6. Minifies HTML by stripping comments, collapsing whitespace, removing inter-tag spaces.
-7. Discovers translations from `translations/` directory.
+7. Discovers translations from `public/translations/` directory.
 8. Generates combined `bible-CODE.json` for each translation (+ `bible.json` for WEB backward compat).
 9. Writes `translations.json` manifest.
 10. Creates `.nojekyll` marker file.
@@ -728,10 +727,10 @@ Subheadings are shown in chapter, book, and chapter range views. They are not sh
 
 ## Adding a New Translation
 
-1. Add a folder `translations/NEWCODE/NEWCODE_books/` with 66 JSON files (one per book, same format as WEB/KR38).
+1. Add a folder `public/translations/NEWCODE/NEWCODE_books/` with 66 JSON files (one per book, same format as WEB/KR38).
 2. Add book display names and aliases in `bookNames.ts` under a new `const NEWCODE: Record<string, BookEntry>` and add it to the `TRANSLATIONS` object.
 3. Add translation metadata to `TRANSLATION_NAMES` and `TRANSLATION_LANG` in `app.ts`.
-4. The build script auto-discovers translations from the `translations/` directory.
+4. The build script auto-discovers translations from the `public/translations/` directory.
 5. Run `bun run build:static` to regenerate `docs/`.
 
 ## AI agent instructions
