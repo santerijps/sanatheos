@@ -604,6 +604,40 @@ export function renderIndex(
     showChapters(books[0]);
   }
 
+  /** Scroll the index panel to a specific book/chapter/verse. */
+  function scrollTo(book?: string, chapter?: number, verse?: number) {
+    if (!book || !data[book]) return;
+
+    // Force showChapters even if same book (reset activeBook so it rebuilds)
+    activeBook = "";
+    showChapters(book);
+
+    // Scroll book item into view
+    const bookEl = booksCol.querySelector(`[data-book="${book}"]`) as HTMLElement | null;
+    if (bookEl) bookEl.scrollIntoView({ block: "center" });
+
+    if (chapter !== undefined) {
+      const chEl = chapsCol.querySelector(`[data-chapter="${chapter}"]`) as HTMLElement | null;
+      if (chEl) {
+        chapsCol.querySelectorAll(".idx-item").forEach(e => e.classList.remove("active"));
+        chEl.classList.add("active");
+        chEl.scrollIntoView({ block: "center" });
+        showVerses(book, chapter);
+      }
+
+      if (verse !== undefined) {
+        // Verse items don't have data attributes, find by text prefix
+        const verseItems = versesCol.querySelectorAll(".idx-item");
+        for (const vEl of verseItems) {
+          if ((vEl as HTMLElement).textContent?.startsWith(`${verse}. `)) {
+            (vEl as HTMLElement).scrollIntoView({ block: "center" });
+            break;
+          }
+        }
+      }
+    }
+  }
+
   // --- Keyboard navigation ---
   const cols = [booksCol, chapsCol, versesCol];
   let focusedCol = 0;
@@ -695,6 +729,8 @@ export function renderIndex(
   for (let i = 0; i < cols.length; i++) {
     cols[i].addEventListener("focusin", () => { focusedCol = i; });
   }
+
+  return { scrollTo };
 }
 
 // --- Parallel translation rendering ---

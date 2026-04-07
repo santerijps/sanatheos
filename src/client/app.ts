@@ -193,6 +193,7 @@ async function init() {
         }
 
         indexRendered = false;
+        indexScrollTo = null;
         if (overlay.classList.contains("open")) openIndex();
 
         // Translate query book names to new translation
@@ -225,8 +226,8 @@ async function init() {
       localStorage.setItem("bible-language", lang);
       updateStaticText();
       indexRendered = false;
+      indexScrollTo = null;
       if (overlay.classList.contains("open")) openIndex();
-      const state = readState();
       searchInput.value = stateToInputText(state);
       applyState(state);
       updateFooter();
@@ -361,6 +362,7 @@ async function init() {
 
   // --- Index panel ---
   let indexRendered = false;
+  let indexScrollTo: ((book?: string, chapter?: number, verse?: number) => void) | null = null;
 
   function lockScroll() {
     const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
@@ -377,18 +379,34 @@ async function init() {
     overlay.classList.add("open");
     lockScroll();
     if (!indexRendered) {
-      renderIndex(data, {
+      const idx = renderIndex(data, {
         onBook(book) { navigate({ book }); },
         onChapter(book, chapter) { navigate({ book, chapter }); },
         onVerse(book, chapter, verse) { navigate({ book, chapter, verse }); },
       });
+      indexScrollTo = idx.scrollTo;
       indexRendered = true;
     }
-    // Focus the active book in the panel
+    // Scroll to the currently viewed book/chapter/verse
+    const current = readState();
+    const book = current.book || "Genesis";
     requestAnimationFrame(() => {
-      const active = document.querySelector("#idx-books .idx-item.active") as HTMLElement
-        ?? document.querySelector("#idx-books .idx-item") as HTMLElement;
-      active?.focus();
+      if (indexScrollTo) indexScrollTo(book, current.chapter, current.verse);
+      // Focus the most specific column matching what's being read
+      let target: HTMLElement | null = null;
+      if (current.verse !== undefined) {
+        target = document.querySelector("#idx-verses .idx-item:focus") as HTMLElement
+          ?? (() => { const items = document.querySelectorAll("#idx-verses .idx-item"); for (const el of items) if (el.textContent?.startsWith(`${current.verse}. `)) return el; return null; })()
+          ?? document.querySelector("#idx-verses .idx-item") as HTMLElement;
+      } else if (current.chapter !== undefined) {
+        target = document.querySelector(`#idx-chapters .idx-item.active`) as HTMLElement
+          ?? document.querySelector("#idx-chapters .idx-item") as HTMLElement;
+      }
+      if (!target) {
+        target = document.querySelector("#idx-books .idx-item.active") as HTMLElement
+          ?? document.querySelector("#idx-books .idx-item") as HTMLElement;
+      }
+      target?.focus();
     });
   }
 
@@ -722,6 +740,7 @@ async function init() {
         }
 
         indexRendered = false;
+        indexScrollTo = null;
         if (overlay.classList.contains("open")) openIndex();
         if (translationSelect) translationSelect.value = s.translation;
         updateFooter();
