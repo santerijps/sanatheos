@@ -129,10 +129,13 @@ header {
 
 /* === Main Content === */
 main {
+  background-color: var(--surface);
   max-width: 90ch;
   margin: 0 auto;
-  padding: 32px 24px 32px;
+  padding: 0 64px 24px 64px;
+  margin-top: 24px;
   min-height: 80vh;
+  outline: 1px solid var(--border);
 }
 
 .book-title {
@@ -189,17 +192,17 @@ main {
 /* === Subheadings === */
 .subheading {
   font-family: var(--sans);
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   color: var(--muted);
   margin: 28px 0 2px;
-  line-height: 1.5;
+  line-height: 1.7;
 }
 
 /* === Verses === */
 .verses {
   font-size: 17px;
-  line-height: 2;
+  line-height: 1.7;
 }
 
 [data-font-size="small"] .verses { font-size: 14px; }
@@ -722,7 +725,6 @@ mark {
   max-width: 720px;
   margin: 0 auto;
   padding: 32px 24px 40px;
-  border-top: 1px solid var(--border);
   text-align: center;
   font: 12px var(--sans);
   color: var(--muted);
