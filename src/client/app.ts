@@ -316,6 +316,9 @@ async function init() {
   replaceState(withTranslationParams(stateForUrl(state)));
   updateFooter();
 
+  // Reveal footer now that content has been rendered
+  document.getElementById("footer")?.classList.add("visible");
+
   // --- Search with debounce ---
   let timer: number;
   searchInput.addEventListener("input", () => {

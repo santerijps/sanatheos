@@ -132,6 +132,7 @@ main {
   max-width: 90ch;
   margin: 0 auto;
   padding: 32px 24px 32px;
+  min-height: 80vh;
 }
 
 .book-title {
@@ -726,6 +727,12 @@ mark {
   font: 12px var(--sans);
   color: var(--muted);
   line-height: 1.8;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+#footer.visible {
+  opacity: 1;
 }
 
 #footer a {
