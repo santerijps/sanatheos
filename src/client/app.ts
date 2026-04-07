@@ -938,7 +938,6 @@ function updateStaticText() {
   const fsSelect = document.getElementById("fontsize-select") as HTMLSelectElement | null;
   if (fsSelect) {
     const opts = [s.fontSizeSmall, s.fontSizeMedium, s.fontSizeLarge, s.fontSizeXL, s.fontSizeXXL];
-    const vals = ["small", "medium", "large", "xl", "xxl"];
     for (let i = 0; i < fsSelect.options.length; i++) {
       if (i < opts.length) fsSelect.options[i].textContent = opts[i];
     }
@@ -970,14 +969,14 @@ function updateStaticText() {
 function updateFooter() {
   const info = TRANSLATION_NAMES[currentTranslation];
   const name = info ? info.name : currentTranslation;
-  for (const el of document.querySelectorAll(".nav-translation")) {
+  for (const el of document.querySelectorAll<HTMLElement>(".nav-translation")) {
     el.textContent = currentTranslation;
-    (el as HTMLElement).title = `${currentTranslation} \u2014 ${name}`;
+    el.title = `${currentTranslation} \u2014 ${name}`;
   }
-  for (const el of document.querySelectorAll(".parallel-translation-label")) {
+  for (const el of document.querySelectorAll<HTMLElement>(".parallel-translation-label")) {
     const code = el.textContent?.trim() || "";
     const ti = TRANSLATION_NAMES[code];
-    if (ti) (el as HTMLElement).title = `${code} \u2014 ${ti.name}`;
+    if (ti) el.title = `${code} \u2014 ${ti.name}`;
   }
 }
 
