@@ -747,6 +747,12 @@ mark {
   color: var(--text);
 }
 
+.footer-sheets {
+  margin: 8px 0;
+  font-size: 13px;
+  letter-spacing: 0.3px;
+}
+
 /* === Wide screens — larger index panel === */
 @media (min-width: 1200px) {
   .idx-col { width: 320px; }

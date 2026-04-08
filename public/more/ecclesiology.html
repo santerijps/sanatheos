@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Ecclesiology Cheat Sheet — Eastern Orthodox perspective on the Church, her nature, structure, sacraments, and councils">
+  <title>Ecclesiology Cheat Sheet — SANATHEOS</title>
+  <link rel="icon" type="image/jpeg" href="../favicon.ico">
+  <link rel="manifest" href="../manifest.json">
+  <link rel="stylesheet" href="../style.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="../style.css"></noscript>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --mono: monospace;
+      --bg: #fafafa; --surface: #ffffff; --text: #1a1a1a; --subtle: #888888;
+      --border: #e5e5e5; --hover: #f0f0f0; --accent: #333333; --muted: #666666;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1a1a; --surface: #242424; --text: #e0e0e0; --subtle: #888888;
+      --border: #333333; --hover: #2e2e2e; --accent: #cccccc; --muted: #999999;
+    }
+    html { height: 100%; }
+    body {
+      font-family: var(--serif); color: var(--text); background: var(--bg);
+      line-height: 1.9; letter-spacing: 0.1ch; word-spacing: 0.3ch;
+      min-height: 100%; -webkit-font-smoothing: antialiased;
+    }
+    #title-bar {
+      text-align: center; font: 700 18px/1 var(--mono);
+      letter-spacing: 1ch; padding: 12px 20px 0;
+      color: var(--text); background: var(--surface);
+    }
+    header {
+      position: sticky; top: 0; z-index: 100; background: var(--surface);
+      border-bottom: 1px solid var(--border); display: flex;
+      align-items: center; justify-content: center; gap: 10px; padding: 10px 20px;
+    }
+    header a {
+      font: 600 15px var(--sans); color: var(--accent); text-decoration: none;
+      padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    header a:hover { background: var(--hover); }
+    main {
+      max-width: 90ch; margin: 0 auto; padding: 0 64px 24px 64px;
+      min-height: 80vh; margin-top: 24px;
+    }
+    #footer { opacity: 1; }
+    @media (max-width: 800px) {
+      header { padding: 8px 12px; }
+      main { padding: 20px 16px; margin-top: 0; }
+    }
+  </style>
+  <script>
+    (function() {
+      var t = localStorage.getItem("bible-theme") || "system";
+      if (t === "system") {
+        t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      }
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+</head>
+<body>
+  <div id="title-bar" title="SANATHEOS">&Sigma;&Alpha;&Nu;&Alpha;&Theta;&Epsilon;&Omega;&Sigma;</div>
+  <header>
+    <a href="../">&larr; Bible Reader</a>
+  </header>
+
+  <main>
+    <h1 class="book-title">Ecclesiology Cheat Sheet</h1>
+    <p class="description" style="max-width: 70ch; margin: 0 auto 32px;">A concise reference to the Orthodox Christian teaching on the Church&mdash;her nature, structure, worship, and councils.</p>
+
+    <!-- ================================================ -->
+    <section class="chapter-block">
+      <h2 class="section-title">The Nature of the Church</h2>
+      <div class="verses" style="font-size: 16px; line-height: 1.9;">
+        <p>The Church is the <strong>Body of Christ</strong> (1 Corinthians 12:27), animated by the <strong>Holy Spirit</strong>. She is not merely a human institution or a confederation of believers but a <strong>divine-human organism</strong>&mdash;the continuation of the Incarnation in history. Christ is the Head; the faithful are the members; the Holy Spirit is the life-giving breath.</p>
+        <p style="margin-top: 0.8em;">The Nicene Creed confesses the Church as <strong>One, Holy, Catholic, and Apostolic</strong>:</p>
+        <ul style="margin: 0.8em 0 0.8em 1.5em; line-height: 1.8;">
+          <li><strong>One</strong> &mdash; there is a single Church, because there is one Christ. Unity is ontological, not merely organizational.</li>
+          <li><strong>Holy</strong> &mdash; not because her members are sinless, but because the Holy Spirit dwells in her and sanctifies her.</li>
+          <li><strong>Catholic</strong> (<em>katholike</em>) &mdash; universal in the sense of fullness: each local church, gathered around its bishop at the Eucharist, possesses the fullness of the Church.</li>
+          <li><strong>Apostolic</strong> &mdash; founded on the apostles, preserving their faith, and maintaining unbroken succession of bishops from the apostles to the present.</li>
+        </ul>
+
+        <p class="subheading" style="margin-top: 1.5em;">Fathers</p>
+        <ul style="margin-left: 1.5em; font-family: var(--sans); font-size: 14px; color: var(--muted); line-height: 1.7;">
+          <li><strong>St. Ignatius of Antioch</strong> (d. c. 110) &mdash; &ldquo;Where the bishop is, there is the catholic Church&rdquo; (<em>Letter to the Smyrnaeans</em> 8). Earliest use of the term &ldquo;catholic Church.&rdquo;</li>
+          <li><strong>St. Irenaeus of Lyon</strong> &mdash; described the Church as the guardian of apostolic Tradition, handed down through the succession of bishops.</li>
+          <li><strong>St. Cyprian of Carthage</strong> &mdash; &ldquo;He cannot have God for his Father who has not the Church for his mother&rdquo; (<em>On the Unity of the Church</em>).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="chapter-block">
+      <h2 class="section-title">The Eucharistic Ecclesiology</h2>
+      <div class="verses" style="font-size: 16px; line-height: 1.9;">
+        <p>The <strong>Eucharist</strong> is not merely one sacrament among many but the very center of the Church&rsquo;s life. The Church is most fully herself when she is gathered around the <strong>holy table</strong>, offering the Eucharistic sacrifice. Each local Eucharistic assembly, presided over by the bishop (or his delegated priest), <em>is</em> the Church in its fullness&mdash;not a branch or fragment of it.</p>
+        <p style="margin-top: 0.8em;">This <strong>eucharistic ecclesiology</strong> means that the Church is not primarily a juridical structure but a <strong>communion</strong> (<em>koinonia</em>). The unity of the Church is manifested in the common chalice. To be in communion is to share the Eucharist; to be out of communion is to be separated from the Church&rsquo;s life.</p>
+
+        <p class="subheading" style="margin-top: 1.5em;">Fathers &amp; Theologians</p>
+        <ul style="margin-left: 1.5em; font-family: var(--sans); font-size: 14px; color: var(--muted); line-height: 1.7;">
+          <li><strong>St. Ignatius of Antioch</strong> &mdash; insisted on one Eucharist under one bishop as the foundation of Church unity.</li>
+          <li><strong>St. Nicholas Cabasilas</strong> &mdash; in <em>The Life in Christ</em>, described the Eucharist as the consummation of all the sacraments.</li>
+          <li><strong>Fr. Alexander Schmemann</strong> (20th c.) &mdash; in <em>The Eucharist</em>, recovered and articulated eucharistic ecclesiology for the modern Orthodox world.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="chapter-block">
+      <h2 class="section-title">Hierarchy &amp; Conciliarity</h2>
+      <div class="verses" style="font-size: 16px; line-height: 1.9;">
+        <p>The Church is both <strong>hierarchical</strong> and <strong>conciliar</strong> (<em>sobornost</em>). The threefold ministry of <strong>bishop</strong>, <strong>priest</strong>, and <strong>deacon</strong> is attested from the earliest centuries and is understood as essential to the Church&rsquo;s structure.</p>
+
+        <p class="subheading" style="margin-top: 1.5em;">The Bishop</p>
+        <p>The <strong>bishop</strong> (<em>episkopos</em>) is the head of the local church, the guardian of the apostolic faith, and the president of the Eucharistic assembly. <strong>Apostolic succession</strong>&mdash;the unbroken chain of ordination from the apostles&mdash;is not merely historical but charismatic: through it the grace of the Holy Spirit is transmitted for the governance and sanctification of the Church.</p>
+
+        <p class="subheading" style="margin-top: 1.5em;">Conciliarity (<em>Sobornost</em>)</p>
+        <p>No single bishop rules the whole Church. Authority is exercised <strong>conciliarly</strong>&mdash;through councils of bishops, guided by the Holy Spirit. The <strong>Ecumenical Councils</strong> are the highest expression of this conciliar authority. Their dogmatic definitions are received as infallible because they express the <em>consensus of the Church</em> (<em>consensus patrum</em>), confirmed by the whole Body.</p>
+        <p style="margin-top: 0.8em;">The <strong>Ecumenical Patriarch</strong> holds a primacy of honor (&ldquo;first among equals,&rdquo; <em>primus inter pares</em>) but not a primacy of jurisdiction over other autocephalous churches. Each autocephalous church is self-governing, united to the others through shared faith, sacraments, and mutual recognition.</p>
+
+        <p class="subheading" style="margin-top: 1.5em;">Councils &amp; Fathers</p>
+        <ul style="margin-left: 1.5em; font-family: var(--sans); font-size: 14px; color: var(--muted); line-height: 1.7;">
+          <li><strong>St. Ignatius of Antioch</strong> &mdash; the earliest witness to the threefold ministry of bishop, priest, and deacon.</li>
+          <li><strong>Canon 34 of the Apostolic Canons</strong> &mdash; the bishops of a region act together with their primate, and the primate acts only with the bishops: the principle of conciliarity.</li>
+          <li><strong>Canon 28 of Chalcedon</strong> (451) &mdash; granted Constantinople a primacy of honor after Rome, based on the city&rsquo;s civil status, not on divine right.</li>
+          <li><strong>St. Photios the Great</strong> &mdash; defended the conciliar model of Church governance against Roman papal claims in the 9th century.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="chapter-block">
+      <h2 class="section-title">Holy Tradition &amp; Scripture</h2>
+      <div class="verses" style="font-size: 16px; line-height: 1.9;">
+        <p>In Orthodoxy, <strong>Holy Tradition</strong> (<em>Paradosis</em>) and <strong>Holy Scripture</strong> are not two separate sources of revelation but <strong>one living reality</strong>. Scripture is the written expression of Tradition. Tradition is the living context in which Scripture was written, canonized, and is rightly interpreted.</p>
+        <p style="margin-top: 0.8em;">Tradition includes the <strong>Creed</strong>, the <strong>dogmatic definitions</strong> of the councils, the <strong>writings of the Fathers</strong>, the <strong>liturgical life</strong> (lex orandi, lex credendi&mdash;&ldquo;the law of prayer is the law of belief&rdquo;), <strong>canon law</strong>, and <strong>iconography</strong>. It is not a static deposit but the living experience of the Holy Spirit in the Church across the ages.</p>
+
+        <p class="subheading" style="margin-top: 1.5em;">Fathers</p>
+        <ul style="margin-left: 1.5em; font-family: var(--sans); font-size: 14px; color: var(--muted); line-height: 1.7;">
+          <li><strong>St. Basil the Great</strong> &mdash; &ldquo;Of the beliefs and practices preserved in the Church, some we have from written teaching, others we have received from the apostolic tradition handed down to us in a mystery&rdquo; (<em>On the Holy Spirit</em> 27.66).</li>
+          <li><strong>St. Vincent of L&eacute;rins</strong> &mdash; the &ldquo;Vincentian Canon&rdquo;: true doctrine is what has been believed &ldquo;everywhere, always, and by all&rdquo; (<em>quod ubique, quod semper, quod ab omnibus</em>).</li>
+          <li><strong>St. Irenaeus of Lyon</strong> &mdash; described Tradition as the living faith preserved in the churches through apostolic succession.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="chapter-block">
+      <h2 class="section-title">Icons &amp; the Incarnational Principle</h2>
+      <div class="verses" style="font-size: 16px; line-height: 1.9;">
+        <p>The veneration of <strong>icons</strong> is grounded in the <strong>Incarnation</strong>. Because the invisible God became visible in the flesh of Christ, He can be depicted. To deny this is, implicitly, to deny the reality of the Incarnation. The icon is not an idol; the veneration (<em>proskynesis</em>) given to the icon passes to the <strong>prototype</strong>&mdash;the person depicted.</p>
+        <p style="margin-top: 0.8em;">Icons of Christ, the Theotokos, and the saints fill Orthodox churches and homes, serving as &ldquo;windows into heaven&rdquo;&mdash;visible reminders of the invisible reality of the communion of saints.</p>
+
+        <p class="subheading" style="margin-top: 1.5em;">Councils &amp; Fathers</p>
+        <ul style="margin-left: 1.5em; font-family: var(--sans); font-size: 14px; color: var(--muted); line-height: 1.7;">
+          <li><strong>Seventh Ecumenical Council</strong> (Nicaea II, 787) &mdash; upheld the veneration of icons; distinguished <em>latreia</em> (worship, due to God alone) from <em>proskynesis</em> (veneration, given to icons and saints).</li>
+          <li><strong>St. John of Damascus</strong> &mdash; <em>On the Divine Images</em> is the definitive defense of icon veneration, arguing from the Incarnation: &ldquo;I do not worship matter, I worship the Creator of matter who became matter for my sake.&rdquo;</li>
+          <li><strong>St. Theodore the Studite</strong> &mdash; further developed the theology of the icon during the second period of iconoclasm (9th century).</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="chapter-block">
+      <h2 class="section-title">The Communion of Saints</h2>
+      <div class="verses" style="font-size: 16px; line-height: 1.9;">
+        <p>The Church is not bounded by death. The <strong>saints</strong>&mdash;those who have departed in faith and are alive in Christ&mdash;are part of the one Church. The Church <strong>militant</strong> (on earth) and the Church <strong>triumphant</strong> (in heaven) form a single communion. The faithful ask the saints for their <strong>intercessions</strong>, just as one would ask a living brother or sister to pray. The saints are not mediators in the way Christ is the one Mediator (1 Timothy 2:5); they pray <em>with</em> the faithful <em>to</em> Christ.</p>
+
+        <p class="subheading" style="margin-top: 1.5em;">Fathers</p>
+        <ul style="margin-left: 1.5em; font-family: var(--sans); font-size: 14px; color: var(--muted); line-height: 1.7;">
+          <li><strong>St. John of Damascus</strong> &mdash; defended the intercession of the saints in <em>An Exact Exposition of the Orthodox Faith</em>.</li>
+          <li><strong>St. Basil the Great</strong> &mdash; invoked the martyrs&rsquo; prayers in his homilies.</li>
+          <li><strong>The Liturgical Tradition</strong> &mdash; every Orthodox service includes petitions to the Theotokos and the saints, reflecting the living faith of the Church in the communion of saints.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ================================================ -->
+    <section class="chapter-block">
+      <h2 class="section-title">Key Patristic Axioms</h2>
+      <div class="verses" style="font-size: 16px; line-height: 1.9;">
+        <blockquote style="border-left: 3px solid var(--border); padding-left: 1em; margin: 0.8em 0; font-style: italic; color: var(--muted);">
+          &ldquo;Where the bishop is, there is the catholic Church.&rdquo;
+          <br><span style="font-style: normal; font-size: 13px; font-family: var(--sans);">&mdash; St. Ignatius of Antioch, <em>Letter to the Smyrnaeans</em> 8</span>
+        </blockquote>
+        <blockquote style="border-left: 3px solid var(--border); padding-left: 1em; margin: 0.8em 0; font-style: italic; color: var(--muted);">
+          &ldquo;He cannot have God for his Father who has not the Church for his mother.&rdquo;
+          <br><span style="font-style: normal; font-size: 13px; font-family: var(--sans);">&mdash; St. Cyprian of Carthage, <em>On the Unity of the Church</em></span>
+        </blockquote>
+        <blockquote style="border-left: 3px solid var(--border); padding-left: 1em; margin: 0.8em 0; font-style: italic; color: var(--muted);">
+          &ldquo;I do not worship matter, I worship the Creator of matter who became matter for my sake.&rdquo;
+          <br><span style="font-style: normal; font-size: 13px; font-family: var(--sans);">&mdash; St. John of Damascus, <em>On the Divine Images</em></span>
+        </blockquote>
+        <blockquote style="border-left: 3px solid var(--border); padding-left: 1em; margin: 0.8em 0; font-style: italic; color: var(--muted);">
+          &ldquo;Of the beliefs and practices preserved in the Church, some we have from written teaching, others we have received from the apostolic tradition handed down to us in a mystery.&rdquo;
+          <br><span style="font-style: normal; font-size: 13px; font-family: var(--sans);">&mdash; St. Basil the Great, <em>On the Holy Spirit</em> 27.66</span>
+        </blockquote>
+      </div>
+    </section>
+
+  </main>
+
+  <footer id="footer">
+    <p><a href="../">Bible Reader</a> &bull; <strong>Ecclesiology Cheat Sheet</strong></p>
+    <p>Built with <a href="https://bun.sh" target="_blank" rel="noopener noreferrer">Bun</a> &amp; TypeScript</p>
+  </footer>
+
+</body>
+</html>

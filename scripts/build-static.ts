@@ -35,6 +35,20 @@ const staticFiles = [
   "sw.js",
 ];
 
+const moreFiles = [
+  "more/index.html",
+  "more/christology.html",
+  "more/soteriology.html",
+  "more/ecclesiology.html",
+  "more/mariology.html",
+  "more/pneumatology.html",
+  "more/essence-energies.html",
+  "more/theological-terms.html",
+  "more/angelology.html",
+  "more/typology.html",
+  "more/philosophy.html",
+];
+
 const staticDirs = [
   "icons",
   "data",
@@ -42,6 +56,10 @@ const staticDirs = [
 
 // Copy static files (HTML, CSS, PWA)
 for (const name of staticFiles) {
+  await cp(join(PUBLIC, name), join(OUT, name));
+}
+await mkdir(join(OUT, "more"), { recursive: true });
+for (const name of moreFiles) {
   await cp(join(PUBLIC, name), join(OUT, name));
 }
 for (const dir of staticDirs) {
@@ -60,16 +78,18 @@ if (cssResult.success && cssResult.outputs.length > 0) {
   console.log("CSS minified.");
 }
 
-// Minify HTML
-const htmlPath = join(OUT, "index.html");
-let html = await readFile(htmlPath, "utf-8");
-html = html
-  .replace(/<!--[\s\S]*?-->/g, "")          // remove comments
-  .replace(/\n\s*/g, "\n")                   // collapse leading whitespace per line
-  .replace(/\n+/g, "\n")                     // collapse blank lines
-  .replace(/>\s+</g, "><")                   // remove whitespace between tags
-  .trim();
-await writeFile(htmlPath, html, "utf-8");
+// Minify HTML files
+for (const htmlFile of ["index.html", ...moreFiles]) {
+  const htmlPath = join(OUT, htmlFile);
+  let html = await readFile(htmlPath, "utf-8");
+  html = html
+    .replace(/<!--[\s\S]*?-->/g, "")          // remove comments
+    .replace(/\n\s*/g, "\n")                   // collapse leading whitespace per line
+    .replace(/\n+/g, "\n")                     // collapse blank lines
+    .replace(/>\s+</g, "><")                   // remove whitespace between tags
+    .trim();
+  await writeFile(htmlPath, html, "utf-8");
+}
 console.log("HTML minified.");
 
 // Discover and generate per-translation JSON files

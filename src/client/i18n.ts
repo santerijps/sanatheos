@@ -58,6 +58,7 @@ interface Strings {
   footerLine1: string;
   footerDescriptions: string;
   footerStyleguide: string;
+  footerCheatSheets: string;
   footerFavicon: string;
 
   // New features
@@ -147,6 +148,7 @@ const EN: Strings = {
   footerLine1: "All available Bible translations are in the public domain.",
   footerDescriptions: 'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> (CPDV).',
   footerStyleguide: 'Paragraph and poetry formatting is based on the <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) translation.',
+  footerCheatSheets: '<a href="./more/">More Content</a>: <a href="./more/christology.html">Christology</a> &bull; <a href="./more/soteriology.html">Soteriology</a> &bull; <a href="./more/ecclesiology.html">Ecclesiology</a> &bull; <a href="./more/mariology.html">Mariology</a> &bull; <a href="./more/pneumatology.html">Pneumatology</a> &bull; <a href="./more/essence-energies.html">Essence&ndash;Energies</a> &bull; <a href="./more/theological-terms.html">Theological Terms</a> &bull; <a href="./more/angelology.html">Angelology</a> &bull; <a href="./more/typology.html">Typology</a> &bull; <a href="./more/philosophy.html">Philosophy</a>',
   footerFavicon: 'Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Copied!",
@@ -235,6 +237,7 @@ const FI: Strings = {
   footerLine1: "Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
   footerDescriptions: 'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä (CPDV).',
   footerStyleguide: 'Kappalejako ja runomuotoilu perustuvat <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) -käännökseen.',
+  footerCheatSheets: '<a href="./more/">Lis&auml;sis&auml;lt&ouml;&auml;</a>: <a href="./more/christology.html">Kristologia</a> &bull; <a href="./more/soteriology.html">Soteriologia</a> &bull; <a href="./more/ecclesiology.html">Ekklesiologia</a> &bull; <a href="./more/mariology.html">Mariologia</a> &bull; <a href="./more/pneumatology.html">Pneumatologia</a> &bull; <a href="./more/essence-energies.html">Olemus&ndash;energiat</a> &bull; <a href="./more/theological-terms.html">Teologiset termit</a> &bull; <a href="./more/angelology.html">Angelologia</a> &bull; <a href="./more/typology.html">Typologia</a> &bull; <a href="./more/philosophy.html">Filosofia</a>',
   footerFavicon: 'Sivustokuvake: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo;, Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Kopioitu!",
