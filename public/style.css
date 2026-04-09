@@ -966,10 +966,74 @@ mark {
   color: var(--text);
 }
 
+/* === Share Button === */
+.share-wrap {
+  display: inline-flex;
+  position: relative;
+  vertical-align: middle;
+  margin-left: 4px;
+  padding-bottom: 6px;
+  margin-bottom: -6px;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 2px 6px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--subtle);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.share-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.share-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 200;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 4px 0;
+  white-space: nowrap;
+}
+
+.share-wrap:hover .share-dropdown {
+  display: block;
+}
+
+.share-opt {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 6px 12px;
+  font: 13px var(--sans);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+
+.share-opt:hover {
+  background: var(--hover);
+}
+
 /* === Print Styles === */
 @media print {
   header, footer, #index-overlay, #info-overlay, #settings-overlay,
-  #verse-menu, .toast, .chapter-nav, .copy-btn,
+  #verse-menu, .toast, .chapter-nav, .copy-btn, .share-wrap,
   .read-full-chapter {
     display: none !important;
   }

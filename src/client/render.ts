@@ -12,6 +12,12 @@ export function setHighlightMap(m: Map<string, HighlightColor>) {
   highlightMap = m;
 }
 
+let translationCode = "";
+
+export function setTranslationCode(code: string) {
+  translationCode = code;
+}
+
 let descriptions: DescriptionData = [];
 let secondaryDescriptions: DescriptionData = [];
 
@@ -77,6 +83,10 @@ function getChapterDescription(book: string, chapter: number): string {
 function descriptionHtml(text: string): string {
   if (!text) return "";
   return `<p class="description">${esc(text)}</p>`;
+}
+
+function shareButtonHtml(): string {
+  return ` <span class="share-wrap"><button class="share-btn">&#128279;</button><span class="share-dropdown"><button class="share-opt" data-share="with">${esc(t().shareWith)} ${esc(translationCode)}</button><button class="share-opt" data-share="without">${esc(t().shareWithout)}</button></span></span>`;
 }
 
 function getHighlightClass(book: string, chapter: number, verse: number): string {
@@ -252,7 +262,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
   let html = navArrowsHtml(prev, next);
   html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button></h2>`;
+  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button>${shareButtonHtml()}</h2>`;
   if (chapter === 1) html += descriptionHtml(getBookDescription(book));
   html += descriptionHtml(getChapterDescription(book, chapter));
   html += `<div class="verses">`;
@@ -293,7 +303,7 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 
   const { prev, next } = getVerseNav(data, book, chapter, verse);
   $("content").innerHTML = `
-    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button></h2>
+    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button>${shareButtonHtml()}</h2>
     <div class="verses single-verse">
       <span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}</span>
     </div>
@@ -337,7 +347,7 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
   html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
   const segNums: number[] = [];
   for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
-  html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button></h2><div class="verses">`;
+  html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button>${shareButtonHtml()}</h2><div class="verses">`;
   html += renderStyledVerses(book, chapter, segNums, ch);
   html += `</div>`;
   html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;

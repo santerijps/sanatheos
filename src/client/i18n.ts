@@ -65,6 +65,9 @@ interface Strings {
   copied: string;
   copyVerse: string;
   copyBoth: string;
+  shareWith: string;
+  shareWithout: string;
+  linkCopied: string;
   highlight: string;
   removeHighlight: string;
   showMore: string;
@@ -154,6 +157,9 @@ const EN: Strings = {
   copied: "Copied!",
   copyVerse: "Copy verse",
   copyBoth: "Copy both",
+  shareWith: "Copy link with",
+  shareWithout: "Copy link",
+  linkCopied: "Link copied!",
   highlight: "Highlight",
   removeHighlight: "Remove highlight",
   showMore: "Show more",
@@ -243,6 +249,9 @@ const FI: Strings = {
   copied: "Kopioitu!",
   copyVerse: "Kopioi jae",
   copyBoth: "Kopioi molemmat",
+  shareWith: "Kopioi linkki käännöksellä",
+  shareWithout: "Kopioi linkki",
+  linkCopied: "Linkki kopioitu!",
   highlight: "Korosta",
   removeHighlight: "Poista korostus",
   showMore: "Näytä lisää",

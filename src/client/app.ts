@@ -3,7 +3,7 @@ import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight } 
 import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, setSubheadings, setSecondarySubheadings, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, setSubheadings, setSecondarySubheadings, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav, setTranslationCode } from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -88,6 +88,7 @@ async function init() {
   const initialState = readState();
   currentTranslation = initialState.translation || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
   setTranslation(currentTranslation);
+  setTranslationCode(currentTranslation);
 
   // Determine initial language: sync with translation
   const savedLang = TRANSLATION_LANG[currentTranslation] || localStorage.getItem("bible-language") || "en";
@@ -169,6 +170,7 @@ async function init() {
         data = newData;
         currentTranslation = code;
         setTranslation(code);
+        setTranslationCode(code);
         localStorage.setItem("bible-translation", code);
         initSearch(data);
 
@@ -520,6 +522,18 @@ async function init() {
       return;
     }
 
+    // Click on share option → copy link to clipboard
+    const shareOpt = (e.target as HTMLElement).closest(".share-opt") as HTMLElement;
+    if (shareOpt) {
+      e.preventDefault();
+      const url = new URL(window.location.href);
+      if (shareOpt.dataset.share === "without") {
+        url.searchParams.delete("t");
+      }
+      navigator.clipboard.writeText(url.toString()).then(() => showToast(t().linkCopied));
+      return;
+    }
+
     // Click on copy button → copy text to clipboard
     const copyBtn = (e.target as HTMLElement).closest(".copy-btn") as HTMLElement;
     if (copyBtn) {
@@ -727,6 +741,7 @@ async function init() {
         data = await fetchTranslation(s.translation);
         currentTranslation = s.translation;
         setTranslation(s.translation);
+        setTranslationCode(s.translation);
         localStorage.setItem("bible-translation", s.translation);
         initSearch(data);
 
