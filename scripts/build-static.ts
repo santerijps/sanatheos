@@ -5,7 +5,7 @@ import { loadBible, discoverTranslations } from "../src/shared/bible-loader.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
-const TRANSLATIONS_DIR = join(PUBLIC, "translations");
+const TEXT_DIR = join(PUBLIC, "text");
 const OUT = join(ROOT, "docs");
 
 // Clean and create output directory
@@ -93,19 +93,17 @@ for (const htmlFile of ["index.html", ...moreFiles]) {
 console.log("HTML minified.");
 
 // Discover and generate per-translation JSON files
-const translations = await discoverTranslations(TRANSLATIONS_DIR);
+const translations = await discoverTranslations(TEXT_DIR);
+const outText = join(OUT, "text");
+await mkdir(outText, { recursive: true });
 for (const t of translations) {
-  const json = await loadBible(TRANSLATIONS_DIR, t);
-  // Default (WEB) also written as bible.json for backward compatibility
-  if (t === "WEB") {
-    await Bun.write(join(OUT, "bible.json"), json);
-  }
-  await Bun.write(join(OUT, `bible-${t}.json`), json);
+  const json = await loadBible(TEXT_DIR, t);
+  await Bun.write(join(outText, `bible-${t}.json`), json);
   console.log(`bible-${t}.json written (${(json.length / 1024 / 1024).toFixed(1)} MB).`);
 }
 
 // Write translations manifest
-await Bun.write(join(OUT, "translations.json"), JSON.stringify(translations));
+await Bun.write(join(outText, "translations.json"), JSON.stringify(translations));
 console.log(`translations.json written (${translations.join(", ")})`);
 
 // Create .nojekyll to prevent GitHub Pages from ignoring underscore files

@@ -1024,7 +1024,7 @@ describe("parseQueryBooks", () => {
     expect(result).toHaveLength(1);
     expect(result[0].book).toBe("Exodus");
     expect(result[0].rest).toBe("2:5-10");
-    setTranslation("WEB");
+    setTranslation("NHEB");
   });
 
   test("KR38 Finnish prefix resolves to English key", () => {
@@ -1035,19 +1035,19 @@ describe("parseQueryBooks", () => {
     expect(result[0].rest).toBe("2:5-10");
     expect(result[1].book).toBe("Job");
     expect(result[1].rest).toBe("1:13-22");
-    setTranslation("WEB");
+    setTranslation("NHEB");
   });
 });
 
 // --- search only shows results for quoted text ---
 describe("search — nav-only queries without quotes", () => {
   test("tryParseNav returns null when query has unresolvable book", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(tryParseNav("Foobar 2:5-10; John 1:1-3")).toBeNull();
   });
 
   test("search still returns results for partially valid nav query without quotes", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const results = search(fixture, "Foobar 2:5-10; John 1:1-3");
     // "John" resolves in the search function even though tryParseNav failed
     // But the app layer should not render this as a list for nav-only queries
@@ -1058,62 +1058,62 @@ describe("search — nav-only queries without quotes", () => {
 // --- 3-letter short codes ---
 describe("matchBook — 3-letter short codes", () => {
   test("gen resolves to Genesis", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("gen 1")).toEqual({ book: "Genesis", rest: "1" });
   });
 
   test("exo resolves to Exodus", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("exo 3")).toEqual({ book: "Exodus", rest: "3" });
   });
 
   test("mat resolves to Matthew", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("mat 5")).toEqual({ book: "Matthew", rest: "5" });
   });
 
   test("rev resolves to Revelation", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("rev")).toEqual({ book: "Revelation", rest: "" });
   });
 
   test("1co resolves to 1 Corinthians", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("1co 13")).toEqual({ book: "1 Corinthians", rest: "13" });
   });
 
   test("1sa resolves to 1 Samuel", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("1sa 3")).toEqual({ book: "1 Samuel", rest: "3" });
   });
 
   test("2ki resolves to 2 Kings", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("2ki 5")).toEqual({ book: "2 Kings", rest: "5" });
   });
 
   test("psa resolves to Psalm", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("psa 23")).toEqual({ book: "Psalm", rest: "23" });
   });
 
   test("jud resolves to Jude", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("jud")).toEqual({ book: "Jude", rest: "" });
   });
 
   test("mrk resolves to Mark", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("mrk 1")).toEqual({ book: "Mark", rest: "1" });
   });
 
   test("phi resolves to Philippians", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("phi 4")).toEqual({ book: "Philippians", rest: "4" });
   });
 
   test("phm resolves to Philemon", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     expect(_matchBook("phm")).toEqual({ book: "Philemon", rest: "" });
   });
 });
@@ -1232,7 +1232,7 @@ describe("normalizeQuery", () => {
 // --- matchBook with abbreviation periods ---
 describe("matchBook with periods", () => {
   test("Matt. matches Matthew", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const result = _matchBook("Matt. 27:1");
     expect(result).not.toBeNull();
     expect(result!.book).toBe("Matthew");
@@ -1240,7 +1240,7 @@ describe("matchBook with periods", () => {
   });
 
   test("Joh. matches John", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const result = _matchBook("Joh. 3:16");
     expect(result).not.toBeNull();
     expect(result!.book).toBe("John");
@@ -1253,11 +1253,11 @@ describe("matchBook with periods", () => {
     expect(result).not.toBeNull();
     expect(result!.book).toBe("Luke");
     expect(result!.rest).toBe("23:39");
-    setTranslation("WEB");
+    setTranslation("NHEB");
   });
 
   test("Gen. matches Genesis", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const result = _matchBook("Gen. 1:1");
     expect(result).not.toBeNull();
     expect(result!.book).toBe("Genesis");
@@ -1265,7 +1265,7 @@ describe("matchBook with periods", () => {
   });
 
   test("book name with period and no rest", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const result = _matchBook("Rev.");
     expect(result).not.toBeNull();
     expect(result!.book).toBe("Revelation");
@@ -1277,14 +1277,14 @@ describe("matchBook with periods", () => {
     const result = _matchBook("ap. t.");
     expect(result).not.toBeNull();
     expect(result!.book).toBe("Acts");
-    setTranslation("WEB");
+    setTranslation("NHEB");
   });
 });
 
 // --- Full integration: non-standard search syntax ---
 describe("non-standard search syntax", () => {
   test("tryParseNav with en-dashes and comma separation", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const result = tryParseNav("Matt. 27:1\u201338, Joh. 19:31\u201337");
     expect(result).not.toBeNull();
     expect(result).toHaveLength(2);
@@ -1297,7 +1297,7 @@ describe("non-standard search syntax", () => {
   });
 
   test("search with the full non-standard example against fixture", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const results = search(fixture, "Gen. 1:1\u20133, Joh. 3:16\u201317");
     expect(results.length).toBe(5); // Gen 1:1-3 + John 3:16-17
     expect(results[0].book).toBe("Genesis");
@@ -1312,7 +1312,7 @@ describe("non-standard search syntax", () => {
     expect(result[0].rest).toBe("27:1-38");
     expect(result[1].book).toBe("Luke");
     expect(result[1].rest).toBe("23:39-43");
-    setTranslation("WEB");
+    setTranslation("NHEB");
   });
 
   test("en-dash in chapter range", () => {
@@ -1360,7 +1360,7 @@ describe("escapeRegex", () => {
 // ---------------------------------------------------------------------------
 
 describe("parseRef edge cases", () => {
-  beforeEach(() => { setTranslation("WEB"); initSearch(fixture); });
+  beforeEach(() => { setTranslation("NHEB"); initSearch(fixture); });
 
   test("chapter 0 returns no results", () => {
     const results = search(fixture, "Genesis 0");
@@ -1470,7 +1470,7 @@ describe("normalizeQuery edge cases", () => {
 // ---------------------------------------------------------------------------
 
 describe("matchBook edge cases", () => {
-  beforeEach(() => { setTranslation("WEB"); initSearch(fixture); });
+  beforeEach(() => { setTranslation("NHEB"); initSearch(fixture); });
 
   test("exact match preferred over prefix when 'John' could match '1 John'", () => {
     const result = _matchBook("John");
@@ -1495,7 +1495,7 @@ describe("matchBook edge cases", () => {
 // ---------------------------------------------------------------------------
 
 describe("parseQueryBooks edge cases", () => {
-  beforeEach(() => { setTranslation("WEB"); initSearch(fixture); });
+  beforeEach(() => { setTranslation("NHEB"); initSearch(fixture); });
 
   test("empty string returns empty array", () => {
     expect(parseQueryBooks("")).toEqual([]);
@@ -1543,21 +1543,21 @@ describe("search with empty data", () => {
 
 describe("alias caching", () => {
   test("getAliases returns the same Map instance on repeated calls", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const a = getAliases();
     const b = getAliases();
     expect(a).toBe(b); // same reference, not just equal
   });
 
   test("getSortedAliases returns the same array on repeated calls", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const a = getSortedAliases();
     const b = getSortedAliases();
     expect(a).toBe(b);
   });
 
   test("setTranslation invalidates the alias cache", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const a = getAliases();
     setTranslation("KR38");
     const b = getAliases();
@@ -1565,7 +1565,7 @@ describe("alias caching", () => {
   });
 
   test("getSortedAliases is sorted longest-first", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const sorted = getSortedAliases();
     for (let i = 1; i < sorted.length; i++) {
       expect(sorted[i - 1][0].length).toBeGreaterThanOrEqual(sorted[i][0].length);
@@ -1573,7 +1573,7 @@ describe("alias caching", () => {
   });
 
   test("getSortedAliases entries match getAliases entries", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     const aliases = getAliases();
     const sorted = getSortedAliases();
     expect(sorted.length).toBe(aliases.size);
@@ -1589,7 +1589,7 @@ describe("alias caching", () => {
 
 describe("initSearch optimization", () => {
   test("pure text search iterates BibleData directly", () => {
-    setTranslation("WEB");
+    setTranslation("NHEB");
     initSearch(fixture);
     // A text search should still find results from all books
     const results = search(fixture, '"beginning"');

@@ -5,7 +5,7 @@ import { loadBible, discoverTranslations } from "./shared/bible-loader.ts";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PUBLIC = join(ROOT, "public");
-const TRANSLATIONS_DIR = join(PUBLIC, "translations");
+const TEXT_DIR = join(PUBLIC, "text");
 
 async function buildClient() {
   const result = await Bun.build({
@@ -25,10 +25,10 @@ async function buildClient() {
 await buildClient();
 
 // Pre-load all translations into memory
-const translations = await discoverTranslations(TRANSLATIONS_DIR);
+const translations = await discoverTranslations(TEXT_DIR);
 const bibleCache: Record<string, string> = {};
 for (const t of translations) {
-  bibleCache[t] = await loadBible(TRANSLATIONS_DIR, t);
+  bibleCache[t] = await loadBible(TEXT_DIR, t);
   console.log(`${t} loaded (${(bibleCache[t].length / 1024 / 1024).toFixed(1)} MB)`);
 }
 const translationsJson = JSON.stringify(translations);
@@ -64,8 +64,8 @@ Bun.serve({
       return new Response("Bad Request", { status: 400 });
     }
 
-    // Match /bible-CODE.json (e.g. /bible-WEB.json)
-    const bibleMatch = path.match(/^\/bible-([A-Z0-9]+)\.json$/i);
+    // Match /text/bible-CODE.json (e.g. /text/bible-NHEB.json)
+    const bibleMatch = path.match(/^\/text\/bible-([A-Z0-9]+)\.json$/i);
     if (bibleMatch) {
       const t = bibleMatch[1].toUpperCase();
       const json = bibleCache[t];
@@ -92,7 +92,7 @@ Bun.serve({
       });
     }
 
-    if (path === "/translations.json") {
+    if (path === "/text/translations.json") {
       return new Response(translationsJson, {
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +112,10 @@ Bun.serve({
     const file = Bun.file(full);
     if (await file.exists()) {
       return new Response(file, {
-        headers: { "Content-Type": MIME[extname(full)] || "application/octet-stream" },
+        headers: {
+          "Content-Type": MIME[extname(full)] || "application/octet-stream",
+          "Cache-Control": "no-cache",
+        },
       });
     }
 

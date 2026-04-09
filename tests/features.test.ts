@@ -421,7 +421,7 @@ describe("i18n — PWA feature in info items", () => {
 // Descriptions — type validation and file structure
 // ---------------------------------------------------------------------------
 
-const TRANSLATIONS_DIR = join(ROOT, "public", "translations");
+const TEXT_DIR = join(ROOT, "public", "text");
 
 describe("DescriptionData types", () => {
   test("BookDescription has required fields", () => {
@@ -664,7 +664,7 @@ describe("i18n — function-type strings", () => {
     setLanguage("en");
     expect(t().loadingTranslation("KR38")).toContain("KR38");
     setLanguage("fi");
-    expect(t().loadingTranslation("WEB")).toContain("WEB");
+    expect(t().loadingTranslation("NHEB")).toContain("NHEB");
   });
 });
 

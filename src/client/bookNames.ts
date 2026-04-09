@@ -43,6 +43,26 @@ const KR38: Record<string, BookEntry> = {
   "Haggai":         { display: "Haggain kirja",            aliases: ["hagg", "haggai"] },
   "Zechariah":      { display: "Sakarjan kirja",           aliases: ["sak", "sakarja"] },
   "Malachi":        { display: "Malakian kirja",           aliases: ["malakia", "malakian kirja"] },
+  // Deuterocanonical
+  "Tobit":          { display: "Tobitin kirja",            aliases: ["tob", "tobit"] },
+  "Judith":         { display: "Juditin kirja",            aliases: ["judit"] },
+  "Esther (Greek)": { display: "Esterin kirja (kreikk.)",  aliases: ["est kreikk", "esteri kreikk"] },
+  "Wisdom":         { display: "Viisauden kirja",          aliases: ["viis", "viisaus"] },
+  "Sirach":         { display: "Sirakin kirja",            aliases: ["sirak", "sir"] },
+  "Baruch":         { display: "Barukin kirja",            aliases: ["baruk"] },
+  "Prayer of Azariah": { display: "Asarjan rukous",        aliases: ["asarjan rukous"] },
+  "Susanna":        { display: "Susanna",                  aliases: [] },
+  "Bel and the Dragon": { display: "Bel ja lohikäärme",   aliases: ["bel"] },
+  "1 Maccabees":    { display: "1. Makkabealaiskirja",     aliases: ["1 makk", "1. makk"] },
+  "2 Maccabees":    { display: "2. Makkabealaiskirja",     aliases: ["2 makk", "2. makk"] },
+  "1 Esdras":       { display: "1. Esdran kirja",          aliases: ["1 esdr", "1. esdr"] },
+  "Prayer of Manasses": { display: "Manassen rukous",      aliases: ["manassen rukous"] },
+  "Additional Psalm": { display: "Psalmi 151",             aliases: ["ps 151", "psalmi 151"] },
+  "3 Maccabees":    { display: "3. Makkabealaiskirja",     aliases: ["3 makk", "3. makk"] },
+  "2 Esdras":       { display: "2. Esdran kirja",          aliases: ["2 esdr", "2. esdr"] },
+  "4 Maccabees":    { display: "4. Makkabealaiskirja",     aliases: ["4 makk", "4. makk"] },
+  "Laodiceans":     { display: "Laodikealaiskirje",        aliases: ["laodikea"] },
+  // New Testament
   "Matthew":        { display: "Matteuksen evankeliumi",   aliases: ["matt", "matteus"] },
   "Mark":           { display: "Markuksen evankeliumi",    aliases: ["markus", "markuksen evankeliumi"] },
   "Luke":           { display: "Luukkaan evankeliumi",     aliases: ["luuk", "luukas"] },
@@ -72,7 +92,9 @@ const KR38: Record<string, BookEntry> = {
   "Revelation":     { display: "Ilmestyskirja",            aliases: ["ilm", "ilmestyskirja"] },
 };
 
-const WEB: Record<string, BookEntry> = {
+/** English book names/aliases shared by NHEB, KJV, CPDV, and any other English translation. */
+const EN: Record<string, BookEntry> = {
+  // Old Testament
   "Genesis":        { display: "Genesis",              aliases: ["gen"] },
   "Exodus":         { display: "Exodus",               aliases: ["exod", "exo", "ex"] },
   "Leviticus":      { display: "Leviticus",            aliases: ["lev"] },
@@ -112,6 +134,26 @@ const WEB: Record<string, BookEntry> = {
   "Haggai":         { display: "Haggai",               aliases: ["hag"] },
   "Zechariah":      { display: "Zechariah",            aliases: ["zech", "zec"] },
   "Malachi":        { display: "Malachi",              aliases: ["mal"] },
+  // Deuterocanonical
+  "Tobit":          { display: "Tobit",                aliases: ["tob"] },
+  "Judith":         { display: "Judith",               aliases: ["jdt"] },
+  "Esther (Greek)": { display: "Esther (Greek)",       aliases: ["esg", "greek esther"] },
+  "Wisdom":         { display: "Wisdom",               aliases: ["wis", "wisdom of solomon"] },
+  "Sirach":         { display: "Sirach",               aliases: ["sir", "ecclesiasticus"] },
+  "Baruch":         { display: "Baruch",               aliases: ["bar"] },
+  "Prayer of Azariah": { display: "Prayer of Azariah", aliases: ["pra", "azariah"] },
+  "Susanna":        { display: "Susanna",              aliases: ["sus"] },
+  "Bel and the Dragon": { display: "Bel and the Dragon", aliases: ["bel"] },
+  "1 Maccabees":    { display: "1 Maccabees",          aliases: ["1 macc", "1macc", "1ma"] },
+  "2 Maccabees":    { display: "2 Maccabees",          aliases: ["2 macc", "2macc", "2ma"] },
+  "1 Esdras":       { display: "1 Esdras",             aliases: ["1 esdr", "1esdr", "1es"] },
+  "Prayer of Manasses": { display: "Prayer of Manasses", aliases: ["man", "manasses"] },
+  "Additional Psalm": { display: "Additional Psalm",   aliases: ["psalm 151", "ps 151"] },
+  "3 Maccabees":    { display: "3 Maccabees",          aliases: ["3 macc", "3macc", "3ma"] },
+  "2 Esdras":       { display: "2 Esdras",             aliases: ["2 esdr", "2esdr", "2es"] },
+  "4 Maccabees":    { display: "4 Maccabees",          aliases: ["4 macc", "4macc", "4ma"] },
+  "Laodiceans":     { display: "Laodiceans",           aliases: ["lao"] },
+  // New Testament
   "Matthew":        { display: "Matthew",              aliases: ["matt", "mat", "mt"] },
   "Mark":           { display: "Mark",                 aliases: ["mrk", "mk"] },
   "Luke":           { display: "Luke",                 aliases: ["luk", "lk"] },
@@ -141,9 +183,14 @@ const WEB: Record<string, BookEntry> = {
   "Revelation":     { display: "Revelation",           aliases: ["rev", "rv", "apocalypse"] },
 };
 
-const TRANSLATIONS: Record<string, Record<string, BookEntry>> = { KR38, WEB };
+const TRANSLATIONS: Record<string, Record<string, BookEntry>> = {
+  KR38,
+  NHEB: EN,
+  KJV: EN,
+  CPDV: EN,
+};
 
-let currentCode = "WEB";
+let currentCode = "NHEB";
 let aliasCache: Map<string, string> | null = null;
 let sortedAliasCache: [string, string][] | null = null;
 

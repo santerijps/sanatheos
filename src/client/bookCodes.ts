@@ -1,6 +1,7 @@
 /** Short language-independent book codes for URLs (3–4 chars). */
 
 const CODE_TO_BOOK: Record<string, string> = {
+  // Old Testament (39)
   gen: "Genesis",
   exo: "Exodus",
   lev: "Leviticus",
@@ -40,6 +41,26 @@ const CODE_TO_BOOK: Record<string, string> = {
   hag: "Haggai",
   zec: "Zechariah",
   mal: "Malachi",
+  // Deuterocanonical / Apocrypha
+  tob: "Tobit",
+  jdt: "Judith",
+  esg: "Esther (Greek)",
+  wis: "Wisdom",
+  sir: "Sirach",
+  bar: "Baruch",
+  pra: "Prayer of Azariah",
+  sus: "Susanna",
+  bel: "Bel and the Dragon",
+  "1ma": "1 Maccabees",
+  "2ma": "2 Maccabees",
+  "1es": "1 Esdras",
+  man: "Prayer of Manasses",
+  aps: "Additional Psalm",
+  "3ma": "3 Maccabees",
+  "2es": "2 Esdras",
+  "4ma": "4 Maccabees",
+  lao: "Laodiceans",
+  // New Testament (27)
   mat: "Matthew",
   mrk: "Mark",
   luk: "Luke",

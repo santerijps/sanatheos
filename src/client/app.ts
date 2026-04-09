@@ -8,8 +8,8 @@ import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
 let data: BibleData;
-let currentTranslation = "WEB";
-const DEFAULT_TRANSLATION = "WEB";
+let currentTranslation = "NHEB";
+const DEFAULT_TRANSLATION = "NHEB";
 let translationRequestId = 0;
 let parallelTranslation = "";
 let parallelData: BibleData | null = null;
@@ -22,7 +22,7 @@ function withTranslationParams(s: AppState): AppState {
 async function fetchTranslation(code: string): Promise<BibleData> {
   const cached = await loadBible(code);
   if (cached) return cached;
-  const res = await fetch(`./bible-${encodeURIComponent(code)}.json`);
+  const res = await fetch(`./text/bible-${encodeURIComponent(code)}.json`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const d: BibleData = await res.json();
   await saveBible(code, d);
@@ -31,7 +31,7 @@ async function fetchTranslation(code: string): Promise<BibleData> {
 
 async function fetchTranslations(): Promise<string[]> {
   try {
-    const res = await fetch("./translations.json");
+    const res = await fetch("./text/translations.json");
     if (!res.ok) return [DEFAULT_TRANSLATION];
     return await res.json();
   } catch {
@@ -920,12 +920,16 @@ function applyState(s: AppState) {
 }
 
 const TRANSLATION_NAMES: Record<string, { name: string; language: string }> = {
-  WEB: { name: "World English Bible", language: "English" },
+  NHEB: { name: "New Heart English Bible", language: "English" },
+  KJV: { name: "King James Version", language: "English" },
+  CPDV: { name: "Catholic Public Domain Version", language: "English" },
   KR38: { name: "Raamattu 1933/1938", language: "Suomi" },
 };
 
 const TRANSLATION_LANG: Record<string, string> = {
-  WEB: "en",
+  NHEB: "en",
+  KJV: "en",
+  CPDV: "en",
   KR38: "fi",
 };
 

@@ -573,14 +573,27 @@ export function renderIndex(
     }
   }
 
+  const DC_BOOKS = new Set(["Tobit", "Judith", "Esther (Greek)", "Wisdom", "Sirach", "Baruch",
+    "Prayer of Azariah", "Susanna", "Bel and the Dragon",
+    "1 Maccabees", "2 Maccabees", "1 Esdras", "Prayer of Manasses",
+    "Additional Psalm", "3 Maccabees", "2 Esdras", "4 Maccabees", "Laodiceans"]);
+
   const books = Object.keys(data);
   let addedNtLabel = false;
+  let addedDcLabel = false;
   const otLabel = document.createElement("div");
   otLabel.className = "idx-section-label";
   otLabel.textContent = t().oldTestament;
   booksCol.appendChild(otLabel);
 
   for (const book of books) {
+    if (!addedDcLabel && DC_BOOKS.has(book)) {
+      addedDcLabel = true;
+      const dcLabel = document.createElement("div");
+      dcLabel.className = "idx-section-label";
+      dcLabel.textContent = t().deuterocanonical;
+      booksCol.appendChild(dcLabel);
+    }
     if (book === "Matthew" && !addedNtLabel) {
       addedNtLabel = true;
       const ntLabel = document.createElement("div");

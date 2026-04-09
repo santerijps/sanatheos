@@ -53,6 +53,7 @@ interface Strings {
   // Index panel
   oldTestament: string;
   newTestament: string;
+  deuterocanonical: string;
 
   // Footer
   footerLine1: string;
@@ -128,7 +129,7 @@ const EN: Strings = {
     "<kbd>Enter</kbd> &mdash; Select item in the index panel",
   ],
   infoSettingsTitle: "Settings",
-  infoSettingsText: "Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. WEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.",
+  infoSettingsText: "Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. NHEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.",
   infoFeaturesTitle: "Features",
   infoFeaturesItems: [
     "<strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.",
@@ -143,6 +144,7 @@ const EN: Strings = {
 
   oldTestament: "Old Testament",
   newTestament: "New Testament",
+  deuterocanonical: "Deuterocanonical",
 
   footerLine1: "All available Bible translations are in the public domain.",
   footerDescriptions: 'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> (CPDV).',
@@ -216,7 +218,7 @@ const FI: Strings = {
     "<kbd>Enter</kbd> &mdash; Valitse kohde",
   ],
   infoSettingsTitle: "Asetukset",
-  infoSettingsText: "Napsauta <strong>&#9881;</strong>-rataspainiketta avataksesi asetukset. Voit vaihtaa raamatunkäännöstä (esim. WEB, KR38), valita <strong>rinnakkaiskäännöksen</strong> (vierekkäin-näkymä), asettaa <strong>teeman</strong> (Vaalea, Tumma tai Järjestelmä) ja vaihtaa sovelluksen kielen. Valinnat tallennetaan.",
+  infoSettingsText: "Napsauta <strong>&#9881;</strong>-rataspainiketta avataksesi asetukset. Voit vaihtaa raamatunkäännöstä (esim. NHEB, KR38), valita <strong>rinnakkaiskäännöksen</strong> (vierekkäin-näkymä), asettaa <strong>teeman</strong> (Vaalea, Tumma tai Järjestelmä) ja vaihtaa sovelluksen kielen. Valinnat tallennetaan.",
   infoFeaturesTitle: "Ominaisuudet",
   infoFeaturesItems: [
     "<strong>Korostus</strong> &mdash; Napsauta hiiren oikealla jaenumeroa ja valitse korostusväri (keltainen, vihreä, sininen, pinkki, oranssi). Valitse &ldquo;Poista korostus&rdquo; poistaaksesi sen.",
@@ -231,6 +233,7 @@ const FI: Strings = {
 
   oldTestament: "Vanha testamentti",
   newTestament: "Uusi testamentti",
+  deuterocanonical: "Deuterokanoniset kirjat",
 
   footerLine1: "Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
   footerDescriptions: 'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä (CPDV).',
