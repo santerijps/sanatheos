@@ -14,10 +14,10 @@ const SHELL_ASSETS = [
     "./more/philosophy.html",
     "./style.css",
     "./bundle.js",
-    "./favicon.ico",
     "./manifest.json",
-    "./icons/pwaicon-192.png",
-    "./icons/pwaicon-512.png",
+    "./icon/favicon.ico",
+    "./icon/pwaicon-192.png",
+    "./icon/pwaicon-512.png",
 ];
 
 self.addEventListener("install", (event) => {

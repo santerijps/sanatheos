@@ -30,7 +30,6 @@ const staticFiles = [
   "index.html",
   "style.css",
   "robots.txt",
-  "favicon.ico",
   "manifest.json",
   "sw.js",
 ];
@@ -50,7 +49,7 @@ const moreFiles = [
 ];
 
 const staticDirs = [
-  "icons",
+  "icon",
   "data",
 ];
 

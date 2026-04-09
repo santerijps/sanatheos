@@ -366,8 +366,8 @@ describe("PWA — service worker", () => {
   });
 
   test("SHELL_ASSETS includes PWA icons", () => {
-    expect(sw).toContain("./icons/pwaicon-192.png");
-    expect(sw).toContain("./icons/pwaicon-512.png");
+    expect(sw).toContain("./icon/pwaicon-192.png");
+    expect(sw).toContain("./icon/pwaicon-512.png");
   });
 });
 
@@ -397,7 +397,7 @@ describe("PWA — build script copies PWA files", () => {
   });
 
   test("copies PWA icon PNGs via icons directory", () => {
-    expect(buildScript).toContain('"icons"');
+    expect(buildScript).toContain('"icon"');
   });
 });
 
