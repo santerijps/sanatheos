@@ -1,7 +1,7 @@
 const CACHE_NAME = "sanatheos-v1";
 const SHELL_ASSETS = [
     "./",
-    "./more/",
+    "./more/index.html",
     "./more/christology.html",
     "./more/soteriology.html",
     "./more/ecclesiology.html",

@@ -978,7 +978,7 @@ function updateStaticText() {
   // Footer
   const footer = document.getElementById("footer");
   if (footer) {
-    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerDescriptions}</p><p>${s.footerStyleguide}</p><p class="footer-sheets">${s.footerCheatSheets}</p><p>${s.footerFavicon}</p>`;
+    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerDescriptions}</p><p>${s.footerStyleguide}</p><p>${s.footerFavicon}</p>`;
   }
 
   // HTML lang attribute

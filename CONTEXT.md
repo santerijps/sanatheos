@@ -48,6 +48,18 @@ sanatheos/
 │   │   ├── subheadings-fi.json # Verse subheadings (Finnish)
 │   │   ├── descriptions-en.json # Book/chapter descriptions (English)
 │   │   └── descriptions-fi.json # Book/chapter descriptions (Finnish)
+│   ├── more/                         # "More Content" — static reference pages
+│   │   ├── index.html                # Listing page for all reference guides
+│   │   ├── philosophy.html           # Philosophy & Worldview
+│   │   ├── christology.html          # Christology cheat sheet
+│   │   ├── soteriology.html          # Soteriology cheat sheet
+│   │   ├── ecclesiology.html         # Ecclesiology cheat sheet
+│   │   ├── mariology.html            # Mariology cheat sheet
+│   │   ├── pneumatology.html         # Pneumatology cheat sheet
+│   │   ├── essence-energies.html     # Essence–Energies Distinction
+│   │   ├── theological-terms.html    # Theological Terms glossary
+│   │   ├── angelology.html           # Angelology & Demonology
+│   │   └── typology.html             # Biblical Typology
 │   └── translations/             # Raw Bible text source files
 │       ├── WEB/
 │       │   ├── descriptions.json # Book and chapter descriptions (English)
@@ -77,6 +89,18 @@ sanatheos/
 │   ├── icons/                # PWA icons (copied from public/icons/)
 │   │   ├── pwaicon-192.png
 │   │   └── pwaicon-512.png
+│   ├── more/                 # More Content pages (copied from public/more/)
+│   │   ├── index.html
+│   │   ├── philosophy.html
+│   │   ├── christology.html
+│   │   ├── soteriology.html
+│   │   ├── ecclesiology.html
+│   │   ├── mariology.html
+│   │   ├── pneumatology.html
+│   │   ├── essence-energies.html
+│   │   ├── theological-terms.html
+│   │   ├── angelology.html
+│   │   └── typology.html
 │   └── data/                 # Data files (copied from public/data/)
 │       ├── styleguide.json
 │       ├── subheadings-en.json
@@ -430,20 +454,23 @@ Produces the `docs/` directory for GitHub Pages deployment. Uses `loadBible` and
 1. Cleans and recreates `docs/`.
 2. Bundles `app.ts` → `docs/bundle.js` (minified, browser target).
 3. Copies static files: `index.html`, `style.css`, `robots.txt`, `favicon.ico`, `manifest.json`, `sw.js`.
-4. Copies static directories recursively: `icons/` (PWA icons), `data/` (styleguide, subheadings, descriptions).
-5. Minifies CSS using Bun's bundler.
-6. Minifies HTML by stripping comments, collapsing whitespace, removing inter-tag spaces.
-7. Discovers translations from `public/translations/` directory.
-8. Generates combined `bible-CODE.json` for each translation (+ `bible.json` for WEB backward compat).
-9. Writes `translations.json` manifest.
-10. Creates `.nojekyll` marker file.
+4. Creates `docs/more/` and copies all `moreFiles` (11 HTML pages from `public/more/`).
+5. Copies static directories recursively: `icons/` (PWA icons), `data/` (styleguide, subheadings, descriptions).
+6. Minifies CSS using Bun's bundler.
+7. Minifies HTML by stripping comments, collapsing whitespace, removing inter-tag spaces. Iterates over `["index.html", ...moreFiles]`.
+8. Discovers translations from `public/translations/` directory.
+9. Generates combined `bible-CODE.json` for each translation (+ `bible.json` for WEB backward compat).
+10. Writes `translations.json` manifest.
+11. Creates `.nojekyll` marker file.
+
+The `moreFiles` array lists all `more/` pages with their `more/` prefix (e.g., `"more/index.html"`, `"more/christology.html"`, etc.).
 
 ## PWA (Progressive Web App)
 
 **manifest.json:** `name: "Sanatheos"`, `display: standalone`, icons at 192×192 and 512×512 (PNG), `start_url: ./index.html`, dark theme color `#1a1a1a`.
 
 **sw.js (Service Worker):** Cache name `sanatheos-v1`.
-- **Install:** Pre-caches shell assets: `./`, `./style.css`, `./bundle.js`, `./favicon.ico`, `./manifest.json`, `./icons/pwaicon-192.png`, `./icons/pwaicon-512.png`. Calls `self.skipWaiting()`.
+- **Install:** Pre-caches shell assets: `./`, `./style.css`, `./bundle.js`, `./favicon.ico`, `./manifest.json`, `./icons/pwaicon-192.png`, `./icons/pwaicon-512.png`, plus all 11 `./more/*.html` pages (index + 10 content pages). Calls `self.skipWaiting()`.
 - **Activate:** Deletes old caches (any key ≠ `CACHE_NAME`). Calls `self.clients.claim()`.
 - **Fetch strategy:**
   - Same-origin GET only.
@@ -460,7 +487,7 @@ The page is a single HTML file with this DOM structure:
 
 ```
 <body>
-  #title-bar          — "SANATHEOS" centered header text
+  #title-bar          — "ΣΑΝΑΘΕΩΣ" centered header text (Ω is a hidden link to ./more/index.html)
   <header #header>    — Sticky toolbar
     #info-btn         — ⓘ help button
     #settings-btn     — ⚙ settings button
@@ -495,6 +522,10 @@ The page is a single HTML file with this DOM structure:
   #toast              — Toast notification element
 
   <footer #footer>    — Translation info, descriptions attribution, styleguide attribution, favicon attribution
+
+  Note: The Omega (Ω) character in the title bar is wrapped in an <a> tag linking to
+  ./more/index.html with color:inherit, text-decoration:none, cursor:inherit — making
+  it an invisible entry point to the More Content pages.
 
   <script defer src="./bundle.js">
   <script> — Service worker registration
@@ -678,6 +709,40 @@ Subheadings are loaded on app startup based on the current UI language and store
 **Parallel mode:** In parallel views, each column displays subheadings in its own language. The primary translation uses `setSubheadings()` and the secondary translation uses `setSecondarySubheadings()`. `renderStyledVerses()` selects the appropriate source based on its `secondary` parameter.
 
 Subheadings are shown in chapter, book, chapter range, and verse segment views. They are not shown in single verse or search result views.
+
+### 16. More Content Pages
+
+A collection of self-contained HTML reference pages in `public/more/`, covering Orthodox Christian theology and philosophy. These are static HTML pages — not part of the SPA — living in their own subdirectory.
+
+**Listing page (`more/index.html`):** An index page with a styled `.page-list` linking to all 10 content pages. Each entry has a `.page-title` and `.page-desc`. The header links back to the Bible reader (`← Read the Bible`), and the footer shows `Read the Bible • More Content`.
+
+**Content pages (10 pages):** Each page follows an identical template structure:
+- **Head:** Inline critical CSS (duplicates CSS custom properties for light/dark themes, layout, sticky header), async `style.css` load via `media="print" onload="this.media='all'"`, and an inline theme-detection `<script>` that reads `bible-theme` from `localStorage`.
+- **Title bar:** `ΣΑΝΑΘΕΩΣ` in monospace.
+- **Header:** Sticky bar with `← More Content` linking back to `./index.html`.
+- **Main:** `<h1 class="book-title">`, `.description` intro paragraph, then `<section class="chapter-block">` blocks each containing `<h2 class="section-title">` and `.verses` div with prose content, lists, and tables.
+- **Footer:** Single `<p>` with `<a href="./index.html">More Content</a> • <strong>Page Title</strong>`.
+
+**Pages and topics:**
+
+| File | Title | Topic |
+|------|-------|-------|
+| `philosophy.html` | Philosophy & Worldview | Contingency argument, transcendental argument, epistemology, teleology, divine attributes, why Orthodox Christianity |
+| `christology.html` | Christology | Person and natures of Christ, Chalcedonian definition, hypostatic union, communicatio idiomatum, Ecumenical Councils |
+| `soteriology.html` | Soteriology | Theosis, Christus Victor, ancestral sin, synergy, therapeutic model |
+| `ecclesiology.html` | Ecclesiology | Apostolic succession, conciliarity, sacraments, marks of the Church |
+| `mariology.html` | Mariology | Theotokos title, ever-virginity, Dormition, intercession, New Eve |
+| `pneumatology.html` | Pneumatology | Procession, Filioque controversy, Pentecost, gifts of the Spirit, deification |
+| `essence-energies.html` | Essence–Energies Distinction | Palamite distinction, Tabor Light, theosis, Hesychast controversy |
+| `theological-terms.html` | Theological Terms | Wrath, judgement, salvation, heaven, hell, sin, righteousness, sainthood — Orthodox therapeutic lens |
+| `angelology.html` | Angelology & Demonology | Angelic hierarchy, guardian angels, fall of angels, demons, spiritual warfare, exorcism, toll-houses |
+| `typology.html` | Biblical Typology | OT types and NT fulfillments — persons, events, institutions prefiguring Christ and the Church |
+
+**Navigation pattern:** The main app's title bar contains a hidden link: the Omega (Ω) in ΣΑΝΑΘΕΩΣ is an `<a>` to `./more/index.html` styled with `color:inherit; text-decoration:none; cursor:inherit` — invisible to the user unless they click it. There are no visible links to the more/ pages from the main app footer or UI.
+
+**Asset paths:** Content pages use `../` relative paths for shared assets (`../favicon.ico`, `../manifest.json`, `../style.css`) since they are one directory level deep. Links between content pages and the index use `./` relative paths (e.g., `./index.html`, `./philosophy.html`).
+
+**Build integration:** The `moreFiles` array in `build-static.ts` lists all 11 pages. The build script creates `docs/more/`, copies the files, and includes them in HTML minification. The service worker's `SHELL_ASSETS` array includes all 11 `./more/*.html` paths for offline caching.
 
 ## Storage
 
