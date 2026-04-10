@@ -1,9 +1,9 @@
-import type { BibleData, AppState, HighlightColor, DescriptionData } from "./types.ts";
-import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight } from "./db.ts";
-import { initSearch, search, tryParseNav, parseQueryBooks } from "./search.ts";
+import type { BibleData, AppState, HighlightColor, DescriptionData, InterlinearBook, StrongsDict } from "./types.ts";
+import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight, loadInterlinearBook, saveInterlinearBook, loadStrongsDict, saveStrongsDict } from "./db.ts";
+import { initSearch, search, tryParseNav, parseQueryBooks, setSearchInterlinearData } from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, setSubheadings, setSecondarySubheadings, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav, setTranslationCode } from "./render.ts";
+import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, setSubheadings, setSecondarySubheadings, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav, setTranslationCode, setInterlinearEnabled, getInterlinearEnabled, setInterlinearBook, getInterlinearBook, getInterlinearBooks, setStrongsDict, getStrongsDict, renderStrongsPanel } from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -16,7 +16,33 @@ let parallelData: BibleData | null = null;
 let highlightMap = new Map<string, HighlightColor>();
 
 function withTranslationParams(s: AppState): AppState {
-  return { ...s, translation: currentTranslation, parallel: parallelTranslation || undefined };
+  return { ...s, translation: currentTranslation, parallel: parallelTranslation || undefined, interlinear: getInterlinearEnabled() || undefined };
+}
+
+async function fetchInterlinear(book: string): Promise<InterlinearBook> {
+  const existing = getInterlinearBook(book);
+  if (existing) return existing;
+  const cached = await loadInterlinearBook(book);
+  if (cached) { setInterlinearBook(book, cached); return cached; }
+  const res = await fetch(`./text/interlinear/${encodeURIComponent(book)}.json`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const d: InterlinearBook = await res.json();
+  setInterlinearBook(book, d);
+  await saveInterlinearBook(book, d);
+  return d;
+}
+
+async function fetchStrongs(): Promise<StrongsDict> {
+  const existing = getStrongsDict();
+  if (existing && Object.keys(existing).length > 0) return existing;
+  const cached = await loadStrongsDict();
+  if (cached) { setStrongsDict(cached); return cached; }
+  const res = await fetch("./text/strongs.json");
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const d: StrongsDict = await res.json();
+  setStrongsDict(d);
+  await saveStrongsDict(d);
+  return d;
 }
 
 async function fetchTranslation(code: string): Promise<BibleData> {
@@ -71,6 +97,20 @@ function applyTheme(theme: string) {
   }
 }
 
+// --- Interlinear helpers ---
+function isKJV(): boolean {
+  return currentTranslation === "KJV";
+}
+
+/** Load interlinear data for a book (lazy), then reload Strong's dict if needed. */
+async function ensureInterlinear(book: string): Promise<void> {
+  if (!isKJV()) return;
+  try {
+    await Promise.all([fetchInterlinear(book), fetchStrongs()]);
+    setSearchInterlinearData(getInterlinearBooks());
+  } catch { /* data unavailable — interlinear won't render */ }
+}
+
 async function init() {
   const content = document.getElementById("content")!;
   const searchInput = document.getElementById("search-input") as HTMLInputElement;
@@ -83,6 +123,9 @@ async function init() {
   const settingsOverlay = document.getElementById("settings-overlay")!;
   const settingsClose = document.getElementById("settings-close")!;
   const verseMenu = document.getElementById("verse-menu")!;
+
+  // Remove inline visibility:hidden (anti-flash) now that CSS is loaded
+  document.getElementById("toast")?.style.removeProperty("visibility");
 
   // Determine initial translation from URL or localStorage
   const initialState = readState();
@@ -312,6 +355,52 @@ async function init() {
 
   updateStaticText();
 
+  // --- Interlinear toggle ---
+  const strongsPanel = document.getElementById("strongs-panel")!;
+  strongsPanel.style.removeProperty("visibility");
+
+  const savedIl = initialState.interlinear || (isKJV() && localStorage.getItem("bible-interlinear") === "1");
+  if (savedIl && isKJV()) {
+    setInterlinearEnabled(true);
+  }
+
+  function updateIlToggle() {
+    const btn = document.querySelector(".il-toggle-btn") as HTMLElement | null;
+    if (!btn) return;
+    if (getInterlinearEnabled()) btn.classList.add("active");
+    else btn.classList.remove("active");
+  }
+
+  function closeStrongsPanel() {
+    strongsPanel.classList.remove("open");
+    strongsPanel.innerHTML = "";
+    currentStrongsId = "";
+  }
+
+  let currentStrongsId = "";
+
+  async function openStrongsPanel(strongsId: string) {
+    // Toggle closed if clicking the same word again
+    if (strongsPanel.classList.contains("open") && currentStrongsId === strongsId.toLowerCase()) {
+      closeStrongsPanel();
+      return;
+    }
+    // Ensure Strong's dictionary is loaded
+    let dict = getStrongsDict();
+    if (!dict || Object.keys(dict).length === 0) {
+      try { dict = await fetchStrongs(); } catch { return; }
+    }
+    const entry = dict[strongsId.toLowerCase()];
+    if (!entry) return;
+    currentStrongsId = strongsId.toLowerCase();
+    strongsPanel.innerHTML = renderStrongsPanel(entry, strongsId);
+    strongsPanel.classList.add("open");
+
+    // Close button handler
+    const closeBtn = strongsPanel.querySelector(".strongs-close");
+    if (closeBtn) closeBtn.addEventListener("click", closeStrongsPanel);
+  }
+
   // Render initial state from URL
   const state = readState();
   searchInput.value = stateToInputText(state);
@@ -463,6 +552,7 @@ async function init() {
   // Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
+      if (strongsPanel.classList.contains("open")) { closeStrongsPanel(); return; }
       if (verseMenu.classList.contains("open")) { closeVerseMenu(); return; }
       if (settingsOverlay.classList.contains("open")) { closeSettings(); return; }
       if (infoOverlay.classList.contains("open")) { closeInfo(); return; }
@@ -519,6 +609,36 @@ async function init() {
     const heading = (e.target as HTMLElement).closest(".chapter-heading") as HTMLElement;
     if (heading) {
       navigate({ book: heading.dataset.book!, chapter: +heading.dataset.chapter! });
+      return;
+    }
+
+    // Click on Strong's number → open definition panel
+    const strongsEl = (e.target as HTMLElement).closest(".il-strongs") as HTMLElement;
+    if (strongsEl) {
+      const word = strongsEl.closest(".il-word") as HTMLElement;
+      if (word?.dataset.strongs) {
+        openStrongsPanel(word.dataset.strongs);
+      }
+      return;
+    }
+
+    // Click on interlinear word → open definition panel
+    const ilWord = (e.target as HTMLElement).closest(".il-word") as HTMLElement;
+    if (ilWord?.dataset.strongs) {
+      openStrongsPanel(ilWord.dataset.strongs);
+      return;
+    }
+
+    // Click on interlinear toggle button
+    const ilToggle = (e.target as HTMLElement).closest(".il-toggle-btn") as HTMLElement;
+    if (ilToggle) {
+      const enabled = !getInterlinearEnabled();
+      setInterlinearEnabled(enabled);
+      localStorage.setItem("bible-interlinear", enabled ? "1" : "0");
+      updateIlToggle();
+      const state = readState();
+      applyState(state);
+      replaceState(withTranslationParams(stateForUrl(state)));
       return;
     }
 
@@ -886,8 +1006,25 @@ function stateForUrl(s: AppState): AppState {
   return s;
 }
 
-function applyState(s: AppState) {
+async function applyState(s: AppState) {
   const useParallel = !!parallelData && !!parallelTranslation;
+
+  // Determine which book(s) will be rendered and preload interlinear data
+  if (getInterlinearEnabled() && isKJV()) {
+    let books: string[] = [];
+    if (s.query) {
+      const navRefs = tryParseNav(s.query);
+      if (navRefs && navRefs.every(r => !!data[r.book])) {
+        books = navRefs.map(r => r.book);
+      }
+    } else if (s.book) {
+      books = [s.book];
+    } else {
+      books = ["Genesis"];
+    }
+    await Promise.all(books.map(b => ensureInterlinear(b)));
+  }
+
   if (s.query) {
     // Check if the query is pure reference(s) → navigate instead of search
     const navRefs = tryParseNav(s.query);
@@ -997,7 +1134,7 @@ function updateStaticText() {
   // Footer
   const footer = document.getElementById("footer");
   if (footer) {
-    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerDescriptions}</p><p>${s.footerStyleguide}</p><p>${s.footerFavicon}</p>`;
+    footer.innerHTML = `<p>${s.footerLine1}</p><p>${s.footerDescriptions}</p><p>${s.footerStyleguide}</p><p>${s.footerDictionary}</p><p>${s.footerFavicon}</p>`;
   }
 
   // HTML lang attribute

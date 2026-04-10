@@ -20,6 +20,7 @@ export interface AppState {
   query?: string;
   translation?: string;
   parallel?: string;
+  interlinear?: boolean;
 }
 
 export type HighlightColor = "yellow" | "green" | "blue" | "pink" | "orange";
@@ -54,3 +55,32 @@ export type SubheadingsData = {
     [chapter: string]: SubheadingEntry[];
   };
 };
+
+// --- Interlinear types ---
+
+export interface InterlinearWord {
+  w: string;
+  english: string;
+  original: string;
+  translit: string;
+  lemma?: string;
+  strongs: string;
+  morph?: string;
+}
+
+export type InterlinearChapter = {
+  [verse: string]: InterlinearWord[];
+};
+
+export type InterlinearBook = {
+  [chapter: string]: InterlinearChapter;
+};
+
+export interface StrongsEntry {
+  d: string;
+  p: string;
+  s: string;
+  r: string;
+}
+
+export type StrongsDict = Record<string, StrongsEntry>;

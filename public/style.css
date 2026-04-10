@@ -863,13 +863,15 @@ mark {
   border-radius: 8px;
   z-index: 500;
   opacity: 0;
-  transition: transform 0.3s, opacity 0.3s;
+  visibility: hidden;
+  transition: transform 0.3s, opacity 0.3s, visibility 0.3s;
   pointer-events: none;
 }
 
 .toast.show {
   transform: translateX(-50%) translateY(0);
   opacity: 1;
+  visibility: visible;
 }
 
 /* === Show More Button === */
@@ -1029,11 +1031,222 @@ mark {
   background: var(--hover);
 }
 
+/* === Interlinear === */
+.il-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 4px 10px;
+  font: 13px var(--sans);
+  color: var(--subtle);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
+.il-toggle-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.il-toggle-btn.active {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.il-verses {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.il-verse {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  margin-bottom: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.il-verse-num {
+  flex-shrink: 0;
+  margin-right: 4px;
+  padding-top: 2px;
+}
+
+.il-verse-num sup {
+  font-size: 0.75em;
+  font-family: var(--sans);
+  font-weight: 600;
+  color: var(--verse-num);
+  vertical-align: super;
+  cursor: pointer;
+  user-select: none;
+}
+
+.il-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: flex-start;
+}
+
+.il-word {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.12s;
+  min-width: 3em;
+}
+
+.il-word:hover {
+  background: var(--hover);
+}
+
+.il-english {
+  font-family: var(--serif);
+  font-size: 0.95em;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.il-original {
+  font-size: 1.05em;
+  color: var(--accent);
+  margin-top: 1px;
+}
+
+.il-hebrew {
+  font-size: 1.15em;
+}
+
+.il-translit {
+  font-size: 0.75em;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.il-strongs {
+  font-size: 0.65em;
+  font-family: var(--mono);
+  color: var(--verse-num);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+.il-strongs:hover {
+  color: var(--text);
+}
+
+.il-morph {
+  font-size: 0.6em;
+  font-family: var(--mono);
+  color: var(--muted);
+}
+
+/* --- Strong's definition panel --- */
+#strongs-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(380px, 90vw);
+  height: 100%;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  box-shadow: -4px 0 16px rgba(0, 0, 0, 0.1);
+  z-index: 2000;
+  transform: translateX(100%);
+  transition: transform 0.2s ease, visibility 0.2s;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  visibility: hidden;
+}
+
+#strongs-panel.open {
+  transform: translateX(0);
+  visibility: visible;
+}
+
+.strongs-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--sans);
+  font-size: 18px;
+}
+
+.strongs-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+
+.strongs-close:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.strongs-panel-body {
+  padding: 16px 20px;
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.strongs-def {
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+
+.strongs-field {
+  margin-bottom: 8px;
+  color: var(--muted);
+}
+
+.strongs-field strong {
+  color: var(--text);
+}
+
+/* --- Responsive interlinear --- */
+@media (max-width: 600px) {
+  .il-word {
+    min-width: 2.5em;
+    padding: 2px 3px;
+  }
+
+  .il-row {
+    gap: 3px;
+  }
+
+  #strongs-panel {
+    width: 100vw;
+  }
+}
+
 /* === Print Styles === */
 @media print {
   header, footer, #index-overlay, #info-overlay, #settings-overlay,
-  #verse-menu, .toast, .chapter-nav, .copy-btn, .share-wrap,
-  .read-full-chapter {
+  #verse-menu, #strongs-panel, .toast, .chapter-nav, .copy-btn, .share-wrap,
+  .read-full-chapter, .il-toggle-btn {
     display: none !important;
   }
 

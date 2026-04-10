@@ -1,12 +1,17 @@
-import type { BibleData, VerseResult } from "./types.ts";
+import type { BibleData, VerseResult, InterlinearBook } from "./types.ts";
 import { getSortedAliases } from "./bookNames.ts";
 
 let searchData: BibleData = {};
 let bookNames: string[] = [];
+let interlinearData: Map<string, InterlinearBook> = new Map();
 
 export function initSearch(data: BibleData) {
   searchData = data;
   bookNames = Object.keys(data);
+}
+
+export function setSearchInterlinearData(data: Map<string, InterlinearBook>) {
+  interlinearData = data;
 }
 
 function levenshtein(a: string, b: string): number {
@@ -223,6 +228,25 @@ export function search(data: BibleData, query: string): VerseResult[] {
     const rawFilter = quotedMatch && quotedMatch[1].length > 0 ? quotedMatch[1] : null;
     const textMatch = rawFilter ? buildTextMatcher(rawFilter) : null;
     const refPart = quotedMatch ? term.replace(/"(.*?)"/, "").trim() : term;
+
+    // Strong's number search (e.g., G2316, H430)
+    const strongsMatch = refPart.match(/^([GHgh]\d+)$/);
+    if (strongsMatch && interlinearData.size > 0) {
+      const strongsId = strongsMatch[1].toLowerCase();
+      for (const [book, ilBook] of interlinearData) {
+        for (const [c, ilChapter] of Object.entries(ilBook)) {
+          for (const [v, words] of Object.entries(ilChapter)) {
+            const hasStrongs = words.some(w => w.strongs === strongsId);
+            if (hasStrongs) {
+              const text = searchData[book]?.[c]?.[v] || "";
+              const k = `${book}:${c}:${v}`;
+              if (!seen.has(k)) { seen.add(k); results.push({ book, chapter: +c, verse: +v, text }); }
+            }
+          }
+        }
+      }
+      continue;
+    }
 
     // Pure text search — iterate BibleData directly (no intermediate array)
     if (textMatch && !refPart) {

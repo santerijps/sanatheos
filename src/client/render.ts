@@ -1,4 +1,4 @@
-import type { BibleData, VerseResult, HighlightColor, DescriptionData, SubheadingsData } from "./types.ts";
+import type { BibleData, VerseResult, HighlightColor, DescriptionData, SubheadingsData, InterlinearBook, InterlinearWord, StrongsDict, StrongsEntry } from "./types.ts";
 import type { NavRef } from "./search.ts";
 import { escapeRegex } from "./search.ts";
 import { displayName, displayNameFor } from "./bookNames.ts";
@@ -53,6 +53,39 @@ let secondarySubheadings: SubheadingsData = {};
 
 export function setSecondarySubheadings(sh: SubheadingsData) {
   secondarySubheadings = sh;
+}
+
+// --- Interlinear state ---
+let interlinearEnabled = false;
+let interlinearBooks: Map<string, InterlinearBook> = new Map();
+let strongsDict: StrongsDict = {};
+
+export function setInterlinearEnabled(enabled: boolean) {
+  interlinearEnabled = enabled;
+}
+
+export function getInterlinearEnabled(): boolean {
+  return interlinearEnabled;
+}
+
+export function setInterlinearBook(book: string, data: InterlinearBook) {
+  interlinearBooks.set(book, data);
+}
+
+export function getInterlinearBook(book: string): InterlinearBook | undefined {
+  return interlinearBooks.get(book);
+}
+
+export function getInterlinearBooks(): Map<string, InterlinearBook> {
+  return interlinearBooks;
+}
+
+export function setStrongsDict(dict: StrongsDict) {
+  strongsDict = dict;
+}
+
+export function getStrongsDict(): StrongsDict {
+  return strongsDict;
 }
 
 /** Look up the book-level description from a given description dataset. */
@@ -153,6 +186,93 @@ function renderStyledVerses(book: string, chapter: number, nums: number[], ch: R
   }
 
   return parts.join("");
+}
+
+// --- Interlinear rendering ---
+
+function interlinearToggleHtml(): string {
+  if (translationCode !== "KJV") return "";
+  const active = interlinearEnabled ? " active" : "";
+  return ` <button class="il-toggle-btn${active}" title="${esc(t().interlinearTooltip)}">${esc(t().interlinear)}</button>`;
+}
+
+function isHebrew(strongs: string): boolean {
+  return strongs.startsWith("h");
+}
+
+function renderInterlinearWord(w: InterlinearWord): string {
+  const hebrew = isHebrew(w.strongs);
+  const dir = hebrew ? ' dir="rtl"' : '';
+  const originalClass = hebrew ? "il-original il-hebrew" : "il-original il-greek";
+  const morphHtml = w.morph ? `<span class="il-morph">${esc(w.morph)}</span>` : '';
+  return `<span class="il-word" data-strongs="${esc(w.strongs)}">` +
+    `<span class="il-english">${esc(w.english)}</span>` +
+    `<span class="${originalClass}"${dir}>${esc(w.original)}</span>` +
+    `<span class="il-translit">${esc(w.translit)}</span>` +
+    `<span class="il-strongs">${esc(w.strongs.toUpperCase())}</span>` +
+    morphHtml +
+    `</span>`;
+}
+
+function renderInterlinearVerse(book: string, chapter: number, verse: number, words: InterlinearWord[]): string {
+  let html = `<div class="il-verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}">`;
+  html += `<span class="il-verse-num"><sup>${verse}</sup></span>`;
+  html += `<div class="il-row">`;
+  for (const w of words) {
+    html += renderInterlinearWord(w);
+  }
+  html += `</div></div>`;
+  return html;
+}
+
+function renderInterlinearChapterVerses(book: string, chapter: number, nums: number[], ilChapter: Record<string, InterlinearWord[]>): string {
+  const parts: string[] = [];
+  const sh = subheadings[book]?.[String(chapter)];
+  for (const n of nums) {
+    if (sh) {
+      for (const entry of sh) {
+        if (entry.v === n) {
+          parts.push(`<h3 class="subheading">${esc(entry.t)}</h3>`);
+        }
+      }
+    }
+    const words = ilChapter[String(n)];
+    if (words) {
+      parts.push(renderInterlinearVerse(book, chapter, n, words));
+    }
+  }
+  return parts.join("");
+}
+
+/** Generate HTML for the Strong's definition panel (rendered once, populated via JS). */
+export function renderStrongsPanel(entry: StrongsEntry, strongsId: string): string {
+  const s = t();
+  let html = `<div class="strongs-panel-header">`;
+  html += `<strong>${esc(strongsId.toUpperCase())}</strong>`;
+  html += `<button class="strongs-close" title="${esc(s.closePanel)}">&times;</button>`;
+  html += `</div>`;
+  html += `<div class="strongs-panel-body">`;
+  html += `<p class="strongs-def">${esc(entry.d)}</p>`;
+  if (entry.p) html += `<p class="strongs-field"><strong>${esc(s.pronunciation)}:</strong> ${esc(entry.p)}</p>`;
+  if (entry.s) html += `<p class="strongs-field"><strong>${esc(s.partOfSpeech)}:</strong> ${esc(entry.s)}</p>`;
+  if (entry.r) {
+    // entry.r format: "derivation info|English: word1, word2"
+    const rParts = entry.r.split("|");
+    const derivation = rParts[0]?.trim();
+    const english = rParts[1]?.trim();
+    if (derivation) html += `<p class="strongs-field"><strong>${esc(s.crossReferences)}:</strong> ${esc(derivation)}</p>`;
+    if (english) {
+      const engMatch = english.match(/^English:\s*(.*)$/);
+      if (engMatch) {
+        html += `<p class="strongs-field"><strong>English:</strong> ${esc(engMatch[1])}</p>`;
+      } else {
+        html += `<p class="strongs-field">${esc(english)}</p>`;
+      }
+    }
+  }
+  html += `<p class="strongs-field" style="margin-top:12px"><a href="./dictionary.html#${encodeURIComponent(strongsId.toLowerCase())}" style="color:var(--verse-num);font-family:var(--sans);font-size:13px">View in Dictionary →</a></p>`;
+  html += `</div>`;
+  return html;
 }
 
 interface NavTarget {
@@ -262,12 +382,21 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
   const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
   let html = navArrowsHtml(prev, next);
   html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button>${shareButtonHtml()}</h2>`;
+  html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
   if (chapter === 1) html += descriptionHtml(getBookDescription(book));
   html += descriptionHtml(getChapterDescription(book, chapter));
-  html += `<div class="verses">`;
-  html += renderStyledVerses(book, chapter, nums, ch);
-  html += `</div>`;
+
+  const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
+  const ilChapter = ilBook?.[String(chapter)];
+  if (ilChapter) {
+    html += `<div class="verses il-verses">`;
+    html += renderInterlinearChapterVerses(book, chapter, nums, ilChapter);
+    html += `</div>`;
+  } else {
+    html += `<div class="verses">`;
+    html += renderStyledVerses(book, chapter, nums, ch);
+    html += `</div>`;
+  }
   html += navArrowsHtml(prev, next, false);
   $("content").innerHTML = html;
   window.scrollTo(0, 0);
@@ -281,15 +410,22 @@ export function renderBook(data: BibleData, book: string) {
   const { prev, next } = getBookNav(data, book);
   let html = navArrowsHtml(prev, next);
   html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-  html += `<h1 class="book-title">${esc(displayName(book))}</h1>`;
+  html += `<h1 class="book-title">${esc(displayName(book))}${interlinearToggleHtml()}</h1>`;
   html += descriptionHtml(getBookDescription(book));
+  const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
   for (const c of chs) {
     const verses = bd[String(c)];
     const nums = Object.keys(verses).map(Number).sort((a, b) => a - b);
+    const ilChapter = ilBook?.[String(c)];
     html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
     html += descriptionHtml(getChapterDescription(book, c));
-    html += `<div class="verses">`;
-    html += renderStyledVerses(book, c, nums, verses);
+    if (ilChapter) {
+      html += `<div class="verses il-verses">`;
+      html += renderInterlinearChapterVerses(book, c, nums, ilChapter);
+    } else {
+      html += `<div class="verses">`;
+      html += renderStyledVerses(book, c, nums, verses);
+    }
     html += `</div></div>`;
   }
   html += navArrowsHtml(prev, next, false);
@@ -302,11 +438,19 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
   if (!text) { $("content").innerHTML = `<p class="empty">${t().notFound}</p>`; return; }
 
   const { prev, next } = getVerseNav(data, book, chapter, verse);
+  const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
+  const ilWords = ilBook?.[String(chapter)]?.[String(verse)];
+
+  let verseHtml: string;
+  if (ilWords) {
+    verseHtml = `<div class="verses il-verses single-verse">${renderInterlinearVerse(book, chapter, verse, ilWords)}</div>`;
+  } else {
+    verseHtml = `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}</span></div>`;
+  }
+
   $("content").innerHTML = `
-    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button>${shareButtonHtml()}</h2>
-    <div class="verses single-verse">
-      <span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}</span>
-    </div>
+    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>
+    ${verseHtml}
     <div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   window.scrollTo(0, 0);
 }
@@ -317,8 +461,11 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
 
   const { prev } = getChapterNav(data, book, chStart);
   const { next } = getChapterNav(data, book, chEnd);
+  const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
   let html = navArrowsHtml(prev, next);
   html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
+  const ilToggle = interlinearToggleHtml();
+  if (ilToggle) html += `<div style="text-align:right;margin-bottom:8px">${ilToggle}</div>`;
   for (let c = chStart; c <= chEnd; c++) {
     const ch = bd[String(c)];
     if (!ch) continue;
@@ -326,8 +473,14 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
     html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(displayName(book))} ${c}</h2>`;
     if (c === chStart) html += descriptionHtml(getBookDescription(book));
     html += descriptionHtml(getChapterDescription(book, c));
-    html += `<div class="verses">`;
-    html += renderStyledVerses(book, c, nums, ch);
+    const ilChapter = ilBook?.[String(c)];
+    if (ilChapter) {
+      html += `<div class="verses il-verses">`;
+      html += renderInterlinearChapterVerses(book, c, nums, ilChapter);
+    } else {
+      html += `<div class="verses">`;
+      html += renderStyledVerses(book, c, nums, ch);
+    }
     html += `</div></div>`;
   }
   html += navArrowsHtml(prev, next, false);
@@ -347,8 +500,17 @@ export function renderVerseSegments(data: BibleData, book: string, chapter: numb
   html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
   const segNums: number[] = [];
   for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
-  html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button>${shareButtonHtml()}</h2><div class="verses">`;
-  html += renderStyledVerses(book, chapter, segNums, ch);
+  html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
+
+  const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
+  const ilChapter = ilBook?.[String(chapter)];
+  if (ilChapter) {
+    html += `<div class="verses il-verses">`;
+    html += renderInterlinearChapterVerses(book, chapter, segNums, ilChapter);
+  } else {
+    html += `<div class="verses">`;
+    html += renderStyledVerses(book, chapter, segNums, ch);
+  }
   html += `</div>`;
   html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
   $("content").innerHTML = html;

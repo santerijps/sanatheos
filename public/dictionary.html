@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SANATHEOS — Strong's Concordance Dictionary: search, browse, and filter Greek and Hebrew words">
+  <title>Dictionary — SANATHEOS</title>
+  <link rel="icon" type="image/jpeg" href="./icon/favicon.ico">
+  <link rel="manifest" href="./manifest.json">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --serif: Georgia, "Times New Roman", Times, serif;
+      --mono: monospace;
+      --bg: #fafafa; --surface: #ffffff; --text: #1a1a1a; --subtle: #888888;
+      --border: #e5e5e5; --hover: #f0f0f0; --accent: #333333; --muted: #666666;
+      --verse-num: firebrick;
+    }
+    [data-theme="dark"] {
+      --bg: #1a1a1a; --surface: #242424; --text: #e0e0e0; --subtle: #888888;
+      --border: #333333; --hover: #2e2e2e; --accent: #cccccc; --muted: #999999;
+      --verse-num: #e07060;
+    }
+    html { height: 100%; }
+    body {
+      font-family: var(--serif); color: var(--text); background: var(--bg);
+      line-height: 1.7; min-height: 100%;
+      -webkit-font-smoothing: antialiased;
+    }
+    #title-bar {
+      text-align: center; font: 700 18px/1 var(--mono);
+      letter-spacing: 1ch; padding: 12px 20px 0;
+      color: var(--text); background: var(--surface);
+    }
+    #title-bar a { color: inherit; text-decoration: none; }
+    header {
+      position: sticky; top: 0; z-index: 100; background: var(--surface);
+      border-bottom: 1px solid var(--border); padding: 10px 20px;
+    }
+    .header-top {
+      display: flex; align-items: center; gap: 10px;
+    }
+    .back-btn {
+      flex-shrink: 0; width: 42px; height: 42px; display: flex;
+      align-items: center; justify-content: center; font-size: 20px;
+      background: none; border: 1px solid var(--border); border-radius: 8px;
+      cursor: pointer; color: var(--text); text-decoration: none;
+    }
+    .back-btn:hover { background: var(--hover); }
+    #search-input {
+      flex: 1; height: 42px; padding: 0 16px;
+      font: 15px/42px var(--sans); border: 1px solid var(--border);
+      border-radius: 8px; outline: none; background: var(--bg); color: var(--text);
+    }
+    #search-input:focus { border-color: var(--accent); }
+    .filter-bar {
+      display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px;
+      align-items: center; font: 13px var(--sans);
+    }
+    .filter-bar label { color: var(--muted); font-weight: 600; margin-right: 2px; }
+    .filter-bar select {
+      height: 32px; padding: 0 8px; font: 13px var(--sans);
+      border: 1px solid var(--border); border-radius: 6px;
+      background: var(--bg); color: var(--text); cursor: pointer;
+    }
+    .filter-pill {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 4px 10px; border-radius: 16px; font: 13px var(--sans);
+      border: 1px solid var(--border); background: var(--bg);
+      color: var(--text); cursor: pointer; transition: background 0.12s, border-color 0.12s;
+      user-select: none;
+    }
+    .filter-pill:hover { background: var(--hover); }
+    .filter-pill.active { background: var(--accent); color: var(--bg); border-color: var(--accent); }
+    .stats {
+      font: 13px var(--sans); color: var(--muted); margin-left: auto;
+      white-space: nowrap;
+    }
+    main {
+      max-width: 100ch; margin: 0 auto; padding: 16px 20px 40px;
+    }
+    .dict-list { list-style: none; }
+    .dict-entry {
+      padding: 12px 16px; border-bottom: 1px solid var(--border);
+      transition: background 0.1s; cursor: default;
+    }
+    .dict-entry:hover { background: var(--hover); }
+    .entry-header {
+      display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    }
+    .entry-id {
+      font: 700 14px var(--mono); color: var(--verse-num);
+      min-width: 5em;
+    }
+    .entry-original {
+      font-size: 1.2em; color: var(--accent);
+    }
+    .entry-hebrew { direction: rtl; }
+    .entry-translit {
+      font-style: italic; color: var(--muted); font-size: 0.9em;
+    }
+    .entry-pos {
+      font: 600 11px var(--sans); color: var(--surface);
+      background: var(--muted); padding: 2px 7px; border-radius: 10px;
+      text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
+    }
+    .entry-def {
+      margin-top: 4px; font-size: 0.92em; color: var(--text);
+      line-height: 1.6;
+    }
+    .entry-def mark {
+      background: rgba(253, 230, 138, 0.5); border-radius: 2px; padding: 0 1px;
+    }
+    [data-theme="dark"] .entry-def mark { background: rgba(253, 230, 138, 0.25); }
+    .entry-english {
+      margin-top: 3px; font: 13px var(--sans); color: var(--muted);
+    }
+    .entry-english strong { color: var(--text); font-weight: 600; }
+    .entry-derivation {
+      margin-top: 3px; font: 12px var(--sans); color: var(--subtle);
+    }
+    .no-results {
+      text-align: center; padding: 60px 20px;
+      font: 16px var(--sans); color: var(--subtle);
+    }
+    .loading-msg {
+      text-align: center; padding: 80px 20px;
+      font: 16px var(--sans); color: var(--subtle);
+    }
+    .loading-msg::before {
+      content: ""; display: block; width: 32px; height: 32px;
+      margin: 0 auto 16px; border: 3px solid var(--border);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Virtual scroll sentinel */
+    .scroll-sentinel { height: 1px; }
+
+    /* Detail modal */
+    .detail-overlay {
+      display: none; position: fixed; inset: 0; z-index: 1000;
+      background: rgba(0,0,0,0.4); justify-content: center; align-items: center;
+    }
+    .detail-overlay.open { display: flex; }
+    .detail-modal {
+      background: var(--surface); border-radius: 12px; width: min(560px, 92vw);
+      max-height: 85vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+      padding: 24px; position: relative;
+    }
+    .detail-close {
+      position: absolute; top: 12px; right: 12px; background: none; border: none;
+      font-size: 24px; cursor: pointer; color: var(--muted); padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .detail-close:hover { background: var(--hover); color: var(--text); }
+    .detail-id { font: 700 18px var(--mono); color: var(--verse-num); }
+    .detail-original { font-size: 1.6em; color: var(--accent); margin: 8px 0; }
+    .detail-hebrew { direction: rtl; text-align: right; }
+    .detail-pron { font-style: italic; color: var(--muted); margin-bottom: 8px; }
+    .detail-pos-tag {
+      display: inline-block; font: 600 12px var(--sans); color: var(--surface);
+      background: var(--muted); padding: 3px 10px; border-radius: 12px;
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px;
+    }
+    .detail-section { margin-bottom: 12px; }
+    .detail-section h4 {
+      font: 600 13px var(--sans); color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;
+    }
+    .detail-section p {
+      font-size: 0.95em; line-height: 1.7;
+    }
+    .detail-ref-link {
+      color: var(--verse-num); text-decoration: underline dotted;
+      cursor: pointer;
+    }
+    .detail-ref-link:hover { color: var(--text); }
+
+    @media (max-width: 700px) {
+      header { padding: 8px 12px; }
+      main { padding: 12px 8px 40px; }
+      .dict-entry { padding: 10px 12px; }
+      .entry-header { gap: 6px; }
+      .filter-bar { gap: 4px; }
+    }
+
+    @media print {
+      header, .filter-bar, .detail-overlay { display: none; }
+      .dict-entry { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div id="title-bar"><a href="./">ΣΑΝΑΘΕΩΣ</a></div>
+  <header>
+    <div class="header-top">
+      <a href="./" class="back-btn" title="Back to Bible">&#8592;</a>
+      <input type="text" id="search-input" placeholder="Search dictionary — word, definition, Strong's number…" autocomplete="off" spellcheck="false">
+    </div>
+    <div class="filter-bar" id="filter-bar">
+      <label>Language:</label>
+      <span class="filter-pill active" data-lang="all">All</span>
+      <span class="filter-pill" data-lang="hebrew">Hebrew</span>
+      <span class="filter-pill" data-lang="greek">Greek</span>
+      <label style="margin-left:8px">Category:</label>
+      <select id="category-filter">
+        <option value="">All categories</option>
+      </select>
+      <label style="margin-left:8px">Sort:</label>
+      <select id="sort-select">
+        <option value="id-asc">Number ↑</option>
+        <option value="id-desc">Number ↓</option>
+        <option value="alpha-asc">Alphabetical A→Z</option>
+        <option value="alpha-desc">Alphabetical Z→A</option>
+      </select>
+      <span class="stats" id="stats"></span>
+    </div>
+  </header>
+
+  <main>
+    <p class="loading-msg" id="loading">Loading dictionary…</p>
+    <ul class="dict-list" id="dict-list" style="display:none"></ul>
+    <p class="no-results" id="no-results" style="display:none">No entries match your search.</p>
+  </main>
+
+  <div class="detail-overlay" id="detail-overlay">
+    <div class="detail-modal" id="detail-modal"></div>
+  </div>
+
+  <script>
+  (function() {
+    "use strict";
+
+    // --- Theme ---
+    const savedTheme = localStorage.getItem("bible-theme") || "system";
+    if (savedTheme === "system") {
+      document.documentElement.setAttribute("data-theme",
+        window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    } else {
+      document.documentElement.setAttribute("data-theme", savedTheme);
+    }
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function() {
+      if ((localStorage.getItem("bible-theme") || "system") === "system") {
+        document.documentElement.setAttribute("data-theme",
+          window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+      }
+    });
+
+    // --- State ---
+    var allEntries = [];
+    var filtered = [];
+    var currentLang = "all";
+    var currentCategory = "";
+    var currentSort = "id-asc";
+    var currentSearch = "";
+    var PAGE_SIZE = 100;
+    var rendered = 0;
+    var observer = null;
+
+    // --- Elements ---
+    var searchInput = document.getElementById("search-input");
+    var dictList = document.getElementById("dict-list");
+    var noResults = document.getElementById("no-results");
+    var loading = document.getElementById("loading");
+    var stats = document.getElementById("stats");
+    var categoryFilter = document.getElementById("category-filter");
+    var sortSelect = document.getElementById("sort-select");
+    var detailOverlay = document.getElementById("detail-overlay");
+    var detailModal = document.getElementById("detail-modal");
+
+    // --- Helpers ---
+    function esc(s) {
+      var d = document.createElement("div");
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    function parseEntry(key, raw) {
+      var isHeb = key.charAt(0) === "h";
+      var num = parseInt(key.substring(1), 10);
+      var def = raw.d || "";
+      var pron = raw.p || "";
+      var pos = raw.s || "";
+      var ref = raw.r || "";
+
+      // Parse the definition for the original word and transliteration
+      var original = "";
+      var translit = "";
+      var defText = def;
+      // Definitions often start with: <original> <translit>, <pronunciation>; <definition>
+      // Try to extract the leading original word
+      var firstSpace = def.indexOf(" ");
+      if (firstSpace > 0) {
+        original = def.substring(0, firstSpace);
+        // Find the comma after the transliteration
+        var commaIdx = def.indexOf(",", firstSpace);
+        var semiIdx = def.indexOf(";", firstSpace);
+        var delimIdx = commaIdx > 0 ? commaIdx : semiIdx;
+        if (delimIdx > 0) {
+          translit = def.substring(firstSpace + 1, delimIdx).trim();
+          // Remove pronunciation part from translit if present
+          var pronInTranslit = translit.indexOf(",");
+          if (pronInTranslit > 0) translit = translit.substring(0, pronInTranslit).trim();
+        }
+      }
+
+      // Parse derivation and English meanings from 'r' field
+      var parts = ref.split("|");
+      var derivation = (parts[0] || "").trim();
+      var englishMeanings = "";
+      if (parts[1]) {
+        englishMeanings = parts[1].replace(/^English:\s*/, "").trim();
+      }
+
+      // Normalize category
+      var posLower = pos.toLowerCase();
+      var category = "other";
+      if (posLower.indexOf("verb") >= 0) category = "verb";
+      else if (posLower.indexOf("proper") >= 0) category = "proper noun";
+      else if (posLower.indexOf("noun") >= 0) category = "noun";
+      else if (posLower.indexOf("adjective") >= 0) category = "adjective";
+      else if (posLower.indexOf("adverb") >= 0) category = "adverb";
+      else if (posLower.indexOf("pronoun") >= 0) category = "pronoun";
+      else if (posLower.indexOf("preposition") >= 0) category = "preposition";
+      else if (posLower.indexOf("conjunction") >= 0) category = "conjunction";
+      else if (posLower.indexOf("particle") >= 0) category = "particle";
+      else if (posLower.indexOf("interjection") >= 0) category = "interjection";
+      else if (posLower.indexOf("article") >= 0) category = "article";
+      else if (posLower.indexOf("substantive") >= 0) category = "substantive";
+      else if (posLower.indexOf("numeral") >= 0) category = "numeral";
+      if (!pos) category = "";
+
+      return {
+        key: key,
+        num: num,
+        isHeb: isHeb,
+        original: original,
+        translit: translit,
+        pron: pron,
+        pos: pos,
+        category: category,
+        def: defText,
+        derivation: derivation,
+        english: englishMeanings,
+        // Precomputed search text
+        _search: (key + " " + def + " " + pos + " " + pron + " " + ref + " " + (englishMeanings || "")).toLowerCase()
+      };
+    }
+
+    function compareId(a, b) { return a.isHeb === b.isHeb ? a.num - b.num : (a.isHeb ? -1 : 1); }
+
+    function sortEntries(arr, mode) {
+      var copy = arr.slice();
+      switch (mode) {
+        case "id-asc": copy.sort(compareId); break;
+        case "id-desc": copy.sort(function(a, b) { return -compareId(a, b); }); break;
+        case "alpha-asc": copy.sort(function(a, b) {
+          var aa = a.original || a.key, bb = b.original || b.key;
+          return aa.localeCompare(bb);
+        }); break;
+        case "alpha-desc": copy.sort(function(a, b) {
+          var aa = a.original || a.key, bb = b.original || b.key;
+          return bb.localeCompare(aa);
+        }); break;
+      }
+      return copy;
+    }
+
+    function applyFilters() {
+      var src = allEntries;
+      // Language filter
+      if (currentLang === "hebrew") src = src.filter(function(e) { return e.isHeb; });
+      else if (currentLang === "greek") src = src.filter(function(e) { return !e.isHeb; });
+
+      // Category filter
+      if (currentCategory) {
+        src = src.filter(function(e) { return e.category === currentCategory; });
+      }
+
+      // Search filter
+      if (currentSearch) {
+        var terms = currentSearch.toLowerCase().split(/\s+/);
+        src = src.filter(function(e) {
+          for (var i = 0; i < terms.length; i++) {
+            if (e._search.indexOf(terms[i]) < 0) return false;
+          }
+          return true;
+        });
+      }
+
+      // Sort
+      filtered = sortEntries(src, currentSort);
+
+      // Reset and render
+      rendered = 0;
+      dictList.innerHTML = "";
+      renderBatch();
+      updateStats();
+    }
+
+    function updateStats() {
+      var total = allEntries.length;
+      stats.textContent = filtered.length === total
+        ? total.toLocaleString() + " entries"
+        : filtered.length.toLocaleString() + " of " + total.toLocaleString();
+      noResults.style.display = filtered.length === 0 ? "" : "none";
+      dictList.style.display = filtered.length > 0 ? "" : "none";
+    }
+
+    function highlightText(text, terms) {
+      if (!terms || terms.length === 0) return esc(text);
+      // Build regex from terms
+      var escaped = terms.map(function(t) {
+        return t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      });
+      var re = new RegExp("(" + escaped.join("|") + ")", "gi");
+      // Split and rebuild with highlights
+      var parts = text.split(re);
+      var out = "";
+      for (var i = 0; i < parts.length; i++) {
+        if (re.test(parts[i])) {
+          re.lastIndex = 0;
+          out += "<mark>" + esc(parts[i]) + "</mark>";
+        } else {
+          out += esc(parts[i]);
+        }
+      }
+      return out;
+    }
+
+    function renderEntry(entry) {
+      var terms = currentSearch ? currentSearch.toLowerCase().split(/\s+/) : [];
+      var isHeb = entry.isHeb;
+      var id = entry.key.toUpperCase();
+      var origClass = "entry-original" + (isHeb ? " entry-hebrew" : "");
+
+      var html = '<div class="entry-header">';
+      html += '<span class="entry-id">' + esc(id) + '</span>';
+      if (entry.original) {
+        html += '<span class="' + origClass + '">' + esc(entry.original) + '</span>';
+      }
+      if (entry.translit) {
+        html += '<span class="entry-translit">' + esc(entry.translit) + '</span>';
+      }
+      if (entry.pos) {
+        html += '<span class="entry-pos">' + esc(entry.pos) + '</span>';
+      }
+      html += '</div>';
+
+      // Definition (cleaned up, with highlights)
+      var defDisplay = entry.def;
+      // Remove leading original word + transliteration from display (already shown in header)
+      if (entry.original && defDisplay.indexOf(entry.original) === 0) {
+        var afterOrig = defDisplay.indexOf(";");
+        if (afterOrig > 0) defDisplay = defDisplay.substring(afterOrig + 1).trim();
+      }
+      if (defDisplay) {
+        html += '<div class="entry-def">' + highlightText(defDisplay, terms) + '</div>';
+      }
+
+      // English meanings
+      if (entry.english) {
+        html += '<div class="entry-english"><strong>English:</strong> ' + highlightText(entry.english, terms) + '</div>';
+      }
+
+      return html;
+    }
+
+    function renderBatch() {
+      var end = Math.min(rendered + PAGE_SIZE, filtered.length);
+      var frag = document.createDocumentFragment();
+      for (var i = rendered; i < end; i++) {
+        var li = document.createElement("li");
+        li.className = "dict-entry";
+        li.setAttribute("data-key", filtered[i].key);
+        li.innerHTML = renderEntry(filtered[i]);
+        frag.appendChild(li);
+      }
+      // Remove old sentinel
+      var oldSentinel = dictList.querySelector(".scroll-sentinel");
+      if (oldSentinel) oldSentinel.remove();
+
+      dictList.appendChild(frag);
+      rendered = end;
+
+      // Add sentinel for infinite scroll
+      if (rendered < filtered.length) {
+        var sentinel = document.createElement("li");
+        sentinel.className = "scroll-sentinel";
+        dictList.appendChild(sentinel);
+        if (observer) observer.disconnect();
+        observer = new IntersectionObserver(function(entries) {
+          if (entries[0].isIntersecting) {
+            observer.disconnect();
+            renderBatch();
+          }
+        });
+        observer.observe(sentinel);
+      }
+    }
+
+    // --- Detail modal ---
+    function renderDetail(entry) {
+      var isHeb = entry.isHeb;
+      var id = entry.key.toUpperCase();
+      var origClass = "detail-original" + (isHeb ? " detail-hebrew" : "");
+
+      var html = '<button class="detail-close" id="detail-close">&times;</button>';
+      html += '<div class="detail-id">' + esc(id) + '</div>';
+      if (entry.original) {
+        html += '<div class="' + origClass + '">' + esc(entry.original) + '</div>';
+      }
+      if (entry.pron) {
+        html += '<div class="detail-pron">' + esc(entry.pron) + '</div>';
+      }
+      if (entry.pos) {
+        html += '<div class="detail-pos-tag">' + esc(entry.pos) + '</div>';
+      }
+
+      // Full definition
+      html += '<div class="detail-section"><h4>Definition</h4>';
+      html += '<p>' + linkifyStrongs(esc(entry.def)) + '</p></div>';
+
+      // Derivation
+      if (entry.derivation) {
+        html += '<div class="detail-section"><h4>Derivation</h4>';
+        html += '<p>' + linkifyStrongs(esc(entry.derivation)) + '</p></div>';
+      }
+
+      // English meanings
+      if (entry.english) {
+        html += '<div class="detail-section"><h4>English Translations</h4>';
+        html += '<p>' + esc(entry.english) + '</p></div>';
+      }
+
+      return html;
+    }
+
+    function linkifyStrongs(html) {
+      // Turn references like (H123) or (G456) into clickable links
+      return html.replace(/\(([HG])(\d+)\)/gi, function(m, prefix, num) {
+        var key = prefix.toLowerCase() + num;
+        return '(<a class="detail-ref-link" data-ref="' + key + '">' + prefix.toUpperCase() + num + '</a>)';
+      });
+    }
+
+    function openDetail(key) {
+      var entry = entryMap[key];
+      if (!entry) return;
+      detailModal.innerHTML = renderDetail(entry);
+      detailOverlay.classList.add("open");
+      document.getElementById("detail-close").addEventListener("click", closeDetail);
+
+      // Handle reference clicks
+      detailModal.addEventListener("click", function(e) {
+        var ref = e.target.closest(".detail-ref-link");
+        if (ref) {
+          var refKey = ref.getAttribute("data-ref");
+          if (entryMap[refKey]) openDetail(refKey);
+        }
+      });
+
+      // Support URL hash
+      history.replaceState(null, "", "#" + key);
+    }
+
+    function closeDetail() {
+      detailOverlay.classList.remove("open");
+      detailModal.innerHTML = "";
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+
+    detailOverlay.addEventListener("click", function(e) {
+      if (e.target === detailOverlay) closeDetail();
+    });
+
+    document.addEventListener("keydown", function(e) {
+      if (e.key === "Escape" && detailOverlay.classList.contains("open")) closeDetail();
+    });
+
+    // --- Entry map for quick lookup ---
+    var entryMap = {};
+
+    // --- Click on entry ---
+    dictList.addEventListener("click", function(e) {
+      var li = e.target.closest(".dict-entry");
+      if (!li) return;
+      var key = li.getAttribute("data-key");
+      if (key) openDetail(key);
+    });
+
+    // --- Language pills ---
+    document.getElementById("filter-bar").addEventListener("click", function(e) {
+      var pill = e.target.closest(".filter-pill[data-lang]");
+      if (!pill) return;
+      currentLang = pill.getAttribute("data-lang");
+      var pills = document.querySelectorAll(".filter-pill[data-lang]");
+      for (var i = 0; i < pills.length; i++) pills[i].classList.remove("active");
+      pill.classList.add("active");
+      applyFilters();
+    });
+
+    // --- Category filter ---
+    categoryFilter.addEventListener("change", function() {
+      currentCategory = categoryFilter.value;
+      applyFilters();
+    });
+
+    // --- Sort ---
+    sortSelect.addEventListener("change", function() {
+      currentSort = sortSelect.value;
+      applyFilters();
+    });
+
+    // --- Search with debounce ---
+    var searchTimer;
+    searchInput.addEventListener("input", function() {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(function() {
+        currentSearch = searchInput.value.trim();
+        applyFilters();
+        // Update URL
+        var url = new URL(location.href);
+        if (currentSearch) url.searchParams.set("q", currentSearch);
+        else url.searchParams.delete("q");
+        history.replaceState(null, "", url);
+      }, 150);
+    });
+
+    // Ctrl+K focus search
+    document.addEventListener("keydown", function(e) {
+      if ((e.ctrlKey || e.metaKey) && e.key === "k") {
+        e.preventDefault();
+        searchInput.focus();
+        searchInput.select();
+      }
+    });
+
+    // --- Load data ---
+    fetch("./text/strongs.json")
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var keys = Object.keys(data);
+        var categorySet = {};
+        for (var i = 0; i < keys.length; i++) {
+          var entry = parseEntry(keys[i], data[keys[i]]);
+          allEntries.push(entry);
+          entryMap[keys[i]] = entry;
+          if (entry.category) categorySet[entry.category] = (categorySet[entry.category] || 0) + 1;
+        }
+
+        // Sort by default
+        allEntries.sort(compareId);
+
+        // Populate category filter
+        var cats = Object.keys(categorySet).sort(function(a, b) {
+          return categorySet[b] - categorySet[a];
+        });
+        for (var c = 0; c < cats.length; c++) {
+          var opt = document.createElement("option");
+          opt.value = cats[c];
+          opt.textContent = cats[c].charAt(0).toUpperCase() + cats[c].slice(1) + " (" + categorySet[cats[c]] + ")";
+          categoryFilter.appendChild(opt);
+        }
+
+        loading.style.display = "none";
+
+        // Restore search from URL
+        var urlParams = new URLSearchParams(location.search);
+        var q = urlParams.get("q");
+        if (q) {
+          searchInput.value = q;
+          currentSearch = q;
+        }
+
+        applyFilters();
+
+        // Open detail from hash
+        if (location.hash) {
+          var hashKey = location.hash.substring(1).toLowerCase();
+          if (entryMap[hashKey]) openDetail(hashKey);
+        }
+      })
+      .catch(function() {
+        loading.textContent = "Failed to load dictionary data.";
+      });
+  })();
+  </script>
+</body>
+</html>

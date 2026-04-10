@@ -95,6 +95,17 @@ console.log("HTML minified.");
 const translations = await discoverTranslations(TEXT_DIR);
 const outText = join(OUT, "text");
 await mkdir(outText, { recursive: true });
+
+// Copy interlinear data and Strong's dictionary
+const ilSrc = join(TEXT_DIR, "interlinear");
+const ilDst = join(outText, "interlinear");
+if (await Bun.file(join(TEXT_DIR, "strongs.json")).exists()) {
+  await cp(join(TEXT_DIR, "strongs.json"), join(outText, "strongs.json"));
+}
+try {
+  await cp(ilSrc, ilDst, { recursive: true });
+  console.log("Interlinear data copied.");
+} catch {}
 for (const t of translations) {
   const json = await loadBible(TEXT_DIR, t);
   await Bun.write(join(outText, `bible-${t}.json`), json);

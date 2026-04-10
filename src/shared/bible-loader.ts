@@ -125,11 +125,14 @@ export async function loadBible(textDir: string, code: string): Promise<string> 
   return JSON.stringify(ordered);
 }
 
+const NON_TRANSLATION_FILES = new Set(["strongs", "translations"]);
+
 export async function discoverTranslations(textDir: string): Promise<string[]> {
   const glob = new Bun.Glob("*.json");
   const codes: string[] = [];
   for await (const f of glob.scan(textDir)) {
-    codes.push(f.replace(/\.json$/, ""));
+    const code = f.replace(/\.json$/, "");
+    if (!NON_TRANSLATION_FILES.has(code)) codes.push(code);
   }
   return codes.sort();
 }

@@ -1,4 +1,4 @@
-import type { BibleData, Highlight, HighlightColor } from "./types.ts";
+import type { BibleData, Highlight, HighlightColor, InterlinearBook, StrongsDict } from "./types.ts";
 
 const DB_NAME = "bible-app";
 const DB_VERSION = 2;
@@ -81,6 +81,48 @@ export async function removeHighlight(book: string, chapter: number, verse: numb
   await new Promise<void>((resolve, reject) => {
     const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
     tx.objectStore(HIGHLIGHTS_STORE).delete(highlightId(book, chapter, verse));
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+// --- Interlinear data ---
+
+export async function loadInterlinearBook(book: string): Promise<InterlinearBook | null> {
+  const db = await open();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DATA_STORE, "readonly");
+    const req = tx.objectStore(DATA_STORE).get(`il:${book}`);
+    req.onsuccess = () => resolve((req.result as InterlinearBook) ?? null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function saveInterlinearBook(book: string, data: InterlinearBook): Promise<void> {
+  const db = await open();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(DATA_STORE, "readwrite");
+    tx.objectStore(DATA_STORE).put(data, `il:${book}`);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+export async function loadStrongsDict(): Promise<StrongsDict | null> {
+  const db = await open();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(DATA_STORE, "readonly");
+    const req = tx.objectStore(DATA_STORE).get("strongs");
+    req.onsuccess = () => resolve((req.result as StrongsDict) ?? null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+export async function saveStrongsDict(data: StrongsDict): Promise<void> {
+  const db = await open();
+  await new Promise<void>((resolve, reject) => {
+    const tx = db.transaction(DATA_STORE, "readwrite");
+    tx.objectStore(DATA_STORE).put(data, "strongs");
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
   });

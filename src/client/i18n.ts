@@ -59,6 +59,7 @@ interface Strings {
   footerLine1: string;
   footerDescriptions: string;
   footerStyleguide: string;
+  footerDictionary: string;
   footerFavicon: string;
 
   // New features
@@ -71,6 +72,16 @@ interface Strings {
   highlight: string;
   removeHighlight: string;
   showMore: string;
+
+  // Interlinear
+  interlinear: string;
+  interlinearTooltip: string;
+  strongsDef: string;
+  pronunciation: string;
+  partOfSpeech: string;
+  morphology: string;
+  crossReferences: string;
+  closePanel: string;
 }
 
 const EN: Strings = {
@@ -141,6 +152,7 @@ const EN: Strings = {
     "<strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.",
     "<strong>Print</strong> &mdash; Use <kbd>Ctrl+P</kbd> for a clean, print-optimized layout.",
     "<strong>Install as app</strong> &mdash; Sanatheos is a Progressive Web App. Use your browser\u2019s \u201cInstall\u201d or \u201cAdd to Home Screen\u201d option to install it for quick, offline access.",
+    '<strong>Dictionary</strong> &mdash; Browse and search the full Strong\u2019s Concordance (Hebrew &amp; Greek) in the <a href="./dictionary.html">Dictionary</a> page.',
   ],
   infoDataTitle: "Data & Storage",
   infoDataText: "Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.",
@@ -152,6 +164,7 @@ const EN: Strings = {
   footerLine1: "All available Bible translations are in the public domain.",
   footerDescriptions: 'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> (CPDV).',
   footerStyleguide: 'Paragraph and poetry formatting is based on the <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) translation.',
+  footerDictionary: 'Browse the <a href="./dictionary.html">Strong\u2019s Concordance Dictionary</a> for Hebrew and Greek word definitions.',
   footerFavicon: 'Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Copied!",
@@ -163,6 +176,15 @@ const EN: Strings = {
   highlight: "Highlight",
   removeHighlight: "Remove highlight",
   showMore: "Show more",
+
+  interlinear: "Interlinear",
+  interlinearTooltip: "Show original Hebrew/Greek with Strong\u2019s numbers",
+  strongsDef: "Strong\u2019s Definition",
+  pronunciation: "Pronunciation",
+  partOfSpeech: "Part of speech",
+  morphology: "Morphology",
+  crossReferences: "References",
+  closePanel: "Close",
 };
 
 const FI: Strings = {
@@ -233,6 +255,7 @@ const FI: Strings = {
     "<strong>Pyyhkäisynavigaatio</strong> &mdash; Kosketuslaitteilla pyyhkäise vasemmalle tai oikealle siirtyäksesi lukujen välillä.",
     "<strong>Tulostus</strong> &mdash; Käytä <kbd>Ctrl+P</kbd> saadaksesi siistin tulostusnäkymän.",
     "<strong>Asenna sovelluksena</strong> &mdash; Sanatheos on progressiivinen verkkosovellus (PWA). Käytä selaimesi \u201cAsenna\u201d- tai \u201cLisää aloitusnäytölle\u201d-toimintoa asentaaksesi sen nopeaa offline-käyttöä varten.",
+    '<strong>Sanakirja</strong> &mdash; Selaa ja etsi koko Strongin konkordanssia (heprea ja kreikka) <a href="./dictionary.html">Sanakirja</a>-sivulta.',
   ],
   infoDataTitle: "Tiedot ja tallennus",
   infoDataText: "Raamatun teksti haetaan palvelimelta kerran ja tallennetaan selaimeesi <strong>IndexedDB</strong>-tietokantaan nopeaa offline-käyttöä varten. Tietoja ei lähetetä kolmansille osapuolille. Kaikki toimii selaimessasi.",
@@ -244,6 +267,7 @@ const FI: Strings = {
   footerLine1: "Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
   footerDescriptions: 'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä (CPDV).',
   footerStyleguide: 'Kappalejako ja runomuotoilu perustuvat <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) -käännökseen.',
+  footerDictionary: 'Selaa <a href="./dictionary.html">Strongin konkordanssisanakirjaa</a> heprean ja kreikan sananmääritelmille.',
   footerFavicon: 'Sivustokuvake: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo;, Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Kopioitu!",
@@ -255,6 +279,15 @@ const FI: Strings = {
   highlight: "Korosta",
   removeHighlight: "Poista korostus",
   showMore: "Näytä lisää",
+
+  interlinear: "Interlineaari",
+  interlinearTooltip: "Näytä alkuperäinen heprea/kreikka Strongin numeroilla",
+  strongsDef: "Strongin määritelmä",
+  pronunciation: "Ääntäminen",
+  partOfSpeech: "Sanaluokka",
+  morphology: "Morfologia",
+  crossReferences: "Viittaukset",
+  closePanel: "Sulje",
 };
 
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };

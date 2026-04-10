@@ -27,7 +27,7 @@ describe("i18n — new feature strings (EN)", () => {
 
   test("copy string exists", () => {
     expect(t().copied).toBe("Copied!");
-    expect(t().copyVerse).toBe("Copy verse");
+    expect(t().copyVerse).toBe("Copy");
   });
 
   test("highlight strings exist", () => {
@@ -61,7 +61,7 @@ describe("i18n — new feature strings (FI)", () => {
 
   test("copy string exists", () => {
     expect(t().copied).toBe("Kopioitu!");
-    expect(t().copyVerse).toBe("Kopioi jae");
+    expect(t().copyVerse).toBe("Kopioi");
   });
 
   test("highlight strings exist", () => {

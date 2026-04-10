@@ -101,6 +101,36 @@ Bun.serve({
       });
     }
 
+    // Interlinear data: /text/interlinear/{Book}.json
+    const ilMatch = path.match(/^\/text\/interlinear\/(.+)\.json$/i);
+    if (ilMatch) {
+      const bookName = decodeURIComponent(ilMatch[1]);
+      const ilFile = Bun.file(join(TEXT_DIR, "interlinear", `${bookName}.json`));
+      if (await ilFile.exists()) {
+        return new Response(ilFile, {
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=86400",
+          },
+        });
+      }
+      return new Response("Not found", { status: 404 });
+    }
+
+    // Strong's dictionary: /text/strongs.json
+    if (path === "/text/strongs.json") {
+      const strongsFile = Bun.file(join(TEXT_DIR, "strongs.json"));
+      if (await strongsFile.exists()) {
+        return new Response(strongsFile, {
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "public, max-age=86400",
+          },
+        });
+      }
+      return new Response("Not found", { status: 404 });
+    }
+
     if (path === "/") path = "/index.html";
 
     // Prevent path traversal
