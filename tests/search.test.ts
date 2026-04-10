@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
-import { initSearch, search, tryParseNav, parseQueryBooks, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein, _normalizeQuery, escapeRegex } from "../src/client/search.ts";
+import type { InterlinearBook } from "../src/client/types.ts";
+import { initSearch, search, tryParseNav, parseQueryBooks, setSearchInterlinearData, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein, _normalizeQuery, escapeRegex } from "../src/client/search.ts";
 import { setTranslation, getAliases, getSortedAliases } from "../src/client/bookNames.ts";
 
 // Minimal fixture data
@@ -1607,5 +1608,98 @@ describe("initSearch optimization", () => {
     const results = search(smallData, '"Alpha"');
     expect(results).toHaveLength(1);
     expect(results[0].text).toBe("Alpha and Omega");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Strong's number search
+// ---------------------------------------------------------------------------
+
+describe("Strong's number search", () => {
+  const bibleData: BibleData = {
+    John: {
+      "1": {
+        "1": "In the beginning was the Word, and the Word was with God, and the Word was God.",
+        "2": "The same was in the beginning with God.",
+        "3": "All things were made through him.",
+      },
+    },
+    Genesis: {
+      "1": {
+        "1": "In the beginning God created the heavens and the earth.",
+      },
+    },
+  };
+
+  const interlinearMap: Map<string, InterlinearBook> = new Map([
+    [
+      "John",
+      {
+        "1": {
+          "1": [
+            { w: "In", english: "In", original: "Ἐν", translit: "En", strongs: "g1722" },
+            { w: "beginning", english: "beginning", original: "ἀρχῇ", translit: "archē", strongs: "g746" },
+            { w: "was", english: "was", original: "ἦν", translit: "ēn", strongs: "g1510" },
+            { w: "Word", english: "Word", original: "λόγος", translit: "logos", strongs: "g3056" },
+            { w: "God", english: "God", original: "θεός", translit: "theos", strongs: "g2316" },
+          ],
+          "2": [
+            { w: "same", english: "same", original: "οὗτος", translit: "houtos", strongs: "g3778" },
+            { w: "beginning", english: "beginning", original: "ἀρχῇ", translit: "archē", strongs: "g746" },
+            { w: "God", english: "God", original: "θεός", translit: "theos", strongs: "g2316" },
+          ],
+          "3": [
+            { w: "all", english: "all", original: "πάντα", translit: "panta", strongs: "g3956" },
+          ],
+        },
+      },
+    ],
+  ]);
+
+  beforeEach(() => {
+    setTranslation("NHEB");
+    initSearch(bibleData);
+    setSearchInterlinearData(interlinearMap);
+  });
+
+  test("finds verses by Greek Strong's number", () => {
+    const results = search(bibleData, "G2316");
+    expect(results.length).toBe(2);
+    expect(results[0].book).toBe("John");
+    expect(results[0].chapter).toBe(1);
+    expect(results[0].verse).toBe(1);
+    expect(results[1].verse).toBe(2);
+  });
+
+  test("Strong's search is case-insensitive", () => {
+    const upper = search(bibleData, "G746");
+    const lower = search(bibleData, "g746");
+    expect(upper.length).toBe(lower.length);
+    expect(upper.length).toBe(2);
+  });
+
+  test("Strong's search with no matches returns empty", () => {
+    const results = search(bibleData, "G9999");
+    expect(results).toHaveLength(0);
+  });
+
+  test("Strong's search finds unique Strong's number", () => {
+    const results = search(bibleData, "G3056");
+    expect(results).toHaveLength(1);
+    expect(results[0].book).toBe("John");
+    expect(results[0].chapter).toBe(1);
+    expect(results[0].verse).toBe(1);
+  });
+
+  test("Strong's search with no interlinear data returns empty", () => {
+    setSearchInterlinearData(new Map());
+    const results = search(bibleData, "G2316");
+    expect(results).toHaveLength(0);
+  });
+
+  test("Hebrew Strong's pattern recognized", () => {
+    // No Hebrew interlinear data loaded, so should return empty
+    const results = search(bibleData, "H430");
+    expect(results).toHaveLength(0);
   });
 });

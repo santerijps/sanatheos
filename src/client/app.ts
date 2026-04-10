@@ -81,6 +81,7 @@ let toastTimer: number;
 function showToast(msg: string) {
   const el = document.getElementById("toast");
   if (!el) return;
+  el.style.removeProperty("visibility");
   el.textContent = msg;
   el.classList.add("show");
   clearTimeout(toastTimer);
@@ -123,9 +124,6 @@ async function init() {
   const settingsOverlay = document.getElementById("settings-overlay")!;
   const settingsClose = document.getElementById("settings-close")!;
   const verseMenu = document.getElementById("verse-menu")!;
-
-  // Remove inline visibility:hidden (anti-flash) now that CSS is loaded
-  document.getElementById("toast")?.style.removeProperty("visibility");
 
   // Determine initial translation from URL or localStorage
   const initialState = readState();

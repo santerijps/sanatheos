@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from "bun:test";
+import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { setLanguage, t } from "../src/client/i18n.ts";
 import type { Highlight, HighlightColor, BookDescription, DescriptionData } from "../src/client/types.ts";
 import { readFileSync, existsSync } from "node:fs";
@@ -814,5 +814,459 @@ describe("HTML — bundle script defer", () => {
 
   test("bundle.js script tag has defer attribute", () => {
     expect(html).toMatch(/<script\s+defer\s+src="\.\/bundle\.js"><\/script>/);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// i18n — interlinear strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — interlinear strings (EN)", () => {
+  beforeEach(() => setLanguage("en"));
+
+  test("interlinear string exists", () => {
+    expect(t().interlinear).toBe("Interlinear");
+  });
+
+  test("interlinearTooltip mentions Hebrew/Greek", () => {
+    expect(t().interlinearTooltip).toContain("Hebrew");
+    expect(t().interlinearTooltip).toContain("Greek");
+  });
+
+  test("strongsDef string exists", () => {
+    expect(t().strongsDef).toBeTruthy();
+  });
+
+  test("pronunciation string exists", () => {
+    expect(t().pronunciation).toBeTruthy();
+  });
+
+  test("partOfSpeech string exists", () => {
+    expect(t().partOfSpeech).toBeTruthy();
+  });
+
+  test("morphology string exists", () => {
+    expect(t().morphology).toBeTruthy();
+  });
+
+  test("crossReferences string exists", () => {
+    expect(t().crossReferences).toBeTruthy();
+  });
+
+  test("closePanel string exists", () => {
+    expect(t().closePanel).toBeTruthy();
+  });
+});
+
+describe("i18n — interlinear strings (FI)", () => {
+  beforeEach(() => setLanguage("fi"));
+
+  test("interlinear string exists", () => {
+    expect(t().interlinear).toBe("Interlineaari");
+  });
+
+  test("strongsDef string exists", () => {
+    expect(t().strongsDef).toBeTruthy();
+  });
+
+  test("pronunciation string exists", () => {
+    expect(t().pronunciation).toBeTruthy();
+  });
+
+  test("partOfSpeech string exists", () => {
+    expect(t().partOfSpeech).toBeTruthy();
+  });
+
+  test("closePanel string exists", () => {
+    expect(t().closePanel).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// i18n — share link strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — share link strings (EN)", () => {
+  beforeEach(() => setLanguage("en"));
+
+  test("shareWith string exists", () => {
+    expect(t().shareWith).toBeTruthy();
+  });
+
+  test("shareWithout string exists", () => {
+    expect(t().shareWithout).toBeTruthy();
+  });
+
+  test("linkCopied string exists", () => {
+    expect(t().linkCopied).toBeTruthy();
+  });
+});
+
+describe("i18n — share link strings (FI)", () => {
+  beforeEach(() => setLanguage("fi"));
+
+  test("shareWith string exists", () => {
+    expect(t().shareWith).toBeTruthy();
+  });
+
+  test("shareWithout string exists", () => {
+    expect(t().shareWithout).toBeTruthy();
+  });
+
+  test("linkCopied string exists", () => {
+    expect(t().linkCopied).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// i18n — dictionary / footer dictionary strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — dictionary strings (EN)", () => {
+  beforeEach(() => setLanguage("en"));
+
+  test("footerDictionary mentions dictionary", () => {
+    expect(t().footerDictionary).toContain("dictionary.html");
+    expect(t().footerDictionary).toContain("Dictionary");
+  });
+
+  test("infoFeaturesItems mentions Dictionary", () => {
+    const joined = t().infoFeaturesItems.join(" ");
+    expect(joined).toContain("Dictionary");
+    expect(joined).toContain("dictionary.html");
+  });
+});
+
+describe("i18n — dictionary strings (FI)", () => {
+  beforeEach(() => setLanguage("fi"));
+
+  test("footerDictionary mentions dictionary", () => {
+    expect(t().footerDictionary).toContain("dictionary.html");
+  });
+
+  test("infoFeaturesItems mentions Sanakirja", () => {
+    const joined = t().infoFeaturesItems.join(" ");
+    expect(joined).toContain("Sanakirja");
+    expect(joined).toContain("dictionary.html");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// i18n — deuterocanonical strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — deuterocanonical strings", () => {
+  test("EN has deuterocanonical string", () => {
+    setLanguage("en");
+    expect(t().deuterocanonical).toBe("Deuterocanonical");
+  });
+
+  test("FI has deuterocanonical string", () => {
+    setLanguage("fi");
+    expect(t().deuterocanonical).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// i18n — loadTranslationFailed
+// ---------------------------------------------------------------------------
+
+describe("i18n — loadTranslationFailed", () => {
+  test("EN includes code", () => {
+    setLanguage("en");
+    expect(t().loadTranslationFailed("XYZ")).toContain("XYZ");
+  });
+
+  test("FI includes code", () => {
+    setLanguage("fi");
+    expect(t().loadTranslationFailed("XYZ")).toContain("XYZ");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// i18n — copyBoth and showMore
+// ---------------------------------------------------------------------------
+
+describe("i18n — copyBoth and showMore", () => {
+  test("EN copyBoth exists", () => {
+    setLanguage("en");
+    expect(t().copyBoth).toBeTruthy();
+  });
+
+  test("FI copyBoth exists", () => {
+    setLanguage("fi");
+    expect(t().copyBoth).toBeTruthy();
+  });
+
+  test("EN showMore exists", () => {
+    setLanguage("en");
+    expect(t().showMore).toBeTruthy();
+  });
+
+  test("FI showMore exists", () => {
+    setLanguage("fi");
+    expect(t().showMore).toBeTruthy();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// bookNames — displayName and displayNameFor
+// ---------------------------------------------------------------------------
+
+import { setTranslation, displayName, displayNameFor } from "../src/client/bookNames.ts";
+
+describe("bookNames — displayName", () => {
+  test("returns English name for NHEB", () => {
+    setTranslation("NHEB");
+    expect(displayName("Genesis")).toBe("Genesis");
+    expect(displayName("John")).toBe("John");
+    expect(displayName("Revelation")).toBe("Revelation");
+  });
+
+  test("returns Finnish name for KR38", () => {
+    setTranslation("KR38");
+    expect(displayName("Genesis")).toBe("1. Mooseksen kirja");
+    expect(displayName("John")).toBe("Johanneksen evankeliumi");
+    expect(displayName("Revelation")).toBe("Ilmestyskirja");
+  });
+
+  test("returns key as fallback for unknown book", () => {
+    setTranslation("NHEB");
+    expect(displayName("FakeBook")).toBe("FakeBook");
+  });
+
+  test("handles deuterocanonical books", () => {
+    setTranslation("NHEB");
+    expect(displayName("Tobit")).toBe("Tobit");
+    expect(displayName("1 Maccabees")).toBe("1 Maccabees");
+  });
+
+  // Reset to NHEB
+  afterAll(() => setTranslation("NHEB"));
+});
+
+describe("bookNames — displayNameFor", () => {
+  test("returns name for specified translation code", () => {
+    expect(displayNameFor("KR38", "Genesis")).toBe("1. Mooseksen kirja");
+    expect(displayNameFor("NHEB", "Genesis")).toBe("Genesis");
+  });
+
+  test("returns key as fallback for unknown translation", () => {
+    expect(displayNameFor("UNKNOWN", "Genesis")).toBe("Genesis");
+  });
+
+  test("returns key as fallback for unknown book", () => {
+    expect(displayNameFor("NHEB", "FakeBook")).toBe("FakeBook");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// bookCodes — deuterocanonical books
+// ---------------------------------------------------------------------------
+
+import { bookFromCode, bookToCode } from "../src/client/bookCodes.ts";
+
+describe("bookCodes — deuterocanonical books", () => {
+  test("deuterocanonical books have codes", () => {
+    expect(bookToCode("Tobit")).toBe("tob");
+    expect(bookToCode("Judith")).toBe("jdt");
+    expect(bookToCode("Wisdom")).toBe("wis");
+    expect(bookToCode("Sirach")).toBe("sir");
+    expect(bookToCode("1 Maccabees")).toBe("1ma");
+    expect(bookToCode("2 Maccabees")).toBe("2ma");
+  });
+
+  test("deuterocanonical codes resolve back to books", () => {
+    expect(bookFromCode("tob")).toBe("Tobit");
+    expect(bookFromCode("jdt")).toBe("Judith");
+    expect(bookFromCode("wis")).toBe("Wisdom");
+    expect(bookFromCode("sir")).toBe("Sirach");
+    expect(bookFromCode("1ma")).toBe("1 Maccabees");
+    expect(bookFromCode("2ma")).toBe("2 Maccabees");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// state — toUrl with interlinear param
+// ---------------------------------------------------------------------------
+
+import { toUrl } from "../src/client/state.ts";
+
+describe("state — interlinear param", () => {
+  test("interlinear true adds il=1 to URL", () => {
+    const url = toUrl({ book: "Genesis", chapter: 1, interlinear: true });
+    expect(url).toContain("il=1");
+  });
+
+  test("interlinear false omits il param", () => {
+    const url = toUrl({ book: "Genesis", chapter: 1, interlinear: false });
+    expect(url).not.toContain("il=");
+  });
+
+  test("interlinear undefined omits il param", () => {
+    const url = toUrl({ book: "Genesis", chapter: 1 });
+    expect(url).not.toContain("il=");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Interlinear types validation
+// ---------------------------------------------------------------------------
+
+import type { InterlinearWord, StrongsEntry, StrongsDict } from "../src/client/types.ts";
+
+describe("Interlinear types", () => {
+  test("InterlinearWord has required fields", () => {
+    const word: InterlinearWord = {
+      w: "In",
+      english: "In",
+      original: "Ἐν",
+      translit: "En",
+      strongs: "g1722",
+    };
+    expect(word.w).toBeTruthy();
+    expect(word.english).toBeTruthy();
+    expect(word.original).toBeTruthy();
+    expect(word.strongs).toBeTruthy();
+  });
+
+  test("InterlinearWord optional fields", () => {
+    const word: InterlinearWord = {
+      w: "beginning",
+      english: "beginning",
+      original: "ἀρχῇ",
+      translit: "archē",
+      lemma: "ἀρχή",
+      strongs: "g746",
+      morph: "N-DSF",
+    };
+    expect(word.lemma).toBe("ἀρχή");
+    expect(word.morph).toBe("N-DSF");
+  });
+
+  test("StrongsEntry has required fields", () => {
+    const entry: StrongsEntry = {
+      d: "beginning, origin",
+      p: "ar-khay'",
+      s: "feminine noun",
+      r: "from G756|English: beginning",
+    };
+    expect(entry.d).toBeTruthy();
+    expect(entry.s).toBeTruthy();
+  });
+
+  test("StrongsDict is keyed by lowercase Strong's numbers", () => {
+    const dict: StrongsDict = {
+      g746: { d: "beginning", p: "ar-khay'", s: "feminine noun", r: "" },
+      h430: { d: "God", p: "el-o-heem'", s: "masculine plural noun", r: "" },
+    };
+    expect(dict["g746"]).toBeDefined();
+    expect(dict["h430"]).toBeDefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Dictionary page exists
+// ---------------------------------------------------------------------------
+
+describe("dictionary.html exists in public/", () => {
+  test("dictionary.html file is present", () => {
+    expect(existsSync(join(PUBLIC, "dictionary.html"))).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Build script copies dictionary.html
+// ---------------------------------------------------------------------------
+
+describe("Build script — dictionary.html", () => {
+  const buildScript = readFileSync(join(ROOT, "scripts", "build-static.ts"), "utf-8");
+
+  test("build script includes dictionary.html in staticFiles", () => {
+    expect(buildScript).toContain("dictionary.html");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Strong's data file
+// ---------------------------------------------------------------------------
+
+describe("Strong's data — strongs.json", () => {
+  const strongsPath = join(ROOT, "public", "text", "strongs.json");
+
+  test("strongs.json exists", () => {
+    expect(existsSync(strongsPath)).toBe(true);
+  });
+
+  if (existsSync(strongsPath)) {
+    const data = JSON.parse(readFileSync(strongsPath, "utf-8")) as StrongsDict;
+
+    test("has Hebrew entries (h-prefixed keys)", () => {
+      const hKeys = Object.keys(data).filter(k => k.startsWith("h"));
+      expect(hKeys.length).toBeGreaterThan(4000);
+    });
+
+    test("has Greek entries (g-prefixed keys)", () => {
+      const gKeys = Object.keys(data).filter(k => k.startsWith("g"));
+      expect(gKeys.length).toBeGreaterThan(5000);
+    });
+
+    test("every entry has d, p, s, r fields", () => {
+      let checked = 0;
+      for (const [key, entry] of Object.entries(data)) {
+        expect(typeof entry.d).toBe("string");
+        expect(typeof entry.p).toBe("string");
+        expect(typeof entry.s).toBe("string");
+        expect(typeof entry.r).toBe("string");
+        checked++;
+        if (checked >= 100) break; // sample check
+      }
+    });
+
+    test("keys are lowercase", () => {
+      for (const key of Object.keys(data).slice(0, 100)) {
+        expect(key).toBe(key.toLowerCase());
+      }
+    });
+  }
+});
+
+// ---------------------------------------------------------------------------
+// CSS — interlinear styles
+// ---------------------------------------------------------------------------
+
+describe("CSS — interlinear styles", () => {
+  const css = readFileSync(join(ROOT, "public", "style.css"), "utf-8");
+
+  test("has interlinear word styles", () => {
+    expect(css).toContain(".il-word");
+  });
+
+  test("has Strong's panel styles", () => {
+    expect(css).toContain("#strongs-panel");
+  });
+
+  test("has interlinear toggle button styles", () => {
+    expect(css).toContain(".il-toggle-btn");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// HTML — strongs-panel and toast elements
+// ---------------------------------------------------------------------------
+
+describe("HTML — structural elements", () => {
+  const html = readFileSync(join(PUBLIC, "index.html"), "utf-8");
+
+  test("has Strong's panel element", () => {
+    expect(html).toContain('id="strongs-panel"');
+  });
+
+  test("has toast notification element", () => {
+    expect(html).toContain('id="toast"');
+  });
+
+  test("has verse menu element", () => {
+    expect(html).toContain('id="verse-menu"');
   });
 });

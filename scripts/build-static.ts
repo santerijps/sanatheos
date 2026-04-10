@@ -28,6 +28,7 @@ console.log("Client bundled.");
 
 const staticFiles = [
   "index.html",
+  "dictionary.html",
   "style.css",
   "robots.txt",
   "manifest.json",

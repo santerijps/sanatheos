@@ -27,12 +27,6 @@ export const BOOK_ORDER = [
   "1 John", "2 John", "3 John", "Jude", "Revelation",
 ];
 
-/** First NT book index in BOOK_ORDER. */
-export const NT_START = BOOK_ORDER.indexOf("Matthew");
-
-/** First deuterocanonical book index in BOOK_ORDER. */
-export const DC_START = BOOK_ORDER.indexOf("Tobit");
-
 /** Map source JSON book names to canonical internal keys. */
 const SOURCE_NAME_MAP: Record<string, string> = {
   "I Samuel": "1 Samuel",

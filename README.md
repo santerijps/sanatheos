@@ -15,13 +15,22 @@ Lightweight, offline-ready, keyboard-friendly, and requires no sign-up.
 - **Word boundary matching** — Use `^` for word start and `$` for word end inside quotes: `"^grace"`, `"grace$"`, `"^grace$"` (exact word)
 - **Combined search** — Combine a reference with a text filter: `Romans "faith"`, `Gen 1-3 "light"`
 - **Multi-query** — Separate independent queries with `;`, e.g. `John 3:16; Rev 1:1`
+- **Strong's number search** — Search by Strong's Concordance number: `G2316` (Greek) or `H430` (Hebrew) to find all verses containing that word
 - **Abbreviations** — Common abbreviations work for both English and Finnish: `gen`, `rev`, `eph`, `1 cor`, `joh`, `room`, `2. moos`
 - **Auto-closing quotes** — Typing `"` inserts a matching pair and places the cursor between them
 - Results appear instantly with debounced input and highlighted matching text.
 
 ### Book Index Panel
 
-Browse all 66 books in a three-column layout (books, chapters, verses). Hovering over a chapter shows a text preview; hovering over a book reveals its chapters. Full keyboard navigation is supported with arrow keys, Tab, and Enter.
+Browse all books in a three-column layout (books, chapters, verses) with Old Testament, Deuterocanonical, and New Testament section labels. Hovering over a chapter shows a text preview; hovering over a book reveals its chapters. Full keyboard navigation is supported with arrow keys, Tab, and Enter.
+
+### Interlinear View
+
+Toggle interlinear mode to display original Hebrew (OT) and Greek (NT) text alongside the English translation. Each word shows the original language text, transliteration, and Strong's number. Clicking a word opens a Strong's Concordance panel with the definition, pronunciation, part of speech, morphology, and cross-references.
+
+### Strong's Concordance Dictionary
+
+A standalone dictionary page (`dictionary.html`) provides a browsable reference for all Strong's Hebrew and Greek word definitions.
 
 ### Keyboard Shortcuts
 
@@ -36,18 +45,20 @@ Browse all 66 books in a three-column layout (books, chapters, verses). Hovering
 
 ### Shareable URLs
 
-Every search query, book, chapter, verse selection, and Bible translation is encoded in the URL. Sharing a link preserves the exact passage and translation for the recipient, regardless of their own settings.
+Every search query, book, chapter, verse selection, Bible translation, and interlinear mode is encoded in the URL. A share button allows copying a link with or without the current verse text. Sharing a link preserves the exact passage and settings for the recipient.
 
 ### Translations and Languages
 
-Two Bible translations are currently included:
+Four Bible translations are currently included:
 
-- **World English Bible (WEB)** — a public-domain modern English translation
+- **New Heart English Bible (NHEB)** — a public-domain modern English translation (default)
+- **King James Version (KJV)** — the classic English translation with interlinear data
+- **Catholic Public Domain Version (CPDV)** — a public-domain English translation including deuterocanonical books
 - **Raamattu 1933/1938 (KR38)** — a Finnish Bible translation
 
-All 66 books of the Old and New Testaments are available in both translations.
+All 66 canonical books of the Old and New Testaments are available, plus 18 deuterocanonical/apocryphal books in translations that include them (e.g., CPDV).
 
-The active translation can be changed in Settings. Switching translations automatically updates the UI language to match and translates any book names present in the search input (e.g. "2. Moos" becomes "Exodus" when switching from KR38 to WEB). The UI language can also be set independently to English or Finnish.
+The active translation can be changed in Settings. Switching translations automatically updates the UI language to match and translates any book names present in the search input (e.g. "Joh 3:16" becomes "John 3:16" when switching from KR38 to an English translation). The UI language can also be set independently to English or Finnish.
 
 ### Offline Support
 
