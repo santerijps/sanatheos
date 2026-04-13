@@ -7,15 +7,18 @@
     "dev": "bun run --watch src/server.ts",
     "build:static": "bun run scripts/build-static.ts",
     "lint": "oxlint src/ tests/ scripts/",
+    "lint:fix": "oxlint --fix src/ tests/ scripts/",
     "fmt": "oxfmt src/ tests/ scripts/",
     "fmt:check": "oxfmt --check src/ tests/ scripts/",
     "test:e2e": "bunx playwright test",
-    "download-translation": "python scripts/bible-gateway.py"
+    "download-translation": "python scripts/bible-gateway.py",
+    "postinstall": "lefthook install"
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/bun": "latest",
     "@types/node": "^25.5.1",
+    "lefthook": "^2.1.5",
     "oxfmt": "^0.44.0",
     "oxlint": "^1.59.0"
   }

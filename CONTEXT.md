@@ -10,9 +10,10 @@ Sanatheos is a fast, offline-capable Bible reader and search application built w
 
 ```
 sanatheos/
-├── package.json              # npm metadata, scripts (start, dev, build:static, test:e2e, lint, fmt)
+├── package.json              # npm metadata, scripts (start, dev, build:static, test:e2e, lint, fmt, postinstall)
 ├── tsconfig.json             # TypeScript strict mode, ES2022, bundler resolution
 ├── bunfig.toml               # Bun config — scopes unit tests to tests/, excludes e2e/
+├── lefthook.yml              # Git hooks config — pre-commit runs lint + format check
 ├── playwright.config.ts      # Playwright e2e test config (Chromium, auto-starts dev server)
 ├── LICENSE
 ├── README.md                 # User-facing project documentation
@@ -916,10 +917,11 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 4. **IndexedDB caching:** Bible data fetched once and persisted. Subsequent visits load from IndexedDB, making the app work fully offline.
 5. **Canonical English keys:** Internal book keys are always English (e.g., "Genesis"). Translation-specific display names and aliases are layered on top via `bookNames.ts`.
 6. **3-character URL codes:** URL book parameters use compact codes (`gen`, `jhn`, `rev`) to keep URLs short and language-independent.
-7. **Minimal build dependencies:** `@types/bun`, `@types/node`, `@playwright/test`, `oxlint`, and `oxfmt` as devDependencies. No runtime npm packages.
+7. **Minimal build dependencies:** `@types/bun`, `@types/node`, `@playwright/test`, `lefthook`, `oxlint`, and `oxfmt` as devDependencies. No runtime npm packages.
 8. **Static deployment:** The `docs/` output is a self-contained static site. GitHub Pages serves it directly. The Bun server is dev-only.
 9. **CSS custom properties:** All theming via CSS variables, toggled by `data-theme` attribute. No CSS-in-JS.
 10. **oxlint & oxfmt:** Rust-based linter (`oxlint`) and formatter (`oxfmt`) with zero config. Run via `bun run lint` and `bun run fmt`. All source files pass with 0 warnings and 0 errors.
+11. **Lefthook git hooks:** Pre-commit hook runs lint and format check in parallel via `lefthook.yml`. Hooks are auto-installed on `bun install` via the `postinstall` script.
 
 ## Adding a New Translation
 
