@@ -564,7 +564,7 @@ The page is a single HTML file with this DOM structure:
     #info-btn         — ⓘ help button
     #settings-btn     — ⚙ settings button
     #search-input     — Text input (autocomplete off, spellcheck off)
-    #index-btn        — 🔍 book index button (inside search input)
+    #index-btn        — SVG magnifier icon, book index button (inside search input)
   </header>
 
   <main #content>     — Dynamic content area (chapters, verses, results)
@@ -584,11 +584,13 @@ The page is a single HTML file with this DOM structure:
     #settings-modal
       #settings-close
       #settings-modal-body
-        #language-select    — EN / Suomi
-        #translation-select — NHEB / KJV / CPDV / KR38
-        #parallel-select    — None / NHEB / KJV / CPDV / KR38
-        #theme-select       — System / Light / Dark
-        #fontsize-select    — Small / Medium / Large / XL / XXL
+        fieldset.settings-group  — Content group
+          #translation-select    — NHEB / KJV / CPDV / KR38 (select)
+          #parallel-select       — None / NHEB / KJV / CPDV / KR38 (select)
+        fieldset.settings-group  — Appearance group
+          #theme-segmented       — System / Light / Dark (segmented control)
+          #fontsize-segmented    — S / M / L / XL / XXL (segmented control)
+          #language-segmented    — English / Suomi (segmented control)
 
   #verse-menu         — Floating context menu for verse actions
   #strongs-panel      — Side panel for Strong's word definitions
@@ -607,7 +609,7 @@ The page is a single HTML file with this DOM structure:
 
 ## CSS Design (style.css)
 
-**Theme system:** CSS custom properties on `:root` (light) and `[data-theme="dark"]`. Variables: `--bg`, `--surface`, `--text`, `--verse-num`, `--subtle`, `--border`, `--hover`, `--accent`, `--muted`, `--mark-bg`, and 5 highlight colors (`--hl-yellow`, `--hl-green`, `--hl-blue`, `--hl-pink`, `--hl-orange`).
+**Theme system:** CSS custom properties on `:root` (light) and `[data-theme="dark"]`. Variables: `--bg`, `--surface`, `--text`, `--verse-num`, `--subtle`, `--border`, `--hover`, `--accent` (muted steel blue: `#4a6fa5` light / `#7da2d4` dark), `--muted`, `--mark-bg`, and 5 highlight colors (`--hl-yellow`, `--hl-green`, `--hl-blue`, `--hl-pink`, `--hl-orange`).
 
 **Font size system:** `[data-font-size]` attribute on `<html>` sets `.verses` font size: small (14px), medium (17px, default), large (20px), xl (23px), xxl (26px).
 
@@ -641,6 +643,8 @@ The page is a single HTML file with this DOM structure:
 - `#strongs-panel` — Slide-in panel for Strong's word definitions, pronunciation, morphology.
 - `.strongs-panel-header` / `.strongs-panel-body` — Strong's panel layout components.
 - Settings/info modals — Centered cards with close buttons.
+- `.settings-group` — Fieldset grouping related settings (content vs appearance).
+- `.segmented` / `.seg-btn` — Horizontal segmented controls for theme, font size, and language. Active state uses `--accent` background.
 - `@media print` — Hides header, overlays, nav arrows, buttons. Shows `.print-translation-label`.
 - `@media (max-width: 800px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels, smaller section titles.
 
@@ -678,7 +682,7 @@ The search input in the sticky header accepts multiple query formats. Input is d
 
 ### 2. Book Index Panel
 
-Three-column browser opened via the 🔍 button (inside the search input) or Ctrl+I:
+Three-column browser opened via the magnifier icon (inside the search input) or Ctrl+I:
 - **Column 1 (Books):** All books with "Old Testament", "Deuterocanonical", and "New Testament" section labels. Hovering or keyboard-navigating to a book reveals its chapters.
 - **Column 2 (Chapters):** Chapter numbers with verse 1 text preview. Hovering shows verse list. Clicking navigates to that chapter.
 - **Column 3 (Verses):** Verse numbers with truncated text preview (50 chars). Clicking navigates to that verse.

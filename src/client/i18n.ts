@@ -134,7 +134,7 @@ const EN: Strings = {
 		'Typing <kbd>"</kbd> auto-inserts a closing quote. Abbreviations like <code>gen</code>, <code>rev</code>, <code>eph</code> are supported.',
 	infoBrowseTitle: "Browse Books",
 	infoBrowseText:
-		"Click the <strong>&#128269;</strong> search button inside the search input (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.",
+		"Click the magnifier icon inside the search input (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.",
 	infoShortcutsTitle: "Keyboard Shortcuts",
 	infoShortcuts: [
 		"<kbd>Ctrl+K</kbd> &mdash; Focus search input",
@@ -245,7 +245,7 @@ const FI: Strings = {
 		'<kbd>"</kbd>-näppäin lisää automaattisesti sulkevan lainausmerkin. Lyhenteet kuten <code>1 moos</code>, <code>ilm</code>, <code>ef</code> toimivat.',
 	infoBrowseTitle: "Selaa kirjoja",
 	infoBrowseText:
-		"Napsauta hakukentän sisällä olevaa <strong>&#128269;</strong>-painiketta (tai paina <kbd>Ctrl+I</kbd>) avataksesi kirjaluettelon. Selaa kirjoja, lukuja ja jakeita kolmessa sarakkeessa. Käytä nuolinäppäimiä ja Enter-näppäintä.",
+		"Napsauta hakukentän sisällä olevaa suurennuslasikuvaketta (tai paina <kbd>Ctrl+I</kbd>) avataksesi kirjaluettelon. Selaa kirjoja, lukuja ja jakeita kolmessa sarakkeessa. Käytä nuolinäppäimiä ja Enter-näppäintä.",
 	infoShortcutsTitle: "Pikanäppäimet",
 	infoShortcuts: [
 		"<kbd>Ctrl+K</kbd> &mdash; Kohdista hakukenttään",
