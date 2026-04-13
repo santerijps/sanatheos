@@ -8,18 +8,18 @@ const PUBLIC = join(ROOT, "public");
 const TEXT_DIR = join(PUBLIC, "text");
 
 async function buildClient() {
-  const result = await Bun.build({
-    entrypoints: [join(ROOT, "src", "client", "app.ts")],
-    outdir: PUBLIC,
-    naming: "bundle.js",
-    target: "browser",
-    minify: true,
-  });
-  if (!result.success) {
-    console.error("Build failed:", result.logs);
-    process.exit(1);
-  }
-  console.log("Client built.");
+	const result = await Bun.build({
+		entrypoints: [join(ROOT, "src", "client", "app.ts")],
+		outdir: PUBLIC,
+		naming: "bundle.js",
+		target: "browser",
+		minify: true,
+	});
+	if (!result.success) {
+		console.error("Build failed:", result.logs);
+		process.exit(1);
+	}
+	console.log("Client built.");
 }
 
 await buildClient();
@@ -28,8 +28,8 @@ await buildClient();
 const translations = await discoverTranslations(TEXT_DIR);
 const bibleCache: Record<string, string> = {};
 for (const t of translations) {
-  bibleCache[t] = await loadBible(TEXT_DIR, t);
-  console.log(`${t} loaded (${(bibleCache[t].length / 1024 / 1024).toFixed(1)} MB)`);
+	bibleCache[t] = await loadBible(TEXT_DIR, t);
+	console.log(`${t} loaded (${(bibleCache[t].length / 1024 / 1024).toFixed(1)} MB)`);
 }
 const translationsJson = JSON.stringify(translations);
 
@@ -37,123 +37,124 @@ const translationsJson = JSON.stringify(translations);
 const descriptionsCache: Record<string, string> = {};
 const langFiles = ["en", "fi"];
 for (const lang of langFiles) {
-  const descPath = join(PUBLIC, "data", `descriptions-${lang}.json`);
-  if (existsSync(descPath)) {
-    descriptionsCache[lang] = await Bun.file(descPath).text();
-    console.log(`descriptions-${lang} loaded`);
-  }
+	const descPath = join(PUBLIC, "data", `descriptions-${lang}.json`);
+	if (existsSync(descPath)) {
+		descriptionsCache[lang] = await Bun.file(descPath).text();
+		console.log(`descriptions-${lang} loaded`);
+	}
 }
 
 const MIME: Record<string, string> = {
-  ".html": "text/html; charset=utf-8",
-  ".css": "text/css; charset=utf-8",
-  ".js": "application/javascript; charset=utf-8",
-  ".json": "application/json",
-  ".txt": "text/plain; charset=utf-8",
-  ".ico": "image/ico",
+	".html": "text/html; charset=utf-8",
+	".css": "text/css; charset=utf-8",
+	".js": "application/javascript; charset=utf-8",
+	".json": "application/json",
+	".txt": "text/plain; charset=utf-8",
+	".ico": "image/ico",
 };
 
 Bun.serve({
-  port: 3000,
-  async fetch(req) {
-    const url = new URL(req.url);
-    let path: string;
-    try {
-      path = decodeURIComponent(url.pathname);
-    } catch {
-      return new Response("Bad Request", { status: 400 });
-    }
+	port: 3000,
+	async fetch(req) {
+		const url = new URL(req.url);
+		let path: string;
+		try {
+			path = decodeURIComponent(url.pathname);
+		} catch {
+			return new Response("Bad Request", { status: 400 });
+		}
 
-    // Match /text/bible-CODE.json (e.g. /text/bible-NHEB.json)
-    const bibleMatch = path.match(/^\/text\/bible-([A-Z0-9]+)\.json$/i);
-    if (bibleMatch) {
-      const t = bibleMatch[1].toUpperCase();
-      const json = bibleCache[t];
-      if (!json) return new Response("Translation not found", { status: 404 });
-      return new Response(json, {
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "public, max-age=86400",
-        },
-      });
-    }
+		// Match /text/bible-CODE.json (e.g. /text/bible-NHEB.json)
+		const bibleMatch = path.match(/^\/text\/bible-([A-Z0-9]+)\.json$/i);
+		if (bibleMatch) {
+			const t = bibleMatch[1].toUpperCase();
+			const json = bibleCache[t];
+			if (!json) return new Response("Translation not found", { status: 404 });
+			return new Response(json, {
+				headers: {
+					"Content-Type": "application/json",
+					"Cache-Control": "public, max-age=86400",
+				},
+			});
+		}
 
-    // Match /data/descriptions-LANG.json (e.g. /data/descriptions-en.json)
-    const descMatch = path.match(/^\/data\/descriptions-([a-z]+)\.json$/i);
-    if (descMatch) {
-      const lang = descMatch[1].toLowerCase();
-      const json = descriptionsCache[lang];
-      if (!json) return new Response("[]", { headers: { "Content-Type": "application/json" } });
-      return new Response(json, {
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "public, max-age=86400",
-        },
-      });
-    }
+		// Match /data/descriptions-LANG.json (e.g. /data/descriptions-en.json)
+		const descMatch = path.match(/^\/data\/descriptions-([a-z]+)\.json$/i);
+		if (descMatch) {
+			const lang = descMatch[1].toLowerCase();
+			const json = descriptionsCache[lang];
+			if (!json)
+				return new Response("[]", { headers: { "Content-Type": "application/json" } });
+			return new Response(json, {
+				headers: {
+					"Content-Type": "application/json",
+					"Cache-Control": "public, max-age=86400",
+				},
+			});
+		}
 
-    if (path === "/text/translations.json") {
-      return new Response(translationsJson, {
-        headers: {
-          "Content-Type": "application/json",
-          "Cache-Control": "public, max-age=86400",
-        },
-      });
-    }
+		if (path === "/text/translations.json") {
+			return new Response(translationsJson, {
+				headers: {
+					"Content-Type": "application/json",
+					"Cache-Control": "public, max-age=86400",
+				},
+			});
+		}
 
-    // Interlinear data: /text/interlinear/{Book}.json
-    const ilMatch = path.match(/^\/text\/interlinear\/(.+)\.json$/i);
-    if (ilMatch) {
-      const bookName = decodeURIComponent(ilMatch[1]);
-      const ilFile = Bun.file(join(TEXT_DIR, "interlinear", `${bookName}.json`));
-      if (await ilFile.exists()) {
-        return new Response(ilFile, {
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=86400",
-          },
-        });
-      }
-      return new Response("Not found", { status: 404 });
-    }
+		// Interlinear data: /text/interlinear/{Book}.json
+		const ilMatch = path.match(/^\/text\/interlinear\/(.+)\.json$/i);
+		if (ilMatch) {
+			const bookName = decodeURIComponent(ilMatch[1]);
+			const ilFile = Bun.file(join(TEXT_DIR, "interlinear", `${bookName}.json`));
+			if (await ilFile.exists()) {
+				return new Response(ilFile, {
+					headers: {
+						"Content-Type": "application/json",
+						"Cache-Control": "public, max-age=86400",
+					},
+				});
+			}
+			return new Response("Not found", { status: 404 });
+		}
 
-    // Strong's dictionary: /text/strongs.json
-    if (path === "/text/strongs.json") {
-      const strongsFile = Bun.file(join(TEXT_DIR, "strongs.json"));
-      if (await strongsFile.exists()) {
-        return new Response(strongsFile, {
-          headers: {
-            "Content-Type": "application/json",
-            "Cache-Control": "public, max-age=86400",
-          },
-        });
-      }
-      return new Response("Not found", { status: 404 });
-    }
+		// Strong's dictionary: /text/strongs.json
+		if (path === "/text/strongs.json") {
+			const strongsFile = Bun.file(join(TEXT_DIR, "strongs.json"));
+			if (await strongsFile.exists()) {
+				return new Response(strongsFile, {
+					headers: {
+						"Content-Type": "application/json",
+						"Cache-Control": "public, max-age=86400",
+					},
+				});
+			}
+			return new Response("Not found", { status: 404 });
+		}
 
-    if (path === "/") path = "/index.html";
+		if (path === "/") path = "/index.html";
 
-    // Prevent path traversal
-    const full = resolve(PUBLIC, "." + path);
-    if (!full.startsWith(PUBLIC)) {
-      return new Response("Forbidden", { status: 403 });
-    }
+		// Prevent path traversal
+		const full = resolve(PUBLIC, "." + path);
+		if (!full.startsWith(PUBLIC)) {
+			return new Response("Forbidden", { status: 403 });
+		}
 
-    const file = Bun.file(full);
-    if (await file.exists()) {
-      return new Response(file, {
-        headers: {
-          "Content-Type": MIME[extname(full)] || "application/octet-stream",
-          "Cache-Control": "no-cache",
-        },
-      });
-    }
+		const file = Bun.file(full);
+		if (await file.exists()) {
+			return new Response(file, {
+				headers: {
+					"Content-Type": MIME[extname(full)] || "application/octet-stream",
+					"Cache-Control": "no-cache",
+				},
+			});
+		}
 
-    // SPA fallback
-    return new Response(Bun.file(join(PUBLIC, "index.html")), {
-      headers: { "Content-Type": "text/html; charset=utf-8" },
-    });
-  },
+		// SPA fallback
+		return new Response(Bun.file(join(PUBLIC, "index.html")), {
+			headers: { "Content-Type": "text/html; charset=utf-8" },
+		});
+	},
 });
 
 console.log("→ http://localhost:3000");
