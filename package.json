@@ -11,6 +11,8 @@
     "fmt": "oxfmt src/ tests/ scripts/",
     "fmt:check": "oxfmt --check src/ tests/ scripts/",
     "test:e2e": "bunx playwright test",
+    "test:coverage": "bun test --coverage",
+    "typecheck": "bunx tsc --noEmit",
     "download-translation": "python scripts/bible-gateway.py",
     "postinstall": "lefthook install"
   },
@@ -20,6 +22,7 @@
     "@types/node": "^25.5.1",
     "lefthook": "^2.1.5",
     "oxfmt": "^0.44.0",
-    "oxlint": "^1.59.0"
+    "oxlint": "^1.59.0",
+    "typescript": "^6.0.2"
   }
 }

@@ -5,3 +5,10 @@ pre-commit:
       run: bunx oxlint src/ tests/ scripts/
     fmt-check:
       run: bunx oxfmt --check src/ tests/ scripts/
+    typecheck:
+      run: bunx tsc --noEmit
+
+pre-push:
+  commands:
+    test:
+      run: bun test

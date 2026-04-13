@@ -10,14 +10,18 @@ Sanatheos is a fast, offline-capable Bible reader and search application built w
 
 ```
 sanatheos/
-├── package.json              # npm metadata, scripts (start, dev, build:static, test:e2e, lint, fmt, postinstall)
+├── package.json              # npm metadata, scripts (start, dev, build:static, test:e2e, test:coverage, typecheck, lint, fmt, postinstall)
 ├── tsconfig.json             # TypeScript strict mode, ES2022, bundler resolution
 ├── bunfig.toml               # Bun config — scopes unit tests to tests/, excludes e2e/
-├── lefthook.yml              # Git hooks config — pre-commit runs lint + format check
+├── lefthook.yml              # Git hooks config — pre-commit: lint + fmt + typecheck; pre-push: unit tests
 ├── playwright.config.ts      # Playwright e2e test config (Chromium, auto-starts dev server)
 ├── LICENSE
 ├── README.md                 # User-facing project documentation
 ├── CONTEXT.md                # This file — full project context
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml            # GitHub Actions CI — typecheck, lint, fmt, unit tests, e2e tests
 │
 ├── src/
 │   ├── server.ts             # Bun HTTP server (dev mode)
@@ -917,11 +921,12 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 4. **IndexedDB caching:** Bible data fetched once and persisted. Subsequent visits load from IndexedDB, making the app work fully offline.
 5. **Canonical English keys:** Internal book keys are always English (e.g., "Genesis"). Translation-specific display names and aliases are layered on top via `bookNames.ts`.
 6. **3-character URL codes:** URL book parameters use compact codes (`gen`, `jhn`, `rev`) to keep URLs short and language-independent.
-7. **Minimal build dependencies:** `@types/bun`, `@types/node`, `@playwright/test`, `lefthook`, `oxlint`, and `oxfmt` as devDependencies. No runtime npm packages.
+7. **Minimal build dependencies:** `@types/bun`, `@types/node`, `@playwright/test`, `lefthook`, `oxlint`, `oxfmt`, and `typescript` as devDependencies. No runtime npm packages.
 8. **Static deployment:** The `docs/` output is a self-contained static site. GitHub Pages serves it directly. The Bun server is dev-only.
 9. **CSS custom properties:** All theming via CSS variables, toggled by `data-theme` attribute. No CSS-in-JS.
 10. **oxlint & oxfmt:** Rust-based linter (`oxlint`) and formatter (`oxfmt`) with zero config. Run via `bun run lint` and `bun run fmt`. All source files pass with 0 warnings and 0 errors.
-11. **Lefthook git hooks:** Pre-commit hook runs lint and format check in parallel via `lefthook.yml`. Hooks are auto-installed on `bun install` via the `postinstall` script.
+11. **Lefthook git hooks:** Pre-commit hook runs lint, format check, and typecheck in parallel. Pre-push hook runs unit tests. Hooks are auto-installed on `bun install` via the `postinstall` script.
+12. **GitHub Actions CI:** Runs typecheck, lint, format check, unit tests, and e2e tests on push to `main` and on pull requests. Uses `oven-sh/setup-bun` for Bun installation.
 
 ## Adding a New Translation
 
