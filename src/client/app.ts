@@ -162,6 +162,14 @@ function applyTheme(theme: string) {
 	}
 }
 
+// --- Segmented control helper ---
+function activateSegmented(container: HTMLElement | null, value: string) {
+	if (!container) return;
+	for (const btn of container.querySelectorAll<HTMLElement>(".seg-btn")) {
+		btn.classList.toggle("seg-active", btn.dataset.value === value);
+	}
+}
+
 // --- Interlinear helpers ---
 function isKJV(): boolean {
 	return currentTranslation === "KJV";
@@ -206,20 +214,20 @@ async function init() {
 	setLanguage(savedLang);
 	localStorage.setItem("bible-language", savedLang);
 
-	const languageSelect = document.getElementById("language-select") as HTMLSelectElement | null;
-	if (languageSelect) languageSelect.value = savedLang;
+	const languageSegmented = document.getElementById("language-segmented");
+	activateSegmented(languageSegmented, savedLang);
 
 	// Apply theme
 	const savedTheme = localStorage.getItem("bible-theme") || "system";
 	applyTheme(savedTheme);
-	const themeSelect = document.getElementById("theme-select") as HTMLSelectElement | null;
-	if (themeSelect) themeSelect.value = savedTheme;
+	const themeSegmented = document.getElementById("theme-segmented");
+	activateSegmented(themeSegmented, savedTheme);
 
 	// Apply font size
 	const savedFontSize = localStorage.getItem("bible-font-size") || "medium";
 	document.documentElement.setAttribute("data-font-size", savedFontSize);
-	const fontSizeSelect = document.getElementById("fontsize-select") as HTMLSelectElement | null;
-	if (fontSizeSelect) fontSizeSelect.value = savedFontSize;
+	const fontSizeSegmented = document.getElementById("fontsize-segmented");
+	activateSegmented(fontSizeSegmented, savedFontSize);
 
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
 		const theme = localStorage.getItem("bible-theme") || "system";
@@ -309,7 +317,7 @@ async function init() {
 				if (newLang && newLang !== getLanguage()) {
 					setLanguage(newLang);
 					localStorage.setItem("bible-language", newLang);
-					if (languageSelect) languageSelect.value = newLang;
+					activateSegmented(languageSegmented, newLang);
 					updateStaticText();
 				}
 
@@ -341,10 +349,13 @@ async function init() {
 		});
 	}
 
-	// Language selector
-	if (languageSelect) {
-		languageSelect.addEventListener("change", () => {
-			const lang = languageSelect.value;
+	// Language segmented control
+	if (languageSegmented) {
+		languageSegmented.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement).closest(".seg-btn") as HTMLElement | null;
+			if (!btn || btn.classList.contains("seg-active")) return;
+			const lang = btn.dataset.value!;
+			activateSegmented(languageSegmented, lang);
 			setLanguage(lang);
 			localStorage.setItem("bible-language", lang);
 			updateStaticText();
@@ -421,19 +432,25 @@ async function init() {
 		});
 	}
 
-	// Theme selector
-	if (themeSelect) {
-		themeSelect.addEventListener("change", () => {
-			const theme = themeSelect.value;
+	// Theme segmented control
+	if (themeSegmented) {
+		themeSegmented.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement).closest(".seg-btn") as HTMLElement | null;
+			if (!btn || btn.classList.contains("seg-active")) return;
+			const theme = btn.dataset.value!;
+			activateSegmented(themeSegmented, theme);
 			applyTheme(theme);
 			localStorage.setItem("bible-theme", theme);
 		});
 	}
 
-	// Font size selector
-	if (fontSizeSelect) {
-		fontSizeSelect.addEventListener("change", () => {
-			const size = fontSizeSelect.value;
+	// Font size segmented control
+	if (fontSizeSegmented) {
+		fontSizeSegmented.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement).closest(".seg-btn") as HTMLElement | null;
+			if (!btn || btn.classList.contains("seg-active")) return;
+			const size = btn.dataset.value!;
+			activateSegmented(fontSizeSegmented, size);
 			document.documentElement.setAttribute("data-font-size", size);
 			localStorage.setItem("bible-font-size", size);
 		});
@@ -1021,7 +1038,7 @@ async function init() {
 				if (newLang && newLang !== getLanguage()) {
 					setLanguage(newLang);
 					localStorage.setItem("bible-language", newLang);
-					if (languageSelect) languageSelect.value = newLang;
+					activateSegmented(languageSegmented, newLang);
 					updateStaticText();
 				}
 
@@ -1336,18 +1353,31 @@ function updateStaticText() {
 	if (parallelLabel) parallelLabel.textContent = s.parallelLabel;
 	const fontSizeLabel = document.getElementById("settings-fontsize-label");
 	if (fontSizeLabel) fontSizeLabel.textContent = s.fontSizeLabel;
-	const fsSelect = document.getElementById("fontsize-select") as HTMLSelectElement | null;
-	if (fsSelect) {
-		const opts = [
+
+	// Theme segmented button labels
+	const themeSeg = document.getElementById("theme-segmented");
+	if (themeSeg) {
+		const labels = [s.themeSystem, s.themeLight, s.themeDark];
+		const btns = themeSeg.querySelectorAll<HTMLElement>(".seg-btn");
+		btns.forEach((btn, i) => {
+			if (i < labels.length) btn.textContent = labels[i];
+		});
+	}
+
+	// Font size segmented button labels
+	const fsSeg = document.getElementById("fontsize-segmented");
+	if (fsSeg) {
+		const labels = [
 			s.fontSizeSmall,
 			s.fontSizeMedium,
 			s.fontSizeLarge,
 			s.fontSizeXL,
 			s.fontSizeXXL,
 		];
-		for (let i = 0; i < fsSelect.options.length; i++) {
-			if (i < opts.length) fsSelect.options[i].textContent = opts[i];
-		}
+		const btns = fsSeg.querySelectorAll<HTMLElement>(".seg-btn");
+		btns.forEach((btn, i) => {
+			if (i < labels.length) btn.textContent = labels[i];
+		});
 	}
 
 	// Info modal

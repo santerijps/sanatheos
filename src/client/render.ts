@@ -129,7 +129,7 @@ function descriptionHtml(text: string): string {
 }
 
 function shareButtonHtml(): string {
-	return ` <span class="share-wrap"><button class="share-btn">&#128279;</button><span class="share-dropdown"><button class="share-opt" data-share="with">${esc(t().shareWith)} ${esc(translationCode)}</button><button class="share-opt" data-share="without">${esc(t().shareWithout)}</button></span></span>`;
+	return ` <span class="share-wrap"><button class="share-btn">&#128279;</button><span class="share-dropdown"><button class="share-opt" data-share="with">${esc(t().shareWithout)} (${esc(translationCode)})</button><button class="share-opt" data-share="without">${esc(t().shareWithout)}</button></span></span>`;
 }
 
 function getHighlightClass(book: string, chapter: number, verse: number): string {
@@ -513,10 +513,10 @@ function navArrowsHtml(
 	showTranslation = true,
 ): string {
 	const prevBtn = prev
-		? `<a class="nav-arrow nav-prev" title="${esc(prev.label)}" data-book="${esc(prev.book)}"${prev.chapter ? ` data-chapter="${prev.chapter}"` : ""}${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&DoubleLeftArrow;</a>`
-		: `<span class="nav-arrow nav-prev nav-disabled">&DoubleLeftArrow;</span>`;
+		? `<a class="nav-arrow nav-prev" title="${esc(prev.label)}" data-book="${esc(prev.book)}"${prev.chapter ? ` data-chapter="${prev.chapter}"` : ""}${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&lsaquo;</a>`
+		: `<span class="nav-arrow nav-prev nav-disabled">&lsaquo;</span>`;
 	const nextBtn = next
-		? `<a class="nav-arrow nav-next" title="${esc(next.label)}" data-book="${esc(next.book)}"${next.chapter ? ` data-chapter="${next.chapter}"` : ""}${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&DoubleRightArrow;</a>`
+		? `<a class="nav-arrow nav-next" title="${esc(next.label)}" data-book="${esc(next.book)}"${next.chapter ? ` data-chapter="${next.chapter}"` : ""}${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&rsaquo;</a>`
 		: `<span class="nav-arrow nav-next nav-disabled"></span>`;
 	const mid = showTranslation ? `<span class="nav-translation">&DoubleRightArrow;</span>` : "";
 	return `<nav class="chapter-nav">${prevBtn}${mid}${nextBtn}</nav>`;
@@ -535,7 +535,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
 		.sort((a, b) => a - b);
 	let html = navArrowsHtml(prev, next);
 	html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-	html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
+	html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
 	if (chapter === 1) html += descriptionHtml(getBookDescription(book));
 	html += descriptionHtml(getChapterDescription(book, chapter));
 
@@ -612,7 +612,7 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 	}
 
 	$("content").innerHTML = `
-    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>
+    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>
     ${verseHtml}
     <div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
 	window.scrollTo(0, 0);
@@ -678,7 +678,7 @@ export function renderVerseSegments(
 	html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
 	const segNums: number[] = [];
 	for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
-	html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
+	html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">&#128203;</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
 
 	const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
 	const ilChapter = ilBook?.[String(chapter)];
@@ -1172,12 +1172,12 @@ export function renderParallelChapter(
 		.sort((a, b) => a - b);
 
 	let html = navArrowsHtml(prev, next);
-	html += `<div class="parallel-copy-both"><button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="both">&#128203; ${esc(t().copyBoth)}</button></div>`;
+	html += `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="both">&#128203;</button>${shareButtonHtml()}</div>`;
 	html += `<div class="parallel-container">`;
 
 	// Primary column
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="primary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="primary">&#128203;</button></h2>`;
 	if (chapter === 1) html += descriptionHtml(getBookDescription(book));
 	html += descriptionHtml(getChapterDescription(book, chapter));
 	html += `<div class="verses">`;
@@ -1186,7 +1186,7 @@ export function renderParallelChapter(
 
 	// Secondary column
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="secondary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="secondary">&#128203;</button></h2>`;
 	if (chapter === 1) html += descriptionHtml(bookDescFrom(secondaryDescriptions, book));
 	html += descriptionHtml(chapterDescFrom(secondaryDescriptions, book, chapter));
 	html += `<div class="verses">`;
@@ -1222,6 +1222,7 @@ export function renderParallelBook(
 		.sort((a, b) => a - b);
 	const { prev, next } = getBookNav(primary, book);
 	let html = navArrowsHtml(prev, next);
+	html += `<div class="parallel-copy-both">${shareButtonHtml()}</div>`;
 	html += `<div class="parallel-container">`;
 
 	// Primary column
@@ -1292,12 +1293,12 @@ export function renderParallelVerseSegments(
 		.map((s) => (s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`))
 		.join(",");
 
-	let html = `<div class="parallel-copy-both"><button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="both">&#128203; ${esc(t().copyBoth)}</button></div>`;
+	let html = `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="both">&#128203;</button>${shareButtonHtml()}</div>`;
 	html += `<div class="parallel-container">`;
 
 	// Primary column
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="primary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="primary">&#128203;</button></h2>`;
 	const segNums: number[] = [];
 	for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
 	html += `<div class="verses">`;
@@ -1306,7 +1307,7 @@ export function renderParallelVerseSegments(
 
 	// Secondary column
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="secondary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="secondary">&#128203;</button></h2>`;
 	html += `<div class="verses">`;
 	if (ch2) {
 		html += renderStyledVerses(book, chapter, segNums, ch2, true);
@@ -1339,13 +1340,13 @@ export function renderParallelVerse(
 
 	const { prev, next } = getVerseNav(primary, book, chapter, verse);
 	let html = navArrowsHtml(prev, next);
-	html += `<div class="parallel-copy-both"><button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="both">&#128203; ${esc(t().copyBoth)}</button></div>`;
+	html += `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="both">&#128203;</button>${shareButtonHtml()}</div>`;
 	html += `<div class="parallel-container">`;
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="primary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="primary">&#128203;</button></h2>`;
 	html += `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text1)}</span></div></div>`;
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="secondary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="secondary">&#128203;</button></h2>`;
 	html += `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? fmt(text2) : t().notFound}</span></div></div>`;
 	html += `</div>`;
 	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
@@ -1465,11 +1466,11 @@ function parallelNavRefHtml(
 
 	let html = `<div class="parallel-container">`;
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(pTitle)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="primary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(pTitle)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="primary">&#128203;</button></h2>`;
 	html += primaryHtml;
 	html += `</div>`;
 	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(sTitle)} <button class="copy-btn" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="secondary">&#128203;</button></h2>`;
+	html += `<h2 class="section-title">${esc(sTitle)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="secondary">&#128203;</button></h2>`;
 	html += secondaryHtml;
 	html += `</div></div>`;
 

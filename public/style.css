@@ -8,11 +8,11 @@
   --bg: #fafafa;
   --surface: #ffffff;
   --text: #1a1a1a;
-  --verse-num: firebrick;
+  --verse-num: #767676;
   --subtle: #888888;
   --border: #e5e5e5;
   --hover: #f0f0f0;
-  --accent: #333333;
+  --accent: #4a6fa5;
   --muted: #666666;
   --mark-bg: #fde68a;
   --hl-yellow: rgba(253, 230, 138, 0.4);
@@ -24,13 +24,13 @@
 
 [data-theme="dark"] {
   --bg: #1a1a1a;
-  --surface: #242424;
+  --surface: #282828;
   --text: #e0e0e0;
-  --verse-num: #e07060;
+  --verse-num: #a0a0a0;
   --subtle: #888888;
   --border: #333333;
   --hover: #2e2e2e;
-  --accent: #cccccc;
+  --accent: #7da2d4;
   --muted: #999999;
   --mark-bg: #78650a;
   --hl-yellow: rgba(253, 230, 138, 0.35);
@@ -61,10 +61,10 @@ body.panel-open {
 /* === Title bar === */
 #title-bar {
   text-align: center;
-  font: 700 18px/1 var(--mono);
-  letter-spacing: 1ch;
+  font: 600 16px/1 var(--sans);
+  letter-spacing: 0.5ch;
   padding: 12px 20px 0;
-  color: var(--text);
+  color: var(--subtle);
   background: var(--surface);
 }
 
@@ -101,13 +101,14 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  border: 1px solid var(--border);
-  border-radius: 8px 0 0 8px;
+  font-size: 18px;
+  border: none;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
   background: none;
   cursor: pointer;
-  color: var(--text);
-  transition: background 0.15s, border-color 0.15s;
+  color: var(--subtle);
+  transition: background 0.15s, color 0.15s;
   z-index: 1;
 }
 
@@ -124,18 +125,16 @@ header {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-#search-wrap:focus-within #index-btn,
-#search-wrap:hover #index-btn {
-  border-color: #aaa;
+#search-wrap #index-btn:hover {
+  color: var(--text);
 }
 
-#search-wrap:focus-within #search-input,
-#search-wrap:hover #search-input {
+#search-input:focus {
   border-color: #aaa;
 }
 
 #search-input:focus {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
 }
 
 #search-input::placeholder {
@@ -145,24 +144,28 @@ header {
 #info-btn,
 #settings-btn {
   flex-shrink: 0;
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 20px;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: none;
+  border-radius: 50%;
   cursor: pointer;
-  color: var(--text);
-  transition: background 0.15s;
+  color: var(--subtle);
+  transition: background 0.15s, color 0.15s;
+}
+
+#settings-btn {
+  font-size: 22px;
 }
 
 #info-btn:hover,
-#settings-btn:hover,
-#search-wrap #index-btn:hover {
+#settings-btn:hover {
   background: var(--hover);
+  color: var(--text);
 }
 
 /* === Main Content === */
@@ -172,7 +175,6 @@ main {
   margin: 0 auto;
   padding: 0 64px 24px 64px;
   margin-top: 24px;
-  outline: 1px solid var(--border);
 }
 
 .book-title {
@@ -186,7 +188,7 @@ main {
 
 .section-title {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 400;
   margin-bottom: 20px;
   font-family: var(--sans);
   color: var(--accent);
@@ -331,14 +333,18 @@ main {
 .results {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .result {
   padding: 14px 16px;
-  border-radius: 8px;
   cursor: pointer;
   transition: background 0.12s;
+  border-bottom: 1px solid var(--border);
+}
+
+.result:last-child {
+  border-bottom: none;
 }
 
 .result:hover {
@@ -366,7 +372,9 @@ mark {
 #index-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 200;
   display: none;
   align-items: center;
@@ -384,7 +392,7 @@ mark {
   overflow: hidden;
   height: 75vh;
   gap: 1px;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
 .idx-col {
@@ -468,7 +476,9 @@ mark {
 #info-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 300;
   display: none;
   align-items: center;
@@ -488,7 +498,7 @@ mark {
   width: 90vw;
   max-height: 85vh;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   font-family: var(--sans);
   line-height: 1.65;
   display: flex;
@@ -575,11 +585,25 @@ mark {
   line-height: 1.6;
 }
 
+#info-modal a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 2px;
+  transition: text-decoration-color 0.12s;
+}
+
+#info-modal a:hover {
+  text-decoration-color: var(--accent);
+}
+
 /* === Settings Modal === */
 #settings-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.35);
+  background: rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: 300;
   display: none;
   align-items: center;
@@ -599,7 +623,7 @@ mark {
   width: 90vw;
   max-height: 85vh;
   overflow: hidden;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   font-family: var(--sans);
   line-height: 1.65;
   display: flex;
@@ -643,30 +667,92 @@ mark {
 #settings-modal section {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin: 12px 0;
+  gap: 6px;
+  margin: 0;
 }
 
 #settings-modal label {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--muted);
   white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.05ch;
+}
+
+.settings-group {
+  border: none;
+  padding: 0;
+  margin: 0 0 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.settings-group:last-child {
+  margin-bottom: 0;
 }
 
 #translation-select,
-#language-select,
-#theme-select,
-#parallel-select,
-#fontsize-select {
+#parallel-select {
   width: 100%;
-  padding: 6px 10px;
+  padding: 8px 12px;
   font: 15px var(--sans);
   border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface);
+  border-radius: 8px;
+  background: var(--bg);
   color: var(--text);
   cursor: pointer;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+}
+
+#translation-select:focus,
+#parallel-select:focus {
+  border-color: #aaa;
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+/* === Segmented Controls === */
+.segmented {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.seg-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font: 14px var(--sans);
+  background: none;
+  border: none;
+  border-right: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  white-space: nowrap;
+}
+
+.seg-btn:last-child {
+  border-right: none;
+}
+
+.seg-btn:hover:not(.seg-active) {
+  background: var(--hover);
+}
+
+.seg-btn.seg-active {
+  background: var(--accent);
+  color: var(--surface);
+  font-weight: 600;
 }
 
 /* === Translation Label === */
@@ -698,18 +784,23 @@ mark {
 
 .nav-arrow {
   cursor: pointer;
-  color: var(--accent);
-  font-size: 3ch;
-  padding: 0 12px;
-  border-radius: 6px;
+  color: var(--subtle);
+  font-size: 28px;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
   transition: background 0.15s, color 0.15s;
   user-select: none;
   text-decoration: none;
+  line-height: 1;
 }
 
 .nav-arrow:hover {
   background: var(--hover);
-  color: var(--accent);
+  color: var(--text);
 }
 
 .nav-prev { text-align: left; }
@@ -894,11 +985,13 @@ mark {
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%) translateY(100px);
-  background: var(--accent);
-  color: var(--bg);
+  background: var(--surface);
+  color: var(--text);
   font: 14px var(--sans);
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   z-index: 500;
   opacity: 0;
   visibility: hidden;
@@ -989,9 +1082,9 @@ mark {
   justify-content: center;
   vertical-align: middle;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2px 6px;
+  border: none;
+  border-radius: 50%;
+  padding: 4px;
   font-size: 14px;
   line-height: 1;
   color: var(--subtle);
@@ -1020,9 +1113,9 @@ mark {
   align-items: center;
   justify-content: center;
   background: none;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  padding: 2px 6px;
+  border: none;
+  border-radius: 50%;
+  padding: 4px;
   font-size: 14px;
   line-height: 1;
   color: var(--subtle);
@@ -1075,13 +1168,13 @@ mark {
   align-items: center;
   justify-content: center;
   background: none;
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 6px;
   padding: 4px 10px;
   font: 13px var(--sans);
   color: var(--subtle);
   cursor: pointer;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: background 0.12s, color 0.12s;
   margin-left: 8px;
   vertical-align: middle;
 }
@@ -1094,7 +1187,6 @@ mark {
 .il-toggle-btn.active {
   background: var(--accent);
   color: var(--bg);
-  border-color: var(--accent);
 }
 
 .il-verses {

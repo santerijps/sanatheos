@@ -16,11 +16,11 @@
       --serif: Georgia, "Times New Roman", Times, serif;
       --mono: monospace;
       --bg: #fafafa; --surface: #ffffff; --text: #1a1a1a; --subtle: #888888;
-      --border: #e5e5e5; --hover: #f0f0f0; --accent: #333333; --muted: #666666;
+      --border: #e5e5e5; --hover: #f0f0f0; --accent: #4a6fa5; --muted: #666666;
     }
     [data-theme="dark"] {
-      --bg: #1a1a1a; --surface: #242424; --text: #e0e0e0; --subtle: #888888;
-      --border: #333333; --hover: #2e2e2e; --accent: #cccccc; --muted: #999999;
+      --bg: #1a1a1a; --surface: #282828; --text: #e0e0e0; --subtle: #888888;
+      --border: #333333; --hover: #2e2e2e; --accent: #7da2d4; --muted: #999999;
     }
     html { height: 100%; }
     body {
@@ -29,9 +29,9 @@
       min-height: 100%; -webkit-font-smoothing: antialiased;
     }
     #title-bar {
-      text-align: center; font: 700 18px/1 var(--mono);
-      letter-spacing: 1ch; padding: 12px 20px 0;
-      color: var(--text); background: var(--surface);
+      text-align: center; font: 600 16px/1 var(--sans);
+      letter-spacing: 0.5ch; padding: 12px 20px 0;
+      color: var(--subtle); background: var(--surface);
     }
     header {
       position: sticky; top: 0; z-index: 100; background: var(--surface);
@@ -48,23 +48,17 @@
     }
     #search-wrap #index-btn {
       position: absolute; left: 0; top: 0; bottom: 0; width: 42px;
-      border: 1px solid var(--border);
-      border-radius: 8px 0 0 8px; background: none; z-index: 1;
-    }
-    #search-wrap:focus-within #index-btn,
-    #search-wrap:hover #index-btn {
-      border-color: #aaa;
-    }
-    #search-wrap:focus-within #search-input,
-    #search-wrap:hover #search-input {
-      border-color: #aaa;
+      border: none; border-right: 1px solid var(--border);
+      border-radius: 0; background: none; z-index: 1;
+      color: var(--subtle); font-size: 18px;
     }
     #info-btn, #settings-btn {
-      flex-shrink: 0; width: 42px; height: 42px; display: flex;
+      flex-shrink: 0; width: 36px; height: 36px; display: flex;
       align-items: center; justify-content: center; font-size: 20px;
-      background: none; border: 1px solid var(--border); border-radius: 8px;
-      cursor: pointer; color: var(--text);
+      background: none; border: none; border-radius: 50%;
+      cursor: pointer; color: var(--subtle);
     }
+    #settings-btn { font-size: 22px; }
     main { max-width: 90ch; margin: 0 auto; padding: 0 64px 24px 64px; margin-top: 24px; }
     .loading, .empty {
       text-align: center; padding: 80px 20px;
@@ -91,7 +85,7 @@
     <button id="info-btn" type="button" title="Help &amp; info">&#9432;</button>
     <button id="settings-btn" type="button" title="Settings">&#9881;</button>
     <div id="search-wrap">
-      <button id="index-btn" type="button" title="Browse books">&#128269;</button>
+      <button id="index-btn" type="button" title="Browse books"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><line x1="16" y1="16" x2="22" y2="22"/></svg></button>
       <input
         type="text"
         id="search-input"
@@ -175,39 +169,43 @@
       <button id="settings-close" type="button" title="Close">&times;</button>
       <div id="settings-modal-body">
         <h2>Settings</h2>
-        <section>
-          <label id="settings-language-label" for="language-select">Language</label>
-          <select id="language-select">
-            <option value="en">English</option>
-            <option value="fi">Suomi</option>
-          </select>
-        </section>
-        <section>
-          <label id="settings-translation-label" for="translation-select">Translation</label>
-          <select id="translation-select"></select>
-        </section>
-        <section>
-          <label id="settings-parallel-label" for="parallel-select">Parallel translation</label>
-          <select id="parallel-select"></select>
-        </section>
-        <section>
-          <label id="settings-theme-label" for="theme-select">Theme</label>
-          <select id="theme-select">
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </section>
-        <section>
-          <label id="settings-fontsize-label" for="fontsize-select">Font size</label>
-          <select id="fontsize-select">
-            <option value="small">Small</option>
-            <option value="medium">Medium</option>
-            <option value="large">Large</option>
-            <option value="xl">Extra large</option>
-            <option value="xxl">Huge</option>
-          </select>
-        </section>
+        <fieldset class="settings-group">
+          <section>
+            <label id="settings-translation-label" for="translation-select">Translation</label>
+            <select id="translation-select"></select>
+          </section>
+          <section>
+            <label id="settings-parallel-label" for="parallel-select">Parallel translation</label>
+            <select id="parallel-select"></select>
+          </section>
+        </fieldset>
+        <fieldset class="settings-group">
+          <section>
+            <label id="settings-theme-label">Theme</label>
+            <div id="theme-segmented" class="segmented" role="radiogroup">
+              <button type="button" class="seg-btn" data-value="system">System</button>
+              <button type="button" class="seg-btn" data-value="light">Light</button>
+              <button type="button" class="seg-btn" data-value="dark">Dark</button>
+            </div>
+          </section>
+          <section>
+            <label id="settings-fontsize-label">Font size</label>
+            <div id="fontsize-segmented" class="segmented" role="radiogroup">
+              <button type="button" class="seg-btn" data-value="small">S</button>
+              <button type="button" class="seg-btn" data-value="medium">M</button>
+              <button type="button" class="seg-btn" data-value="large">L</button>
+              <button type="button" class="seg-btn" data-value="xl">XL</button>
+              <button type="button" class="seg-btn" data-value="xxl">XXL</button>
+            </div>
+          </section>
+          <section>
+            <label id="settings-language-label">Language</label>
+            <div id="language-segmented" class="segmented" role="radiogroup">
+              <button type="button" class="seg-btn" data-value="en">English</button>
+              <button type="button" class="seg-btn" data-value="fi">Suomi</button>
+            </div>
+          </section>
+        </fieldset>
       </div>
     </div>
   </div>
