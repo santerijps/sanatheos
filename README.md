@@ -1,5 +1,9 @@
 # Sanatheos
 
+[![CI](https://github.com/santerijps/sanatheos/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/santerijps/sanatheos/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/santerijps/sanatheos/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master)](https://github.com/santerijps/sanatheos/actions/workflows/github-code-scanning/codeql)
+[![pages-build-deployment](https://github.com/santerijps/sanatheos/actions/workflows/pages/pages-build-deployment/badge.svg?branch=master)](https://github.com/santerijps/sanatheos/actions/workflows/pages/pages-build-deployment)
+
 A fast, modern web application for reading and searching the Bible, built with TypeScript and Bun. The name is derived from *sana* (Finnish: "word") and *theos* (Greek: "God").
 
 Lightweight, offline-ready, keyboard-friendly, and requires no sign-up.
