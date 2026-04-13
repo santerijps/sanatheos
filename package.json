@@ -6,9 +6,11 @@
     "start": "bun run src/server.ts",
     "dev": "bun run --watch src/server.ts",
     "build:static": "bun run scripts/build-static.ts",
+    "test:e2e": "bunx playwright test",
     "download-translation": "python scripts/bible-gateway.py"
   },
   "devDependencies": {
+    "@playwright/test": "^1.59.1",
     "@types/bun": "latest",
     "@types/node": "^25.5.1"
   }

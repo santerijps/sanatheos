@@ -10,8 +10,10 @@ Sanatheos is a fast, offline-capable Bible reader and search application built w
 
 ```
 sanatheos/
-├── package.json              # npm metadata, scripts (start, dev, build:static)
+├── package.json              # npm metadata, scripts (start, dev, build:static, test:e2e)
 ├── tsconfig.json             # TypeScript strict mode, ES2022, bundler resolution
+├── bunfig.toml               # Bun config — scopes unit tests to tests/ directory
+├── playwright.config.ts      # Playwright e2e test config (Chromium, auto-starts dev server)
 ├── LICENSE
 ├── README.md                 # User-facing project documentation
 ├── CONTEXT.md                # This file — full project context
@@ -112,11 +114,14 @@ sanatheos/
 │   ├── build-static.ts       # Builds docs/ — bundle, minify, combine translations
 │   └── bible-gateway.py      # Python scraper to download translations
 │
-└── tests/
-    ├── search.test.ts        # Search engine tests (incl. Strong's number search)
-    ├── state.test.ts         # URL state & book code tests
-    ├── features.test.ts      # Feature tests (i18n, highlights, descriptions, interlinear, PWA)
-    └── bible-loader.test.ts  # Bible loader tests (BOOK_ORDER, loadBible, discoverTranslations)
+├── tests/                    # Unit tests (bun test)
+│   ├── search.test.ts        # Search engine tests (incl. Strong's number search)
+│   ├── state.test.ts         # URL state & book code tests
+│   ├── features.test.ts      # Feature tests (i18n, highlights, descriptions, interlinear, PWA)
+│   └── bible-loader.test.ts  # Bible loader tests (BOOK_ORDER, loadBible, discoverTranslations)
+│
+└── e2e/                      # End-to-end tests (Playwright)
+    └── app.spec.ts           # Full app e2e tests (40 tests across 12 describe blocks)
 ```
 
 ## Bible Data Format
@@ -858,7 +863,7 @@ A collection of self-contained HTML reference pages in `public/more/`, covering 
 
 ## Testing
 
-Tests across 4 files using `bun test`.
+Unit tests across 4 files using `bun test` (scoped to `tests/` via `bunfig.toml`). End-to-end tests using Playwright (`bun run test:e2e`).
 
 **search.test.ts:** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
 - `parseVerseSegments` — single, range, comma-separated, edge cases, invalid inputs, overlapping ranges, inverted ranges
@@ -882,6 +887,28 @@ Tests across 4 files using `bun test`.
 
 **bible-loader.test.ts:** BOOK_ORDER completeness (84 books, OT/DC/NT ordering, no duplicates, deuterocanonical placement). `loadBible` (JSON parsing, canonical ordering, book name normalization, empty verse trimming). `discoverTranslations` (discovery, sorting, exclusion of non-translation files).
 
+### End-to-End Tests (Playwright)
+
+E2e tests in `e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. Tests cover 12 areas (40 tests total):
+
+- **Page load** (5 tests) — Default chapter (Genesis 1 / NHEB), specific chapter from URL, specific verse from URL, different translation from URL (KJV), title bar text.
+- **Search** (4 tests) — Text search returns results (quoted query), reference query navigates to chapter, search URL param loads results directly, empty search returns to default view.
+- **Chapter navigation** (3 tests) — Next arrow navigates to next chapter, prev arrow navigates to previous chapter, nav arrows cross book boundaries.
+- **Book index panel** (4 tests) — Opens and closes via button, opens with Ctrl+I, shows books with OT/NT sections, hovering a book reveals its chapters.
+- **Settings modal** (4 tests) — Opens and closes, translation selector is populated, theme switching updates `data-theme` attribute, font size switching updates `data-font-size` attribute.
+- **Info modal** (3 tests) — Opens and closes, contains help sections, closes with Escape.
+- **Keyboard shortcuts** (2 tests) — Ctrl+K focuses search input, Escape closes book index.
+- **URL state** (2 tests) — Navigation updates URL with book code, browser back restores previous state.
+- **Translation switching** (1 test) — Switching translation reloads content with new translation's text.
+- **Toast notifications** (1 test) — Toast appears when copying a verse.
+- **Parallel translation views** (8 tests) — Two-column layout renders with `.parallel-container` and `.parallel-col`, columns show different translation labels and different verse text, parallel single verse shows two columns, copy-both button visible, each column has its own copy button, enabling parallel via settings select, disabling parallel returns to single column.
+- **More Content pages** (2 tests) — Index page loads, philosophy page loads.
+- **Footer** (1 test) — Footer is rendered with attribution text.
+
+**Configuration:** `playwright.config.ts` defines a single Chromium project, 30s test timeout, headless mode, `baseURL: http://localhost:3000`, and `webServer` that starts `bun run start` with 15s startup timeout. `reuseExistingServer` is enabled outside CI.
+
+**Bun test isolation:** `bunfig.toml` sets `[test] root = "./tests"` so `bun test` only discovers unit tests in `tests/`, preventing Playwright's `test.describe()` from conflicting with Bun's test runner.
+
 ## Design Choices
 
 1. **No framework:** Vanilla TypeScript for minimal bundle size and full control. DOM manipulation via innerHTML and template strings.
@@ -890,7 +917,7 @@ Tests across 4 files using `bun test`.
 4. **IndexedDB caching:** Bible data fetched once and persisted. Subsequent visits load from IndexedDB, making the app work fully offline.
 5. **Canonical English keys:** Internal book keys are always English (e.g., "Genesis"). Translation-specific display names and aliases are layered on top via `bookNames.ts`.
 6. **3-character URL codes:** URL book parameters use compact codes (`gen`, `jhn`, `rev`) to keep URLs short and language-independent.
-7. **No build dependencies:** Only `@types/bun` as a devDependency. No runtime npm packages.
+7. **Minimal build dependencies:** `@types/bun` and `@playwright/test` as devDependencies. No runtime npm packages.
 8. **Static deployment:** The `docs/` output is a self-contained static site. GitHub Pages serves it directly. The Bun server is dev-only.
 9. **CSS custom properties:** All theming via CSS variables, toggled by `data-theme` attribute. No CSS-in-JS.
 10. **Biome linting:** Some pre-existing lint warnings in `server.ts` are accepted.
