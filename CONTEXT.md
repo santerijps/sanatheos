@@ -12,7 +12,7 @@ Sanatheos is a fast, offline-capable Bible reader and search application built w
 sanatheos/
 ├── package.json              # npm metadata, scripts (start, dev, build:static, test:e2e, lint, fmt)
 ├── tsconfig.json             # TypeScript strict mode, ES2022, bundler resolution
-├── bunfig.toml               # Bun config — scopes unit tests to tests/ directory
+├── bunfig.toml               # Bun config — scopes unit tests to tests/, excludes e2e/
 ├── playwright.config.ts      # Playwright e2e test config (Chromium, auto-starts dev server)
 ├── LICENSE
 ├── README.md                 # User-facing project documentation
@@ -114,14 +114,13 @@ sanatheos/
 │   ├── build-static.ts       # Builds docs/ — bundle, minify, combine translations
 │   └── bible-gateway.py      # Python scraper to download translations
 │
-├── tests/                    # Unit tests (bun test)
-│   ├── search.test.ts        # Search engine tests (incl. Strong's number search)
-│   ├── state.test.ts         # URL state & book code tests
-│   ├── features.test.ts      # Feature tests (i18n, highlights, descriptions, interlinear, PWA)
-│   └── bible-loader.test.ts  # Bible loader tests (BOOK_ORDER, loadBible, discoverTranslations)
-│
-└── e2e/                      # End-to-end tests (Playwright)
-    └── app.spec.ts           # Full app e2e tests (40 tests across 12 describe blocks)
+└── tests/                    # All tests
+    ├── search.test.ts        # Search engine tests (incl. Strong's number search)
+    ├── state.test.ts         # URL state & book code tests
+    ├── features.test.ts      # Feature tests (i18n, highlights, descriptions, interlinear, PWA)
+    ├── bible-loader.test.ts  # Bible loader tests (BOOK_ORDER, loadBible, discoverTranslations)
+    └── e2e/                  # End-to-end tests (Playwright)
+        └── app.spec.ts       # Full app e2e tests (40 tests across 12 describe blocks)
 ```
 
 ## Bible Data Format
@@ -889,7 +888,7 @@ Unit tests across 4 files using `bun test` (scoped to `tests/` via `bunfig.toml`
 
 ### End-to-End Tests (Playwright)
 
-E2e tests in `e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. Tests cover 12 areas (40 tests total):
+E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. Tests cover 12 areas (40 tests total):
 
 - **Page load** (5 tests) — Default chapter (Genesis 1 / NHEB), specific chapter from URL, specific verse from URL, different translation from URL (KJV), title bar text.
 - **Search** (4 tests) — Text search returns results (quoted query), reference query navigates to chapter, search URL param loads results directly, empty search returns to default view.
@@ -907,7 +906,7 @@ E2e tests in `e2e/app.spec.ts` using `@playwright/test` with Chromium. The `play
 
 **Configuration:** `playwright.config.ts` defines a single Chromium project, 30s test timeout, headless mode, `baseURL: http://localhost:3000`, and `webServer` that starts `bun run start` with 15s startup timeout. `reuseExistingServer` is enabled outside CI.
 
-**Bun test isolation:** `bunfig.toml` sets `[test] root = "./tests"` so `bun test` only discovers unit tests in `tests/`, preventing Playwright's `test.describe()` from conflicting with Bun's test runner.
+**Bun test isolation:** `bunfig.toml` sets `[test] root = "./tests"` with `pathIgnorePatterns = ["**/e2e/**"]` so `bun test` only discovers unit test files, preventing Playwright's `test.describe()` in `tests/e2e/` from conflicting with Bun's test runner.
 
 ## Design Choices
 

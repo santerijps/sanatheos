@@ -6,9 +6,9 @@
     "start": "bun run src/server.ts",
     "dev": "bun run --watch src/server.ts",
     "build:static": "bun run scripts/build-static.ts",
-    "lint": "oxlint src/ tests/ e2e/ scripts/",
-    "fmt": "oxfmt src/ tests/ e2e/ scripts/",
-    "fmt:check": "oxfmt --check src/ tests/ e2e/ scripts/",
+    "lint": "oxlint src/ tests/ scripts/",
+    "fmt": "oxfmt src/ tests/ scripts/",
+    "fmt:check": "oxfmt --check src/ tests/ scripts/",
     "test:e2e": "bunx playwright test",
     "download-translation": "python scripts/bible-gateway.py"
   },
