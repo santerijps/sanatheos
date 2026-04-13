@@ -1,5 +1,11 @@
-import { describe, test, expect } from "bun:test";
-import { stateToInputText, toUrl } from "../src/client/state.ts";
+import { describe, test, expect, beforeEach } from "bun:test";
+import {
+  stateToInputText,
+  toUrl,
+  readState,
+  pushState,
+  replaceState,
+} from "../src/client/state.ts";
 import { bookFromCode, bookToCode } from "../src/client/bookCodes.ts";
 
 describe("stateToInputText", () => {
@@ -285,5 +291,128 @@ describe("bookCodes edge cases", () => {
       expect(code.length).toBeGreaterThanOrEqual(3);
       expect(code.length).toBeLessThanOrEqual(4);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// readState — parses window.location.search into AppState
+// ---------------------------------------------------------------------------
+
+describe("readState", () => {
+  function setSearch(qs: string) {
+    // @ts-expect-error — minimal window mock for Bun test environment
+    globalThis.window = { location: { search: qs, pathname: "/" } };
+  }
+
+  test("empty search returns empty state", () => {
+    setSearch("");
+    expect(readState()).toEqual({});
+  });
+
+  test("parses query param", () => {
+    setSearch("?q=grace");
+    expect(readState().query).toBe("grace");
+  });
+
+  test("parses book code and expands to full name", () => {
+    setSearch("?book=gen");
+    expect(readState().book).toBe("Genesis");
+  });
+
+  test("falls back to raw book value for unknown code", () => {
+    setSearch("?book=xyz");
+    expect(readState().book).toBe("xyz");
+  });
+
+  test("parses chapter as number", () => {
+    setSearch("?chapter=3");
+    expect(readState().chapter).toBe(3);
+  });
+
+  test("ignores non-numeric chapter", () => {
+    setSearch("?chapter=abc");
+    expect(readState().chapter).toBeUndefined();
+  });
+
+  test("parses verse as number", () => {
+    setSearch("?verse=16");
+    expect(readState().verse).toBe(16);
+  });
+
+  test("ignores non-numeric verse", () => {
+    setSearch("?verse=abc");
+    expect(readState().verse).toBeUndefined();
+  });
+
+  test("parses translation and uppercases it", () => {
+    setSearch("?t=nheb");
+    expect(readState().translation).toBe("NHEB");
+  });
+
+  test("parses parallel and uppercases it", () => {
+    setSearch("?p=kr38");
+    expect(readState().parallel).toBe("KR38");
+  });
+
+  test("parses interlinear flag", () => {
+    setSearch("?il=1");
+    expect(readState().interlinear).toBe(true);
+  });
+
+  test("interlinear absent means undefined", () => {
+    setSearch("?book=gen");
+    expect(readState().interlinear).toBeUndefined();
+  });
+
+  test("parses full URL with all params", () => {
+    setSearch("?t=KJV&p=KR38&il=1&q=love&book=jhn&chapter=3&verse=16");
+    const s = readState();
+    expect(s.translation).toBe("KJV");
+    expect(s.parallel).toBe("KR38");
+    expect(s.interlinear).toBe(true);
+    expect(s.query).toBe("love");
+    expect(s.book).toBe("John");
+    expect(s.chapter).toBe(3);
+    expect(s.verse).toBe(16);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// pushState / replaceState
+// ---------------------------------------------------------------------------
+
+describe("pushState / replaceState", () => {
+  const calls: Array<{ method: string; state: unknown; url: string }> = [];
+
+  beforeEach(() => {
+    calls.length = 0;
+    // @ts-expect-error — partial mock of history
+    globalThis.history = {
+      pushState: (s: unknown, _t: string, url: string) =>
+        calls.push({ method: "push", state: s, url }),
+      replaceState: (s: unknown, _t: string, url: string) =>
+        calls.push({ method: "replace", state: s, url }),
+    };
+  });
+
+  test("pushState calls history.pushState with correct URL", () => {
+    pushState({ book: "Genesis", chapter: 1 });
+    expect(calls).toHaveLength(1);
+    expect(calls[0].method).toBe("push");
+    expect(calls[0].url).toContain("book=gen");
+    expect(calls[0].url).toContain("chapter=1");
+  });
+
+  test("replaceState calls history.replaceState with correct URL", () => {
+    replaceState({ query: "faith" });
+    expect(calls).toHaveLength(1);
+    expect(calls[0].method).toBe("replace");
+    expect(calls[0].url).toContain("q=faith");
+  });
+
+  test("pushState passes state object through", () => {
+    const s = { book: "John", chapter: 3, verse: 16 };
+    pushState(s);
+    expect(calls[0].state).toEqual(s);
   });
 });
