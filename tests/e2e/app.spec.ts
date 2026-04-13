@@ -207,9 +207,9 @@ test.describe("Settings modal", () => {
 		await page.goto("/");
 		await waitForApp(page);
 		await page.click("#settings-btn");
-		await page.selectOption("#theme-select", "dark");
+		await page.click('#theme-segmented .seg-btn[data-value="dark"]');
 		await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-		await page.selectOption("#theme-select", "light");
+		await page.click('#theme-segmented .seg-btn[data-value="light"]');
 		await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 	});
 
@@ -217,7 +217,7 @@ test.describe("Settings modal", () => {
 		await page.goto("/");
 		await waitForApp(page);
 		await page.click("#settings-btn");
-		await page.selectOption("#fontsize-select", "large");
+		await page.click('#fontsize-segmented .seg-btn[data-value="large"]');
 		await expect(page.locator("html")).toHaveAttribute("data-font-size", "large");
 	});
 });
