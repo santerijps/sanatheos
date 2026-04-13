@@ -87,7 +87,7 @@ interface Strings {
 const EN: Strings = {
 	helpInfo: "Help & info",
 	settings: "Settings",
-	searchPlaceholder: 'Search: John 3:16; Gen 1-3 "Adam"',
+	searchPlaceholder: "Search the Bible",
 	browseBooks: "Browse books",
 
 	notFound: "Not found.",
@@ -134,7 +134,7 @@ const EN: Strings = {
 		'Typing <kbd>"</kbd> auto-inserts a closing quote. Abbreviations like <code>gen</code>, <code>rev</code>, <code>eph</code> are supported.',
 	infoBrowseTitle: "Browse Books",
 	infoBrowseText:
-		"Click the <strong>&#9776;</strong> menu button (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.",
+		"Click the <strong>&#128269;</strong> search button inside the search input (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.",
 	infoShortcutsTitle: "Keyboard Shortcuts",
 	infoShortcuts: [
 		"<kbd>Ctrl+K</kbd> &mdash; Focus search input",
@@ -173,7 +173,7 @@ const EN: Strings = {
 	footerDictionary:
 		'Browse the <a href="./dictionary.html">Strong\u2019s Concordance Dictionary</a> for Hebrew and Greek word definitions.',
 	footerFavicon:
-		'Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+		'Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
 	copied: "Copied!",
 	copyVerse: "Copy",
@@ -198,7 +198,7 @@ const EN: Strings = {
 const FI: Strings = {
 	helpInfo: "Ohje ja tiedot",
 	settings: "Asetukset",
-	searchPlaceholder: 'Haku: Joh 3:16; 1 Moos 1-3 "Aadam"',
+	searchPlaceholder: "Hae Raamatusta",
 	browseBooks: "Selaa kirjoja",
 
 	notFound: "Ei löytynyt.",
@@ -245,7 +245,7 @@ const FI: Strings = {
 		'<kbd>"</kbd>-näppäin lisää automaattisesti sulkevan lainausmerkin. Lyhenteet kuten <code>1 moos</code>, <code>ilm</code>, <code>ef</code> toimivat.',
 	infoBrowseTitle: "Selaa kirjoja",
 	infoBrowseText:
-		"Napsauta <strong>&#9776;</strong>-valikkopainiketta (tai paina <kbd>Ctrl+I</kbd>) avataksesi kirjaluettelon. Selaa kirjoja, lukuja ja jakeita kolmessa sarakkeessa. Käytä nuolinäppäimiä ja Enter-näppäintä.",
+		"Napsauta hakukentän sisällä olevaa <strong>&#128269;</strong>-painiketta (tai paina <kbd>Ctrl+I</kbd>) avataksesi kirjaluettelon. Selaa kirjoja, lukuja ja jakeita kolmessa sarakkeessa. Käytä nuolinäppäimiä ja Enter-näppäintä.",
 	infoShortcutsTitle: "Pikanäppäimet",
 	infoShortcuts: [
 		"<kbd>Ctrl+K</kbd> &mdash; Kohdista hakukenttään",

@@ -39,11 +39,27 @@
       align-items: center; gap: 10px; padding: 10px 20px;
     }
     #search-input {
-      flex: 1; height: 42px; padding: 0 16px;
+      flex: 1; height: 42px; padding: 0 16px 0 50px;
       font: 15px/42px var(--sans); border: 1px solid var(--border);
       border-radius: 8px; outline: none; background: var(--bg); color: var(--text);
     }
-    #info-btn, #settings-btn, #index-btn {
+    #search-wrap {
+      flex: 1; position: relative; display: flex; align-items: center;
+    }
+    #search-wrap #index-btn {
+      position: absolute; left: 0; top: 0; bottom: 0; width: 42px;
+      border: 1px solid var(--border);
+      border-radius: 8px 0 0 8px; background: none; z-index: 1;
+    }
+    #search-wrap:focus-within #index-btn,
+    #search-wrap:hover #index-btn {
+      border-color: #aaa;
+    }
+    #search-wrap:focus-within #search-input,
+    #search-wrap:hover #search-input {
+      border-color: #aaa;
+    }
+    #info-btn, #settings-btn {
       flex-shrink: 0; width: 42px; height: 42px; display: flex;
       align-items: center; justify-content: center; font-size: 20px;
       background: none; border: 1px solid var(--border); border-radius: 8px;
@@ -74,13 +90,15 @@
   <header id="header">
     <button id="info-btn" type="button" title="Help &amp; info">&#9432;</button>
     <button id="settings-btn" type="button" title="Settings">&#9881;</button>
-    <input
-      type="text"
-      id="search-input"
-      autocomplete="off"
-      spellcheck="false"
-    >
-    <button id="index-btn" type="button" title="Browse books">&#9776;</button>
+    <div id="search-wrap">
+      <button id="index-btn" type="button" title="Browse books">&#128269;</button>
+      <input
+        type="text"
+        id="search-input"
+        autocomplete="off"
+        spellcheck="false"
+      >
+    </div>
   </header>
 
   <main id="content"><p class="loading">Loading…</p></main>
@@ -200,7 +218,7 @@
 
   <footer id="footer">
     <p>All available Bible translations are in the public domain.</p>
-    <p>Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a></p>
+    <p>Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a></p>
   </footer>
 
   <script defer src="./bundle.js"></script>

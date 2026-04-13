@@ -26,7 +26,7 @@ Lightweight, offline-ready, keyboard-friendly, and requires no sign-up.
 
 ### Book Index Panel
 
-Browse all books in a three-column layout (books, chapters, verses) with Old Testament, Deuterocanonical, and New Testament section labels. Hovering over a chapter shows a text preview; hovering over a book reveals its chapters. Full keyboard navigation is supported with arrow keys, Tab, and Enter.
+Click the 🔍 button inside the search input (or press Ctrl+I) to browse all books in a three-column layout (books, chapters, verses) with Old Testament, Deuterocanonical, and New Testament section labels. Hovering over a chapter shows a text preview; hovering over a book reveals its chapters. Full keyboard navigation is supported with arrow keys, Tab, and Enter.
 
 ### Interlinear View
 

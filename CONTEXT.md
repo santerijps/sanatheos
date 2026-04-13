@@ -564,7 +564,7 @@ The page is a single HTML file with this DOM structure:
     #info-btn         — ⓘ help button
     #settings-btn     — ⚙ settings button
     #search-input     — Text input (autocomplete off, spellcheck off)
-    #index-btn        — ☰ book index button
+    #index-btn        — 🔍 book index button (inside search input)
   </header>
 
   <main #content>     — Dynamic content area (chapters, verses, results)
@@ -678,7 +678,7 @@ The search input in the sticky header accepts multiple query formats. Input is d
 
 ### 2. Book Index Panel
 
-Three-column browser opened via the ☰ button or Ctrl+I:
+Three-column browser opened via the 🔍 button (inside the search input) or Ctrl+I:
 - **Column 1 (Books):** All books with "Old Testament", "Deuterocanonical", and "New Testament" section labels. Hovering or keyboard-navigating to a book reveals its chapters.
 - **Column 2 (Chapters):** Chapter numbers with verse 1 text preview. Hovering shows verse list. Clicking navigates to that chapter.
 - **Column 3 (Verses):** Verse numbers with truncated text preview (50 chars). Clicking navigates to that verse.

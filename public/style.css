@@ -81,10 +81,40 @@ header {
   padding: 10px 20px;
 }
 
+#search-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+#search-wrap #search-input {
+  width: 100%;
+}
+
+#search-wrap #index-btn {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px 0 0 8px;
+  background: none;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.15s, border-color 0.15s;
+  z-index: 1;
+}
+
 #search-input {
   flex: 1;
   height: 42px;
-  padding: 0 16px;
+  padding: 0 16px 0 50px;
   font: 15px/42px var(--sans);
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -94,8 +124,17 @@ header {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-#search-input:focus {
+#search-wrap:focus-within #index-btn,
+#search-wrap:hover #index-btn {
   border-color: #aaa;
+}
+
+#search-wrap:focus-within #search-input,
+#search-wrap:hover #search-input {
+  border-color: #aaa;
+}
+
+#search-input:focus {
   box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.04);
 }
 
@@ -104,8 +143,7 @@ header {
 }
 
 #info-btn,
-#settings-btn,
-#index-btn {
+#settings-btn {
   flex-shrink: 0;
   width: 42px;
   height: 42px;
@@ -123,7 +161,7 @@ header {
 
 #info-btn:hover,
 #settings-btn:hover,
-#index-btn:hover {
+#search-wrap #index-btn:hover {
   background: var(--hover);
 }
 
