@@ -326,7 +326,7 @@ test.describe("Translation switching", () => {
     await page.click("#settings-close");
     await expect(page.locator("#content")).toContainText(
       "In the beginning God created the heaven and the earth",
-      { timeout: 10_000 }
+      { timeout: 10_000 },
     );
   });
 });

@@ -1,6 +1,11 @@
 import { describe, test, expect, beforeEach, afterAll } from "bun:test";
 import { setLanguage, t } from "../src/client/i18n.ts";
-import type { Highlight, HighlightColor, BookDescription, DescriptionData } from "../src/client/types.ts";
+import type {
+  Highlight,
+  HighlightColor,
+  BookDescription,
+  DescriptionData,
+} from "../src/client/types.ts";
 import { readFileSync, existsSync } from "node:fs";
 import { join, resolve } from "node:path";
 
@@ -101,10 +106,16 @@ describe("i18n — language switching preserves new strings", () => {
 
 describe("i18n — all new keys are non-empty strings", () => {
   const newKeys = [
-    "themeLabel", "themeLight", "themeDark", "themeSystem",
-    "parallelLabel", "parallelNone",
-    "copied", "copyVerse",
-    "highlight", "removeHighlight",
+    "themeLabel",
+    "themeLight",
+    "themeDark",
+    "themeSystem",
+    "parallelLabel",
+    "parallelNone",
+    "copied",
+    "copyVerse",
+    "highlight",
+    "removeHighlight",
   ] as const;
 
   test("EN: all new keys are non-empty", () => {
@@ -421,8 +432,6 @@ describe("i18n — PWA feature in info items", () => {
 // Descriptions — type validation and file structure
 // ---------------------------------------------------------------------------
 
-const TEXT_DIR = join(ROOT, "public", "text");
-
 describe("DescriptionData types", () => {
   test("BookDescription has required fields", () => {
     const bd: BookDescription = {
@@ -439,7 +448,11 @@ describe("DescriptionData types", () => {
 
   test("DescriptionData is an array of BookDescription", () => {
     const data: DescriptionData = [
-      { name: "Genesis", description: "First book.", chapters: [{ number: 1, description: "Ch 1." }] },
+      {
+        name: "Genesis",
+        description: "First book.",
+        chapters: [{ number: 1, description: "Ch 1." }],
+      },
       { name: "Exodus", description: "Second book.", chapters: [] },
     ];
     expect(Array.isArray(data)).toBe(true);
@@ -733,7 +746,9 @@ describe("i18n — EN and FI key parity", () => {
 describe("i18n — favicon attribution", () => {
   test("EN footerFavicon links to Wikimedia Commons source", () => {
     setLanguage("en");
-    expect(t().footerFavicon).toContain("commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg");
+    expect(t().footerFavicon).toContain(
+      "commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg",
+    );
   });
 
   test("EN footerFavicon links to CC BY-SA 3.0 license", () => {
@@ -743,7 +758,9 @@ describe("i18n — favicon attribution", () => {
 
   test("FI footerFavicon links to Wikimedia Commons source", () => {
     setLanguage("fi");
-    expect(t().footerFavicon).toContain("commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg");
+    expect(t().footerFavicon).toContain(
+      "commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg",
+    );
   });
 
   test("FI footerFavicon links to CC BY-SA 3.0 license", () => {
@@ -769,7 +786,10 @@ describe("CSS — responsive section-title", () => {
     for (let i = css.indexOf("{", start); i < css.length; i++) {
       if (css[i] === "{") depth++;
       if (css[i] === "}") depth--;
-      if (depth === 0) { end = i + 1; break; }
+      if (depth === 0) {
+        end = i + 1;
+        break;
+      }
     }
     const block = css.slice(start, end);
     expect(block).toContain(".section-title");
@@ -1202,18 +1222,18 @@ describe("Strong's data — strongs.json", () => {
     const data = JSON.parse(readFileSync(strongsPath, "utf-8")) as StrongsDict;
 
     test("has Hebrew entries (h-prefixed keys)", () => {
-      const hKeys = Object.keys(data).filter(k => k.startsWith("h"));
+      const hKeys = Object.keys(data).filter((k) => k.startsWith("h"));
       expect(hKeys.length).toBeGreaterThan(4000);
     });
 
     test("has Greek entries (g-prefixed keys)", () => {
-      const gKeys = Object.keys(data).filter(k => k.startsWith("g"));
+      const gKeys = Object.keys(data).filter((k) => k.startsWith("g"));
       expect(gKeys.length).toBeGreaterThan(5000);
     });
 
     test("every entry has d, p, s, r fields", () => {
       let checked = 0;
-      for (const [key, entry] of Object.entries(data)) {
+      for (const [_key, entry] of Object.entries(data)) {
         expect(typeof entry.d).toBe("string");
         expect(typeof entry.p).toBe("string");
         expect(typeof entry.s).toBe("string");

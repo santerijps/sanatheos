@@ -1,7 +1,20 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import type { BibleData } from "../src/client/types.ts";
 import type { InterlinearBook } from "../src/client/types.ts";
-import { initSearch, search, tryParseNav, parseQueryBooks, setSearchInterlinearData, _matchBook, _parseRef, _parseVerseSegments, _buildTextMatcher, _levenshtein, _normalizeQuery, escapeRegex } from "../src/client/search.ts";
+import {
+  initSearch,
+  search,
+  tryParseNav,
+  parseQueryBooks,
+  setSearchInterlinearData,
+  _matchBook,
+  _parseRef,
+  _parseVerseSegments,
+  _buildTextMatcher,
+  _levenshtein,
+  _normalizeQuery,
+  escapeRegex,
+} from "../src/client/search.ts";
 import { setTranslation, getAliases, getSortedAliases } from "../src/client/bookNames.ts";
 
 // Minimal fixture data
@@ -10,7 +23,7 @@ const fixture: BibleData = {
     "1": {
       "1": "In the beginning God created the heavens and the earth.",
       "2": "The earth was without form, and void.",
-      "3": "Then God said, \"Let there be light\"; and there was light.",
+      "3": 'Then God said, "Let there be light"; and there was light.',
       "4": "And God saw the light, that it was good.",
       "5": "God called the light Day, and the darkness He called Night.",
     },
@@ -347,8 +360,8 @@ describe("search — combined reference + text", () => {
   test("combined with semicolon multi-term", () => {
     const results = search(fixture, 'Genesis "light";John 3:16');
     expect(results.length).toBeGreaterThanOrEqual(3); // light in Gen + John 3:16
-    const genResults = results.filter(r => r.book === "Genesis");
-    const johnResults = results.filter(r => r.book === "John");
+    const genResults = results.filter((r) => r.book === "Genesis");
+    const johnResults = results.filter((r) => r.book === "John");
     expect(genResults.length).toBeGreaterThanOrEqual(1);
     expect(johnResults).toHaveLength(1);
     for (const r of genResults) {
@@ -377,32 +390,52 @@ describe("search — combined reference + text", () => {
 describe("tryParseNav", () => {
   test("single book returns NavRef array", () => {
     const nav = tryParseNav("Genesis");
-    expect(nav).toEqual([{ book: "Genesis", chapterStart: undefined, chapterEnd: undefined, verseSegments: undefined }]);
+    expect(nav).toEqual([
+      { book: "Genesis", chapterStart: undefined, chapterEnd: undefined, verseSegments: undefined },
+    ]);
   });
 
   test("single chapter", () => {
     const nav = tryParseNav("Genesis 2");
-    expect(nav).toEqual([{ book: "Genesis", chapterStart: 2, chapterEnd: 2, verseSegments: undefined }]);
+    expect(nav).toEqual([
+      { book: "Genesis", chapterStart: 2, chapterEnd: 2, verseSegments: undefined },
+    ]);
   });
 
   test("single verse", () => {
     const nav = tryParseNav("John 3:16");
-    expect(nav).toEqual([{ book: "John", chapterStart: 3, chapterEnd: 3, verseSegments: [{ start: 16, end: 16 }] }]);
+    expect(nav).toEqual([
+      { book: "John", chapterStart: 3, chapterEnd: 3, verseSegments: [{ start: 16, end: 16 }] },
+    ]);
   });
 
   test("chapter range", () => {
     const nav = tryParseNav("Genesis 1-3");
-    expect(nav).toEqual([{ book: "Genesis", chapterStart: 1, chapterEnd: 3, verseSegments: undefined }]);
+    expect(nav).toEqual([
+      { book: "Genesis", chapterStart: 1, chapterEnd: 3, verseSegments: undefined },
+    ]);
   });
 
   test("verse range", () => {
     const nav = tryParseNav("Genesis 1:2-4");
-    expect(nav).toEqual([{ book: "Genesis", chapterStart: 1, chapterEnd: 1, verseSegments: [{ start: 2, end: 4 }] }]);
+    expect(nav).toEqual([
+      { book: "Genesis", chapterStart: 1, chapterEnd: 1, verseSegments: [{ start: 2, end: 4 }] },
+    ]);
   });
 
   test("comma-separated verse segments", () => {
     const nav = tryParseNav("Genesis 1:1-3,5");
-    expect(nav).toEqual([{ book: "Genesis", chapterStart: 1, chapterEnd: 1, verseSegments: [{ start: 1, end: 3 }, { start: 5, end: 5 }] }]);
+    expect(nav).toEqual([
+      {
+        book: "Genesis",
+        chapterStart: 1,
+        chapterEnd: 1,
+        verseSegments: [
+          { start: 1, end: 3 },
+          { start: 5, end: 5 },
+        ],
+      },
+    ]);
   });
 
   test("multi-term semicolon returns array", () => {
@@ -415,8 +448,18 @@ describe("tryParseNav", () => {
   test("multi-term with chapter ranges", () => {
     const nav = tryParseNav("Genesis 1-2; John 1");
     expect(nav).toHaveLength(2);
-    expect(nav![0]).toEqual({ book: "Genesis", chapterStart: 1, chapterEnd: 2, verseSegments: undefined });
-    expect(nav![1]).toEqual({ book: "John", chapterStart: 1, chapterEnd: 1, verseSegments: undefined });
+    expect(nav![0]).toEqual({
+      book: "Genesis",
+      chapterStart: 1,
+      chapterEnd: 2,
+      verseSegments: undefined,
+    });
+    expect(nav![1]).toEqual({
+      book: "John",
+      chapterStart: 1,
+      chapterEnd: 1,
+      verseSegments: undefined,
+    });
   });
 
   test("returns null for text search", () => {
@@ -445,12 +488,16 @@ describe("tryParseNav", () => {
 
   test("abbreviated book name", () => {
     const nav = tryParseNav("gen 1");
-    expect(nav).toEqual([{ book: "Genesis", chapterStart: 1, chapterEnd: 1, verseSegments: undefined }]);
+    expect(nav).toEqual([
+      { book: "Genesis", chapterStart: 1, chapterEnd: 1, verseSegments: undefined },
+    ]);
   });
 
   test("numbered book abbreviation", () => {
     const nav = tryParseNav("1 jo");
-    expect(nav).toEqual([{ book: "1 John", chapterStart: undefined, chapterEnd: undefined, verseSegments: undefined }]);
+    expect(nav).toEqual([
+      { book: "1 John", chapterStart: undefined, chapterEnd: undefined, verseSegments: undefined },
+    ]);
   });
 
   test("returns null when one term in multi is invalid", () => {
@@ -495,7 +542,10 @@ describe("parseVerseSegments — edge cases", () => {
   test("invalid: trailing comma", () => {
     // trailing comma produces empty part which is filtered, so segments still valid
     const result = _parseVerseSegments("1,2,");
-    expect(result).toEqual([{ start: 1, end: 1 }, { start: 2, end: 2 }]);
+    expect(result).toEqual([
+      { start: 1, end: 1 },
+      { start: 2, end: 2 },
+    ]);
   });
 
   test("invalid: just comma", () => {
@@ -606,7 +656,10 @@ describe("parseRef — edge cases", () => {
       book: "Genesis",
       chapterStart: 1,
       chapterEnd: 1,
-      verseSegments: [{ start: 1, end: 2 }, { start: 4, end: 5 }],
+      verseSegments: [
+        { start: 1, end: 2 },
+        { start: 4, end: 5 },
+      ],
     });
   });
 });
@@ -695,7 +748,7 @@ describe("search — edge cases", () => {
   test("text search matches across books", () => {
     const results = search(fixture, '"In the beginning"');
     expect(results.length).toBeGreaterThanOrEqual(2);
-    const books = new Set(results.map(r => r.book));
+    const books = new Set(results.map((r) => r.book));
     expect(books.size).toBeGreaterThanOrEqual(2);
   });
 
@@ -717,8 +770,8 @@ describe("search — edge cases", () => {
   test("multiple text-only searches with semicolons", () => {
     const results = search(fixture, '"serpent"; "Jesus"');
     expect(results.length).toBeGreaterThanOrEqual(2);
-    expect(results.some(r => r.text.toLowerCase().includes("serpent"))).toBe(true);
-    expect(results.some(r => r.text.toLowerCase().includes("jesus"))).toBe(true);
+    expect(results.some((r) => r.text.toLowerCase().includes("serpent"))).toBe(true);
+    expect(results.some((r) => r.text.toLowerCase().includes("jesus"))).toBe(true);
   });
 
   test("unrecognized term is silently skipped", () => {
@@ -939,7 +992,12 @@ describe("search — unquoted ^/$ anchors return nothing", () => {
 describe("parseRef — trailing dash/comma ignored", () => {
   test("John 1:1- parses as John 1:1", () => {
     const ref = _parseRef("John 1:1-");
-    expect(ref).toEqual({ book: "John", chapterStart: 1, chapterEnd: 1, verseSegments: [{ start: 1, end: 1 }] });
+    expect(ref).toEqual({
+      book: "John",
+      chapterStart: 1,
+      chapterEnd: 1,
+      verseSegments: [{ start: 1, end: 1 }],
+    });
   });
 
   test("Genesis 1- parses as Genesis 1", () => {
@@ -949,7 +1007,12 @@ describe("parseRef — trailing dash/comma ignored", () => {
 
   test("Genesis 1:1-3, parses as Genesis 1:1-3", () => {
     const ref = _parseRef("Genesis 1:1-3,");
-    expect(ref).toEqual({ book: "Genesis", chapterStart: 1, chapterEnd: 1, verseSegments: [{ start: 1, end: 3 }] });
+    expect(ref).toEqual({
+      book: "Genesis",
+      chapterStart: 1,
+      chapterEnd: 1,
+      verseSegments: [{ start: 1, end: 3 }],
+    });
   });
 
   test("John 1: parses as John 1", () => {
@@ -1216,7 +1279,8 @@ describe("normalizeQuery", () => {
   });
 
   test("handles the full non-standard example", () => {
-    const input = "Matt. 27:1\u201338, Luuk. 23:39\u201343, Matt. 27:39\u201354, Joh. 19:31\u201337, Matt. 27:55\u201361";
+    const input =
+      "Matt. 27:1\u201338, Luuk. 23:39\u201343, Matt. 27:39\u201354, Joh. 19:31\u201337, Matt. 27:55\u201361";
     const expected = "Matt. 27:1-38; Luuk. 23:39-43; Matt. 27:39-54; Joh. 19:31-37; Matt. 27:55-61";
     expect(_normalizeQuery(input)).toBe(expected);
   });
@@ -1361,7 +1425,10 @@ describe("escapeRegex", () => {
 // ---------------------------------------------------------------------------
 
 describe("parseRef edge cases", () => {
-  beforeEach(() => { setTranslation("NHEB"); initSearch(fixture); });
+  beforeEach(() => {
+    setTranslation("NHEB");
+    initSearch(fixture);
+  });
 
   test("chapter 0 returns no results", () => {
     const results = search(fixture, "Genesis 0");
@@ -1471,7 +1538,10 @@ describe("normalizeQuery edge cases", () => {
 // ---------------------------------------------------------------------------
 
 describe("matchBook edge cases", () => {
-  beforeEach(() => { setTranslation("NHEB"); initSearch(fixture); });
+  beforeEach(() => {
+    setTranslation("NHEB");
+    initSearch(fixture);
+  });
 
   test("exact match preferred over prefix when 'John' could match '1 John'", () => {
     const result = _matchBook("John");
@@ -1496,7 +1566,10 @@ describe("matchBook edge cases", () => {
 // ---------------------------------------------------------------------------
 
 describe("parseQueryBooks edge cases", () => {
-  beforeEach(() => { setTranslation("NHEB"); initSearch(fixture); });
+  beforeEach(() => {
+    setTranslation("NHEB");
+    initSearch(fixture);
+  });
 
   test("empty string returns empty array", () => {
     expect(parseQueryBooks("")).toEqual([]);
@@ -1595,7 +1668,7 @@ describe("initSearch optimization", () => {
     // A text search should still find results from all books
     const results = search(fixture, '"beginning"');
     expect(results.length).toBeGreaterThanOrEqual(2); // Genesis 1:1 and John 1:1/1:2
-    const books = new Set(results.map(r => r.book));
+    const books = new Set(results.map((r) => r.book));
     expect(books.has("Genesis")).toBe(true);
     expect(books.has("John")).toBe(true);
   });
@@ -1638,14 +1711,26 @@ describe("Strong's number search", () => {
         "1": {
           "1": [
             { w: "In", english: "In", original: "Ἐν", translit: "En", strongs: "g1722" },
-            { w: "beginning", english: "beginning", original: "ἀρχῇ", translit: "archē", strongs: "g746" },
+            {
+              w: "beginning",
+              english: "beginning",
+              original: "ἀρχῇ",
+              translit: "archē",
+              strongs: "g746",
+            },
             { w: "was", english: "was", original: "ἦν", translit: "ēn", strongs: "g1510" },
             { w: "Word", english: "Word", original: "λόγος", translit: "logos", strongs: "g3056" },
             { w: "God", english: "God", original: "θεός", translit: "theos", strongs: "g2316" },
           ],
           "2": [
             { w: "same", english: "same", original: "οὗτος", translit: "houtos", strongs: "g3778" },
-            { w: "beginning", english: "beginning", original: "ἀρχῇ", translit: "archē", strongs: "g746" },
+            {
+              w: "beginning",
+              english: "beginning",
+              original: "ἀρχῇ",
+              translit: "archē",
+              strongs: "g746",
+            },
             { w: "God", english: "God", original: "θεός", translit: "theos", strongs: "g2316" },
           ],
           "3": [

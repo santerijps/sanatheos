@@ -10,17 +10,22 @@ export function readState(): AppState {
     const raw = p.get("book")!;
     s.book = bookFromCode(raw) ?? raw;
   }
-  if (p.has("chapter")) { const n = +p.get("chapter")!; if (Number.isFinite(n)) s.chapter = n; }
-  if (p.has("verse"))   { const n = +p.get("verse")!;   if (Number.isFinite(n)) s.verse = n; }
+  if (p.has("chapter")) {
+    const n = +p.get("chapter")!;
+    if (Number.isFinite(n)) s.chapter = n;
+  }
+  if (p.has("verse")) {
+    const n = +p.get("verse")!;
+    if (Number.isFinite(n)) s.verse = n;
+  }
   if (p.has("t")) s.translation = p.get("t")!.toUpperCase();
   if (p.has("p")) s.parallel = p.get("p")!.toUpperCase();
   if (p.get("il") === "1") s.interlinear = true;
   return s;
 }
 
-const basePath = typeof window !== "undefined"
-  ? window.location.pathname.replace(/\/+$/, "") + "/"
-  : "/";
+const basePath =
+  typeof window !== "undefined" ? window.location.pathname.replace(/\/+$/, "") + "/" : "/";
 
 export function toUrl(s: AppState): string {
   const p = new URLSearchParams();

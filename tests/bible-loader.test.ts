@@ -24,14 +24,47 @@ describe("BOOK_ORDER", () => {
   });
 
   test("Old Testament books are in canonical order", () => {
-    const otBooks = ["Genesis", "Exodus", "Leviticus", "Numbers", "Deuteronomy",
-      "Joshua", "Judges", "Ruth", "1 Samuel", "2 Samuel",
-      "1 Kings", "2 Kings", "1 Chronicles", "2 Chronicles",
-      "Ezra", "Nehemiah", "Esther", "Job", "Psalm", "Proverbs",
-      "Ecclesiastes", "Song Of Solomon", "Isaiah", "Jeremiah",
-      "Lamentations", "Ezekiel", "Daniel", "Hosea", "Joel", "Amos",
-      "Obadiah", "Jonah", "Micah", "Nahum", "Habakkuk", "Zephaniah",
-      "Haggai", "Zechariah", "Malachi"];
+    const otBooks = [
+      "Genesis",
+      "Exodus",
+      "Leviticus",
+      "Numbers",
+      "Deuteronomy",
+      "Joshua",
+      "Judges",
+      "Ruth",
+      "1 Samuel",
+      "2 Samuel",
+      "1 Kings",
+      "2 Kings",
+      "1 Chronicles",
+      "2 Chronicles",
+      "Ezra",
+      "Nehemiah",
+      "Esther",
+      "Job",
+      "Psalm",
+      "Proverbs",
+      "Ecclesiastes",
+      "Song Of Solomon",
+      "Isaiah",
+      "Jeremiah",
+      "Lamentations",
+      "Ezekiel",
+      "Daniel",
+      "Hosea",
+      "Joel",
+      "Amos",
+      "Obadiah",
+      "Jonah",
+      "Micah",
+      "Nahum",
+      "Habakkuk",
+      "Zephaniah",
+      "Haggai",
+      "Zechariah",
+      "Malachi",
+    ];
     for (let i = 0; i < otBooks.length; i++) {
       expect(BOOK_ORDER[i]).toBe(otBooks[i]);
     }
@@ -45,12 +78,35 @@ describe("BOOK_ORDER", () => {
   });
 
   test("New Testament books in canonical order", () => {
-    const ntBooks = ["Matthew", "Mark", "Luke", "John", "Acts", "Romans",
-      "1 Corinthians", "2 Corinthians", "Galatians", "Ephesians",
-      "Philippians", "Colossians", "1 Thessalonians", "2 Thessalonians",
-      "1 Timothy", "2 Timothy", "Titus", "Philemon", "Hebrews",
-      "James", "1 Peter", "2 Peter", "1 John", "2 John", "3 John",
-      "Jude", "Revelation"];
+    const ntBooks = [
+      "Matthew",
+      "Mark",
+      "Luke",
+      "John",
+      "Acts",
+      "Romans",
+      "1 Corinthians",
+      "2 Corinthians",
+      "Galatians",
+      "Ephesians",
+      "Philippians",
+      "Colossians",
+      "1 Thessalonians",
+      "2 Thessalonians",
+      "1 Timothy",
+      "2 Timothy",
+      "Titus",
+      "Philemon",
+      "Hebrews",
+      "James",
+      "1 Peter",
+      "2 Peter",
+      "1 John",
+      "2 John",
+      "3 John",
+      "Jude",
+      "Revelation",
+    ];
     const ntStart = BOOK_ORDER.indexOf("Matthew");
     for (let i = 0; i < ntBooks.length; i++) {
       expect(BOOK_ORDER[ntStart + i]).toBe(ntBooks[i]);
@@ -63,8 +119,7 @@ describe("BOOK_ORDER", () => {
   });
 
   test("deuterocanonical books are present", () => {
-    const dcBooks = ["Tobit", "Judith", "Wisdom", "Sirach", "Baruch",
-      "1 Maccabees", "2 Maccabees"];
+    const dcBooks = ["Tobit", "Judith", "Wisdom", "Sirach", "Baruch", "1 Maccabees", "2 Maccabees"];
     for (const book of dcBooks) {
       expect(BOOK_ORDER).toContain(book);
     }

@@ -1,9 +1,62 @@
-import type { BibleData, AppState, HighlightColor, DescriptionData, InterlinearBook, StrongsDict } from "./types.ts";
-import { loadBible, saveBible, getHighlightMap, setHighlight, removeHighlight, loadInterlinearBook, saveInterlinearBook, loadStrongsDict, saveStrongsDict } from "./db.ts";
-import { initSearch, search, tryParseNav, parseQueryBooks, setSearchInterlinearData } from "./search.ts";
+import type {
+  BibleData,
+  AppState,
+  HighlightColor,
+  DescriptionData,
+  InterlinearBook,
+  StrongsDict,
+} from "./types.ts";
+import {
+  loadBible,
+  saveBible,
+  getHighlightMap,
+  setHighlight,
+  removeHighlight,
+  loadInterlinearBook,
+  saveInterlinearBook,
+  loadStrongsDict,
+  saveStrongsDict,
+} from "./db.ts";
+import {
+  initSearch,
+  search,
+  tryParseNav,
+  parseQueryBooks,
+  setSearchInterlinearData,
+} from "./search.ts";
 import type { NavRef } from "./search.ts";
 import { readState, pushState, replaceState, stateToInputText } from "./state.ts";
-import { renderChapter, renderChapterRange, renderBook, renderVerse, renderVerseSegments, renderMultiNav, renderResults, renderIndex, navRefLabel, setHighlightMap, setDescriptions, setSecondaryDescriptions, setStyleguide, setSubheadings, setSecondarySubheadings, renderParallelChapter, renderParallelBook, renderParallelVerse, renderParallelVerseSegments, renderParallelMultiNav, setTranslationCode, setInterlinearEnabled, getInterlinearEnabled, setInterlinearBook, getInterlinearBook, getInterlinearBooks, setStrongsDict, getStrongsDict, renderStrongsPanel } from "./render.ts";
+import {
+  renderChapter,
+  renderChapterRange,
+  renderBook,
+  renderVerse,
+  renderVerseSegments,
+  renderMultiNav,
+  renderResults,
+  renderIndex,
+  navRefLabel,
+  setHighlightMap,
+  setDescriptions,
+  setSecondaryDescriptions,
+  setStyleguide,
+  setSubheadings,
+  setSecondarySubheadings,
+  renderParallelChapter,
+  renderParallelBook,
+  renderParallelVerse,
+  renderParallelVerseSegments,
+  renderParallelMultiNav,
+  setTranslationCode,
+  setInterlinearEnabled,
+  getInterlinearEnabled,
+  setInterlinearBook,
+  getInterlinearBook,
+  getInterlinearBooks,
+  setStrongsDict,
+  getStrongsDict,
+  renderStrongsPanel,
+} from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
@@ -16,14 +69,22 @@ let parallelData: BibleData | null = null;
 let highlightMap = new Map<string, HighlightColor>();
 
 function withTranslationParams(s: AppState): AppState {
-  return { ...s, translation: currentTranslation, parallel: parallelTranslation || undefined, interlinear: getInterlinearEnabled() || undefined };
+  return {
+    ...s,
+    translation: currentTranslation,
+    parallel: parallelTranslation || undefined,
+    interlinear: getInterlinearEnabled() || undefined,
+  };
 }
 
 async function fetchInterlinear(book: string): Promise<InterlinearBook> {
   const existing = getInterlinearBook(book);
   if (existing) return existing;
   const cached = await loadInterlinearBook(book);
-  if (cached) { setInterlinearBook(book, cached); return cached; }
+  if (cached) {
+    setInterlinearBook(book, cached);
+    return cached;
+  }
   const res = await fetch(`./text/interlinear/${encodeURIComponent(book)}.json`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const d: InterlinearBook = await res.json();
@@ -36,7 +97,10 @@ async function fetchStrongs(): Promise<StrongsDict> {
   const existing = getStrongsDict();
   if (existing && Object.keys(existing).length > 0) return existing;
   const cached = await loadStrongsDict();
-  if (cached) { setStrongsDict(cached); return cached; }
+  if (cached) {
+    setStrongsDict(cached);
+    return cached;
+  }
   const res = await fetch("./text/strongs.json");
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const d: StrongsDict = await res.json();
@@ -109,7 +173,9 @@ async function ensureInterlinear(book: string): Promise<void> {
   try {
     await Promise.all([fetchInterlinear(book), fetchStrongs()]);
     setSearchInterlinearData(getInterlinearBooks());
-  } catch { /* data unavailable — interlinear won't render */ }
+  } catch {
+    /* data unavailable — interlinear won't render */
+  }
 }
 
 async function init() {
@@ -127,12 +193,14 @@ async function init() {
 
   // Determine initial translation from URL or localStorage
   const initialState = readState();
-  currentTranslation = initialState.translation || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
+  currentTranslation =
+    initialState.translation || localStorage.getItem("bible-translation") || DEFAULT_TRANSLATION;
   setTranslation(currentTranslation);
   setTranslationCode(currentTranslation);
 
   // Determine initial language: sync with translation
-  const savedLang = TRANSLATION_LANG[currentTranslation] || localStorage.getItem("bible-language") || "en";
+  const savedLang =
+    TRANSLATION_LANG[currentTranslation] || localStorage.getItem("bible-language") || "en";
   setLanguage(savedLang);
   localStorage.setItem("bible-language", savedLang);
 
@@ -166,7 +234,7 @@ async function init() {
 
   try {
     data = await fetchTranslation(currentTranslation);
-  } catch (err) {
+  } catch {
     content.innerHTML = `<p class="empty">${t().loadFailed}</p>`;
     return;
   }
@@ -175,8 +243,12 @@ async function init() {
   const shLang = TRANSLATION_LANG[currentTranslation] || "en";
   const [desc, sgData, shData] = await Promise.all([
     fetchDescriptions(currentTranslation),
-    fetch("./data/styleguide.json").then(r => r.ok ? r.json() : null).catch(() => null),
-    fetch(`./data/subheadings-${shLang}.json`).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch("./data/styleguide.json")
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null),
+    fetch(`./data/subheadings-${shLang}.json`)
+      .then((r) => (r.ok ? r.json() : null))
+      .catch(() => null),
   ]);
   setDescriptions(desc);
   if (sgData) setStyleguide(sgData);
@@ -186,14 +258,18 @@ async function init() {
   initSearch(data);
 
   // Populate translation selector
-  const translationSelect = document.getElementById("translation-select") as HTMLSelectElement | null;
+  const translationSelect = document.getElementById(
+    "translation-select",
+  ) as HTMLSelectElement | null;
   if (translationSelect) {
     const translations = await fetchTranslations();
-    translationSelect.innerHTML = translations.map(t => {
-      const info = TRANSLATION_NAMES[t];
-      const label = info ? `${t} — ${info.name} (${info.language})` : t;
-      return `<option value="${t}"${t === currentTranslation ? " selected" : ""}>${label}</option>`;
-    }).join("");
+    translationSelect.innerHTML = translations
+      .map((t) => {
+        const info = TRANSLATION_NAMES[t];
+        const label = info ? `${t} — ${info.name} (${info.language})` : t;
+        return `<option value="${t}"${t === currentTranslation ? " selected" : ""}>${label}</option>`;
+      })
+      .join("");
 
     translationSelect.addEventListener("change", async () => {
       const code = translationSelect.value;
@@ -241,13 +317,15 @@ async function init() {
 
         // Translate query book names to new translation
         if (parsedBooks) {
-          state.query = parsedBooks.map(p => {
-            if (!p.book) return p.original;
-            const name = displayName(p.book);
-            let result = p.rest ? `${name} ${p.rest}` : name;
-            if (p.quoted) result += ` ${p.quoted}`;
-            return result;
-          }).join("; ");
+          state.query = parsedBooks
+            .map((p) => {
+              if (!p.book) return p.original;
+              const name = displayName(p.book);
+              let result = p.rest ? `${name} ${p.rest}` : name;
+              if (p.quoted) result += ` ${p.quoted}`;
+              return result;
+            })
+            .join("; ");
         }
 
         searchInput.value = stateToInputText(state);
@@ -282,11 +360,15 @@ async function init() {
   if (parallelSelect && translationSelect) {
     const translations = await fetchTranslations();
     const savedParallel = initialState.parallel || localStorage.getItem("bible-parallel") || "";
-    parallelSelect.innerHTML = `<option value="">${t().parallelNone}</option>` + translations.map(tr => {
-      const info = TRANSLATION_NAMES[tr];
-      const label = info ? `${tr} — ${info.name}` : tr;
-      return `<option value="${tr}"${tr === savedParallel ? " selected" : ""}>${label}</option>`;
-    }).join("");
+    parallelSelect.innerHTML =
+      `<option value="">${t().parallelNone}</option>` +
+      translations
+        .map((tr) => {
+          const info = TRANSLATION_NAMES[tr];
+          const label = info ? `${tr} — ${info.name}` : tr;
+          return `<option value="${tr}"${tr === savedParallel ? " selected" : ""}>${label}</option>`;
+        })
+        .join("");
 
     if (savedParallel) {
       try {
@@ -299,7 +381,11 @@ async function init() {
           const shRes = await fetch(`./data/subheadings-${secShLang}.json`);
           if (shRes.ok) setSecondarySubheadings(await shRes.json());
         } catch {}
-      } catch { parallelTranslation = ""; parallelData = null; parallelSelect.value = ""; }
+      } catch {
+        parallelTranslation = "";
+        parallelData = null;
+        parallelSelect.value = "";
+      }
     }
 
     parallelSelect.addEventListener("change", async () => {
@@ -357,7 +443,8 @@ async function init() {
   const strongsPanel = document.getElementById("strongs-panel")!;
   strongsPanel.style.removeProperty("visibility");
 
-  const savedIl = initialState.interlinear || (isKJV() && localStorage.getItem("bible-interlinear") === "1");
+  const savedIl =
+    initialState.interlinear || (isKJV() && localStorage.getItem("bible-interlinear") === "1");
   if (savedIl && isKJV()) {
     setInterlinearEnabled(true);
   }
@@ -386,7 +473,11 @@ async function init() {
     // Ensure Strong's dictionary is loaded
     let dict = getStrongsDict();
     if (!dict || Object.keys(dict).length === 0) {
-      try { dict = await fetchStrongs(); } catch { return; }
+      try {
+        dict = await fetchStrongs();
+      } catch {
+        return;
+      }
     }
     const entry = dict[strongsId.toLowerCase()];
     if (!entry) return;
@@ -469,9 +560,15 @@ async function init() {
     lockScroll();
     if (!indexRendered) {
       const idx = renderIndex(data, {
-        onBook(book) { navigate({ book }); },
-        onChapter(book, chapter) { navigate({ book, chapter }); },
-        onVerse(book, chapter, verse) { navigate({ book, chapter, verse }); },
+        onBook(book) {
+          navigate({ book });
+        },
+        onChapter(book, chapter) {
+          navigate({ book, chapter });
+        },
+        onVerse(book, chapter, verse) {
+          navigate({ book, chapter, verse });
+        },
       });
       indexScrollTo = idx.scrollTo;
       indexRendered = true;
@@ -484,16 +581,23 @@ async function init() {
       // Focus the most specific column matching what's being read
       let target: HTMLElement | null = null;
       if (current.verse !== undefined) {
-        target = document.querySelector("#idx-verses .idx-item:focus") as HTMLElement
-          ?? (() => { const items = document.querySelectorAll("#idx-verses .idx-item"); for (const el of items) if (el.textContent?.startsWith(`${current.verse}. `)) return el; return null; })()
-          ?? document.querySelector("#idx-verses .idx-item") as HTMLElement;
+        target =
+          (document.querySelector("#idx-verses .idx-item:focus") as HTMLElement) ??
+          (() => {
+            const items = document.querySelectorAll("#idx-verses .idx-item");
+            for (const el of items) if (el.textContent?.startsWith(`${current.verse}. `)) return el;
+            return null;
+          })() ??
+          (document.querySelector("#idx-verses .idx-item") as HTMLElement);
       } else if (current.chapter !== undefined) {
-        target = document.querySelector(`#idx-chapters .idx-item.active`) as HTMLElement
-          ?? document.querySelector("#idx-chapters .idx-item") as HTMLElement;
+        target =
+          (document.querySelector(`#idx-chapters .idx-item.active`) as HTMLElement) ??
+          (document.querySelector("#idx-chapters .idx-item") as HTMLElement);
       }
       if (!target) {
-        target = document.querySelector("#idx-books .idx-item.active") as HTMLElement
-          ?? document.querySelector("#idx-books .idx-item") as HTMLElement;
+        target =
+          (document.querySelector("#idx-books .idx-item.active") as HTMLElement) ??
+          (document.querySelector("#idx-books .idx-item") as HTMLElement);
       }
       target?.focus();
     });
@@ -550,11 +654,26 @@ async function init() {
   // Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      if (strongsPanel.classList.contains("open")) { closeStrongsPanel(); return; }
-      if (verseMenu.classList.contains("open")) { closeVerseMenu(); return; }
-      if (settingsOverlay.classList.contains("open")) { closeSettings(); return; }
-      if (infoOverlay.classList.contains("open")) { closeInfo(); return; }
-      if (overlay.classList.contains("open")) { closeIndex(); return; }
+      if (strongsPanel.classList.contains("open")) {
+        closeStrongsPanel();
+        return;
+      }
+      if (verseMenu.classList.contains("open")) {
+        closeVerseMenu();
+        return;
+      }
+      if (settingsOverlay.classList.contains("open")) {
+        closeSettings();
+        return;
+      }
+      if (infoOverlay.classList.contains("open")) {
+        closeInfo();
+        return;
+      }
+      if (overlay.classList.contains("open")) {
+        closeIndex();
+        return;
+      }
     }
     if ((e.ctrlKey || e.metaKey) && e.key === "k") {
       e.preventDefault();
@@ -692,12 +811,23 @@ async function init() {
           const ch = sourceData[book]?.[String(chapter)];
           if (!ch) return "";
           const nums = buildVerseNums();
-          return `${translationLabel(code)}\n${titleBook} ${chapter}:${segments}\n` + nums.filter(n => ch[String(n)]).map(n => `${n} ${ch[String(n)]}`).join("\n");
+          return (
+            `${translationLabel(code)}\n${titleBook} ${chapter}:${segments}\n` +
+            nums
+              .filter((n) => ch[String(n)])
+              .map((n) => `${n} ${ch[String(n)]}`)
+              .join("\n")
+          );
         } else {
           const ch = sourceData[book]?.[String(chapter)];
           if (!ch) return "";
-          const nums = Object.keys(ch).map(Number).sort((a, b) => a - b);
-          return `${translationLabel(code)}\n${titleBook} ${chapter}\n` + nums.map(n => `${n} ${ch[String(n)]}`).join("\n");
+          const nums = Object.keys(ch)
+            .map(Number)
+            .sort((a, b) => a - b);
+          return (
+            `${translationLabel(code)}\n${titleBook} ${chapter}\n` +
+            nums.map((n) => `${n} ${ch[String(n)]}`).join("\n")
+          );
         }
       }
 
@@ -720,7 +850,6 @@ async function init() {
 
   // --- Verse context menu (right-click / long-press on verse sup) ---
   let longPressTimer: number;
-  let menuVerseEl: HTMLElement | null = null;
 
   function closeVerseMenu() {
     verseMenu.classList.remove("open");
@@ -728,7 +857,6 @@ async function init() {
   }
 
   function openVerseMenu(verseEl: HTMLElement, x: number, y: number) {
-    menuVerseEl = verseEl;
     const book = verseEl.dataset.book!;
     const chapter = +verseEl.dataset.chapter!;
     const verse = +verseEl.dataset.verse!;
@@ -807,17 +935,21 @@ async function init() {
   });
 
   // Long-press for touch devices
-  content.addEventListener("touchstart", (e) => {
-    const sup = (e.target as HTMLElement).closest("sup");
-    if (!sup) return;
-    const verseEl = sup.closest(".verse") as HTMLElement;
-    if (!verseEl || !verseEl.dataset.book) return;
-    const touch = e.touches[0];
-    longPressTimer = window.setTimeout(() => {
-      e.preventDefault();
-      openVerseMenu(verseEl, touch.clientX, touch.clientY);
-    }, 500);
-  }, { passive: false });
+  content.addEventListener(
+    "touchstart",
+    (e) => {
+      const sup = (e.target as HTMLElement).closest("sup");
+      if (!sup) return;
+      const verseEl = sup.closest(".verse") as HTMLElement;
+      if (!verseEl || !verseEl.dataset.book) return;
+      const touch = e.touches[0];
+      longPressTimer = window.setTimeout(() => {
+        e.preventDefault();
+        openVerseMenu(verseEl, touch.clientX, touch.clientY);
+      }, 500);
+    },
+    { passive: false },
+  );
 
   content.addEventListener("touchend", () => clearTimeout(longPressTimer));
   content.addEventListener("touchmove", () => clearTimeout(longPressTimer));
@@ -832,24 +964,33 @@ async function init() {
   let touchStartY = 0;
   let touchStartTime = 0;
 
-  content.addEventListener("touchstart", (e) => {
-    touchStartX = e.touches[0].clientX;
-    touchStartY = e.touches[0].clientY;
-    touchStartTime = Date.now();
-  }, { passive: true });
+  content.addEventListener(
+    "touchstart",
+    (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    },
+    { passive: true },
+  );
 
-  content.addEventListener("touchend", (e) => {
-    const dx = e.changedTouches[0].clientX - touchStartX;
-    const dy = e.changedTouches[0].clientY - touchStartY;
-    const dt = Date.now() - touchStartTime;
-    // Only count horizontal swipes that are fast and far enough
-    if (dt > 500 || Math.abs(dx) < 80 || Math.abs(dy) > Math.abs(dx) * 0.5) return;
+  content.addEventListener(
+    "touchend",
+    (e) => {
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      const dy = e.changedTouches[0].clientY - touchStartY;
+      const dt = Date.now() - touchStartTime;
+      // Only count horizontal swipes that are fast and far enough
+      if (dt > 500 || Math.abs(dx) < 80 || Math.abs(dy) > Math.abs(dx) * 0.5) return;
 
-    const arrow = dx > 0
-      ? content.querySelector(".nav-arrow.nav-prev:not(.nav-disabled)") as HTMLElement
-      : content.querySelector(".nav-arrow.nav-next:not(.nav-disabled)") as HTMLElement;
-    if (arrow) arrow.click();
-  }, { passive: true });
+      const arrow =
+        dx > 0
+          ? (content.querySelector(".nav-arrow.nav-prev:not(.nav-disabled)") as HTMLElement)
+          : (content.querySelector(".nav-arrow.nav-next:not(.nav-disabled)") as HTMLElement);
+      if (arrow) arrow.click();
+    },
+    { passive: true },
+  );
 
   // --- Browser back/forward ---
   window.addEventListener("popstate", async () => {
@@ -877,7 +1018,9 @@ async function init() {
         if (overlay.classList.contains("open")) openIndex();
         if (translationSelect) translationSelect.value = s.translation;
         updateFooter();
-      } catch { /* keep current translation */ }
+      } catch {
+        /* keep current translation */
+      }
     }
 
     // Restore parallel translation from URL
@@ -898,7 +1041,12 @@ async function init() {
             const shRes = await fetch(`./data/subheadings-${secShLang}.json`);
             if (shRes.ok) setSecondarySubheadings(await shRes.json());
           } catch {}
-        } catch { parallelTranslation = ""; parallelData = null; setSecondaryDescriptions([]); setSecondarySubheadings({}); }
+        } catch {
+          parallelTranslation = "";
+          parallelData = null;
+          setSecondaryDescriptions([]);
+          setSecondarySubheadings({});
+        }
       }
       localStorage.setItem("bible-parallel", parallelTranslation);
       if (parallelSelect) parallelSelect.value = parallelTranslation;
@@ -928,14 +1076,30 @@ function renderNavRef(nav: NavRef) {
       // Single verse: Genesis 1:2
       if (verseSegments.length === 1 && verseSegments[0].start === verseSegments[0].end) {
         if (useParallel) {
-          renderParallelVerse(data, parallelData!, book, chapterStart, verseSegments[0].start, currentTranslation, parallelTranslation);
+          renderParallelVerse(
+            data,
+            parallelData!,
+            book,
+            chapterStart,
+            verseSegments[0].start,
+            currentTranslation,
+            parallelTranslation,
+          );
         } else {
           renderVerse(data, book, chapterStart, verseSegments[0].start);
         }
       } else {
         // Verse segments: Genesis 8:1-3 or Genesis 8:1-3,6
         if (useParallel) {
-          renderParallelVerseSegments(data, parallelData!, book, chapterStart, verseSegments, currentTranslation, parallelTranslation);
+          renderParallelVerseSegments(
+            data,
+            parallelData!,
+            book,
+            chapterStart,
+            verseSegments,
+            currentTranslation,
+            parallelTranslation,
+          );
         } else {
           renderVerseSegments(data, book, chapterStart, verseSegments);
         }
@@ -943,7 +1107,14 @@ function renderNavRef(nav: NavRef) {
     } else if (chapterStart === chapterEnd) {
       // Single chapter: Genesis 8
       if (useParallel) {
-        renderParallelChapter(data, parallelData!, book, chapterStart, currentTranslation, parallelTranslation);
+        renderParallelChapter(
+          data,
+          parallelData!,
+          book,
+          chapterStart,
+          currentTranslation,
+          parallelTranslation,
+        );
       } else {
         renderChapter(data, book, chapterStart);
       }
@@ -965,8 +1136,8 @@ function updateTitle(s: AppState) {
   let label: string;
   if (s.query) {
     const navRefs = tryParseNav(s.query);
-    if (navRefs && navRefs.every(r => !!data[r.book])) {
-      label = navRefs.map(r => navRefLabel(r)).join("; ");
+    if (navRefs && navRefs.every((r) => !!data[r.book])) {
+      label = navRefs.map((r) => navRefLabel(r)).join("; ");
     } else {
       label = s.query;
     }
@@ -992,8 +1163,12 @@ function queryToUrlState(q: string): AppState {
   if (nav.chapterStart === nav.chapterEnd && !nav.verseSegments) {
     return { book: nav.book, chapter: nav.chapterStart };
   }
-  if (nav.chapterStart === nav.chapterEnd && nav.verseSegments &&
-      nav.verseSegments.length === 1 && nav.verseSegments[0].start === nav.verseSegments[0].end) {
+  if (
+    nav.chapterStart === nav.chapterEnd &&
+    nav.verseSegments &&
+    nav.verseSegments.length === 1 &&
+    nav.verseSegments[0].start === nav.verseSegments[0].end
+  ) {
     return { book: nav.book, chapter: nav.chapterStart, verse: nav.verseSegments[0].start };
   }
   return { query: q };
@@ -1012,26 +1187,32 @@ async function applyState(s: AppState) {
     let books: string[] = [];
     if (s.query) {
       const navRefs = tryParseNav(s.query);
-      if (navRefs && navRefs.every(r => !!data[r.book])) {
-        books = navRefs.map(r => r.book);
+      if (navRefs && navRefs.every((r) => !!data[r.book])) {
+        books = navRefs.map((r) => r.book);
       }
     } else if (s.book) {
       books = [s.book];
     } else {
       books = ["Genesis"];
     }
-    await Promise.all(books.map(b => ensureInterlinear(b)));
+    await Promise.all(books.map((b) => ensureInterlinear(b)));
   }
 
   if (s.query) {
     // Check if the query is pure reference(s) → navigate instead of search
     const navRefs = tryParseNav(s.query);
-    if (navRefs && navRefs.every(r => !!data[r.book])) {
+    if (navRefs && navRefs.every((r) => !!data[r.book])) {
       if (navRefs.length === 1) {
         renderNavRef(navRefs[0]);
       } else {
         if (useParallel) {
-          renderParallelMultiNav(data, parallelData!, navRefs, currentTranslation, parallelTranslation);
+          renderParallelMultiNav(
+            data,
+            parallelData!,
+            navRefs,
+            currentTranslation,
+            parallelTranslation,
+          );
         } else {
           renderMultiNav(data, navRefs);
         }
@@ -1042,13 +1223,28 @@ async function applyState(s: AppState) {
     }
   } else if (s.book && s.chapter && s.verse) {
     if (useParallel) {
-      renderParallelVerse(data, parallelData!, s.book, s.chapter, s.verse, currentTranslation, parallelTranslation);
+      renderParallelVerse(
+        data,
+        parallelData!,
+        s.book,
+        s.chapter,
+        s.verse,
+        currentTranslation,
+        parallelTranslation,
+      );
     } else {
       renderVerse(data, s.book, s.chapter, s.verse);
     }
   } else if (s.book && s.chapter) {
     if (useParallel) {
-      renderParallelChapter(data, parallelData!, s.book, s.chapter, currentTranslation, parallelTranslation);
+      renderParallelChapter(
+        data,
+        parallelData!,
+        s.book,
+        s.chapter,
+        currentTranslation,
+        parallelTranslation,
+      );
     } else {
       renderChapter(data, s.book, s.chapter);
     }
@@ -1060,7 +1256,14 @@ async function applyState(s: AppState) {
     }
   } else {
     if (useParallel) {
-      renderParallelChapter(data, parallelData!, "Genesis", 1, currentTranslation, parallelTranslation);
+      renderParallelChapter(
+        data,
+        parallelData!,
+        "Genesis",
+        1,
+        currentTranslation,
+        parallelTranslation,
+      );
     } else {
       renderChapter(data, "Genesis", 1);
     }
@@ -1121,11 +1324,11 @@ function updateStaticText() {
   if (infoBody) {
     infoBody.innerHTML = `
       <h2>${s.infoTitle}</h2>
-      <section><h3>${s.infoSearchTitle}</h3><p>${s.infoSearchIntro}</p><ul>${s.infoSearchItems.map(i => `<li>${i}</li>`).join("")}</ul><p>${s.infoSearchNote}</p></section>
+      <section><h3>${s.infoSearchTitle}</h3><p>${s.infoSearchIntro}</p><ul>${s.infoSearchItems.map((i) => `<li>${i}</li>`).join("")}</ul><p>${s.infoSearchNote}</p></section>
       <section><h3>${s.infoBrowseTitle}</h3><p>${s.infoBrowseText}</p></section>
-      <section><h3>${s.infoShortcutsTitle}</h3><ul>${s.infoShortcuts.map(i => `<li>${i}</li>`).join("")}</ul></section>
+      <section><h3>${s.infoShortcutsTitle}</h3><ul>${s.infoShortcuts.map((i) => `<li>${i}</li>`).join("")}</ul></section>
       <section><h3>${s.infoSettingsTitle}</h3><p>${s.infoSettingsText}</p></section>
-      <section><h3>${s.infoFeaturesTitle}</h3><ul>${s.infoFeaturesItems.map(i => `<li>${i}</li>`).join("")}</ul></section>
+      <section><h3>${s.infoFeaturesTitle}</h3><ul>${s.infoFeaturesItems.map((i) => `<li>${i}</li>`).join("")}</ul></section>
       <section><h3>${s.infoDataTitle}</h3><p>${s.infoDataText}</p></section>`;
   }
 

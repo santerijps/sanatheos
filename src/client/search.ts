@@ -94,11 +94,17 @@ function matchBook(q: string): { book: string; rest: string } | null {
     let bestBook: string | null = null;
     for (const book of sorted) {
       const d = levenshtein(prefix, book.toLowerCase());
-      if (d < bestDist) { bestDist = d; bestBook = book; }
+      if (d < bestDist) {
+        bestDist = d;
+        bestBook = book;
+      }
     }
     for (const [alias, key] of sortedAliases) {
       const d = levenshtein(prefix, alias);
-      if (d < bestDist) { bestDist = d; bestBook = key; }
+      if (d < bestDist) {
+        bestDist = d;
+        bestBook = key;
+      }
     }
     if (bestBook) return { book: bestBook, rest };
   }
@@ -119,18 +125,25 @@ interface ParsedRef {
 }
 
 function parseVerseSegments(s: string): VerseSegment[] | null {
-  const parts = s.split(",").map(p => p.trim()).filter(Boolean);
+  const parts = s
+    .split(",")
+    .map((p) => p.trim())
+    .filter(Boolean);
   const segs: VerseSegment[] = [];
   for (const part of parts) {
     const range = part.match(/^(\d+)-(\d+)$/);
     if (range) {
-      const start = +range[1], end = +range[2];
+      const start = +range[1],
+        end = +range[2];
       if (start > end) return null;
       segs.push({ start, end });
       continue;
     }
     const single = part.match(/^(\d+)$/);
-    if (single) { segs.push({ start: +single[1], end: +single[1] }); continue; }
+    if (single) {
+      segs.push({ start: +single[1], end: +single[1] });
+      continue;
+    }
     return null;
   }
   return segs.length ? segs : null;
@@ -152,7 +165,8 @@ function parseRef(term: string): ParsedRef | null {
   if (cvm) {
     const segStr = cvm[2].replace(/[-,]+$/, "");
     const segs = segStr ? parseVerseSegments(segStr) : null;
-    if (segs) return { book: bm.book, chapterStart: +cvm[1], chapterEnd: +cvm[1], verseSegments: segs };
+    if (segs)
+      return { book: bm.book, chapterStart: +cvm[1], chapterEnd: +cvm[1], verseSegments: segs };
     // If only "chapter:" remains, treat as single chapter
     if (!segStr) return { book: bm.book, chapterStart: +cvm[1], chapterEnd: +cvm[1] };
   }
@@ -180,7 +194,10 @@ export interface NavRef {
  * Returns an array of NavRef for navigation, or null if any term is a search query.
  */
 export function tryParseNav(query: string): NavRef[] | null {
-  const terms = normalizeQuery(query).split(/;/).map(t => t.trim()).filter(Boolean);
+  const terms = normalizeQuery(query)
+    .split(/;/)
+    .map((t) => t.trim())
+    .filter(Boolean);
   if (!terms.length) return null;
 
   const refs: NavRef[] = [];
@@ -191,7 +208,12 @@ export function tryParseNav(query: string): NavRef[] | null {
     const ref = parseRef(term);
     if (!ref) return null;
 
-    refs.push({ book: ref.book, chapterStart: ref.chapterStart, chapterEnd: ref.chapterEnd, verseSegments: ref.verseSegments });
+    refs.push({
+      book: ref.book,
+      chapterStart: ref.chapterStart,
+      chapterEnd: ref.chapterEnd,
+      verseSegments: ref.verseSegments,
+    });
   }
   return refs;
 }
@@ -218,7 +240,10 @@ function buildTextMatcher(filter: string): (text: string) => boolean {
 }
 
 export function search(data: BibleData, query: string): VerseResult[] {
-  const terms = normalizeQuery(query).split(/;/).map(t => t.trim()).filter(Boolean);
+  const terms = normalizeQuery(query)
+    .split(/;/)
+    .map((t) => t.trim())
+    .filter(Boolean);
   const results: VerseResult[] = [];
   const seen = new Set<string>();
 
@@ -236,11 +261,14 @@ export function search(data: BibleData, query: string): VerseResult[] {
       for (const [book, ilBook] of interlinearData) {
         for (const [c, ilChapter] of Object.entries(ilBook)) {
           for (const [v, words] of Object.entries(ilChapter)) {
-            const hasStrongs = words.some(w => w.strongs === strongsId);
+            const hasStrongs = words.some((w) => w.strongs === strongsId);
             if (hasStrongs) {
               const text = searchData[book]?.[c]?.[v] || "";
               const k = `${book}:${c}:${v}`;
-              if (!seen.has(k)) { seen.add(k); results.push({ book, chapter: +c, verse: +v, text }); }
+              if (!seen.has(k)) {
+                seen.add(k);
+                results.push({ book, chapter: +c, verse: +v, text });
+              }
             }
           }
         }
@@ -255,7 +283,10 @@ export function search(data: BibleData, query: string): VerseResult[] {
           for (const [v, text] of Object.entries(verses)) {
             if (textMatch(text)) {
               const k = `${book}:${c}:${v}`;
-              if (!seen.has(k)) { seen.add(k); results.push({ book, chapter: +c, verse: +v, text }); }
+              if (!seen.has(k)) {
+                seen.add(k);
+                results.push({ book, chapter: +c, verse: +v, text });
+              }
             }
           }
         }
@@ -280,7 +311,10 @@ export function search(data: BibleData, query: string): VerseResult[] {
               if (!text) continue;
               if (textMatch && !textMatch(text)) continue;
               const k = `${ref.book}:${c}:${v}`;
-              if (!seen.has(k)) { seen.add(k); results.push({ book: ref.book, chapter: c, verse: v, text }); }
+              if (!seen.has(k)) {
+                seen.add(k);
+                results.push({ book: ref.book, chapter: c, verse: v, text });
+              }
             }
           }
         }
@@ -290,7 +324,10 @@ export function search(data: BibleData, query: string): VerseResult[] {
           for (const [v, text] of Object.entries(verses)) {
             if (textMatch && !textMatch(text)) continue;
             const k = `${ref.book}:${c}:${v}`;
-            if (!seen.has(k)) { seen.add(k); results.push({ book: ref.book, chapter: +c, verse: +v, text }); }
+            if (!seen.has(k)) {
+              seen.add(k);
+              results.push({ book: ref.book, chapter: +c, verse: +v, text });
+            }
           }
         }
       }
@@ -313,16 +350,28 @@ interface ParsedQueryTerm {
  * Call this while the current translation is still active so aliases resolve correctly.
  */
 export function parseQueryBooks(query: string): ParsedQueryTerm[] {
-  return normalizeQuery(query).split(/;/).map(t => t.trim()).filter(Boolean).map(term => {
-    const qm = term.match(/"(.*?)"/);
-    const quoted = qm ? qm[0] : "";
-    const refPart = qm ? term.replace(/"(.*?)"/, "").trim() : term;
-    if (!refPart) return { book: "", rest: "", quoted, original: term };
-    const bm = matchBook(refPart);
-    if (!bm) return { book: "", rest: "", quoted: "", original: term };
-    return { book: bm.book, rest: bm.rest, quoted, original: term };
-  });
+  return normalizeQuery(query)
+    .split(/;/)
+    .map((t) => t.trim())
+    .filter(Boolean)
+    .map((term) => {
+      const qm = term.match(/"(.*?)"/);
+      const quoted = qm ? qm[0] : "";
+      const refPart = qm ? term.replace(/"(.*?)"/, "").trim() : term;
+      if (!refPart) return { book: "", rest: "", quoted, original: term };
+      const bm = matchBook(refPart);
+      if (!bm) return { book: "", rest: "", quoted: "", original: term };
+      return { book: bm.book, rest: bm.rest, quoted, original: term };
+    });
 }
 
 // Exported for testing
-export { matchBook as _matchBook, parseRef as _parseRef, parseVerseSegments as _parseVerseSegments, buildTextMatcher as _buildTextMatcher, levenshtein as _levenshtein, normalizeQuery as _normalizeQuery, escapeRegex };
+export {
+  matchBook as _matchBook,
+  parseRef as _parseRef,
+  parseVerseSegments as _parseVerseSegments,
+  buildTextMatcher as _buildTextMatcher,
+  levenshtein as _levenshtein,
+  normalizeQuery as _normalizeQuery,
+  escapeRegex,
+};

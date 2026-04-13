@@ -1,4 +1,10 @@
-import type { BibleData, Highlight, HighlightColor, InterlinearBook, StrongsDict } from "./types.ts";
+import type {
+  BibleData,
+  Highlight,
+  HighlightColor,
+  InterlinearBook,
+  StrongsDict,
+} from "./types.ts";
 
 const DB_NAME = "bible-app";
 const DB_VERSION = 2;
@@ -15,12 +21,15 @@ function open(): Promise<IDBDatabase> {
     req.onupgradeneeded = () => {
       const db = req.result;
       if (!db.objectStoreNames.contains(DATA_STORE)) db.createObjectStore(DATA_STORE);
-      if (!db.objectStoreNames.contains(HIGHLIGHTS_STORE)) db.createObjectStore(HIGHLIGHTS_STORE, { keyPath: "id" });
+      if (!db.objectStoreNames.contains(HIGHLIGHTS_STORE))
+        db.createObjectStore(HIGHLIGHTS_STORE, { keyPath: "id" });
     };
     req.onsuccess = () => {
       dbInstance = req.result;
       // Re-open on unexpected close (e.g. browser pressure)
-      dbInstance.onclose = () => { dbInstance = null; };
+      dbInstance.onclose = () => {
+        dbInstance = null;
+      };
       resolve(dbInstance);
     };
     req.onerror = () => reject(req.error);

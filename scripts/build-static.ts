@@ -49,10 +49,7 @@ const moreFiles = [
   "more/philosophy.html",
 ];
 
-const staticDirs = [
-  "icon",
-  "data",
-];
+const staticDirs = ["icon", "data"];
 
 // Copy static files (HTML, CSS, PWA)
 for (const name of staticFiles) {
@@ -83,10 +80,10 @@ for (const htmlFile of ["index.html", ...moreFiles]) {
   const htmlPath = join(OUT, htmlFile);
   let html = await readFile(htmlPath, "utf-8");
   html = html
-    .replace(/<!--[\s\S]*?-->/g, "")          // remove comments
-    .replace(/\n\s*/g, "\n")                   // collapse leading whitespace per line
-    .replace(/\n+/g, "\n")                     // collapse blank lines
-    .replace(/>\s+</g, "><")                   // remove whitespace between tags
+    .replace(/<!--[\s\S]*?-->/g, "") // remove comments
+    .replace(/\n\s*/g, "\n") // collapse leading whitespace per line
+    .replace(/\n+/g, "\n") // collapse blank lines
+    .replace(/>\s+</g, "><") // remove whitespace between tags
     .trim();
   await writeFile(htmlPath, html, "utf-8");
 }

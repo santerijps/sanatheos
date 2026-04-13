@@ -126,13 +126,15 @@ const EN: Strings = {
     "<strong>Verse</strong> &mdash; <code>John 3:16</code>",
     "<strong>Verse range</strong> &mdash; <code>Genesis 1:1-5</code>",
     "<strong>Multiple verses</strong> &mdash; <code>Genesis 1:1-3,5,8-10</code>",
-    "<strong>Text search</strong> &mdash; <code>\"grace\"</code> (wrap in double quotes). Use <code>\"^grace\"</code> (starts with), <code>\"grace$\"</code> (ends with), <code>\"^grace$\"</code> (exact word) for word boundaries.",
-    "<strong>Combined</strong> &mdash; <code>Romans \"faith\"</code>, <code>Gen 1-3 \"light\"</code>",
+    '<strong>Text search</strong> &mdash; <code>"grace"</code> (wrap in double quotes). Use <code>"^grace"</code> (starts with), <code>"grace$"</code> (ends with), <code>"^grace$"</code> (exact word) for word boundaries.',
+    '<strong>Combined</strong> &mdash; <code>Romans "faith"</code>, <code>Gen 1-3 "light"</code>',
     "<strong>Multiple terms</strong> &mdash; separate with <code>;</code> e.g. <code>John 3:16; Rev 1:1</code>",
   ],
-  infoSearchNote: 'Typing <kbd>"</kbd> auto-inserts a closing quote. Abbreviations like <code>gen</code>, <code>rev</code>, <code>eph</code> are supported.',
+  infoSearchNote:
+    'Typing <kbd>"</kbd> auto-inserts a closing quote. Abbreviations like <code>gen</code>, <code>rev</code>, <code>eph</code> are supported.',
   infoBrowseTitle: "Browse Books",
-  infoBrowseText: "Click the <strong>&#9776;</strong> menu button (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.",
+  infoBrowseText:
+    "Click the <strong>&#9776;</strong> menu button (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.",
   infoShortcutsTitle: "Keyboard Shortcuts",
   infoShortcuts: [
     "<kbd>Ctrl+K</kbd> &mdash; Focus search input",
@@ -143,7 +145,8 @@ const EN: Strings = {
     "<kbd>Enter</kbd> &mdash; Select item in the index panel",
   ],
   infoSettingsTitle: "Settings",
-  infoSettingsText: "Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. NHEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.",
+  infoSettingsText:
+    "Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. NHEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.",
   infoFeaturesTitle: "Features",
   infoFeaturesItems: [
     "<strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.",
@@ -155,17 +158,22 @@ const EN: Strings = {
     '<strong>Dictionary</strong> &mdash; Browse and search the full Strong\u2019s Concordance (Hebrew &amp; Greek) in the <a href="./dictionary.html">Dictionary</a> page.',
   ],
   infoDataTitle: "Data & Storage",
-  infoDataText: "Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.",
+  infoDataText:
+    "Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.",
 
   oldTestament: "Old Testament",
   newTestament: "New Testament",
   deuterocanonical: "Deuterocanonical",
 
   footerLine1: "All available Bible translations are in the public domain.",
-  footerDescriptions: 'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> (CPDV).',
-  footerStyleguide: 'Paragraph and poetry formatting is based on the <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) translation.',
-  footerDictionary: 'Browse the <a href="./dictionary.html">Strong\u2019s Concordance Dictionary</a> for Hebrew and Greek word definitions.',
-  footerFavicon: 'Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+  footerDescriptions:
+    'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> (CPDV).',
+  footerStyleguide:
+    'Paragraph and poetry formatting is based on the <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) translation.',
+  footerDictionary:
+    'Browse the <a href="./dictionary.html">Strong\u2019s Concordance Dictionary</a> for Hebrew and Greek word definitions.',
+  footerFavicon:
+    'Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, licensed under <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Copied!",
   copyVerse: "Copy",
@@ -229,13 +237,15 @@ const FI: Strings = {
     "<strong>Jae</strong> &mdash; <code>Joh 3:16</code>",
     "<strong>Jaealue</strong> &mdash; <code>1 Moos 1:1-5</code>",
     "<strong>Useita jakeita</strong> &mdash; <code>1 Moos 1:1-3,5,8-10</code>",
-    "<strong>Tekstihaku</strong> &mdash; <code>\"armo\"</code> (lainausmerkeissä). Käytä <code>\"^armo\"</code> (alkaa), <code>\"armo$\"</code> (päättyy), <code>\"^armo$\"</code> (tarkka sana) sanan rajoihin.",
-    "<strong>Yhdistetty</strong> &mdash; <code>Room \"usko\"</code>, <code>1 Moos 1-3 \"valo\"</code>",
+    '<strong>Tekstihaku</strong> &mdash; <code>"armo"</code> (lainausmerkeissä). Käytä <code>"^armo"</code> (alkaa), <code>"armo$"</code> (päättyy), <code>"^armo$"</code> (tarkka sana) sanan rajoihin.',
+    '<strong>Yhdistetty</strong> &mdash; <code>Room "usko"</code>, <code>1 Moos 1-3 "valo"</code>',
     "<strong>Useita hakuja</strong> &mdash; erota <code>;</code>-merkillä, esim. <code>Joh 3:16; Ilm 1:1</code>",
   ],
-  infoSearchNote: '<kbd>"</kbd>-näppäin lisää automaattisesti sulkevan lainausmerkin. Lyhenteet kuten <code>1 moos</code>, <code>ilm</code>, <code>ef</code> toimivat.',
+  infoSearchNote:
+    '<kbd>"</kbd>-näppäin lisää automaattisesti sulkevan lainausmerkin. Lyhenteet kuten <code>1 moos</code>, <code>ilm</code>, <code>ef</code> toimivat.',
   infoBrowseTitle: "Selaa kirjoja",
-  infoBrowseText: "Napsauta <strong>&#9776;</strong>-valikkopainiketta (tai paina <kbd>Ctrl+I</kbd>) avataksesi kirjaluettelon. Selaa kirjoja, lukuja ja jakeita kolmessa sarakkeessa. Käytä nuolinäppäimiä ja Enter-näppäintä.",
+  infoBrowseText:
+    "Napsauta <strong>&#9776;</strong>-valikkopainiketta (tai paina <kbd>Ctrl+I</kbd>) avataksesi kirjaluettelon. Selaa kirjoja, lukuja ja jakeita kolmessa sarakkeessa. Käytä nuolinäppäimiä ja Enter-näppäintä.",
   infoShortcutsTitle: "Pikanäppäimet",
   infoShortcuts: [
     "<kbd>Ctrl+K</kbd> &mdash; Kohdista hakukenttään",
@@ -246,7 +256,8 @@ const FI: Strings = {
     "<kbd>Enter</kbd> &mdash; Valitse kohde",
   ],
   infoSettingsTitle: "Asetukset",
-  infoSettingsText: "Napsauta <strong>&#9881;</strong>-rataspainiketta avataksesi asetukset. Voit vaihtaa raamatunkäännöstä (esim. NHEB, KR38), valita <strong>rinnakkaiskäännöksen</strong> (vierekkäin-näkymä), asettaa <strong>teeman</strong> (Vaalea, Tumma tai Järjestelmä) ja vaihtaa sovelluksen kielen. Valinnat tallennetaan.",
+  infoSettingsText:
+    "Napsauta <strong>&#9881;</strong>-rataspainiketta avataksesi asetukset. Voit vaihtaa raamatunkäännöstä (esim. NHEB, KR38), valita <strong>rinnakkaiskäännöksen</strong> (vierekkäin-näkymä), asettaa <strong>teeman</strong> (Vaalea, Tumma tai Järjestelmä) ja vaihtaa sovelluksen kielen. Valinnat tallennetaan.",
   infoFeaturesTitle: "Ominaisuudet",
   infoFeaturesItems: [
     "<strong>Korostus</strong> &mdash; Napsauta hiiren oikealla jaenumeroa ja valitse korostusväri (keltainen, vihreä, sininen, pinkki, oranssi). Valitse &ldquo;Poista korostus&rdquo; poistaaksesi sen.",
@@ -258,17 +269,23 @@ const FI: Strings = {
     '<strong>Sanakirja</strong> &mdash; Selaa ja etsi koko Strongin konkordanssia (heprea ja kreikka) <a href="./dictionary.html">Sanakirja</a>-sivulta.',
   ],
   infoDataTitle: "Tiedot ja tallennus",
-  infoDataText: "Raamatun teksti haetaan palvelimelta kerran ja tallennetaan selaimeesi <strong>IndexedDB</strong>-tietokantaan nopeaa offline-käyttöä varten. Tietoja ei lähetetä kolmansille osapuolille. Kaikki toimii selaimessasi.",
+  infoDataText:
+    "Raamatun teksti haetaan palvelimelta kerran ja tallennetaan selaimeesi <strong>IndexedDB</strong>-tietokantaan nopeaa offline-käyttöä varten. Tietoja ei lähetetä kolmansille osapuolille. Kaikki toimii selaimessasi.",
 
   oldTestament: "Vanha testamentti",
   newTestament: "Uusi testamentti",
   deuterocanonical: "Deuterokanoniset kirjat",
 
-  footerLine1: "Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
-  footerDescriptions: 'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä (CPDV).',
-  footerStyleguide: 'Kappalejako ja runomuotoilu perustuvat <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) -käännökseen.',
-  footerDictionary: 'Selaa <a href="./dictionary.html">Strongin konkordanssisanakirjaa</a> heprean ja kreikan sananmääritelmille.',
-  footerFavicon: 'Sivustokuvake: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo;, Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+  footerLine1:
+    "Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
+  footerDescriptions:
+    'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä (CPDV).',
+  footerStyleguide:
+    'Kappalejako ja runomuotoilu perustuvat <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) -käännökseen.',
+  footerDictionary:
+    'Selaa <a href="./dictionary.html">Strongin konkordanssisanakirjaa</a> heprean ja kreikan sananmääritelmille.',
+  footerFavicon:
+    'Sivustokuvake: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo;, Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
 
   copied: "Kopioitu!",
   copyVerse: "Kopioi",
