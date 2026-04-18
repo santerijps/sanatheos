@@ -191,16 +191,13 @@ async function init() {
 	const searchInput = document.getElementById("search-input") as HTMLInputElement;
 	const indexBtn = document.getElementById("index-btn")!;
 	const overlay = document.getElementById("index-overlay")!;
-	const infoBtn = document.getElementById("info-btn")!;
-	const infoOverlay = document.getElementById("info-overlay")!;
-	const infoClose = document.getElementById("info-close")!;
-	const settingsBtn = document.getElementById("settings-btn")!;
-	const settingsOverlay = document.getElementById("settings-overlay")!;
-	const settingsClose = document.getElementById("settings-close")!;
 	const verseMenu = document.getElementById("verse-menu")!;
-	const storiesBtn = document.getElementById("stories-btn")!;
-	const storiesOverlay = document.getElementById("stories-overlay")!;
-	const storiesClose = document.getElementById("stories-close")!;
+	// Unified side panel
+	const panelBtn = document.getElementById("panel-btn")!;
+	const sideOverlay = document.getElementById("side-overlay")!;
+	const sideClose = document.getElementById("side-close")!;
+	const sideTabBtns = Array.from(document.querySelectorAll<HTMLElement>(".side-tab-btn"));
+	const sidePanes = Array.from(document.querySelectorAll<HTMLElement>(".side-pane"));
 	const storiesFilter = document.getElementById("stories-filter") as HTMLInputElement;
 	const storiesList = document.getElementById("stories-list")!;
 	const storiesTitleEl = document.getElementById("stories-title")!;
@@ -467,6 +464,10 @@ async function init() {
 	// --- Interlinear toggle ---
 	const strongsPanel = document.getElementById("strongs-panel")!;
 	strongsPanel.style.removeProperty("visibility");
+	// Remove inline visibility:hidden from side overlay (set in HTML to prevent FOUC)
+	sideOverlay.style.removeProperty("visibility");
+	// Remove preload class to re-enable CSS transitions after initial paint
+	document.body.classList.remove("preload");
 
 	const savedIl =
 		initialState.interlinear || (isKJV() && localStorage.getItem("bible-interlinear") === "1");
@@ -648,36 +649,59 @@ async function init() {
 		if (e.target === overlay) closeIndex();
 	});
 
-	// --- Info modal ---
-	infoBtn.addEventListener("click", () => {
-		infoOverlay.classList.add("open");
-		lockScroll();
-	});
+	// --- Unified side panel ---
+	let lastActiveTab = localStorage.getItem("side-panel-tab") || "stories";
 
-	function closeInfo() {
-		infoOverlay.classList.remove("open");
+	function activateSideTab(tab: string) {
+		sideTabBtns.forEach((btn) => {
+			btn.classList.toggle("active", btn.dataset.tab === tab);
+		});
+		sidePanes.forEach((pane) => {
+			pane.classList.toggle("active", pane.dataset.pane === tab);
+		});
+		lastActiveTab = tab;
+		localStorage.setItem("side-panel-tab", tab);
+	}
+
+	async function openSidePanel(tab?: string) {
+		activateSideTab(tab || lastActiveTab);
+		sideOverlay.classList.add("open");
+		lockScroll();
+		// If opening stories tab, load data and reset filter
+		if ((tab || lastActiveTab) === "stories") {
+			storiesTitleEl.textContent = t().storiesTitle;
+			storiesFilter.placeholder = t().storiesFilterPlaceholder;
+			storiesFilter.value = "";
+			const stories = await loadStoriesData();
+			renderStoriesList(stories, "");
+			storiesFilter.focus();
+		}
+	}
+
+	function closeSidePanel() {
+		sideOverlay.classList.remove("open");
 		unlockScroll();
 	}
 
-	infoClose.addEventListener("click", closeInfo);
-	infoOverlay.addEventListener("click", (e) => {
-		if (e.target === infoOverlay) closeInfo();
+	panelBtn.addEventListener("click", () => openSidePanel());
+	sideClose.addEventListener("click", closeSidePanel);
+	sideOverlay.addEventListener("click", (e) => {
+		if (e.target === sideOverlay) closeSidePanel();
 	});
 
-	// --- Settings modal ---
-	settingsBtn.addEventListener("click", () => {
-		settingsOverlay.classList.add("open");
-		lockScroll();
-	});
-
-	function closeSettings() {
-		settingsOverlay.classList.remove("open");
-		unlockScroll();
-	}
-
-	settingsClose.addEventListener("click", closeSettings);
-	settingsOverlay.addEventListener("click", (e) => {
-		if (e.target === settingsOverlay) closeSettings();
+	sideTabBtns.forEach((btn) => {
+		btn.addEventListener("click", () => {
+			const tab = btn.dataset.tab!;
+			activateSideTab(tab);
+			// Load stories when switching to stories tab
+			if (tab === "stories") {
+				storiesTitleEl.textContent = t().storiesTitle;
+				storiesFilter.placeholder = t().storiesFilterPlaceholder;
+				loadStoriesData().then((stories) =>
+					renderStoriesList(stories, storiesFilter.value),
+				);
+			}
+		});
 	});
 
 	// --- Stories panel ---
@@ -761,28 +785,6 @@ async function init() {
 			.replace(/"/g, "&quot;");
 	}
 
-	async function openStories() {
-		storiesOverlay.classList.add("open");
-		lockScroll();
-		storiesTitleEl.textContent = t().storiesTitle;
-		storiesFilter.placeholder = t().storiesFilterPlaceholder;
-		storiesFilter.value = "";
-		const stories = await loadStoriesData();
-		renderStoriesList(stories, "");
-		storiesFilter.focus();
-	}
-
-	function closeStories() {
-		storiesOverlay.classList.remove("open");
-		unlockScroll();
-	}
-
-	storiesBtn.addEventListener("click", openStories);
-	storiesClose.addEventListener("click", closeStories);
-	storiesOverlay.addEventListener("click", (e) => {
-		if (e.target === storiesOverlay) closeStories();
-	});
-
 	storiesFilter.addEventListener("input", async () => {
 		const stories = await loadStoriesData();
 		renderStoriesList(stories, storiesFilter.value);
@@ -793,7 +795,7 @@ async function init() {
 		if (!item) return;
 		const ref = item.dataset.ref;
 		if (!ref) return;
-		closeStories();
+		closeSidePanel();
 		searchInput.value = ref;
 		searchInput.dispatchEvent(new Event("input"));
 	});
@@ -809,16 +811,8 @@ async function init() {
 				closeVerseMenu();
 				return;
 			}
-			if (settingsOverlay.classList.contains("open")) {
-				closeSettings();
-				return;
-			}
-			if (storiesOverlay.classList.contains("open")) {
-				closeStories();
-				return;
-			}
-			if (infoOverlay.classList.contains("open")) {
-				closeInfo();
+			if (sideOverlay.classList.contains("open")) {
+				closeSidePanel();
 				return;
 			}
 			if (overlay.classList.contains("open")) {
@@ -1467,18 +1461,13 @@ const TRANSLATION_LANG: Record<string, string> = {
 function updateStaticText() {
 	const s = t();
 	// Header buttons
-	const infoBtn = document.getElementById("info-btn");
-	if (infoBtn) infoBtn.title = s.helpInfo;
-	const settingsBtn = document.getElementById("settings-btn");
-	if (settingsBtn) settingsBtn.title = s.settings;
+	const panelBtnEl = document.getElementById("panel-btn");
+	if (panelBtnEl) panelBtnEl.title = s.settings;
 	const searchInput = document.getElementById("search-input") as HTMLInputElement | null;
 	if (searchInput) searchInput.placeholder = s.searchPlaceholder;
 	const indexBtn = document.getElementById("index-btn");
 	if (indexBtn) indexBtn.title = s.browseBooks;
-	const storiesBtnEl = document.getElementById("stories-btn");
-	if (storiesBtnEl) storiesBtnEl.title = s.storiesTitle;
-
-	// Settings modal
+	// Settings pane
 	const settingsTitle = document.querySelector("#settings-modal-body h2");
 	if (settingsTitle) settingsTitle.textContent = s.settingsTitle;
 	const transLabel = document.getElementById("settings-translation-label");
@@ -1518,11 +1507,12 @@ function updateStaticText() {
 		});
 	}
 
-	// Info modal
+	// Info drawer
+	const infoTitleEl = document.getElementById("info-title");
+	if (infoTitleEl) infoTitleEl.textContent = s.infoTitle;
 	const infoBody = document.getElementById("info-modal-body");
 	if (infoBody) {
 		infoBody.innerHTML = `
-      <h2>${s.infoTitle}</h2>
       <section><h3>${s.infoSearchTitle}</h3><p>${s.infoSearchIntro}</p><ul>${s.infoSearchItems.map((i) => `<li>${i}</li>`).join("")}</ul><p>${s.infoSearchNote}</p></section>
       <section><h3>${s.infoBrowseTitle}</h3><p>${s.infoBrowseText}</p></section>
       <section><h3>${s.infoShortcutsTitle}</h3><ul>${s.infoShortcuts.map((i) => `<li>${i}</li>`).join("")}</ul></section>

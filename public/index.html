@@ -78,10 +78,9 @@
     }
   </style>
 </head>
-<body>
+<body class="preload">
   <div id="title-bar" title="SANATHEOS">&Sigma;&Alpha;&Nu;&Alpha;&Theta;&Epsilon;<a href="./more/index.html" style="color:inherit;text-decoration:none;cursor:inherit">&Omega;</a>&Sigma;</div>
   <header id="header">
-    <button id="settings-btn" type="button" title="Settings"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     <div id="search-wrap">
       <button id="index-btn" type="button" title="Browse books"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="7"/><line x1="16" y1="16" x2="22" y2="22"/></svg></button>
       <input
@@ -92,8 +91,7 @@
         placeholder="Search the Bible"
       >
     </div>
-    <button id="stories-btn" type="button" title="Bible Stories"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></button>
-    <button id="info-btn" type="button" title="Help &amp; info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
+    <button id="panel-btn" type="button" title="Menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
   </header>
 
   <main id="content"><p class="loading">Loading…</p></main>
@@ -106,123 +104,147 @@
     </div>
   </div>
 
-  <div id="stories-overlay">
-    <div id="stories-panel">
-      <div id="stories-header">
-        <h2 id="stories-title">Bible Stories</h2>
-        <button id="stories-close" type="button" title="Close">&times;</button>
-      </div>
-      <div id="stories-search-wrap">
-        <input type="text" id="stories-filter" autocomplete="off" spellcheck="false" placeholder="Filter stories…">
-      </div>
-      <div id="stories-list"></div>
-    </div>
-  </div>
+  <!-- Unified side panel (Stories / Settings / Info tabs) -->
+  <div id="side-overlay" style="visibility:hidden">
+    <div id="side-panel">
 
-  <div id="info-overlay">
-    <div id="info-modal">
-      <button id="info-close" type="button" title="Close">&times;</button>
-      <div id="info-modal-body">
-      <h2>Bible Reader</h2>
-      <section>
-        <h3>Search Input</h3>
-        <p>Type in the search bar to find verses. Supported query formats:</p>
-        <ul>
-          <li><strong>Book reference</strong> &mdash; <code>John</code>, <code>Genesis</code></li>
-          <li><strong>Chapter</strong> &mdash; <code>John 3</code>, <code>Gen 1</code></li>
-          <li><strong>Chapter range</strong> &mdash; <code>Genesis 1-3</code></li>
-          <li><strong>Verse</strong> &mdash; <code>John 3:16</code></li>
-          <li><strong>Verse range</strong> &mdash; <code>Genesis 1:1-5</code></li>
-          <li><strong>Multiple verses</strong> &mdash; <code>Genesis 1:1-3,5,8-10</code></li>
-          <li><strong>Text search</strong> &mdash; <code>"grace"</code> (wrap in double quotes)</li>
-          <li><strong>Word boundary</strong> &mdash; <code>^grace</code> (starts with), <code>grace$</code> (ends with), <code>^grace$</code> (exact word) &mdash; quotes optional</li>
-          <li><strong>Combined</strong> &mdash; <code>Romans "faith"</code>, <code>Gen 1-3 "light"</code></li>
-          <li><strong>Multiple terms</strong> &mdash; separate with <code>;</code> e.g. <code>John 3:16; Rev 1:1</code></li>
-        </ul>
-        <p>Typing <kbd>"</kbd> auto-inserts a closing quote. Abbreviations like <code>gen</code>, <code>rev</code>, <code>eph</code> are supported.</p>
-      </section>
-      <section>
-        <h3>Browse Books</h3>
-        <p>Click the <strong>&#9776;</strong> menu button (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.</p>
-      </section>
-      <section>
-        <h3>Keyboard Shortcuts</h3>
-        <ul>
-          <li><kbd>Ctrl+K</kbd> &mdash; Focus search input</li>
-          <li><kbd>Ctrl+I</kbd> &mdash; Toggle book index panel</li>
-          <li><kbd>Escape</kbd> &mdash; Close any open panel</li>
-          <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Navigate items in the index panel</li>
-          <li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>Tab</kbd> &mdash; Switch columns in the index panel</li>
-          <li><kbd>Enter</kbd> &mdash; Select item in the index panel</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Settings</h3>
-        <p>Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. NHEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.</p>
-      </section>
-      <section>
-        <h3>Features</h3>
-        <ul>
-          <li><strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.</li>
-          <li><strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.</li>
-          <li><strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.</li>
-          <li><strong>Print</strong> &mdash; Use <kbd>Ctrl+P</kbd> for a clean, print-optimized layout.</li>
-          <li><strong>Install as app</strong> &mdash; Sanatheos is a Progressive Web App. Use your browser&rsquo;s &ldquo;Install&rdquo; or &ldquo;Add to Home Screen&rdquo; option to install it for quick, offline access.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Data &amp; Storage</h3>
-        <p>Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.</p>
-      </section>
-      </div>
-    </div>
-  </div>
+      <!-- Icon rail -->
+      <nav id="side-tab-rail" aria-label="Panel tabs">
+        <button class="side-tab-btn active" data-tab="stories" type="button" title="Bible Stories">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </button>
+        <button class="side-tab-btn" data-tab="settings" type="button" title="Settings">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        </button>
+        <button class="side-tab-btn" data-tab="info" type="button" title="Help &amp; info">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+        </button>
+        <div id="side-tab-indicator"></div>
+        <button id="side-close" type="button" title="Close">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </nav>
 
-  <div id="settings-overlay">
-    <div id="settings-modal">
-      <button id="settings-close" type="button" title="Close">&times;</button>
-      <div id="settings-modal-body">
-        <h2>Settings</h2>
-        <fieldset class="settings-group">
+      <!-- Tab content panes -->
+      <div id="side-content">
+
+        <!-- Stories tab -->
+        <div class="side-pane active" data-pane="stories">
+          <div id="stories-header">
+            <h2 id="stories-title">Bible Stories</h2>
+          </div>
+          <div id="stories-search-wrap">
+            <input type="text" id="stories-filter" autocomplete="off" spellcheck="false" placeholder="Filter stories…">
+          </div>
+          <div id="stories-list"></div>
+        </div>
+
+        <!-- Settings tab -->
+        <div class="side-pane" data-pane="settings">
+          <div id="settings-modal-body">
+            <h2>Settings</h2>
+            <fieldset class="settings-group">
+              <section>
+                <label id="settings-translation-label" for="translation-select">Translation</label>
+                <select id="translation-select"></select>
+              </section>
+              <section>
+                <label id="settings-parallel-label" for="parallel-select">Parallel translation</label>
+                <select id="parallel-select"></select>
+              </section>
+            </fieldset>
+            <fieldset class="settings-group">
+              <section>
+                <label id="settings-theme-label">Theme</label>
+                <div id="theme-segmented" class="segmented" role="radiogroup">
+                  <button type="button" class="seg-btn" data-value="system">System</button>
+                  <button type="button" class="seg-btn" data-value="light">Light</button>
+                  <button type="button" class="seg-btn" data-value="dark">Dark</button>
+                </div>
+              </section>
+              <section>
+                <label id="settings-fontsize-label">Font size</label>
+                <div id="fontsize-segmented" class="segmented" role="radiogroup">
+                  <button type="button" class="seg-btn" data-value="small">S</button>
+                  <button type="button" class="seg-btn" data-value="medium">M</button>
+                  <button type="button" class="seg-btn" data-value="large">L</button>
+                  <button type="button" class="seg-btn" data-value="xl">XL</button>
+                  <button type="button" class="seg-btn" data-value="xxl">XXL</button>
+                </div>
+              </section>
+              <section>
+                <label id="settings-language-label">Language</label>
+                <div id="language-segmented" class="segmented" role="radiogroup">
+                  <button type="button" class="seg-btn" data-value="en">English</button>
+                  <button type="button" class="seg-btn" data-value="fi">Suomi</button>
+                </div>
+              </section>
+            </fieldset>
+          </div>
+        </div>
+
+        <!-- Info tab -->
+        <div class="side-pane" data-pane="info">
+          <div id="info-header">
+            <h2 id="info-title">Sanatheos</h2>
+          </div>
+          <div id="info-modal-body">
           <section>
-            <label id="settings-translation-label" for="translation-select">Translation</label>
-            <select id="translation-select"></select>
+            <h3>Search Input</h3>
+            <p>Type in the search bar to find verses. Supported query formats:</p>
+            <ul>
+              <li><strong>Book reference</strong> &mdash; <code>John</code>, <code>Genesis</code></li>
+              <li><strong>Chapter</strong> &mdash; <code>John 3</code>, <code>Gen 1</code></li>
+              <li><strong>Chapter range</strong> &mdash; <code>Genesis 1-3</code></li>
+              <li><strong>Verse</strong> &mdash; <code>John 3:16</code></li>
+              <li><strong>Verse range</strong> &mdash; <code>Genesis 1:1-5</code></li>
+              <li><strong>Multiple verses</strong> &mdash; <code>Genesis 1:1-3,5,8-10</code></li>
+              <li><strong>Text search</strong> &mdash; <code>"grace"</code> (wrap in double quotes)</li>
+              <li><strong>Word boundary</strong> &mdash; <code>^grace</code> (starts with), <code>grace$</code> (ends with), <code>^grace$</code> (exact word) &mdash; quotes optional</li>
+              <li><strong>Combined</strong> &mdash; <code>Romans "faith"</code>, <code>Gen 1-3 "light"</code></li>
+              <li><strong>Multiple terms</strong> &mdash; separate with <code>;</code> e.g. <code>John 3:16; Rev 1:1</code></li>
+            </ul>
+            <p>Typing <kbd>"</kbd> auto-inserts a closing quote. Abbreviations like <code>gen</code>, <code>rev</code>, <code>eph</code> are supported.</p>
           </section>
           <section>
-            <label id="settings-parallel-label" for="parallel-select">Parallel translation</label>
-            <select id="parallel-select"></select>
-          </section>
-        </fieldset>
-        <fieldset class="settings-group">
-          <section>
-            <label id="settings-theme-label">Theme</label>
-            <div id="theme-segmented" class="segmented" role="radiogroup">
-              <button type="button" class="seg-btn" data-value="system">System</button>
-              <button type="button" class="seg-btn" data-value="light">Light</button>
-              <button type="button" class="seg-btn" data-value="dark">Dark</button>
-            </div>
+            <h3>Browse Books</h3>
+            <p>Click the search button (or press <kbd>Ctrl+I</kbd>) to open the book index panel. Browse books, chapters, and verses in three columns. Use arrow keys to navigate and Enter to select.</p>
           </section>
           <section>
-            <label id="settings-fontsize-label">Font size</label>
-            <div id="fontsize-segmented" class="segmented" role="radiogroup">
-              <button type="button" class="seg-btn" data-value="small">S</button>
-              <button type="button" class="seg-btn" data-value="medium">M</button>
-              <button type="button" class="seg-btn" data-value="large">L</button>
-              <button type="button" class="seg-btn" data-value="xl">XL</button>
-              <button type="button" class="seg-btn" data-value="xxl">XXL</button>
-            </div>
+            <h3>Keyboard Shortcuts</h3>
+            <ul>
+              <li><kbd>Ctrl+K</kbd> &mdash; Focus search input</li>
+              <li><kbd>Ctrl+I</kbd> &mdash; Toggle book index panel</li>
+              <li><kbd>Escape</kbd> &mdash; Close any open panel</li>
+              <li><kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Navigate items in the index panel</li>
+              <li><kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>Tab</kbd> &mdash; Switch columns in the index panel</li>
+              <li><kbd>Enter</kbd> &mdash; Select item in the index panel</li>
+            </ul>
           </section>
           <section>
-            <label id="settings-language-label">Language</label>
-            <div id="language-segmented" class="segmented" role="radiogroup">
-              <button type="button" class="seg-btn" data-value="en">English</button>
-              <button type="button" class="seg-btn" data-value="fi">Suomi</button>
-            </div>
+            <h3>Settings</h3>
+            <p>Click the menu button to open settings. You can switch between Bible translations (e.g. NHEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.</p>
           </section>
-        </fieldset>
-      </div>
-    </div>
-  </div>
+          <section>
+            <h3>Features</h3>
+            <ul>
+              <li><strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.</li>
+              <li><strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.</li>
+              <li><strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.</li>
+              <li><strong>Print</strong> &mdash; Use <kbd>Ctrl+P</kbd> for a clean, print-optimized layout.</li>
+              <li><strong>Install as app</strong> &mdash; Sanatheos is a Progressive Web App. Use your browser&rsquo;s &ldquo;Install&rdquo; or &ldquo;Add to Home Screen&rdquo; option to install it for quick, offline access.</li>
+            </ul>
+          </section>
+          <section>
+            <h3>Data &amp; Storage</h3>
+            <p>Bible text is fetched once from the server and cached locally in your browser using <strong>IndexedDB</strong> for fast offline access. No data is sent to any third party. Everything runs in your browser.</p>
+          </section>
+          </div>
+        </div>
+
+      </div><!-- /side-content -->
+    </div><!-- /side-panel -->
+  </div><!-- /side-overlay -->
 
   <div id="verse-menu" class="verse-menu"></div>
   <div id="strongs-panel" style="visibility:hidden"></div>

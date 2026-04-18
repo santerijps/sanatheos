@@ -36,6 +36,10 @@ Toggle interlinear mode to display original Hebrew (OT) and Greek (NT) text alon
 
 A standalone dictionary page (`dictionary.html`) provides a browsable reference for all Strong's Hebrew and Greek word definitions.
 
+### Bible Stories
+
+A curated list of named Bible stories — from the Creation through the Book of Revelation — organized by category (Old Testament, New Testament, Deuterocanonical). Open the side panel with the menu button in the header and select the Stories tab (open book icon). Stories can be filtered by title, description, or category using the search box. Clicking a story loads the corresponding passage directly in the reader. The list is available in both English and Finnish, switching automatically with the application language.
+
 ### Keyboard Shortcuts
 
 | Shortcut | Action |
@@ -96,9 +100,15 @@ Previous/next arrows are displayed at the top and bottom of chapters and verses 
 
 The browser's print function (`Ctrl+P`) produces a clean, print-optimized layout with all UI chrome hidden.
 
-### Built-in Help
+### Side Panel
 
-The information button next to the search bar opens a guide covering search syntax, available features, keyboard shortcuts, and data storage details.
+A single menu button in the header opens a unified right-side drawer with three tabs accessible via an icon rail on the left edge of the panel:
+
+- **Stories** (open book) — Browse and filter Bible stories by name or category
+- **Settings** (gear) — Switch translation, parallel translation, theme, language, and font size
+- **Help** (info circle) — Search syntax guide, keyboard shortcuts, and feature overview
+
+The panel remembers the last active tab across sessions. Press `Escape` or click outside the panel to close it.
 
 ## Getting Started
 

@@ -55,7 +55,8 @@ sanatheos/
 │   │   ├── subheadings-en.json # Verse subheadings (English)
 │   │   ├── subheadings-fi.json # Verse subheadings (Finnish)
 │   │   ├── descriptions-en.json # Book/chapter descriptions (English)
-│   │   └── descriptions-fi.json # Book/chapter descriptions (Finnish)
+   │   ├── descriptions-fi.json # Book/chapter descriptions (Finnish)
+   │   └── stories.json      # Curated Bible stories list (bilingual EN/FI)
 │   ├── more/                         # "More Content" — static reference pages
 │   │   ├── index.html                # Listing page for all reference guides
 │   │   ├── philosophy.html           # Philosophy & Worldview
@@ -128,7 +129,7 @@ sanatheos/
     ├── features.test.ts      # Feature tests (i18n, highlights, descriptions, interlinear, PWA)
     ├── bible-loader.test.ts  # Bible loader tests (BOOK_ORDER, loadBible, discoverTranslations)
     └── e2e/                  # End-to-end tests (Playwright)
-        └── app.spec.ts       # Full app e2e tests (40 tests across 12 describe blocks)
+        └── app.spec.ts       # Full app e2e tests (50+ tests across 13 describe blocks)
 ```
 
 ## Bible Data Format
@@ -195,6 +196,33 @@ Description files live in `public/data/` named by language: `descriptions-en.jso
 Book names use English keys (matching Bible data keys). Descriptions are displayed in the UI when viewing full chapters or books. The build script copies the entire `data/` directory (which includes descriptions) to `docs/data/`. The server serves them at `/data/descriptions-LANG.json` (e.g., `/data/descriptions-en.json`). The `fetchDescriptions(code)` function in `app.ts` maps translation codes to language codes via `TRANSLATION_LANG` (NHEB→"en", KJV→"en", CPDV→"en", KR38→"fi").
 
 **Psalm numbering:** The descriptions originate from the Catholic Public Domain Version (CPDV), which uses Vulgate/Septuagint psalm numbering. Since WEB and KR38 use Hebrew psalm numbering, the Psalm chapter descriptions have been remapped from Vulgate to Hebrew numbering. Key differences: Vulgate Psalms 9–10 merge into Hebrew 9 (Hebrew 10 left empty), Vulgate 114–115 merge into Hebrew 114 (Hebrew 115 empty), Hebrew 116 combines Vulgate 114+115, Hebrew 117–146 shift by +1 from Vulgate 116–145, Hebrew 147 combines Vulgate 146+147, and Hebrew 148–150 match Vulgate.
+
+## Stories Data Format
+
+The Bible stories list lives in `public/data/stories.json`. It is fetched lazily (only when the Stories pane is first opened) and cached in memory. Structure:
+
+```json
+[
+  {
+    "id": "creation",
+    "title": "The Creation",
+    "title_fi": "Luominen",
+    "description": "God creates the heavens, earth, light... in six days.",
+    "description_fi": "Jumala luo taivaan, maan, valon...",
+    "ref": "Genesis 1-2",
+    "category": "Old Testament"
+  }
+]
+```
+
+Fields:
+- `id` — unique slug identifier
+- `title` / `title_fi` — story title in English and Finnish
+- `description` / `description_fi` — one-sentence summary in both languages
+- `ref` — Bible reference string passed directly to the search input on click (e.g., `Genesis 1-2`, `Matthew 5-7`)
+- `category` — one of `"Old Testament"`, `"New Testament"`, `"Deuterocanonical"`
+
+Language selection follows the active UI language. The build script copies the entire `data/` directory (including `stories.json`) to `docs/data/`.
 
 ## Styleguide Data Format
 
@@ -318,7 +346,7 @@ The `init()` function runs on page load and orchestrates everything:
 8. **Wires up all event listeners:**
    - Search input with 150ms debounce and auto-closing double quotes.
    - Index panel open/close with scroll locking.
-   - Info and settings modal open/close.
+   - Unified side panel (`#side-overlay`) open/close/tab-switching with scroll locking.
    - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+I).
    - Content click handlers (nav arrows, search results, chapter links, headings, copy buttons).
    - Verse context menu (left-click on verse numbers, long-press on touch).
@@ -327,6 +355,17 @@ The `init()` function runs on page load and orchestrates everything:
    - Translation switching with automatic query book name translation.
    - Parallel translation loading and toggling.
    - Theme and font size changes.
+
+**Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
+- `#side-tab-rail` — 52px icon column with three `.side-tab-btn[data-tab]` buttons (stories, settings, info) and `#side-close`
+- `#side-content` — scrollable area with three `.side-pane[data-pane]` divs; only the `.active` pane is visible (`display: flex`)
+
+Key functions:
+- `activateSideTab(tab)` — toggles `.active` on both tab buttons and panes, saves to `localStorage` key `"side-panel-tab"`
+- `openSidePanel(tab?)` — adds `.open` to `#side-overlay`, calls `activateSideTab`, loads stories data if opening stories tab
+- `closeSidePanel()` — removes `.open` from `#side-overlay`
+
+**Stories data flow** — `loadStoriesData()` fetches `./data/stories.json` once and caches the result in a module-scoped variable. `renderStoriesList(stories, filter)` builds HTML from the filtered list, grouping entries by `category` with `.stories-category-label` headers and `.story-item` buttons. Clicking a story calls `closeSidePanel()`, sets the search input value to the story's `ref`, and dispatches an `input` event to trigger navigation.
 
 **Key design choice:** The app never routes to different pages. All navigation updates `#content` innerHTML and pushes URL state. The URL uses query parameters (`?t=NHEB&book=gen&chapter=3&verse=16`) not hash fragments.
 

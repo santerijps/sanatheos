@@ -178,26 +178,85 @@ test.describe("Book index panel", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Settings modal
+// Side panel (unified Stories / Settings / Info drawer)
 // ---------------------------------------------------------------------------
 
-test.describe("Settings modal", () => {
-	test("opens and closes", async ({ page }) => {
+/** Open the side panel and switch to a specific tab. */
+async function openPanelTab(page: Page, tab: "stories" | "settings" | "info") {
+	await page.click("#panel-btn");
+	await expect(page.locator("#side-overlay")).toHaveClass(/open/);
+	if (tab !== "stories") {
+		// Stories is the default; only click the tab button for others
+		await page.click(`.side-tab-btn[data-tab="${tab}"]`);
+	}
+	await expect(page.locator(`.side-pane[data-pane="${tab}"]`)).toHaveClass(/active/);
+}
+
+test.describe("Side panel", () => {
+	test("opens via panel-btn and closes via side-close", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);
-		const overlay = page.locator("#settings-overlay");
+		const overlay = page.locator("#side-overlay");
 
-		await page.click("#settings-btn");
+		await page.click("#panel-btn");
 		await expect(overlay).toHaveClass(/open/);
 
-		await page.click("#settings-close");
+		await page.click("#side-close");
 		await expect(overlay).not.toHaveClass(/open/);
 	});
 
+	test("closes by clicking backdrop", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		const overlay = page.locator("#side-overlay");
+
+		await page.click("#panel-btn");
+		await expect(overlay).toHaveClass(/open/);
+
+		// Click the overlay itself (not the panel), near the left edge
+		await overlay.click({ position: { x: 5, y: 300 } });
+		await expect(overlay).not.toHaveClass(/open/);
+	});
+
+	test("closes with Escape", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+
+		await page.click("#panel-btn");
+		await expect(page.locator("#side-overlay")).toHaveClass(/open/);
+		await page.keyboard.press("Escape");
+		await expect(page.locator("#side-overlay")).not.toHaveClass(/open/);
+	});
+
+	test("switching tabs shows the correct pane", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#panel-btn");
+
+		// Default: stories pane is active
+		await expect(page.locator('.side-pane[data-pane="stories"]')).toHaveClass(/active/);
+
+		// Switch to settings
+		await page.click('.side-tab-btn[data-tab="settings"]');
+		await expect(page.locator('.side-pane[data-pane="settings"]')).toHaveClass(/active/);
+		await expect(page.locator('.side-pane[data-pane="stories"]')).not.toHaveClass(/active/);
+
+		// Switch to info
+		await page.click('.side-tab-btn[data-tab="info"]');
+		await expect(page.locator('.side-pane[data-pane="info"]')).toHaveClass(/active/);
+		await expect(page.locator('.side-pane[data-pane="settings"]')).not.toHaveClass(/active/);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Settings pane
+// ---------------------------------------------------------------------------
+
+test.describe("Settings pane", () => {
 	test("translation selector is populated", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await page.click("#settings-btn");
+		await openPanelTab(page, "settings");
 		const options = page.locator("#translation-select option");
 		const count = await options.count();
 		expect(count).toBeGreaterThanOrEqual(2);
@@ -206,7 +265,7 @@ test.describe("Settings modal", () => {
 	test("theme switching updates data-theme attribute", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await page.click("#settings-btn");
+		await openPanelTab(page, "settings");
 		await page.click('#theme-segmented .seg-btn[data-value="dark"]');
 		await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
 		await page.click('#theme-segmented .seg-btn[data-value="light"]');
@@ -216,46 +275,32 @@ test.describe("Settings modal", () => {
 	test("font size switching updates data-font-size attribute", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await page.click("#settings-btn");
+		await openPanelTab(page, "settings");
 		await page.click('#fontsize-segmented .seg-btn[data-value="large"]');
 		await expect(page.locator("html")).toHaveAttribute("data-font-size", "large");
 	});
 });
 
 // ---------------------------------------------------------------------------
-// Info modal
+// Info pane
 // ---------------------------------------------------------------------------
 
-test.describe("Info modal", () => {
-	test("opens and closes", async ({ page }) => {
+test.describe("Info pane", () => {
+	test("opens info pane from panel", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);
-		const overlay = page.locator("#info-overlay");
-
-		await page.click("#info-btn");
-		await expect(overlay).toHaveClass(/open/);
-
-		await page.click("#info-close");
-		await expect(overlay).not.toHaveClass(/open/);
+		await openPanelTab(page, "info");
+		await expect(page.locator('.side-pane[data-pane="info"]')).toHaveClass(/active/);
 	});
 
 	test("contains help sections", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await page.click("#info-btn");
+		await openPanelTab(page, "info");
 		const body = page.locator("#info-modal-body");
 		await expect(body).toContainText("Search Input");
 		await expect(body).toContainText("Keyboard Shortcuts");
 		await expect(body).toContainText("Settings");
-	});
-
-	test("closes with Escape", async ({ page }) => {
-		await page.goto("/");
-		await waitForApp(page);
-		await page.click("#info-btn");
-		await expect(page.locator("#info-overlay")).toHaveClass(/open/);
-		await page.keyboard.press("Escape");
-		await expect(page.locator("#info-overlay")).not.toHaveClass(/open/);
 	});
 });
 
@@ -322,10 +367,10 @@ test.describe("Translation switching", () => {
 	test("switching translation reloads content", async ({ page }) => {
 		await page.goto("/?book=gen&chapter=1");
 		await waitForApp(page);
-		await page.click("#settings-btn");
+		await openPanelTab(page, "settings");
 		await page.selectOption("#translation-select", "KJV");
-		// Close and wait for KJV-specific text
-		await page.click("#settings-close");
+		// Close panel and wait for KJV-specific text
+		await page.click("#side-close");
 		await expect(page.locator("#content")).toContainText(
 			"In the beginning God created the heaven and the earth",
 			{ timeout: 10_000 },
@@ -444,9 +489,9 @@ test.describe("Parallel translation views", () => {
 		// No parallel container initially
 		await expect(page.locator(".parallel-container")).toHaveCount(0);
 		// Enable parallel via settings
-		await page.click("#settings-btn");
+		await openPanelTab(page, "settings");
 		await page.selectOption("#parallel-select", "KJV");
-		await page.click("#settings-close");
+		await page.click("#side-close");
 		// Parallel container should now appear
 		await expect(page.locator(".parallel-container")).toBeVisible({ timeout: 10_000 });
 	});
@@ -456,11 +501,109 @@ test.describe("Parallel translation views", () => {
 		await waitForApp(page);
 		await page.waitForSelector(".parallel-container", { timeout: 10_000 });
 		// Disable parallel via settings
-		await page.click("#settings-btn");
+		await openPanelTab(page, "settings");
 		await page.selectOption("#parallel-select", "");
-		await page.click("#settings-close");
+		await page.click("#side-close");
 		// Parallel container should disappear
 		await expect(page.locator(".parallel-container")).toHaveCount(0, { timeout: 10_000 });
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Bible Stories pane
+// ---------------------------------------------------------------------------
+
+test.describe("Bible Stories pane", () => {
+	test("stories pane is the default tab when opening panel", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		// Clear localStorage so we always start on stories tab
+		await page.evaluate(() => localStorage.removeItem("side-panel-tab"));
+		await page.click("#panel-btn");
+		await expect(page.locator("#side-overlay")).toHaveClass(/open/);
+		await expect(page.locator('.side-pane[data-pane="stories"]')).toHaveClass(/active/);
+	});
+
+	test("stories list is populated with story items", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		// Wait for async data load and render
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+		const items = page.locator(".story-item");
+		expect(await items.count()).toBeGreaterThan(0);
+	});
+
+	test("stories shows category labels (Old Testament, New Testament)", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".stories-category-label", { timeout: 10_000 });
+		const labels = page.locator(".stories-category-label");
+		const texts = await labels.allTextContents();
+		expect(texts.some((t) => t.includes("Old Testament"))).toBe(true);
+		expect(texts.some((t) => t.includes("New Testament"))).toBe(true);
+	});
+
+	test("filter narrows story results", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+
+		const totalBefore = await page.locator(".story-item").count();
+
+		// Filter to a specific story
+		await page.fill("#stories-filter", "Noah");
+		await page.waitForTimeout(100);
+		const totalAfter = await page.locator(".story-item").count();
+		expect(totalAfter).toBeLessThan(totalBefore);
+		// The Noah story should be visible
+		await expect(page.locator(".story-item").first()).toContainText("Noah");
+	});
+
+	test("empty filter shows no-results message", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+
+		await page.fill("#stories-filter", "xyznonexistent999");
+		await page.waitForTimeout(100);
+		await expect(page.locator(".stories-empty")).toBeVisible();
+		await expect(page.locator(".story-item")).toHaveCount(0);
+	});
+
+	test("clicking a story closes the panel and navigates", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+
+		// Click the first story item (should be "The Creation" → Genesis 1-2)
+		const firstItem = page.locator(".story-item").first();
+		const ref = await firstItem.locator(".story-item-ref").textContent();
+		await firstItem.click();
+
+		// Panel should close
+		await expect(page.locator("#side-overlay")).not.toHaveClass(/open/);
+
+		// Content should show the referenced passage
+		await expect(page.locator("#content")).not.toHaveClass("loading", { timeout: 10_000 });
+		await expect(page.locator("#search-input")).not.toHaveValue("", { timeout: 5_000 });
+		expect(ref).toBeTruthy();
+	});
+
+	test("story items show title, description, and reference", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+
+		const firstItem = page.locator(".story-item").first();
+		await expect(firstItem.locator(".story-item-title")).toBeVisible();
+		await expect(firstItem.locator(".story-item-desc")).toBeVisible();
+		await expect(firstItem.locator(".story-item-ref")).toBeVisible();
 	});
 });
 

@@ -54,6 +54,24 @@
     "category": "Old Testament"
   },
   {
+    "id": "melchizedek",
+    "title": "Melchizedek Blesses Abraham",
+    "title_fi": "Melkisedek siunaa Abrahamin",
+    "description": "After Abraham rescues Lot, the mysterious priest-king Melchizedek of Salem brings out bread and wine and blesses him. The Letter to the Hebrews presents Melchizedek as a type of Christ's eternal priesthood and the Eucharist.",
+    "description_fi": "Abrahamin pelastettua Lotin, salaperäinen pappi-kuningas Melkisedek Salemista tuo leivän ja viinin ja siunaa hänet. Heprealaiskirje esittää Melkisedekin kuvana Kristuksen ikuisesta pappeudesta ja ehtoollisesta.",
+    "ref": "Genesis 14:17-20",
+    "category": "Old Testament"
+  },
+  {
+    "id": "three-angels-mamre",
+    "title": "The Three Angels at Mamre",
+    "title_fi": "Kolme enkelia Mamressa",
+    "description": "Three mysterious visitors appear to Abraham at the oaks of Mamre; he offers them hospitality and they promise that Sarah will bear a son. In Eastern Orthodox tradition this scene is understood as a pre-incarnate manifestation of the Holy Trinity, made famous by Andrei Rublev's icon.",
+    "description_fi": "Kolme salaperäistä vierasta ilmestyy Abrahamille Mamren tammilehdossa; hän osoittaa heille vieraanvaraisuutta ja he lupaavat Saaran synnyttävän pojan. Itäisessä ortodoksisessa perinteessä tämä kohtaus ymmärretään Pyhän Kolminaisuuden ennen inkarnaatiota tapahtuneeksi ilmestymiseksi, jonka Andrei Rublev teki kuuluisaksi ikonillaan.",
+    "ref": "Genesis 18:1-15",
+    "category": "Old Testament"
+  },
+  {
     "id": "sodom-gomorrah",
     "title": "Sodom and Gomorrah",
     "title_fi": "Sodoma ja Gomorra",
@@ -87,6 +105,15 @@
     "description": "Jacob dreams of a stairway reaching heaven with angels ascending and descending, and God renews the covenant promises made to Abraham.",
     "description_fi": "Jaakob näkee unta portaista, jotka nousevat taivaaseen enkeleita ylös ja alas kulkien; Jumala uudistaa Abrahamille annetut liittolupaukset.",
     "ref": "Genesis 28:10-22",
+    "category": "Old Testament"
+  },
+  {
+    "id": "jacob-wrestling",
+    "title": "Jacob Wrestles the Angel",
+    "title_fi": "Jaakob painii enkelin kanssa",
+    "description": "Jacob wrestles through the night with a mysterious man at the ford of Jabbok; at dawn the man blesses him and renames him Israel — \"one who strives with God.\" The Church Fathers identify this figure as the pre-incarnate Son of God, and Jacob's limp as the mark of the divine encounter.",
+    "description_fi": "Jaakob painii koko yön salaperäisen miehen kanssa Jabbokin ylityspaikalla; aamunkoitteessa mies siunaa hänet ja antaa hänelle uuden nimen Israel — 'Jumalan kanssa painija.' Kirkon isät tunnistavat tässä hahmossa inkarnaatiota edeltäneen Jumalan Pojan, ja Jaakobin ontuminenon merkki jumalallisesta kohtaamisesta.",
+    "ref": "Genesis 32:22-32",
     "category": "Old Testament"
   },
   {
@@ -141,6 +168,15 @@
     "description": "While Moses is on the mountain receiving the law, the Israelites fashion a golden calf to worship; Moses intercedes with God and destroys the idol.",
     "description_fi": "Mooseksen ollessa vuorella saamassa lakia israelilaiset valmistavat kultaisen vasikan palvottavaksi; Mooses rukoilee Jumalan puolesta ja tuhoaa epäjumalan.",
     "ref": "Exodus 32",
+    "category": "Old Testament"
+  },
+  {
+    "id": "bronze-serpent",
+    "title": "The Bronze Serpent",
+    "title_fi": "Pronssikäärme",
+    "description": "The Israelites grumble in the desert and are bitten by fiery serpents; God commands Moses to make a bronze serpent on a pole, and all who look upon it are healed. Jesus himself cites this event in John 3:14 as a type of his own being \"lifted up\" on the Cross.",
+    "description_fi": "Israelilaiset naputtavat autiomaassa ja tulevat tulisten käärmeisten puremiksi; Jumala käskee Moosesta tekemään pronssikäärmeestä salkoon kiinnitetyn kuvan, ja kaikki jotka katsovat sitä paranevat. Jeesus itse viittaa tähän tapahtumaan Joh. 3:14:ssä kuvana omasta 'ylösnostamisestaan' ristillä.",
+    "ref": "Numbers 21:4-9",
     "category": "Old Testament"
   },
   {
@@ -243,6 +279,33 @@
     "category": "Old Testament"
   },
   {
+    "id": "isaiah-vision",
+    "title": "Isaiah's Vision of the Lord",
+    "title_fi": "Jesajan näky Herrasta",
+    "description": "Isaiah sees the Lord seated high and lifted up in the Temple, with seraphim crying \"Holy, Holy, Holy is the Lord of hosts.\" His lips are cleansed with a burning coal from the altar and he is commissioned as a prophet. The Gospel of John (12:41) states that Isaiah saw the glory of Christ.",
+    "description_fi": "Jesaja näkee Herran korkealla ja korotettuna temppelissä serafien julistaessa 'Pyhä, Pyhä, Pyhä on Herra Sebaot.' Hänen huulensa puhdistetaan alttarihiilellä ja hänet kutsutaan profeetaksi. Johanneksen evankeliumi (12:41) toteaa Jesajan nähneen Kristuksen kirkkauden.",
+    "ref": "Isaiah 6:1-13",
+    "category": "Old Testament"
+  },
+  {
+    "id": "suffering-servant",
+    "title": "The Suffering Servant",
+    "title_fi": "Kärsivä palvelija",
+    "description": "Isaiah prophesies of a servant who is despised and rejected, wounded for the transgressions of others, and led like a lamb to the slaughter — yet through his suffering many are justified. The New Testament applies this passage directly to Jesus, and it is read in Orthodox churches during Holy Week.",
+    "description_fi": "Jesaja ennustaa palvelijasta, joka halveksitaan ja hylätään, haavoitetaan toisten rikkomuksista ja viedään kuin lammas teurastettavaksi — hänen kärsimyksensä kautta monet tehdään vanhurskaiksi. Uusi testamentti soveltaa tämän kohdan suoraan Jeesukseen, ja ortodoksikirkossa se luetaan Suurella viikolla.",
+    "ref": "Isaiah 52:13-53:12",
+    "category": "Old Testament"
+  },
+  {
+    "id": "valley-dry-bones",
+    "title": "The Valley of Dry Bones",
+    "title_fi": "Kuivien luiden laakso",
+    "description": "The prophet Ezekiel is led through a valley of dry bones and commanded to prophesy; breath enters them and a vast army rises to life — a vision of resurrection and restoration. Orthodox churches read this passage at the Paschal vigil, connecting it to Christ's own resurrection.",
+    "description_fi": "Profeetta Hesekiel viedään kuivien luiden täyttämän laakson läpi ja käsketään profetoimaan; luihin tulee henki ja valtava armeija nousee eloon — näky ylösnousemuksesta ja ennallistamisesta. Ortodoksikirkossa tämä kohta luetaan pääsiäisyön vigiliassa yhdistäen sen Kristuksen omaan ylösnousemukseen.",
+    "ref": "Ezekiel 37:1-14",
+    "category": "Old Testament"
+  },
+  {
     "id": "shadrach-meshach-abednego",
     "title": "The Fiery Furnace",
     "title_fi": "Tulinen uuni",
@@ -258,6 +321,15 @@
     "description": "Daniel continues to pray to God despite a royal decree forbidding it; he is thrown into a den of lions but God shuts the lions' mouths and Daniel is unharmed.",
     "description_fi": "Daniel jatkaa rukoilemista Jumalalle huolimatta kieltävästä kuninkaallisesta asetuksesta; hänet heitetään leijonanluolaan, mutta Jumala sulkee leijonien suut.",
     "ref": "Daniel 6",
+    "category": "Old Testament"
+  },
+  {
+    "id": "daniel-son-of-man",
+    "title": "Daniel's Vision of the Son of Man",
+    "title_fi": "Danielin ihmisen Pojan näky",
+    "description": "In a night vision, Daniel sees the Ancient of Days enthroned in glory and then \"one like a son of man\" coming on the clouds, who is given everlasting dominion over all nations. Jesus applies this title and vision to himself throughout the Gospels.",
+    "description_fi": "Yönäyssä Daniel näkee muinaisten päivien kunniassaan istuvan ja sitten 'ihmisen pojan kaltaisen' pilvissä tulevan, jolle annetaan ikuinen hallintavalta kaikkien kansojen yli. Jeesus soveltaa tämän nimityksen ja näyn itseensä koko evankeliumien läpi.",
+    "ref": "Daniel 7:9-14",
     "category": "Old Testament"
   },
   {
@@ -306,6 +378,15 @@
     "category": "New Testament"
   },
   {
+    "id": "presentation-in-temple",
+    "title": "The Presentation in the Temple",
+    "title_fi": "Jeesuksen esittely temppelissä",
+    "description": "Forty days after the birth, Mary and Joseph bring the infant Jesus to the Temple; the elderly Simeon takes him in his arms and sings \"Now, Lord, you let your servant depart in peace,\" having seen salvation. The prophetess Anna also gives thanks. This event is celebrated as one of the twelve Great Feasts of the Orthodox Church.",
+    "description_fi": "Neljäkymmentä päivää syntymän jälkeen Maria ja Joosef tuovat vauvajesuksen temppeliin; vanha Simeon ottaa hänet syliinsä ja laulaa 'Herra, nyt lasket palvelijasi rauhassa pois,' nähtyään pelastuksen. Myös profeetta Anna kiittää. Tätä tapahtumaa vietetään yhtenä ortodoksikirkon kahdesta toista suuresta juhlasta.",
+    "ref": "Luke 2:22-40",
+    "category": "New Testament"
+  },
+  {
     "id": "magi",
     "title": "The Visit of the Magi",
     "title_fi": "Tietäjien vierailu",
@@ -321,6 +402,15 @@
     "description": "An angel warns Joseph in a dream; the family flees to Egypt to escape Herod's massacre of the infants, and returns after Herod's death.",
     "description_fi": "Enkeli varoittaa Joosefia unessa; perhe pakenee Egyptiin Herodeksen vauvojen surmaamiskaavailujen vuoksi ja palaa takaisin Herodeksen kuoleman jälkeen.",
     "ref": "Matthew 2:13-23",
+    "category": "New Testament"
+  },
+  {
+    "id": "jesus-in-temple",
+    "title": "Jesus Found in the Temple",
+    "title_fi": "Jeesus löytyy temppelistä",
+    "description": "At age twelve, Jesus stays behind in Jerusalem during the Passover; his parents search for three days and find him in the Temple, astonishing the teachers. He tells them he must be \"in his Father's house\" — the first recorded words of Jesus and his earliest disclosure of divine identity.",
+    "description_fi": "Kahdentoista vuoden iässä Jeesus jää jälkeen Jerusalemiin pääsiäisen aikana; hänen vanhempansa etsivät häntä kolme päivää ja löytävät hänet temppelistä opettajia hämmästyttämässä. Hän kertoo heidän olevan 'Isänsä kodissa' — Jeesuksen ensimmäiset tallennetut sanat ja varhaisin ilmaus jumalallisesta identiteetistä.",
+    "ref": "Luke 2:41-52",
     "category": "New Testament"
   },
   {
@@ -360,6 +450,15 @@
     "category": "New Testament"
   },
   {
+    "id": "cleansing-of-temple",
+    "title": "Jesus Cleanses the Temple",
+    "title_fi": "Jeesus puhdistaa temppelin",
+    "description": "Jesus drives money-changers and merchants from the Temple with a whip, declaring it a house of prayer. When challenged for a sign, he says \"Destroy this temple and in three days I will raise it\" — a prophecy of his own resurrection body.",
+    "description_fi": "Jeesus ajaa rahanvaihtajat ja kauppiaat temppelistä ruoskalla julistaen sen olevan rukoushuone. Merkkiä vaadittaessa hän sanoo 'Hävitäkää tämä temppeli, niin kolmessa päivässä nostan sen ylös' — ennustus omasta ylösnousemusruumiistaan.",
+    "ref": "John 2:13-22; Matthew 21:12-17",
+    "category": "New Testament"
+  },
+  {
     "id": "nicodemus",
     "title": "Jesus and Nicodemus",
     "title_fi": "Jeesus ja Nikodeemos",
@@ -387,6 +486,15 @@
     "category": "New Testament"
   },
   {
+    "id": "bread-of-life",
+    "title": "The Bread of Life Discourse",
+    "title_fi": "Elämän leivän puhe",
+    "description": "After feeding the five thousand, Jesus declares himself the Bread of Life that came down from heaven and teaches that eating his flesh and drinking his blood gives eternal life. Many disciples leave at this \"hard saying,\" but Peter confesses: \"Lord, to whom shall we go? You have the words of eternal life.\"",
+    "description_fi": "Viiden leivän ihmeen jälkeen Jeesus julistaa olevansa taivaasta laskenut elämän leipä ja opettaa, että hänen lihansa syöminen ja verensä juominen antaa ikuisen elämän. Monet opetuslapset lähtevät tämän 'kovan sanan' takia, mutta Pietari tunnustaa: 'Herra, kenen luo me menisimme? Sinulla on ikuisen elämän sanat.'",
+    "ref": "John 6:22-71",
+    "category": "New Testament"
+  },
+  {
     "id": "walking-on-water",
     "title": "Jesus Walks on Water",
     "title_fi": "Jeesus kävelee vedellä",
@@ -396,12 +504,30 @@
     "category": "New Testament"
   },
   {
+    "id": "peter-confession",
+    "title": "Peter's Confession at Caesarea Philippi",
+    "title_fi": "Pietarin tunnustus Kesarean Filippin luona",
+    "description": "Jesus asks his disciples \"Who do you say that I am?\" and Peter confesses: \"You are the Christ, the Son of the living God.\" Jesus declares this a revelation from the Father and promises to build his Church on this confession. All three synoptic Gospels record this pivotal moment.",
+    "description_fi": "Jeesus kysyy opetuslapsiltaan 'Kuka te sanotte minun olevan?' ja Pietari tunnustaa: 'Sinä olet Kristus, elävän Jumalan Poika.' Jeesus julistaa tämän Isältä saaduksi ilmoitukseksi ja lupaa rakentaa kirkkonsa tälle tunnustukselle. Kaikki kolme synoptista evankeliumia kertovat tästä käänteentekevästä hetkestä.",
+    "ref": "Matthew 16:13-20; Mark 8:27-30; Luke 9:18-21",
+    "category": "New Testament"
+  },
+  {
     "id": "good-samaritan",
     "title": "The Good Samaritan",
     "title_fi": "Laupias samarialainen",
     "description": "Jesus tells the parable of a man who is robbed and left for dead; a priest and a Levite pass by, but a despised Samaritan stops to care for him.",
     "description_fi": "Jeesus kertoo vertauksen miehestä, joka ryystään ja jätetään kuolemaan; pappi ja leevilinen ohittavat hänet, mutta halveksittu samarialainen pysähtyy auttamaan.",
     "ref": "Luke 10:25-37",
+    "category": "New Testament"
+  },
+  {
+    "id": "man-born-blind",
+    "title": "The Healing of the Man Born Blind",
+    "title_fi": "Syntymästä sokean parantaminen",
+    "description": "Jesus heals a man blind from birth, declaring \"I am the light of the world.\" Interrogated by the Pharisees, the man's faith deepens at each questioning until he worships Jesus; the Pharisees, claiming to see, are shown to be truly blind. This chapter is read in Orthodox churches during the Paschal season.",
+    "description_fi": "Jeesus parantaa syntymästä sokean miehen julistaen 'Minä olen maailman valo.' Fariseusten kuulustellessa miehen usko syvenee jokaisessa kuulustelussa, kunnes hän palvoo Jeesusta; fariseukset taas, väittäen näkevänsä, osoitetaan todella sokeiksi. Tämä luku luetaan ortodoksikirkossa pääsiäisaikana.",
+    "ref": "John 9",
     "category": "New Testament"
   },
   {
@@ -468,6 +594,24 @@
     "category": "New Testament"
   },
   {
+    "id": "vine-and-branches",
+    "title": "The Vine and the Branches",
+    "title_fi": "Viinipuu ja oksat",
+    "description": "At the Last Supper, Jesus tells his disciples \"I am the true vine and you are the branches\"; those who remain in him will bear much fruit. He commands them to love one another as he has loved them, and calls them friends rather than servants. The language of \"abiding in Christ\" is central to the Orthodox doctrine of theosis.",
+    "description_fi": "Viimeisellä ehtoollisella Jeesus kertoo opetuslapsille 'Minä olen tosi viinipuu ja te olette oksat'; ne, jotka pysyvät hänessä, kantavat paljon hedelmää. Hän käskee heitä rakastamaan toisiaan niin kuin hän on rakastanut heitä ja kutsuu heitä ystäviksi, ei palvelijoiksi. 'Kristuksessa pysymisen' kieli on keskeistä ortodoksiselle teoosioppille.",
+    "ref": "John 15:1-17",
+    "category": "New Testament"
+  },
+  {
+    "id": "high-priestly-prayer",
+    "title": "The High Priestly Prayer",
+    "title_fi": "Ylipapin rukous",
+    "description": "Before his arrest, Jesus prays to the Father for himself, his disciples, and all future believers, asking for unity and that they may share in the divine glory. The prayer is the clearest Trinitarian text in the Gospels and the scriptural foundation for the Orthodox doctrine of theosis.",
+    "description_fi": "Ennen pidätystään Jeesus rukoilee Isälle puolestaan, opetuslastensa ja kaikkien tulevien uskovien puolesta, pyytäen yhteyttä ja osallisuutta jumalalliseen kunniaan. Rukous on evankeliumien selkein trinitaarinen teksti ja raamatullinen perusta ortodoksiselle teoosioppille.",
+    "ref": "John 17",
+    "category": "New Testament"
+  },
+  {
     "id": "gethsemane",
     "title": "Jesus in Gethsemane",
     "title_fi": "Jeesus Getsemanen puutarhassa",
@@ -510,6 +654,24 @@
     "description": "Thomas refuses to believe in the resurrection until he sees Jesus himself; Jesus appears and invites him to touch his wounds, and Thomas confesses \"My Lord and my God.\"",
     "description_fi": "Tuomas kieltäytyy uskomasta ylösnousemukseen ennen kuin näkee Jeesuksen itse; Jeesus ilmestyy ja kutsuu häntä koskettamaan haavoja, ja Tuomas tunnustaa ‘Herrani ja Jumalani.’",
     "ref": "John 20:24-29",
+    "category": "New Testament"
+  },
+  {
+    "id": "peter-restoration",
+    "title": "Peter's Restoration",
+    "title_fi": "Pietarin ennallistaminen",
+    "description": "The risen Jesus asks Peter three times \"Do you love me?\" — mirroring his three denials — and each time commissions him to feed and tend his flock. Peter is fully restored to apostolic ministry and commissioned as shepherd of the Church.",
+    "description_fi": "Ylösnoussut Jeesus kysyy Pietarilta kolmesti 'Rakastatko sinua minua?' — peilaten kolminkertaista kieltäytymistä — ja kunakin kertaa antaa hänelle tehtäväksi paimentaa lampaita. Pietari palautetaan täysin apostoliseen tehtävään ja asetetaan kirkon paimeneksi.",
+    "ref": "John 21:15-22",
+    "category": "New Testament"
+  },
+  {
+    "id": "great-commission",
+    "title": "The Great Commission",
+    "title_fi": "Suuri lähetystyökäsky",
+    "description": "The risen Jesus meets his disciples on a mountain in Galilee and commands them to make disciples of all nations, baptizing them in the name of the Father, the Son, and the Holy Spirit. He promises to be with them always until the end of the age.",
+    "description_fi": "Ylösnoussut Jeesus tapaa opetuslapsensa vuorella Galileassa ja käskee heitä tekemään kaikki kansat hänen opetuslapsikseen kastamalla heidät Isän, Pojan ja Pyhän Hengen nimeen. Hän lupaa olla heidän kanssaan joka päivä maailman loppuun asti.",
+    "ref": "Matthew 28:16-20",
     "category": "New Testament"
   },
   {
