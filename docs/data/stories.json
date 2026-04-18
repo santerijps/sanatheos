@@ -1,0 +1,542 @@
+[
+  {
+    "id": "creation",
+    "title": "The Creation",
+    "title_fi": "Luominen",
+    "description": "God creates the heavens, earth, light, sky, land, plants, stars, sea creatures, birds, animals, and humanity in six days, and rests on the seventh.",
+    "description_fi": "Jumala luo taivaan, maan, valon, taivaan laajan, kuivan maan, kasvit, tähdet, mereneläimet, linnut, eläimet ja ihmisen kuudessa päivässä ja lepää seitsemäntenä.",
+    "ref": "Genesis 1-2",
+    "category": "Old Testament"
+  },
+  {
+    "id": "fall",
+    "title": "The Fall",
+    "title_fi": "Syntiinlankeemus",
+    "description": "Adam and Eve eat the forbidden fruit in the Garden of Eden, are deceived by the serpent, and are cast out of the garden.",
+    "description_fi": "Aadam ja Eeva syövät kiellettyä hedelmää Eedenin puutarhassa käärmeeen houkuttelemana ja karkotetaan puutarhasta.",
+    "ref": "Genesis 3",
+    "category": "Old Testament"
+  },
+  {
+    "id": "cain-abel",
+    "title": "Cain and Abel",
+    "title_fi": "Kain ja Abel",
+    "description": "Cain murders his brother Abel out of jealousy after God accepts Abel's offering but not his own.",
+    "description_fi": "Kain murhaa veljensä Abelin kateudesta, sillä Jumala hyväksyy Abelin uhrin mutta ei hänen omaansa.",
+    "ref": "Genesis 4:1-16",
+    "category": "Old Testament"
+  },
+  {
+    "id": "noahs-ark",
+    "title": "Noah's Ark",
+    "title_fi": "Nooan arkki",
+    "description": "God instructs Noah to build an ark to save his family and two of every animal from a great flood sent to cleanse the earth.",
+    "description_fi": "Jumala käskee Nooaa rakentamaan arkin pelastaakseen perheensä ja kaksi kaikkia eläintä suurelta vedenpaisumukselta, joka puhdistaa maan.",
+    "ref": "Genesis 6-9",
+    "category": "Old Testament"
+  },
+  {
+    "id": "tower-of-babel",
+    "title": "The Tower of Babel",
+    "title_fi": "Baabelin torni",
+    "description": "Humanity attempts to build a tower reaching heaven; God confuses their languages and scatters them across the earth.",
+    "description_fi": "Ihmiskunta yrittää rakentaa taivaaseen yltävän tornin; Jumala sekoittaa heidän kielensä ja hajottaa heidät ympäri maata.",
+    "ref": "Genesis 11:1-9",
+    "category": "Old Testament"
+  },
+  {
+    "id": "call-of-abraham",
+    "title": "The Call of Abraham",
+    "title_fi": "Abrahamin kutsumus",
+    "description": "God calls Abram to leave his homeland for a new land, promising to make him the father of a great nation.",
+    "description_fi": "Jumala kutsuu Abramin jättämään kotimaansa uudelle maalle ja lupaa tehdä hänestä suuren kansakunnan isän.",
+    "ref": "Genesis 12:1-9",
+    "category": "Old Testament"
+  },
+  {
+    "id": "sodom-gomorrah",
+    "title": "Sodom and Gomorrah",
+    "title_fi": "Sodoma ja Gomorra",
+    "description": "God destroys the wicked cities of Sodom and Gomorrah; Lot and his family escape, but Lot's wife looks back and becomes a pillar of salt.",
+    "description_fi": "Jumala tuhoaa pahat kaupungit Sodoman ja Gomorran; Lot perheensä kanssa pakenee, mutta hänen vaimonsa katsoo taakseen ja muuttuu suolapatsaaksi.",
+    "ref": "Genesis 18:16-19:29",
+    "category": "Old Testament"
+  },
+  {
+    "id": "binding-of-isaac",
+    "title": "The Binding of Isaac",
+    "title_fi": "Iisakin uhri",
+    "description": "God commands Abraham to sacrifice his son Isaac as a test of faith; at the last moment an angel stops him and provides a ram instead.",
+    "description_fi": "Jumala käskee Abrahamia uhraamaan poikansa Iisakin uskon koetukseksi; viime hetkellä enkeli pysäyttää hänet ja toimittaa pässin sijaisuhriksi.",
+    "ref": "Genesis 22:1-19",
+    "category": "Old Testament"
+  },
+  {
+    "id": "jacob-esau",
+    "title": "Jacob and Esau",
+    "title_fi": "Jaakob ja Eesau",
+    "description": "Jacob deceives his father Isaac to receive the blessing meant for his older brother Esau, who sold his birthright for a bowl of stew.",
+    "description_fi": "Jaakob huijaa isäänsä Iisakia saadakseen Eesaulle kuuluvan siunauksen; Eesau oli aiemmin myynyt esikoisoikeutensa Jaakobille linssisopan hinnalla.",
+    "ref": "Genesis 25:19-34; Genesis 27",
+    "category": "Old Testament"
+  },
+  {
+    "id": "jacob-ladder",
+    "title": "Jacob's Ladder",
+    "title_fi": "Jaakobin tikapuut",
+    "description": "Jacob dreams of a stairway reaching heaven with angels ascending and descending, and God renews the covenant promises made to Abraham.",
+    "description_fi": "Jaakob näkee unta portaista, jotka nousevat taivaaseen enkeleita ylös ja alas kulkien; Jumala uudistaa Abrahamille annetut liittolupaukset.",
+    "ref": "Genesis 28:10-22",
+    "category": "Old Testament"
+  },
+  {
+    "id": "joseph-brothers",
+    "title": "Joseph and His Brothers",
+    "title_fi": "Joosef ja hänen veljensä",
+    "description": "Joseph is sold into slavery by his jealous brothers, rises to power in Egypt, and eventually forgives his brothers during a great famine.",
+    "description_fi": "Mustasukkaiset veljet myyvät Joosefin orjaksi Egyptiin, mutta hän nousee valtaan ja antaa lopulta anteeksi veljiensä teon suuren nälänhädän aikana.",
+    "ref": "Genesis 37; Genesis 39-45",
+    "category": "Old Testament"
+  },
+  {
+    "id": "burning-bush",
+    "title": "The Burning Bush",
+    "title_fi": "Palava pensas",
+    "description": "God speaks to Moses from a burning bush that is not consumed, commissioning him to lead Israel out of Egypt.",
+    "description_fi": "Jumala puhuu Moosekselle palavasta pensaasta, joka ei pala loppuun, ja antaa hänelle tehtävän johtaa Israel pois Egyptistä.",
+    "ref": "Exodus 3-4",
+    "category": "Old Testament"
+  },
+  {
+    "id": "ten-plagues",
+    "title": "The Ten Plagues of Egypt",
+    "title_fi": "Egyptin kymmenen vitsausta",
+    "description": "God sends ten devastating plagues upon Egypt — including locusts, darkness, and the death of the firstborn — to compel Pharaoh to free the Israelites.",
+    "description_fi": "Jumala lähettää kymmenen tuhoisaa vitsausta Egyptiin — muun muassa paiseita, havaset, pimeyden ja esikoisten kuoleman — pakottaakseen faraon vapauttamaan israelilaiset.",
+    "ref": "Exodus 7-12",
+    "category": "Old Testament"
+  },
+  {
+    "id": "passover-exodus",
+    "title": "The Passover and the Exodus",
+    "title_fi": "Pääsiäinen ja Egyptistä lähtö",
+    "description": "The Israelites mark their doorposts with lamb's blood so the angel of death passes over them; they then flee Egypt, crossing the Red Sea on dry ground.",
+    "description_fi": "Israelilaiset sivaavat ovenpielensä karitsan verellä, jotta kuolema kulkisi ohitse; he pakenevat Egyptistä ja kulkevat kuivaa tietä pitkin Punaisen meren läpi.",
+    "ref": "Exodus 12-14",
+    "category": "Old Testament"
+  },
+  {
+    "id": "ten-commandments",
+    "title": "The Ten Commandments",
+    "title_fi": "Kymmenen käskyä",
+    "description": "God descends on Mount Sinai in fire and thunder and gives Moses the Ten Commandments as the covenant law for Israel. The law is repeated in Moses's final address to Israel before entering the Promised Land.",
+    "description_fi": "Jumala laskeutuu Siinain vuorelle tulessa ja ukonilmassa ja antaa Moosekselle kymmenen käskyä Israelin liiton lakina. Sama laki toistetaan Mooseksen viimeisessä puheessa ennen Luvattuun Maahan siirtymistä.",
+    "ref": "Exodus 19-20; Deuteronomy 5",
+    "category": "Old Testament"
+  },
+  {
+    "id": "golden-calf",
+    "title": "The Golden Calf",
+    "title_fi": "Kultainen vasikka",
+    "description": "While Moses is on the mountain receiving the law, the Israelites fashion a golden calf to worship; Moses intercedes with God and destroys the idol.",
+    "description_fi": "Mooseksen ollessa vuorella saamassa lakia israelilaiset valmistavat kultaisen vasikan palvottavaksi; Mooses rukoilee Jumalan puolesta ja tuhoaa epäjumalan.",
+    "ref": "Exodus 32",
+    "category": "Old Testament"
+  },
+  {
+    "id": "fall-of-jericho",
+    "title": "The Fall of Jericho",
+    "title_fi": "Jerikon valloitus",
+    "description": "The Israelites march around Jericho for seven days; on the seventh day the walls collapse at the sound of their trumpets and shouts.",
+    "description_fi": "Israelilaiset marssivat Jerikon ympäri seitsemän päivää; seitsemäntenä päivänä kaupungin muurit romahtavat heidän torvien äänessä ja sotahuudossa.",
+    "ref": "Joshua 6",
+    "category": "Old Testament"
+  },
+  {
+    "id": "gideon",
+    "title": "Gideon and the Three Hundred",
+    "title_fi": "Gideon ja kolmesataa",
+    "description": "God whittles Gideon's army down to 300 men with torches and trumpets to defeat the vast Midianite army, to show that the victory is God's alone.",
+    "description_fi": "Jumala supistaa Gideonin armeijan kolmeensataan soihduin ja torviin varustettua miestä lyömään Midianin suuren joukon, jotta voitto olisi selvästi Jumalan.",
+    "ref": "Judges 6-7",
+    "category": "Old Testament"
+  },
+  {
+    "id": "samson-delilah",
+    "title": "Samson and Delilah",
+    "title_fi": "Samson ja Delila",
+    "description": "Samson, a mighty judge of Israel, falls in love with Delilah who betrays him to the Philistines by cutting the hair from which his strength comes.",
+    "description_fi": "Samson, Israelin väkevä tuomari, rakastuu Delilaan, joka pettää hänet filistealaisille paljastamalla hänen voimansa salaisuuden — hänen hiuksensa.",
+    "ref": "Judges 13-16",
+    "category": "Old Testament"
+  },
+  {
+    "id": "ruth",
+    "title": "Ruth and Naomi",
+    "title_fi": "Ruut ja Naomi",
+    "description": "Ruth, a Moabite widow, pledges loyalty to her mother-in-law Naomi and follows her back to Bethlehem, where she meets and marries Boaz.",
+    "description_fi": "Moabilainen leski Ruut lupautuu Naomin seuraksi ja seuraa häntä takaisin Betlehemiin, jossa hän tapaa Booaksen ja avioituu hänen kanssaan.",
+    "ref": "Ruth 1-4",
+    "category": "Old Testament"
+  },
+  {
+    "id": "samuels-call",
+    "title": "The Call of Samuel",
+    "title_fi": "Samuelin kutsumus",
+    "description": "The boy Samuel hears God's voice calling him in the night and responds; he grows up to become the great prophet and judge of Israel.",
+    "description_fi": "Poika Samuel kuulee Jumalan äänen kutsuvan häntä yöllä ja vastaa siihen; hänestä kasvaa Israelin suuri profeetta ja tuomari.",
+    "ref": "1 Samuel 3",
+    "category": "Old Testament"
+  },
+  {
+    "id": "david-goliath",
+    "title": "David and Goliath",
+    "title_fi": "Daavid ja Goljat",
+    "description": "The young shepherd David defeats the Philistine giant Goliath with a single stone from his sling, trusting in God rather than armor or weapons.",
+    "description_fi": "Nuori paimen Daavid voittaa filistealaisen jättiläisen Goljatin yhdellä kivislingon kivellä, luottaen Jumalaan aseiden ja haarniskan sijaan.",
+    "ref": "1 Samuel 17",
+    "category": "Old Testament"
+  },
+  {
+    "id": "david-bathsheba",
+    "title": "David and Bathsheba",
+    "title_fi": "Daavid ja Batseba",
+    "description": "King David covets Bathsheba and engineers the death of her husband Uriah; the prophet Nathan rebukes him and David repents.",
+    "description_fi": "Kuningas Daavid himoitsee Batsebaa ja järjestää hänen miehensä Uriaan kuoleman; profeetta Naatan nuhteli häntä ja Daavid katuu.",
+    "ref": "2 Samuel 11-12",
+    "category": "Old Testament"
+  },
+  {
+    "id": "solomons-wisdom",
+    "title": "Solomon's Wisdom",
+    "title_fi": "Salomon viisaus",
+    "description": "God offers Solomon anything he desires; Solomon asks for wisdom to govern Israel, which pleases God so much that wealth and honor are added as well.",
+    "description_fi": "Jumala tarjoaa Salomonille mitä tahansa hän haluaa; Salomon pyytää viisautta hallita Israelia, mikä miellyttää Jumalaa niin, että hänelle annetaan myös rikkaus ja kunnia.",
+    "ref": "1 Kings 3",
+    "category": "Old Testament"
+  },
+  {
+    "id": "elijah-baal",
+    "title": "Elijah and the Prophets of Baal",
+    "title_fi": "Elia ja Baalin profeetat",
+    "description": "Elijah challenges 450 prophets of Baal on Mount Carmel; fire from heaven consumes his sacrifice while Baal does not answer, proving the Lord is God.",
+    "description_fi": "Elia haastaa 450 Baalin profeettaa Karmelin vuorella; tuli taivaalta kuluttaa hänen uhrinsa, mutta Baal ei vastaa — se todistaa, että Herra on Jumala.",
+    "ref": "1 Kings 18",
+    "category": "Old Testament"
+  },
+  {
+    "id": "elijah-desert",
+    "title": "Elijah in the Desert",
+    "title_fi": "Elia autiomaassa",
+    "description": "Fleeing from Jezebel, Elijah collapses in despair under a broom tree; an angel feeds him twice and he travels forty days to Mount Horeb where God speaks in a still small voice.",
+    "description_fi": "Jeesebeliä paeten Elia romahtaa epätoivoon pujon alle; enkeli ruokkii hänet kahdesti, ja hän vaeltaa neljäkymmentä päivää Hoorebille, jossa Jumala puhuu hiljaisessa äänessä.",
+    "ref": "1 Kings 19",
+    "category": "Old Testament"
+  },
+  {
+    "id": "naaman-healed",
+    "title": "Naaman Healed of Leprosy",
+    "title_fi": "Naamanin parantuminen",
+    "description": "Naaman, an Aramean army commander, is cured of leprosy when he humbles himself and washes seven times in the Jordan River at Elisha's command.",
+    "description_fi": "Aramin sotapäällikkö Naaman paranee spitaalista nöyrtyen ja kylpien seitsemän kertaa Jordanissa profeetta Elisan käskyn mukaan.",
+    "ref": "2 Kings 5",
+    "category": "Old Testament"
+  },
+  {
+    "id": "shadrach-meshach-abednego",
+    "title": "The Fiery Furnace",
+    "title_fi": "Tulinen uuni",
+    "description": "Shadrach, Meshach, and Abednego refuse to bow to Nebuchadnezzar's golden statue and are thrown into a furnace; a fourth figure appears with them and they emerge unharmed.",
+    "description_fi": "Sadrак, Meesak ja Abednego kieltäytyvät kumartamasta Nebukadnessarin kultaista patsasta ja heitetään tuliseen uuniin; neljäs hahmo ilmestyy heidän kanssaan ja he nousevat vahingoittumattomina.",
+    "ref": "Daniel 3",
+    "category": "Old Testament"
+  },
+  {
+    "id": "daniel-lions-den",
+    "title": "Daniel in the Lions' Den",
+    "title_fi": "Daniel leijonain luolassa",
+    "description": "Daniel continues to pray to God despite a royal decree forbidding it; he is thrown into a den of lions but God shuts the lions' mouths and Daniel is unharmed.",
+    "description_fi": "Daniel jatkaa rukoilemista Jumalalle huolimatta kieltävästä kuninkaallisesta asetuksesta; hänet heitetään leijonanluolaan, mutta Jumala sulkee leijonien suut.",
+    "ref": "Daniel 6",
+    "category": "Old Testament"
+  },
+  {
+    "id": "esther",
+    "title": "Esther Saves Her People",
+    "title_fi": "Ester pelastaa kansansa",
+    "description": "Esther, a Jewish queen of Persia, risks her life to appear before the king unsummoned and expose Haman's plot to destroy the Jewish people.",
+    "description_fi": "Juutalainen Persian kuningatar Ester riskeeraa henkensä ilmestymällä kuninkaalle ilman kutsua ja paljastamalla Hamanin suunnitelman tuhota juutalainen kansa.",
+    "ref": "Esther 3-8",
+    "category": "Old Testament"
+  },
+  {
+    "id": "job",
+    "title": "Job's Suffering and Restoration",
+    "title_fi": "Jobin kärsimys ja palautus",
+    "description": "Job, a righteous man, loses everything when God allows Satan to test him; he wrestles with suffering and God speaks from the whirlwind, then restores him.",
+    "description_fi": "Vanhurskas Job menettää kaiken Saatanan koetellessa häntä Jumalan luvalla; hän painii kärsimyksen kanssa, Jumala puhuu pyörremyrskystä, ja lopulta kaikki palautetaan hänelle.",
+    "ref": "Job 1-2; Job 38-42",
+    "category": "Old Testament"
+  },
+  {
+    "id": "jonah",
+    "title": "Jonah and the Great Fish",
+    "title_fi": "Joona ja suuri kala",
+    "description": "Jonah flees God's call to preach to Nineveh, is swallowed by a great fish, prays inside it for three days, and is delivered to complete his mission.",
+    "description_fi": "Joona pakenee Jumalan kutsua saarnata Niinivessä, joutuu suuren kalan nielemäksi, rukoilee sen sisällä kolme päivää ja pelastetaan täyttämään tehtävänsä.",
+    "ref": "Jonah 1-4",
+    "category": "Old Testament"
+  },
+  {
+    "id": "annunciation",
+    "title": "The Annunciation",
+    "title_fi": "Ilmestys Marialle",
+    "description": "The angel Gabriel appears to Mary and announces that she will conceive the Son of God by the Holy Spirit; Mary responds in faith.",
+    "description_fi": "Enkeli Gabriel ilmestyy Marialle ja ilmoittaa, että hän synnytää Jumalan Pojan Pyhästä Hengestsä; Maria vastaa uskossa.",
+    "ref": "Luke 1:26-38",
+    "category": "New Testament"
+  },
+  {
+    "id": "birth-of-jesus",
+    "title": "The Birth of Jesus",
+    "title_fi": "Jeesuksen syntymä",
+    "description": "Mary and Joseph travel to Bethlehem where Jesus is born in a manger; angels announce his birth to shepherds who come to worship him. Matthew gives an account from Joseph's perspective, including the angelic message in a dream.",
+    "description_fi": "Maria ja Joosef matkustavat Betlehemiin, jossa Jeesus syntyy seimeen; enkelit ilmoittavat syntymästä paimenille, jotka tulevat palvomaan. Matteus kertoo tapahtuman Joosefin näkökulmasta, sisältyen enkelin viestin unessa.",
+    "ref": "Luke 2:1-20; Matthew 1:18-25",
+    "category": "New Testament"
+  },
+  {
+    "id": "magi",
+    "title": "The Visit of the Magi",
+    "title_fi": "Tietäjien vierailu",
+    "description": "Wise men from the East follow a star to Bethlehem and present gifts of gold, frankincense, and myrrh to the infant Jesus.",
+    "description_fi": "Idästä tulleet viisaat seuraavat tähteä Betlehemiin ja tuovat vastasyntyneelle Jeesukselle kultaa, suitsuketta ja mirhaa lahjoiksi.",
+    "ref": "Matthew 2:1-12",
+    "category": "New Testament"
+  },
+  {
+    "id": "flight-to-egypt",
+    "title": "The Flight to Egypt",
+    "title_fi": "Pako Egyptiin",
+    "description": "An angel warns Joseph in a dream; the family flees to Egypt to escape Herod's massacre of the infants, and returns after Herod's death.",
+    "description_fi": "Enkeli varoittaa Joosefia unessa; perhe pakenee Egyptiin Herodeksen vauvojen surmaamiskaavailujen vuoksi ja palaa takaisin Herodeksen kuoleman jälkeen.",
+    "ref": "Matthew 2:13-23",
+    "category": "New Testament"
+  },
+  {
+    "id": "baptism-of-jesus",
+    "title": "The Baptism of Jesus",
+    "title_fi": "Jeesuksen kaste",
+    "description": "Jesus is baptized by John in the Jordan River; the Spirit descends as a dove and the voice of God declares, \"This is my beloved Son.\" All three synoptic Gospels record this event.",
+    "description_fi": "Jeesus kastetaan Johanneksen toimesta Jordanissa; Pyhä Henki laskeutuu kyyhkysenä ja Jumalan ääni julistaa: ‘Tämä on rakas Poikani.’ Kaikki kolme synoptista evankeliumia kertovat tämän tapahtuman.",
+    "ref": "Matthew 3:13-17; Mark 1:9-11; Luke 3:21-22",
+    "category": "New Testament"
+  },
+  {
+    "id": "temptation-of-jesus",
+    "title": "The Temptation of Jesus",
+    "title_fi": "Jeesuksen kiusaus",
+    "description": "After forty days of fasting in the desert, Jesus is tempted three times by Satan — with bread, with worldly power, and with a test of God's protection — and refuses each time. Mark also mentions the temptation briefly.",
+    "description_fi": "Neljänkymmenen päivän paaston jälkeen aavikolla Saatana kiusaa Jeesusta kolmesti — leivällä, maailmanvallalla ja Jumalan suojelun koetuksella — ja Jeesus torjuu jokaisen. Markus mainitsee kiusauksen lyhyesti.",
+    "ref": "Matthew 4:1-11; Luke 4:1-13; Mark 1:12-13",
+    "category": "New Testament"
+  },
+  {
+    "id": "sermon-on-the-mount",
+    "title": "The Sermon on the Mount",
+    "title_fi": "Vuorisaarna",
+    "description": "Jesus delivers his greatest discourse, including the Beatitudes, the Lord's Prayer, and teachings on love, prayer, fasting, and trusting God. Luke records a parallel Sermon on the Plain.",
+    "description_fi": "Jeesus pitää suuren puheensa sisältäen autuaaksijulistukset, Isä meidän -rukouksen ja opetukset rakkaudesta, rukouksesta, paastosta ja Jumalaan luottamisesta. Luukas kertoo samankaltaisen tasangolla pidetyn puheen.",
+    "ref": "Matthew 5-7; Luke 6:20-49",
+    "category": "New Testament"
+  },
+  {
+    "id": "wedding-at-cana",
+    "title": "The Wedding at Cana",
+    "title_fi": "Kaanan häät",
+    "description": "At a wedding feast in Cana, Jesus performs his first miracle by turning water into wine at his mother Mary's request.",
+    "description_fi": "Häissä Kaanassa Jeesus tekee ensimmäisen ihmetekonsa muuttamalla veden viiniksi äitinsä Marian pyynnöstä.",
+    "ref": "John 2:1-11",
+    "category": "New Testament"
+  },
+  {
+    "id": "nicodemus",
+    "title": "Jesus and Nicodemus",
+    "title_fi": "Jeesus ja Nikodeemos",
+    "description": "The Pharisee Nicodemus visits Jesus by night; Jesus teaches him about being born again of the Spirit and speaks the verse John 3:16.",
+    "description_fi": "Fariseus Nikodeemos vierailee Jeesuksen luona yöllä; Jeesus opettaa hänelle uudelleen syntymisestä Hengestsä ja lausuu Johannes 3:16:n.",
+    "ref": "John 3:1-21",
+    "category": "New Testament"
+  },
+  {
+    "id": "woman-at-the-well",
+    "title": "The Woman at the Well",
+    "title_fi": "Nainen kaivolla",
+    "description": "Jesus speaks with a Samaritan woman at Jacob's well, revealing himself as the Messiah and the source of living water.",
+    "description_fi": "Jeesus keskustelee samarialaisnaisen kanssa Jaakobin kaivolla paljastaen itsensä Messiaana ja elävän veden lähteenä.",
+    "ref": "John 4:1-42",
+    "category": "New Testament"
+  },
+  {
+    "id": "feeding-5000",
+    "title": "Feeding the Five Thousand",
+    "title_fi": "Viiden leivän ihme",
+    "description": "Jesus feeds a crowd of five thousand men with only five loaves of bread and two fish, with twelve baskets of fragments remaining. This is the only miracle recorded in all four Gospels.",
+    "description_fi": "Jeesus ruokkii viisi tuhatta miestä vain viidellä leivällä ja kahdella kalalla, ja jäljelle jää kaksitoista täyttä koria. Tämä on ainoa ihme, jonka kaikki neljä evankeliumia kertovat.",
+    "ref": "John 6:1-15; Matthew 14:13-21; Mark 6:30-44; Luke 9:10-17",
+    "category": "New Testament"
+  },
+  {
+    "id": "walking-on-water",
+    "title": "Jesus Walks on Water",
+    "title_fi": "Jeesus kävelee vedellä",
+    "description": "Jesus walks across the Sea of Galilee to reach his disciples in a storm-tossed boat; Peter steps out to walk toward him but sinks when his faith falters. Mark and John also record this event.",
+    "description_fi": "Jeesus kävelee Galileanjärven yli saavuttaakseen myrskylaiturissa olevan veneen; Pietari astuu vedelle Jeesusta kohti mutta vajoaa horjuttaessaan uskoaan. Markus ja Johannes kertovat myös tämän tapahtuman.",
+    "ref": "Matthew 14:22-33; Mark 6:45-52; John 6:16-21",
+    "category": "New Testament"
+  },
+  {
+    "id": "good-samaritan",
+    "title": "The Good Samaritan",
+    "title_fi": "Laupias samarialainen",
+    "description": "Jesus tells the parable of a man who is robbed and left for dead; a priest and a Levite pass by, but a despised Samaritan stops to care for him.",
+    "description_fi": "Jeesus kertoo vertauksen miehestä, joka ryystään ja jätetään kuolemaan; pappi ja leevilinen ohittavat hänet, mutta halveksittu samarialainen pysähtyy auttamaan.",
+    "ref": "Luke 10:25-37",
+    "category": "New Testament"
+  },
+  {
+    "id": "prodigal-son",
+    "title": "The Prodigal Son",
+    "title_fi": "Tuhlaajapoika",
+    "description": "A son wastes his inheritance in reckless living, returns home in repentance, and is welcomed with a feast by his overjoyed father — a parable of God's forgiveness.",
+    "description_fi": "Poika tuhlaa perintönsä yltäkylläisessä elämässä, palaa kotiin katuneena ja isä ottaa hänet vastaan ilojuhlin — vertaus Jumalan anteeksiannosta.",
+    "ref": "Luke 15:11-32",
+    "category": "New Testament"
+  },
+  {
+    "id": "lost-sheep",
+    "title": "The Lost Sheep",
+    "title_fi": "Kadonnut lammas",
+    "description": "Jesus tells how a shepherd leaves ninety-nine sheep to search for the one that is lost, rejoicing when it is found — a picture of God's pursuit of the sinner.",
+    "description_fi": "Jeesus kertoo, kuinka paimen jättää yhdeksänkymmentäyhdeksän lammasta etsiäkseen sitä yhtä kadonnutta ja iloitsee löydettyään sen — kuva Jumalan etsinstä.",
+    "ref": "Luke 15:1-10",
+    "category": "New Testament"
+  },
+  {
+    "id": "transfiguration",
+    "title": "The Transfiguration",
+    "title_fi": "Kirkastuminen",
+    "description": "On a high mountain, Jesus is transfigured before Peter, James, and John — his face shines like the sun, Moses and Elijah appear, and God's voice speaks from a cloud. All three synoptic Gospels record this event.",
+    "description_fi": "Korkealla vuorella Jeesus muuttuu kirkkaiksi Pietarin, Jaakobin ja Johanneksen edessä — hänen kasvonsa säteilee kuin aurinko, Mooses ja Elia ilmestyvät, ja Jumalan ääni puhuu pilvestä. Kaikki kolme synoptista evankeliumia kertovat tämän tapahtuman.",
+    "ref": "Matthew 17:1-13; Mark 9:2-13; Luke 9:28-36",
+    "category": "New Testament"
+  },
+  {
+    "id": "zacchaeus",
+    "title": "Zacchaeus the Tax Collector",
+    "title_fi": "Sakkeus",
+    "description": "The wealthy but despised tax collector Zacchaeus climbs a tree to see Jesus, who invites himself to Zacchaeus's house and transforms his life.",
+    "description_fi": "Varakas mutta halveksittu publikaani Sakkeus kiipeää puuhun nähdäkseen Jeesuksen, joka kutsuu itsensä Sakkeuksen kotiin ja muuttaa hänen elämänsä.",
+    "ref": "Luke 19:1-10",
+    "category": "New Testament"
+  },
+  {
+    "id": "lazarus",
+    "title": "The Raising of Lazarus",
+    "title_fi": "Lasaruksen ylösnousemus",
+    "description": "Four days after Lazarus has died and been buried, Jesus arrives, weeps at the tomb, and calls him back to life — his greatest miracle before the resurrection.",
+    "description_fi": "Neljä päivää Lasaruksen kuoleman ja hautaamisen jälkeen Jeesus saapuu, itkee haudalla ja herättää hänet eloon — suurin ihmeteko ennen omaa ylösnousemustaan.",
+    "ref": "John 11:1-44",
+    "category": "New Testament"
+  },
+  {
+    "id": "triumphal-entry",
+    "title": "The Triumphal Entry",
+    "title_fi": "Jeesuksen ratsastus Jerusalemiin",
+    "description": "Jesus rides into Jerusalem on a donkey to shouts of \"Hosanna!\", fulfilling the prophet Zechariah's vision of the humble king coming to his city. All four Gospels record this event.",
+    "description_fi": "Jeesus ratsastaa Jerusalemiin aasilla 'Hoosianna!'-huutoja herättäen, täyttäen profeetta Sakarjan näyn nöyrästä kuninkaasta. Kaikki neljä evankeliumia kertovat tästä tapahtumasta.",
+    "ref": "Matthew 21:1-11; Mark 11:1-11; Luke 19:28-44; John 12:12-19",
+    "category": "New Testament"
+  },
+  {
+    "id": "last-supper",
+    "title": "The Last Supper",
+    "title_fi": "Viimeinen ehtoollinen",
+    "description": "Jesus shares a final Passover meal with his disciples, institutes the Eucharist, washes their feet, and foretells his betrayal. All three synoptic Gospels record this meal.",
+    "description_fi": "Jeesus viettää viimeisen pääsiäisaterian opetuslastensa kanssa, asettaa ehtoollisen, pesee heidän jalkansa ja ennustaa petoksensa. Kaikki kolme synoptista evankeliumia kertovat tästä ateriasta.",
+    "ref": "Luke 22:7-38; Matthew 26:17-30; Mark 14:12-26",
+    "category": "New Testament"
+  },
+  {
+    "id": "gethsemane",
+    "title": "Jesus in Gethsemane",
+    "title_fi": "Jeesus Getsemanen puutarhassa",
+    "description": "In the Garden of Gethsemane, Jesus prays in agony, asking the Father to take the cup from him, yet submitting to God's will; he is then arrested. All three synoptic Gospels record this scene.",
+    "description_fi": "Getsemanen puutarhassa Jeesus rukoilee tuskissaan pytäen Isää ottamaan maljan pois, kuitenkin alistuen Jumalan tahtoon; sitten hänet pidätetään. Kaikki kolme synoptista evankeliumia kertovat tämän kohtauksen.",
+    "ref": "Matthew 26:36-56; Mark 14:32-52; Luke 22:39-53",
+    "category": "New Testament"
+  },
+  {
+    "id": "crucifixion",
+    "title": "The Crucifixion",
+    "title_fi": "Ristiinnaulitseminen",
+    "description": "Jesus is tried, mocked, and crucified at Golgotha between two criminals; darkness covers the land and the temple veil tears in two as he gives up his spirit. All four Gospels record the crucifixion.",
+    "description_fi": "Jeesus tuomitaan, pilkataan ja ristiinnaulitaan Golgotalla kahden rikollisen välissä; pimeys peittää maan ja temppelin esirippu repeytyy hänen antaessaan henkensä. Kaikki neljä evankeliumia kertovat ristiinnaulitsemisen.",
+    "ref": "Matthew 27:27-56; Mark 15:16-41; Luke 23:26-49; John 19:16-30",
+    "category": "New Testament"
+  },
+  {
+    "id": "resurrection",
+    "title": "The Resurrection",
+    "title_fi": "Ylösnousemus",
+    "description": "On the third day, the tomb is found empty; angels announce that Jesus has risen, and he appears to Mary Magdalene and then to his disciples. All four Gospels record the resurrection.",
+    "description_fi": "Kolmantena päivänä hauta löydetään tyhjänä; enkelit ilmoittavat Jeesuksen nousseen kuolleista, ja hän ilmestyy Maria Magdaleenalle ja sitten opetuslapsille. Kaikki neljä evankeliumia kertovat ylösnousemuksesta.",
+    "ref": "John 20:1-18; Matthew 28:1-10; Mark 16:1-8; Luke 24:1-12",
+    "category": "New Testament"
+  },
+  {
+    "id": "road-to-emmaus",
+    "title": "The Road to Emmaus",
+    "title_fi": "Emmauksen tie",
+    "description": "The risen Jesus walks unrecognized with two disciples on the road to Emmaus, explaining the scriptures to them; they recognize him at the breaking of bread.",
+    "description_fi": "Ylösnoussut Jeesus kävelee tunnistamattomana kahden opetuslapsen kanssa Emmauksen tielle selittäen heille kirjoituksia; he tunnistavat hänet leivän murtamisessa.",
+    "ref": "Luke 24:13-35",
+    "category": "New Testament"
+  },
+  {
+    "id": "doubting-thomas",
+    "title": "Doubting Thomas",
+    "title_fi": "Epäilyvä Tuomas",
+    "description": "Thomas refuses to believe in the resurrection until he sees Jesus himself; Jesus appears and invites him to touch his wounds, and Thomas confesses \"My Lord and my God.\"",
+    "description_fi": "Tuomas kieltäytyy uskomasta ylösnousemukseen ennen kuin näkee Jeesuksen itse; Jeesus ilmestyy ja kutsuu häntä koskettamaan haavoja, ja Tuomas tunnustaa ‘Herrani ja Jumalani.’",
+    "ref": "John 20:24-29",
+    "category": "New Testament"
+  },
+  {
+    "id": "ascension",
+    "title": "The Ascension",
+    "title_fi": "Taivaaseen astuminen",
+    "description": "Forty days after the resurrection, Jesus blesses his disciples and is taken up into heaven before their eyes, commissioning them to be his witnesses to all nations. Luke records the Ascension in both his Gospel and Acts.",
+    "description_fi": "Neljäkymmentä päivää ylösnousemuksen jälkeen Jeesus siunaa opetuslapsensa ja otetaan taivaaseen heidän silmiensä edessä, antaen tehtäväksi todistaa hänestä kaikille kansoille. Luukas kertoo taivaaseen astumisen sekä evankeliumissaan että Apostolien teoissa.",
+    "ref": "Acts 1:1-11; Luke 24:50-53",
+    "category": "New Testament"
+  },
+  {
+    "id": "pentecost",
+    "title": "Pentecost",
+    "title_fi": "Helluntai",
+    "description": "The Holy Spirit descends on the disciples in Jerusalem with a rush of wind and tongues of fire; Peter preaches and three thousand people are baptized.",
+    "description_fi": "Pyhä Henki laskeutuu opetuslapsten päälle Jerusalemissa tuulenpuuskan ja tulenkielien muodossa; Pietari saarnaa ja kolme tuhatta ihmistä kastetaan.",
+    "ref": "Acts 2:1-41",
+    "category": "New Testament"
+  },
+  {
+    "id": "pauls-conversion",
+    "title": "Paul's Conversion on the Road to Damascus",
+    "title_fi": "Paavalin kääntymys",
+    "description": "Saul, a fierce persecutor of Christians, is struck blind by a blazing light on the road to Damascus and hears the voice of Jesus; he is baptized and becomes the Apostle Paul.",
+    "description_fi": "Saul, kristittyjen kiivainen vainooja, sokaistuu kirkkaan valon toimesta Damaskoksen tiellä ja kuulee Jeesuksen äänen; hän kastetaan ja hänestä tulee apostoli Paavali.",
+    "ref": "Acts 9:1-19",
+    "category": "New Testament"
+  }
+]

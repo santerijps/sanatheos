@@ -198,6 +198,12 @@ async function init() {
 	const settingsOverlay = document.getElementById("settings-overlay")!;
 	const settingsClose = document.getElementById("settings-close")!;
 	const verseMenu = document.getElementById("verse-menu")!;
+	const storiesBtn = document.getElementById("stories-btn")!;
+	const storiesOverlay = document.getElementById("stories-overlay")!;
+	const storiesClose = document.getElementById("stories-close")!;
+	const storiesFilter = document.getElementById("stories-filter") as HTMLInputElement;
+	const storiesList = document.getElementById("stories-list")!;
+	const storiesTitleEl = document.getElementById("stories-title")!;
 
 	// Determine initial translation from URL or localStorage
 	const initialState = readState();
@@ -674,6 +680,124 @@ async function init() {
 		if (e.target === settingsOverlay) closeSettings();
 	});
 
+	// --- Stories panel ---
+	interface StoryEntry {
+		id: string;
+		title: string;
+		title_fi?: string;
+		description: string;
+		description_fi?: string;
+		ref: string;
+		category: string;
+	}
+
+	let storiesData: StoryEntry[] | null = null;
+
+	async function loadStoriesData(): Promise<StoryEntry[]> {
+		if (storiesData) return storiesData;
+		const res = await fetch("./data/stories.json");
+		storiesData = (await res.json()) as StoryEntry[];
+		return storiesData;
+	}
+
+	function renderStoriesList(stories: StoryEntry[], filter: string) {
+		const s = t();
+		const lang = getLanguage();
+		const getTitle = (st: StoryEntry) =>
+			lang === "fi" && st.title_fi ? st.title_fi : st.title;
+		const getDesc = (st: StoryEntry) =>
+			lang === "fi" && st.description_fi ? st.description_fi : st.description;
+		const getCatLabel = (cat: string) => {
+			if (cat === "Old Testament") return s.oldTestament;
+			if (cat === "New Testament") return s.newTestament;
+			if (cat === "Deuterocanonical") return s.deuterocanonical;
+			return cat;
+		};
+
+		const q = filter.trim().toLowerCase();
+		const filtered = q
+			? stories.filter(
+					(st) =>
+						getTitle(st).toLowerCase().includes(q) ||
+						getDesc(st).toLowerCase().includes(q) ||
+						getCatLabel(st.category).toLowerCase().includes(q),
+				)
+			: stories;
+
+		if (filtered.length === 0) {
+			storiesList.innerHTML = `<p class="stories-empty">${s.storiesEmpty}</p>`;
+			return;
+		}
+
+		const categories: string[] = [];
+		const byCategory: Record<string, StoryEntry[]> = {};
+		for (const st of filtered) {
+			if (!byCategory[st.category]) {
+				byCategory[st.category] = [];
+				categories.push(st.category);
+			}
+			byCategory[st.category].push(st);
+		}
+
+		let html = "";
+		for (const cat of categories) {
+			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
+			for (const st of byCategory[cat]) {
+				html += `<button class="story-item" type="button" data-ref="${escapeHtml(st.ref)}">
+					<span class="story-item-title">${escapeHtml(getTitle(st))}</span>
+					<span class="story-item-desc">${escapeHtml(getDesc(st))}</span>
+					<span class="story-item-ref">${escapeHtml(st.ref)}</span>
+				</button>`;
+			}
+		}
+		storiesList.innerHTML = html;
+	}
+
+	function escapeHtml(str: string): string {
+		return str
+			.replace(/&/g, "&amp;")
+			.replace(/</g, "&lt;")
+			.replace(/>/g, "&gt;")
+			.replace(/"/g, "&quot;");
+	}
+
+	async function openStories() {
+		storiesOverlay.classList.add("open");
+		lockScroll();
+		storiesTitleEl.textContent = t().storiesTitle;
+		storiesFilter.placeholder = t().storiesFilterPlaceholder;
+		storiesFilter.value = "";
+		const stories = await loadStoriesData();
+		renderStoriesList(stories, "");
+		storiesFilter.focus();
+	}
+
+	function closeStories() {
+		storiesOverlay.classList.remove("open");
+		unlockScroll();
+	}
+
+	storiesBtn.addEventListener("click", openStories);
+	storiesClose.addEventListener("click", closeStories);
+	storiesOverlay.addEventListener("click", (e) => {
+		if (e.target === storiesOverlay) closeStories();
+	});
+
+	storiesFilter.addEventListener("input", async () => {
+		const stories = await loadStoriesData();
+		renderStoriesList(stories, storiesFilter.value);
+	});
+
+	storiesList.addEventListener("click", (e) => {
+		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
+		if (!item) return;
+		const ref = item.dataset.ref;
+		if (!ref) return;
+		closeStories();
+		searchInput.value = ref;
+		searchInput.dispatchEvent(new Event("input"));
+	});
+
 	// Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "Escape") {
@@ -687,6 +811,10 @@ async function init() {
 			}
 			if (settingsOverlay.classList.contains("open")) {
 				closeSettings();
+				return;
+			}
+			if (storiesOverlay.classList.contains("open")) {
+				closeStories();
 				return;
 			}
 			if (infoOverlay.classList.contains("open")) {
@@ -1347,6 +1475,8 @@ function updateStaticText() {
 	if (searchInput) searchInput.placeholder = s.searchPlaceholder;
 	const indexBtn = document.getElementById("index-btn");
 	if (indexBtn) indexBtn.title = s.browseBooks;
+	const storiesBtnEl = document.getElementById("stories-btn");
+	if (storiesBtnEl) storiesBtnEl.title = s.storiesTitle;
 
 	// Settings modal
 	const settingsTitle = document.querySelector("#settings-modal-body h2");

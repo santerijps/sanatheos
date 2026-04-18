@@ -92,6 +92,7 @@
         placeholder="Search the Bible"
       >
     </div>
+    <button id="stories-btn" type="button" title="Bible Stories"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></button>
     <button id="info-btn" type="button" title="Help &amp; info"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
   </header>
 
@@ -102,6 +103,19 @@
       <div id="idx-books" class="idx-col"></div>
       <div id="idx-chapters" class="idx-col"></div>
       <div id="idx-verses" class="idx-col"></div>
+    </div>
+  </div>
+
+  <div id="stories-overlay">
+    <div id="stories-panel">
+      <div id="stories-header">
+        <h2 id="stories-title">Bible Stories</h2>
+        <button id="stories-close" type="button" title="Close">&times;</button>
+      </div>
+      <div id="stories-search-wrap">
+        <input type="text" id="stories-filter" autocomplete="off" spellcheck="false" placeholder="Filter stories…">
+      </div>
+      <div id="stories-list"></div>
     </div>
   </div>
 

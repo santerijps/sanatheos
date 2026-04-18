@@ -82,6 +82,11 @@ interface Strings {
 	morphology: string;
 	crossReferences: string;
 	closePanel: string;
+
+	// Stories
+	storiesTitle: string;
+	storiesFilterPlaceholder: string;
+	storiesEmpty: string;
 }
 
 const EN: Strings = {
@@ -193,6 +198,10 @@ const EN: Strings = {
 	morphology: "Morphology",
 	crossReferences: "References",
 	closePanel: "Close",
+
+	storiesTitle: "Bible Stories",
+	storiesFilterPlaceholder: "Filter stories\u2026",
+	storiesEmpty: "No stories match your filter.",
 };
 
 const FI: Strings = {
@@ -305,6 +314,10 @@ const FI: Strings = {
 	morphology: "Morfologia",
 	crossReferences: "Viittaukset",
 	closePanel: "Sulje",
+
+	storiesTitle: "Raamatun kertomukset",
+	storiesFilterPlaceholder: "Suodata kertomuksia\u2026",
+	storiesEmpty: "Ei kertomuksia hakusanalla.",
 };
 
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };
