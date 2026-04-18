@@ -561,10 +561,10 @@ The page is a single HTML file with this DOM structure:
 <body>
   #title-bar          — "ΣΑΝΑΘΕΩΣ" centered header text (Ω is a hidden link to ./more/index.html)
   <header #header>    — Sticky toolbar
-    #info-btn         — ⓘ help button
     #settings-btn     — ⚙ settings button
     #search-input     — Text input (autocomplete off, spellcheck off)
     #index-btn        — SVG magnifier icon, book index button (inside search input)
+    #info-btn         — ⓘ help button (right of search input)
   </header>
 
   <main #content>     — Dynamic content area (chapters, verses, results)
@@ -957,4 +957,4 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
     - Ensure the names of variables, functions, classes, types, fields, etc. are descriptive and self-documenting.
     - Ensure complex code logic has additional comments to explain what the code snippet does.
     - Ensure the code is idiomatic Bun/TypeScript code.
-    - Ensure every test case passes. If not, fix the cases.
+    - Ensure every test case passes (unit tests and e2e tests). If not, fix the cases.
