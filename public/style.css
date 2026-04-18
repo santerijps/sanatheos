@@ -144,27 +144,23 @@ header {
 #info-btn,
 #settings-btn {
   flex-shrink: 0;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
   background: none;
-  border: none;
+  border: 1px solid var(--border);
   border-radius: 50%;
   cursor: pointer;
   color: var(--subtle);
-  transition: background 0.15s, color 0.15s;
-}
-
-#settings-btn {
-  font-size: 22px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
 #info-btn:hover,
 #settings-btn:hover {
   background: var(--hover);
+  border-color: #aaa;
   color: var(--text);
 }
 
@@ -210,7 +206,7 @@ main {
 }
 
 .chapter-heading:hover {
-  color: #000;
+  color: var(--text);
 }
 
 .chapter-block {
@@ -234,7 +230,7 @@ main {
   font-size: 17px;
   font-weight: 600;
   color: var(--muted);
-  margin: 28px 0 2px;
+  margin: 28px 0 14px;
   line-height: 1.7;
 }
 
@@ -263,6 +259,11 @@ main {
   margin-right: 4px;
   vertical-align: super;
   user-select: none;
+  transition: color 0.12s;
+}
+
+.verse sup:hover {
+  color: var(--accent);
 }
 
 .single-verse {
@@ -890,8 +891,8 @@ mark {
 @media (max-width: 800px) {
   header { padding: 8px 12px; }
   main { padding: 20px 16px 20px; margin-top: 0; }
-  #index-panel { flex-direction: column; height: 85vh; width: 90vw; max-width: 90vw; }
-  .idx-col { width: 100%; height: 28vh; max-height: 28vh; border-right: none; }
+  #index-panel { flex-direction: column; height: 90vh; width: 90vw; max-width: 90vw; }
+  .idx-col { width: 100%; flex: 1; height: 0; max-height: none; min-height: 80px; border-right: none; }
   .parallel-container { flex-direction: column; }
   .parallel-col { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
   .nav-full { display: none; }
