@@ -889,6 +889,14 @@ async function init() {
 		const currentColor = highlightMap.get(hlKey);
 
 		const colors: HighlightColor[] = ["yellow", "green", "blue", "pink", "orange"];
+		// Localized color names for tooltip labels
+		const colorTitles: Record<HighlightColor, string> = {
+			yellow: getLanguage() === "fi" ? "Keltainen" : "Yellow",
+			green: getLanguage() === "fi" ? "Vihreä" : "Green",
+			blue: getLanguage() === "fi" ? "Sininen" : "Blue",
+			pink: getLanguage() === "fi" ? "Pinkki" : "Pink",
+			orange: getLanguage() === "fi" ? "Oranssi" : "Orange",
+		};
 		let html = "";
 
 		// Copy verse
@@ -897,7 +905,7 @@ async function init() {
 		// Highlight colors
 		html += `<div class="verse-menu-colors">`;
 		for (const c of colors) {
-			html += `<span class="color-dot${currentColor === c ? " active" : ""}" data-color="${c}" data-action="highlight"></span>`;
+			html += `<span class="color-dot${currentColor === c ? " active" : ""}" data-color="${c}" data-action="highlight" title="${colorTitles[c]}"></span>`;
 		}
 		if (currentColor) {
 			html += `<span class="color-dot" data-action="remove-highlight" style="background: var(--border);" title="${t().removeHighlight}">&#10005;</span>`;

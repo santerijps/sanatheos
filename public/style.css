@@ -5,14 +5,15 @@
   --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --serif: Georgia, "Times New Roman", Times, serif;
   --mono: monospace;
-  --bg: #fafafa;
+  --bg: #f5f0e8;
   --surface: #ffffff;
   --text: #1a1a1a;
   --verse-num: #767676;
   --subtle: #888888;
   --border: #e5e5e5;
-  --hover: #f0f0f0;
-  --accent: #4a6fa5;
+  --hover: #ede8de;
+  --accent: #8a6018;
+  --accent-focus: rgba(138, 96, 24, 0.2);
   --muted: #666666;
   --mark-bg: #fde68a;
   --hl-yellow: rgba(253, 230, 138, 0.4);
@@ -23,16 +24,17 @@
 }
 
 [data-theme="dark"] {
-  --bg: #1a1a1a;
-  --surface: #282828;
-  --text: #e0e0e0;
-  --verse-num: #a0a0a0;
-  --subtle: #888888;
-  --border: #333333;
-  --hover: #2e2e2e;
-  --accent: #7da2d4;
-  --muted: #999999;
-  --mark-bg: #78650a;
+  --bg: #1c1814;
+  --surface: #26221d;
+  --text: #e0d8cc;
+  --verse-num: #a09080;
+  --subtle: #8a8078;
+  --border: #352e27;
+  --hover: #2e2820;
+  --accent: #c9963a;
+  --accent-focus: rgba(201, 150, 58, 0.25);
+  --muted: #9a9080;
+  --mark-bg: #6b540a;
   --hl-yellow: rgba(253, 230, 138, 0.35);
   --hl-green: rgba(134, 239, 172, 0.35);
   --hl-blue: rgba(147, 197, 253, 0.35);
@@ -61,9 +63,9 @@ body.panel-open {
 /* === Title bar === */
 #title-bar {
   text-align: center;
-  font: 600 16px/1 var(--sans);
-  letter-spacing: 0.5ch;
-  padding: 12px 20px 0;
+  font: 300 20px/1 var(--sans);
+  letter-spacing: 0.9ch;
+  padding: 14px 20px 2px;
   color: var(--subtle);
   background: var(--surface);
 }
@@ -134,7 +136,7 @@ header {
 }
 
 #search-input:focus {
-  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0 0 3px var(--accent-focus);
 }
 
 #search-input::placeholder {
@@ -171,14 +173,16 @@ main {
   margin: 0 auto;
   padding: 0 64px 24px 64px;
   margin-top: 24px;
+  box-shadow: 0 0 0 1px var(--border), 0 4px 16px rgba(0, 0, 0, 0.04);
+  border-radius: 10px 10px 10px 10px;
 }
 
 .book-title {
   font-size: 32px;
-  font-weight: 700;
+  font-weight: 800;
   margin-bottom: 32px;
   font-family: var(--sans);
-  letter-spacing: -0.5px;
+  letter-spacing: -1px;
   text-align: center;
 }
 
@@ -324,6 +328,16 @@ main {
   to { transform: rotate(360deg); }
 }
 
+/* === Content Fade === */
+@keyframes contentFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+#content > * {
+  animation: contentFadeIn 0.2s ease-out both;
+}
+
 /* === Search Results === */
 .results-info {
   font: 13px var(--sans);
@@ -368,6 +382,26 @@ mark {
   border-radius: 2px;
   padding: 1px 2px;
 }
+
+/* === Staggered result entry animation (task 7) === */
+@keyframes fadeInResult {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.result {
+  animation: fadeInResult 0.22s ease-out both;
+}
+
+.result:nth-child(2)  { animation-delay: 30ms; }
+.result:nth-child(3)  { animation-delay: 60ms; }
+.result:nth-child(4)  { animation-delay: 90ms; }
+.result:nth-child(5)  { animation-delay: 120ms; }
+.result:nth-child(6)  { animation-delay: 150ms; }
+.result:nth-child(7)  { animation-delay: 180ms; }
+.result:nth-child(8)  { animation-delay: 210ms; }
+.result:nth-child(9)  { animation-delay: 240ms; }
+.result:nth-child(n+10) { animation-delay: 260ms; }
 
 /* === Index Overlay === */
 #index-overlay {
@@ -793,16 +827,20 @@ mark {
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  transition: background 0.15s, color 0.15s;
+  transition: background 0.15s, color 0.15s, transform 0.15s ease;
   user-select: none;
   text-decoration: none;
-  line-height: 1;
+  line-height: 0;
+  padding-bottom: 4px;
 }
 
 .nav-arrow:hover {
   background: var(--hover);
   color: var(--text);
 }
+
+.nav-prev:not(.nav-disabled):hover { transform: translateX(-3px); }
+.nav-next:not(.nav-disabled):hover { transform: translateX(3px); }
 
 .nav-prev { text-align: left; }
 .nav-next { text-align: right; }
@@ -855,7 +893,7 @@ mark {
   margin: 0 auto;
   padding: 32px 24px 40px;
   text-align: center;
-  font: 12px var(--sans);
+  font: 13px/1.8 var(--serif);
   color: var(--muted);
   line-height: 1.8;
   opacity: 0;
@@ -890,7 +928,7 @@ mark {
 /* === Responsive === */
 @media (max-width: 800px) {
   header { padding: 8px 12px; }
-  main { padding: 20px 16px 20px; margin-top: 0; }
+  main { padding: 20px 16px 20px; margin-top: 0; border-radius: 0; }
   #index-panel { flex-direction: column; height: 90vh; width: 90vw; max-width: 90vw; }
   .idx-col { width: 100%; flex: 1; height: 0; max-height: none; min-height: 80px; border-right: none; }
   .parallel-container { flex-direction: column; }
