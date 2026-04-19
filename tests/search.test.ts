@@ -1855,3 +1855,196 @@ describe("Strong's number search", () => {
 		expect(results).toHaveLength(0);
 	});
 });
+
+// ---------------------------------------------------------------------------
+// Cross-chapter verse ranges: chapter1:verse1-chapter2:verse2
+// ---------------------------------------------------------------------------
+
+// Extended fixture with more verses per chapter for cross-chapter tests
+const crossChapterFixture: BibleData = {
+	Genesis: {
+		"18": {
+			"1": "And the LORD appeared to him by the oaks of Mamre.",
+			"2": "He lifted up his eyes and looked.",
+			"16": "Then the men set out from there, and they looked down toward Sodom.",
+			"17": "The LORD said, Shall I hide from Abraham what I am about to do?",
+			"18": "Abraham shall surely become a great and mighty nation.",
+			"19": "For I have chosen him.",
+			"20": "Then the LORD said, Because the outcry against Sodom and Gomorrah is great.",
+			"33": "And the LORD went his way, when he had finished speaking to Abraham.",
+		},
+		"19": {
+			"1": "The two angels came to Sodom in the evening.",
+			"2": "He said, My lords, please turn aside to your servant's house.",
+			"15": "As morning dawned, the angels urged Lot, saying, Up! Take your wife.",
+			"24": "Then the LORD rained on Sodom and Gomorrah sulfur and fire.",
+			"29": "So it was that, when God destroyed the cities of the valley.",
+			"30": "Now Lot went up out of Zoar and lived in the hills.",
+		},
+	},
+};
+
+describe("parseRef — cross-chapter verse ranges", () => {
+	test("parses chapter:verse-chapter:verse form", () => {
+		expect(_parseRef("Genesis 18:16-19:29")).toEqual({
+			book: "Genesis",
+			chapterStart: 18,
+			chapterEnd: 19,
+			verseStart: 16,
+			verseEnd: 29,
+		});
+	});
+
+	test("parses single-chapter cross-chapter form (same chapter)", () => {
+		// 18:1-18:5 — valid form where both chapters are the same
+		expect(_parseRef("Genesis 18:1-18:5")).toEqual({
+			book: "Genesis",
+			chapterStart: 18,
+			chapterEnd: 18,
+			verseStart: 1,
+			verseEnd: 5,
+		});
+	});
+
+	test("parses abbreviated book in cross-chapter form", () => {
+		expect(_parseRef("gen 18:16-19:29")).toEqual({
+			book: "Genesis",
+			chapterStart: 18,
+			chapterEnd: 19,
+			verseStart: 16,
+			verseEnd: 29,
+		});
+	});
+
+	test("does not parse inverted cross-chapter range (start > end)", () => {
+		// 19:1-18:16 — end chapter before start chapter
+		expect(_parseRef("Genesis 19:1-18:16")).toBeNull();
+	});
+
+	test("does not parse same-chapter with inverted verses (start > end)", () => {
+		// 18:16-18:1 — same chapter but verse start > verse end
+		expect(_parseRef("Genesis 18:16-18:1")).toBeNull();
+	});
+
+	test("verseSegments is absent for cross-chapter range", () => {
+		const ref = _parseRef("Genesis 18:16-19:29");
+		expect(ref).not.toBeNull();
+		expect(ref!.verseSegments).toBeUndefined();
+	});
+
+	test("plain chapter:verse range is NOT misidentified as cross-chapter", () => {
+		// 1:2-4 should still produce verseSegments, not verseStart/verseEnd
+		const ref = _parseRef("Genesis 1:2-4");
+		expect(ref).not.toBeNull();
+		expect(ref!.verseSegments).toEqual([{ start: 2, end: 4 }]);
+		expect(ref!.verseStart).toBeUndefined();
+		expect(ref!.verseEnd).toBeUndefined();
+	});
+});
+
+describe("tryParseNav — cross-chapter verse ranges", () => {
+	test("returns NavRef with verseStart and verseEnd", () => {
+		const nav = tryParseNav("Genesis 18:16-19:29");
+		expect(nav).not.toBeNull();
+		expect(nav).toHaveLength(1);
+		expect(nav![0]).toEqual({
+			book: "Genesis",
+			chapterStart: 18,
+			chapterEnd: 19,
+			verseSegments: undefined,
+			verseStart: 16,
+			verseEnd: 29,
+		});
+	});
+
+	test("cross-chapter ref in multi-term query", () => {
+		const nav = tryParseNav("Genesis 18:16-19:29; John 1:1");
+		expect(nav).not.toBeNull();
+		expect(nav).toHaveLength(2);
+		expect(nav![0].verseStart).toBe(16);
+		expect(nav![0].verseEnd).toBe(29);
+		expect(nav![1].book).toBe("John");
+	});
+
+	test("inverted cross-chapter range returns null", () => {
+		expect(tryParseNav("Genesis 19:1-18:16")).toBeNull();
+	});
+});
+
+describe("search — cross-chapter verse ranges", () => {
+	beforeEach(() => {
+		initSearch(crossChapterFixture);
+	});
+
+	test("Genesis 18:16-19:29 returns only verses 16-33 from ch18 and 1-29 from ch19", () => {
+		const results = search(crossChapterFixture, "Genesis 18:16-19:29");
+		const ch18 = results.filter((r) => r.chapter === 18);
+		const ch19 = results.filter((r) => r.chapter === 19);
+
+		// All ch18 verses should be >= 16
+		for (const r of ch18) expect(r.verse).toBeGreaterThanOrEqual(16);
+		// All ch19 verses should be <= 29
+		for (const r of ch19) expect(r.verse).toBeLessThanOrEqual(29);
+
+		// Verse 18:1 (before start) must NOT appear
+		expect(results.some((r) => r.chapter === 18 && r.verse === 1)).toBe(false);
+		expect(results.some((r) => r.chapter === 18 && r.verse === 2)).toBe(false);
+
+		// Verse 19:30 (after end) must NOT appear
+		expect(results.some((r) => r.chapter === 19 && r.verse === 30)).toBe(false);
+
+		// Boundary verses MUST appear
+		expect(results.some((r) => r.chapter === 18 && r.verse === 16)).toBe(true);
+		expect(results.some((r) => r.chapter === 18 && r.verse === 33)).toBe(true);
+		expect(results.some((r) => r.chapter === 19 && r.verse === 1)).toBe(true);
+		expect(results.some((r) => r.chapter === 19 && r.verse === 29)).toBe(true);
+	});
+
+	test("returns only matching verses from first chapter when verseStart > 1", () => {
+		const results = search(crossChapterFixture, "Genesis 18:17-19:1");
+		// ch18: only verses 17-33 (not 16 or earlier)
+		expect(results.some((r) => r.chapter === 18 && r.verse === 16)).toBe(false);
+		expect(results.some((r) => r.chapter === 18 && r.verse === 17)).toBe(true);
+		// ch19: only verse 1 (not 2 or later)
+		expect(results.some((r) => r.chapter === 19 && r.verse === 1)).toBe(true);
+		expect(results.some((r) => r.chapter === 19 && r.verse === 2)).toBe(false);
+	});
+
+	test("cross-chapter range with text filter", () => {
+		const results = search(crossChapterFixture, 'Genesis 18:16-19:29 "Sodom"');
+		expect(results.length).toBeGreaterThan(0);
+		for (const r of results) {
+			expect(r.text.toLowerCase()).toContain("sodom");
+		}
+		// Must still respect verse bounds
+		expect(results.some((r) => r.chapter === 18 && r.verse < 16)).toBe(false);
+		expect(results.some((r) => r.chapter === 19 && r.verse > 29)).toBe(false);
+	});
+
+	test("inverted cross-chapter range returns empty results", () => {
+		const results = search(crossChapterFixture, "Genesis 19:1-18:16");
+		expect(results).toHaveLength(0);
+	});
+
+	test("cross-chapter range spanning only one verse each side", () => {
+		const results = search(crossChapterFixture, "Genesis 18:33-19:1");
+		expect(results).toHaveLength(2);
+		expect(results[0]).toMatchObject({ chapter: 18, verse: 33 });
+		expect(results[1]).toMatchObject({ chapter: 19, verse: 1 });
+	});
+
+	test("deduplication: cross-chapter range + overlapping single-verse term", () => {
+		const results = search(crossChapterFixture, "Genesis 18:16-19:29; Genesis 19:1");
+		// Genesis 19:1 already included in the range; should not be duplicated
+		const count = results.filter((r) => r.chapter === 19 && r.verse === 1).length;
+		expect(count).toBe(1);
+	});
+
+	test("abbreviated book cross-chapter search", () => {
+		const results = search(crossChapterFixture, "gen 18:16-19:29");
+		expect(results.length).toBeGreaterThan(0);
+		expect(results.some((r) => r.chapter === 18 && r.verse === 16)).toBe(true);
+		expect(results.some((r) => r.chapter === 19 && r.verse === 29)).toBe(true);
+		expect(results.some((r) => r.chapter === 18 && r.verse === 1)).toBe(false);
+	});
+});

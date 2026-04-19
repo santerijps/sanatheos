@@ -925,6 +925,18 @@ async function init() {
 			const verse = copyBtn.dataset.copyVerse;
 			const segments = copyBtn.dataset.copySegments;
 			const source = copyBtn.dataset.copySource || "";
+			const chapterEnd =
+				copyBtn.dataset.copyChapterEnd !== undefined
+					? +copyBtn.dataset.copyChapterEnd
+					: undefined;
+			const verseStart =
+				copyBtn.dataset.copyVerseStart !== undefined
+					? +copyBtn.dataset.copyVerseStart
+					: undefined;
+			const verseEnd =
+				copyBtn.dataset.copyVerseEnd !== undefined
+					? +copyBtn.dataset.copyVerseEnd
+					: undefined;
 			const translationLabel = (code: string) => {
 				const info = TRANSLATION_NAMES[code];
 				return info ? `${code} — ${info.name}` : code;
@@ -965,6 +977,29 @@ async function init() {
 							.map((n) => `${n} ${ch[String(n)]}`)
 							.join("\n")
 					);
+				} else if (
+					chapterEnd !== undefined &&
+					verseStart !== undefined &&
+					verseEnd !== undefined
+				) {
+					// Cross-chapter verse range: Genesis 18:16-19:29
+					const lines: string[] = [
+						translationLabel(code),
+						`${titleBook} ${chapter}:${verseStart}\u2013${chapterEnd}:${verseEnd}`,
+					];
+					for (let c = chapter; c <= chapterEnd; c++) {
+						const ch = sourceData[book]?.[String(c)];
+						if (!ch) continue;
+						const vMin = c === chapter ? verseStart : 1;
+						const vMax =
+							c === chapterEnd ? verseEnd : Math.max(...Object.keys(ch).map(Number));
+						Object.keys(ch)
+							.map(Number)
+							.sort((a, b) => a - b)
+							.filter((n) => n >= vMin && n <= vMax)
+							.forEach((n) => lines.push(`${c}:${n} ${ch[String(n)]}`));
+					}
+					return lines.join("\n");
 				} else {
 					const ch = sourceData[book]?.[String(chapter)];
 					if (!ch) return "";
@@ -1278,8 +1313,8 @@ function renderNavRef(nav: NavRef) {
 				renderChapter(data, book, chapterStart);
 			}
 		} else {
-			// Chapter range: Genesis 8-10
-			renderChapterRange(data, book, chapterStart, chapterEnd);
+			// Chapter range (with optional verse bounds): Genesis 8-10 or Genesis 18:16-19:29
+			renderChapterRange(data, book, chapterStart, chapterEnd, nav.verseStart, nav.verseEnd);
 		}
 	} else {
 		// Whole book: Genesis → show chapter 1

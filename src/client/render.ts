@@ -618,7 +618,14 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 	window.scrollTo(0, 0);
 }
 
-export function renderChapterRange(data: BibleData, book: string, chStart: number, chEnd: number) {
+export function renderChapterRange(
+	data: BibleData,
+	book: string,
+	chStart: number,
+	chEnd: number,
+	verseStart?: number,
+	verseEnd?: number,
+) {
 	const bd = data[book];
 	if (!bd) {
 		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
@@ -630,14 +637,22 @@ export function renderChapterRange(data: BibleData, book: string, chStart: numbe
 	const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
 	let html = navArrowsHtml(prev, next);
 	html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
+	// For cross-chapter verse ranges (e.g. Gen 18:16-19:29), emit a titled section heading
+	if (verseStart !== undefined && verseEnd !== undefined) {
+		const rangeLabel = `${displayName(book)} ${chStart}:${verseStart}\u2013${chEnd}:${verseEnd}`;
+		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}">&#128203;</button>${shareButtonHtml()}</h2>`;
+	}
 	const ilToggle = interlinearToggleHtml();
 	if (ilToggle) html += `<div style="text-align:right;margin-bottom:8px">${ilToggle}</div>`;
 	for (let c = chStart; c <= chEnd; c++) {
 		const ch = bd[String(c)];
 		if (!ch) continue;
-		const nums = Object.keys(ch)
+		let nums = Object.keys(ch)
 			.map(Number)
 			.sort((a, b) => a - b);
+		// Apply verse bounds for cross-chapter verse ranges (e.g. Gen 18:16-19:29)
+		if (verseStart !== undefined && c === chStart) nums = nums.filter((n) => n >= verseStart);
+		if (verseEnd !== undefined && c === chEnd) nums = nums.filter((n) => n <= verseEnd);
 		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(displayName(book))} ${c}</h2>`;
 		if (c === chStart) html += descriptionHtml(getBookDescription(book));
 		html += descriptionHtml(getChapterDescription(book, c));
@@ -695,8 +710,11 @@ export function renderVerseSegments(
 	window.scrollTo(0, 0);
 }
 export function navRefLabel(nav: NavRef): string {
-	const { book, chapterStart, chapterEnd, verseSegments } = nav;
+	const { book, chapterStart, chapterEnd, verseSegments, verseStart, verseEnd } = nav;
 	if (chapterStart !== undefined && chapterEnd !== undefined) {
+		if (verseStart !== undefined && verseEnd !== undefined) {
+			return `${displayName(book)} ${chapterStart}:${verseStart}-${chapterEnd}:${verseEnd}`;
+		}
 		if (verseSegments) {
 			const segLabel = verseSegments
 				.map((s) => (s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`))
@@ -710,7 +728,7 @@ export function navRefLabel(nav: NavRef): string {
 }
 
 function navRefVersesHtml(data: BibleData, nav: NavRef): string {
-	const { book, chapterStart, chapterEnd, verseSegments } = nav;
+	const { book, chapterStart, chapterEnd, verseSegments, verseStart, verseEnd } = nav;
 	const bd = data[book];
 	if (!bd) return "";
 
@@ -730,9 +748,14 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
 			for (let c = chapterStart; c <= chapterEnd; c++) {
 				const ch = bd[String(c)];
 				if (!ch) continue;
-				const nums = Object.keys(ch)
+				let nums = Object.keys(ch)
 					.map(Number)
 					.sort((a, b) => a - b);
+				// Apply verse bounds for cross-chapter verse ranges
+				if (verseStart !== undefined && c === chapterStart)
+					nums = nums.filter((n) => n >= verseStart);
+				if (verseEnd !== undefined && c === chapterEnd)
+					nums = nums.filter((n) => n <= verseEnd);
 				if (chapterStart !== chapterEnd) {
 					html += `<h3 class="multi-nav-subheading">${esc(displayName(book))} ${c}</h3>`;
 				}

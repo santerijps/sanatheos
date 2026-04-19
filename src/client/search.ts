@@ -123,6 +123,8 @@ interface ParsedRef {
 	chapterStart?: number;
 	chapterEnd?: number;
 	verseSegments?: VerseSegment[];
+	verseStart?: number;
+	verseEnd?: number;
 }
 
 function parseVerseSegments(s: string): VerseSegment[] | null {
@@ -161,6 +163,24 @@ function parseRef(term: string): ParsedRef | null {
 	const rest = bm.rest.replace(/[-,:]+$/, "");
 	if (!rest) return { book: bm.book };
 
+	// cross-chapter verse range: chapter1:verse1-chapter2:verse2  e.g. 18:16-19:29
+	const ccr = rest.match(/^(\d+):(\d+)-(\d+):(\d+)$/);
+	if (ccr) {
+		const chStart = +ccr[1],
+			vStart = +ccr[2],
+			chEnd = +ccr[3],
+			vEnd = +ccr[4];
+		if (chStart < chEnd || (chStart === chEnd && vStart <= vEnd)) {
+			return {
+				book: bm.book,
+				chapterStart: chStart,
+				chapterEnd: chEnd,
+				verseStart: vStart,
+				verseEnd: vEnd,
+			};
+		}
+	}
+
 	// chapter:verseSegments  e.g. 1:3-7  or  1:1-10,13,20-25
 	const cvm = rest.match(/^(\d+):(.+)$/);
 	if (cvm) {
@@ -193,6 +213,8 @@ export interface NavRef {
 	chapterStart?: number;
 	chapterEnd?: number;
 	verseSegments?: VerseSegment[];
+	verseStart?: number;
+	verseEnd?: number;
 }
 
 /**
@@ -219,6 +241,8 @@ export function tryParseNav(query: string): NavRef[] | null {
 			chapterStart: ref.chapterStart,
 			chapterEnd: ref.chapterEnd,
 			verseSegments: ref.verseSegments,
+			verseStart: ref.verseStart,
+			verseEnd: ref.verseEnd,
 		});
 	}
 	return refs;
@@ -308,11 +332,12 @@ export function search(data: BibleData, query: string): VerseResult[] {
 				for (let c = ref.chapterStart; c <= ref.chapterEnd; c++) {
 					const ch = bookData[String(c)];
 					if (!ch) continue;
-					const segments = ref.verseSegments
-						? ref.verseSegments
-						: [{ start: 1, end: Math.max(...Object.keys(ch).map(Number)) }];
-					for (const seg of segments) {
-						for (let v = seg.start; v <= seg.end; v++) {
+					const chVerseMax = Math.max(...Object.keys(ch).map(Number));
+					// Cross-chapter verse range (e.g. 18:16-19:29)
+					if (ref.verseStart !== undefined && ref.verseEnd !== undefined) {
+						const vMin = c === ref.chapterStart ? ref.verseStart : 1;
+						const vMax = c === ref.chapterEnd ? ref.verseEnd : chVerseMax;
+						for (let v = vMin; v <= vMax; v++) {
 							const text = ch[String(v)];
 							if (!text) continue;
 							if (textMatch && !textMatch(text)) continue;
@@ -320,6 +345,22 @@ export function search(data: BibleData, query: string): VerseResult[] {
 							if (!seen.has(k)) {
 								seen.add(k);
 								results.push({ book: ref.book, chapter: c, verse: v, text });
+							}
+						}
+					} else {
+						const segments = ref.verseSegments
+							? ref.verseSegments
+							: [{ start: 1, end: chVerseMax }];
+						for (const seg of segments) {
+							for (let v = seg.start; v <= seg.end; v++) {
+								const text = ch[String(v)];
+								if (!text) continue;
+								if (textMatch && !textMatch(text)) continue;
+								const k = `${ref.book}:${c}:${v}`;
+								if (!seen.has(k)) {
+									seen.add(k);
+									results.push({ book: ref.book, chapter: c, verse: v, text });
+								}
 							}
 						}
 					}
