@@ -644,6 +644,10 @@ export function renderChapterRange(
 	if (verseStart !== undefined && verseEnd !== undefined) {
 		const rangeLabel = `${displayName(book)} ${chStart}:${verseStart}\u2013${chEnd}:${verseEnd}`;
 		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}">${ICON_COPY}</button>${shareButtonHtml()}</h2>`;
+	} else {
+		// Plain chapter range (e.g. Genesis 1-2): emit a section heading with copy/share
+		const rangeLabel = `${displayName(book)} ${chStart}\u2013${chEnd}`;
+		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}">${ICON_COPY}</button>${shareButtonHtml()}</h2>`;
 	}
 	const ilToggle = interlinearToggleHtml();
 	if (ilToggle) html += `<div style="text-align:center;margin: 10px 0;">${ilToggle}</div>`;

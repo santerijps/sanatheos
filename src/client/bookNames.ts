@@ -294,6 +294,11 @@ export function getAliases(): Map<string, string> {
 	return map;
 }
 
+/** Returns all canonical book keys (e.g. "Genesis", "1 Samuel"). */
+export function getBookKeys(): string[] {
+	return Object.keys(EN);
+}
+
 /** Returns aliases sorted by key length (longest-first) for matching. Cached alongside getAliases(). */
 export function getSortedAliases(): [string, string][] {
 	if (sortedAliasCache) return sortedAliasCache;

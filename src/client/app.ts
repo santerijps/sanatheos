@@ -57,7 +57,7 @@ import {
 	getStrongsDict,
 	renderStrongsPanel,
 } from "./render.ts";
-import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
+import { setTranslation, displayName, displayNameFor, getBookKeys } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
 
 let data: BibleData;
@@ -755,6 +755,17 @@ async function init() {
 		return storiesData;
 	}
 
+	function localizeRef(ref: string): string {
+		// Sort canonical keys longest-first to avoid partial matches (e.g. "1 Samuel" before "Samuel")
+		const keys = getBookKeys().sort((a, b) => b.length - a.length);
+		for (const key of keys) {
+			if (ref === key || ref.startsWith(key + " ")) {
+				return displayName(key) + ref.slice(key.length);
+			}
+		}
+		return ref;
+	}
+
 	function renderStoriesList(stories: StoryEntry[], filter: string) {
 		const s = t();
 		const lang = getLanguage();
@@ -801,7 +812,7 @@ async function init() {
 				html += `<button class="story-item" type="button" data-ref="${escapeHtml(st.ref)}">
 					<span class="story-item-title">${escapeHtml(getTitle(st))}</span>
 					<span class="story-item-desc">${escapeHtml(getDesc(st))}</span>
-					<span class="story-item-ref">${escapeHtml(st.ref)}</span>
+					<span class="story-item-ref">${escapeHtml(localizeRef(st.ref))}</span>
 				</button>`;
 			}
 		}
@@ -1067,6 +1078,21 @@ async function init() {
 							.map(Number)
 							.sort((a, b) => a - b)
 							.filter((n) => n >= vMin && n <= vMax)
+							.forEach((n) => lines.push(`${c}:${n} ${ch[String(n)]}`));
+					}
+					return lines.join("\n");
+				} else if (chapterEnd !== undefined) {
+					// Plain chapter range: Genesis 1-2
+					const lines: string[] = [
+						translationLabel(code),
+						`${titleBook} ${chapter}\u2013${chapterEnd}`,
+					];
+					for (let c = chapter; c <= chapterEnd; c++) {
+						const ch = sourceData[book]?.[String(c)];
+						if (!ch) continue;
+						Object.keys(ch)
+							.map(Number)
+							.sort((a, b) => a - b)
 							.forEach((n) => lines.push(`${c}:${n} ${ch[String(n)]}`));
 					}
 					return lines.join("\n");
