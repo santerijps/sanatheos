@@ -1291,14 +1291,24 @@ mark {
   color: var(--text);
 }
 
+.copy-btn.copy-success {
+  color: var(--accent);
+  transition: color 0.15s;
+}
+
+.btn-icon {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  display: block;
+}
+
 /* === Share Button === */
 .share-wrap {
   display: inline-flex;
   position: relative;
   vertical-align: middle;
   margin-left: 4px;
-  padding-bottom: 6px;
-  margin-bottom: -6px;
 }
 
 .share-btn {
@@ -1335,8 +1345,17 @@ mark {
   white-space: nowrap;
 }
 
-.share-wrap:hover .share-dropdown {
+.share-wrap.share-open .share-dropdown {
   display: block;
+}
+
+/* When a share dropdown is open, elevate the containing section above sibling
+   #content > * elements whose animation-created stacking contexts would otherwise
+   paint on top and swallow pointer events from the dropdown. */
+.section-title:has(.share-wrap.share-open),
+.parallel-copy-both:has(.share-wrap.share-open) {
+  position: relative;
+  z-index: 10;
 }
 
 .share-opt {

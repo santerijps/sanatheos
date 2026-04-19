@@ -803,6 +803,12 @@ async function init() {
 	// Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "Escape") {
+			if (document.querySelectorAll(".share-wrap.share-open").length > 0) {
+				document
+					.querySelectorAll<HTMLElement>(".share-wrap.share-open")
+					.forEach((w) => w.classList.remove("share-open"));
+				return;
+			}
 			if (strongsPanel.classList.contains("open")) {
 				closeStrongsPanel();
 				return;
@@ -833,6 +839,14 @@ async function init() {
 	});
 
 	// --- Click handlers for rendered content ---
+	document.addEventListener("click", (e) => {
+		// Click outside any open share dropdown → close it
+		if (!(e.target as HTMLElement).closest(".share-wrap")) {
+			document
+				.querySelectorAll<HTMLElement>(".share-wrap.share-open")
+				.forEach((w) => w.classList.remove("share-open"));
+		}
+	});
 	content.addEventListener("click", (e) => {
 		// Click on nav arrow → navigate to prev/next chapter/verse
 		const arrow = (e.target as HTMLElement).closest(".nav-arrow") as HTMLElement;
@@ -904,6 +918,22 @@ async function init() {
 			return;
 		}
 
+		// Click on share button → toggle dropdown
+		const shareBtn = (e.target as HTMLElement).closest(".share-btn") as HTMLElement;
+		if (shareBtn) {
+			e.preventDefault();
+			e.stopPropagation();
+			const wrap = shareBtn.closest(".share-wrap") as HTMLElement;
+			if (wrap) {
+				const isOpen = wrap.classList.contains("share-open");
+				document
+					.querySelectorAll<HTMLElement>(".share-wrap.share-open")
+					.forEach((w) => w.classList.remove("share-open"));
+				if (!isOpen) wrap.classList.add("share-open");
+			}
+			return;
+		}
+
 		// Click on share option → copy link to clipboard
 		const shareOpt = (e.target as HTMLElement).closest(".share-opt") as HTMLElement;
 		if (shareOpt) {
@@ -912,6 +942,7 @@ async function init() {
 			if (shareOpt.dataset.share === "without") {
 				url.searchParams.delete("t");
 			}
+			shareOpt.closest(".share-wrap")?.classList.remove("share-open");
 			navigator.clipboard.writeText(url.toString()).then(() => showToast(t().linkCopied));
 			return;
 		}
@@ -1024,7 +1055,11 @@ async function init() {
 			}
 			const text = parts.join("\n\n");
 			if (text) {
-				navigator.clipboard.writeText(text).then(() => showToast(t().copied));
+				navigator.clipboard.writeText(text).then(() => {
+					showToast(t().copied);
+					copyBtn.classList.add("copy-success");
+					window.setTimeout(() => copyBtn.classList.remove("copy-success"), 1500);
+				});
 			}
 			return;
 		}
