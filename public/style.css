@@ -182,9 +182,10 @@ main {
   font-size: 32px;
   font-weight: 800;
   margin-bottom: 32px;
-  font-family: var(--sans);
+  font-family: var(--serif);
   letter-spacing: -1px;
   text-align: center;
+  text-transform: uppercase;
 }
 
 .section-title {
