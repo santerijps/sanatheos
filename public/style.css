@@ -98,7 +98,7 @@ header {
 }
 
 #search-wrap:focus-within {
-  border-color: #aaa;
+  border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-focus);
 }
 
