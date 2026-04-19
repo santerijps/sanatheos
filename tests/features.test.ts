@@ -915,6 +915,42 @@ describe("i18n — interlinear strings (FI)", () => {
 });
 
 // ---------------------------------------------------------------------------
+// i18n — index column labels (mobile sticky headers)
+// ---------------------------------------------------------------------------
+
+describe("i18n — index column labels (EN)", () => {
+	beforeEach(() => setLanguage("en"));
+
+	test("idxBooksLabel is 'Books'", () => {
+		expect(t().idxBooksLabel).toBe("Books");
+	});
+
+	test("idxChaptersLabel is 'Chapters'", () => {
+		expect(t().idxChaptersLabel).toBe("Chapters");
+	});
+
+	test("idxVersesLabel is 'Verses'", () => {
+		expect(t().idxVersesLabel).toBe("Verses");
+	});
+});
+
+describe("i18n — index column labels (FI)", () => {
+	beforeEach(() => setLanguage("fi"));
+
+	test("idxBooksLabel is 'Kirjat'", () => {
+		expect(t().idxBooksLabel).toBe("Kirjat");
+	});
+
+	test("idxChaptersLabel is 'Luvut'", () => {
+		expect(t().idxChaptersLabel).toBe("Luvut");
+	});
+
+	test("idxVersesLabel is 'Jakeet'", () => {
+		expect(t().idxVersesLabel).toBe("Jakeet");
+	});
+});
+
+// ---------------------------------------------------------------------------
 // i18n — side panel tab button titles
 // ---------------------------------------------------------------------------
 

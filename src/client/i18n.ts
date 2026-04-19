@@ -54,6 +54,9 @@ interface Strings {
 	oldTestament: string;
 	newTestament: string;
 	deuterocanonical: string;
+	idxBooksLabel: string;
+	idxChaptersLabel: string;
+	idxVersesLabel: string;
 
 	// Footer
 	footerLine1: string;
@@ -170,6 +173,9 @@ const EN: Strings = {
 	oldTestament: "Old Testament",
 	newTestament: "New Testament",
 	deuterocanonical: "Deuterocanonical",
+	idxBooksLabel: "Books",
+	idxChaptersLabel: "Chapters",
+	idxVersesLabel: "Verses",
 
 	footerLine1: "All available Bible translations are in the public domain.",
 	footerDescriptions:
@@ -286,6 +292,9 @@ const FI: Strings = {
 	oldTestament: "Vanha testamentti",
 	newTestament: "Uusi testamentti",
 	deuterocanonical: "Deuterokanoniset kirjat",
+	idxBooksLabel: "Kirjat",
+	idxChaptersLabel: "Luvut",
+	idxVersesLabel: "Jakeet",
 
 	footerLine1:
 		"Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",

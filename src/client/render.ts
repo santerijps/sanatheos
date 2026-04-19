@@ -903,6 +903,10 @@ export function renderIndex(
 	chapsCol.innerHTML = "";
 	versesCol.innerHTML = "";
 
+	booksCol.dataset.label = t().idxBooksLabel;
+	chapsCol.dataset.label = t().idxChaptersLabel;
+	versesCol.dataset.label = t().idxVersesLabel;
+
 	let activeBook = "";
 
 	function showVerses(book: string, chapter: number) {

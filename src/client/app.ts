@@ -1576,6 +1576,14 @@ function updateStaticText() {
 	if (searchInput) searchInput.placeholder = s.searchPlaceholder;
 	const indexBtn = document.getElementById("index-btn");
 	if (indexBtn) indexBtn.title = s.browseBooks;
+	// Header translation select
+	const headerTransSel = document.getElementById(
+		"header-translation-select",
+	) as HTMLSelectElement | null;
+	if (headerTransSel) {
+		headerTransSel.title = s.translationLabel;
+		headerTransSel.setAttribute("aria-label", s.translationLabel);
+	}
 	// Side tab button titles
 	const tabStories = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="stories"]');
 	if (tabStories) tabStories.title = s.storiesTitle;
@@ -1583,6 +1591,13 @@ function updateStaticText() {
 	if (tabSettings) tabSettings.title = s.settings;
 	const tabInfo = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="info"]');
 	if (tabInfo) tabInfo.title = s.helpInfo;
+	// Index column labels (for mobile sticky headers)
+	const idxBooksEl = document.getElementById("idx-books");
+	if (idxBooksEl) idxBooksEl.dataset.label = s.idxBooksLabel;
+	const idxChaptersEl = document.getElementById("idx-chapters");
+	if (idxChaptersEl) idxChaptersEl.dataset.label = s.idxChaptersLabel;
+	const idxVersesEl = document.getElementById("idx-verses");
+	if (idxVersesEl) idxVersesEl.dataset.label = s.idxVersesLabel;
 	// Settings pane
 	const settingsTitle = document.querySelector("#settings-modal-body h2");
 	if (settingsTitle) settingsTitle.textContent = s.settingsTitle;
