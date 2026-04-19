@@ -730,6 +730,18 @@ describe("i18n — EN and FI key parity", () => {
 		expect(enItems.length).toBe(fiItems.length);
 	});
 
+	test("infoShortcuts contains Ctrl+B entry in EN", () => {
+		setLanguage("en");
+		const shortcuts = t().infoShortcuts.join(" ");
+		expect(shortcuts).toContain("Ctrl+B");
+	});
+
+	test("infoShortcuts contains Ctrl+B entry in FI", () => {
+		setLanguage("fi");
+		const shortcuts = t().infoShortcuts.join(" ");
+		expect(shortcuts).toContain("Ctrl+B");
+	});
+
 	test("both languages have same number of infoFeaturesItems", () => {
 		setLanguage("en");
 		const enItems = t().infoFeaturesItems;
@@ -899,6 +911,42 @@ describe("i18n — interlinear strings (FI)", () => {
 
 	test("closePanel string exists", () => {
 		expect(t().closePanel).toBeTruthy();
+	});
+});
+
+// ---------------------------------------------------------------------------
+// i18n — side panel tab button titles
+// ---------------------------------------------------------------------------
+
+describe("i18n — side tab button titles (EN)", () => {
+	beforeEach(() => setLanguage("en"));
+
+	test("storiesTitle is non-empty", () => {
+		expect(t().storiesTitle).toBeTruthy();
+	});
+
+	test("settings string is non-empty", () => {
+		expect(t().settings).toBeTruthy();
+	});
+
+	test("helpInfo string is non-empty", () => {
+		expect(t().helpInfo).toBeTruthy();
+	});
+});
+
+describe("i18n — side tab button titles (FI)", () => {
+	beforeEach(() => setLanguage("fi"));
+
+	test("storiesTitle is non-empty", () => {
+		expect(t().storiesTitle).toBeTruthy();
+	});
+
+	test("settings string is non-empty", () => {
+		expect(t().settings).toBeTruthy();
+	});
+
+	test("helpInfo string is non-empty", () => {
+		expect(t().helpInfo).toBeTruthy();
 	});
 });
 

@@ -143,6 +143,7 @@ const EN: Strings = {
 	infoShortcutsTitle: "Keyboard Shortcuts",
 	infoShortcuts: [
 		"<kbd>Ctrl+K</kbd> &mdash; Focus search input",
+		"<kbd>Ctrl+B</kbd> &mdash; Toggle side panel",
 		"<kbd>Ctrl+I</kbd> &mdash; Toggle book index panel",
 		"<kbd>Escape</kbd> &mdash; Close any open panel",
 		"<kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Navigate items in the index panel",
@@ -258,6 +259,7 @@ const FI: Strings = {
 	infoShortcutsTitle: "Pikanäppäimet",
 	infoShortcuts: [
 		"<kbd>Ctrl+K</kbd> &mdash; Kohdista hakukenttään",
+		"<kbd>Ctrl+B</kbd> &mdash; Avaa/sulje sivupaneeli",
 		"<kbd>Ctrl+I</kbd> &mdash; Avaa/sulje kirjaluettelo",
 		"<kbd>Escape</kbd> &mdash; Sulje avoin paneeli",
 		"<kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Siirry luettelossa",

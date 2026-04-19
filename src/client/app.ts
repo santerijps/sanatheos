@@ -702,7 +702,10 @@ async function init() {
 			storiesFilter.value = "";
 			const stories = await loadStoriesData();
 			renderStoriesList(stories, "");
-			storiesFilter.focus();
+			// Only auto-focus the filter on non-touch (desktop) devices
+			if (!window.matchMedia("(hover: none)").matches) {
+				storiesFilter.focus();
+			}
 		}
 	}
 
@@ -863,6 +866,14 @@ async function init() {
 		if ((e.ctrlKey || e.metaKey) && e.key === "i") {
 			e.preventDefault();
 			toggleIndex();
+		}
+		if ((e.ctrlKey || e.metaKey) && e.key === "b") {
+			e.preventDefault();
+			if (sideOverlay.classList.contains("open")) {
+				closeSidePanel();
+			} else {
+				openSidePanel();
+			}
 		}
 	});
 
@@ -1565,6 +1576,13 @@ function updateStaticText() {
 	if (searchInput) searchInput.placeholder = s.searchPlaceholder;
 	const indexBtn = document.getElementById("index-btn");
 	if (indexBtn) indexBtn.title = s.browseBooks;
+	// Side tab button titles
+	const tabStories = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="stories"]');
+	if (tabStories) tabStories.title = s.storiesTitle;
+	const tabSettings = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="settings"]');
+	if (tabSettings) tabSettings.title = s.settings;
+	const tabInfo = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="info"]');
+	if (tabInfo) tabInfo.title = s.helpInfo;
 	// Settings pane
 	const settingsTitle = document.querySelector("#settings-modal-body h2");
 	if (settingsTitle) settingsTitle.textContent = s.settingsTitle;

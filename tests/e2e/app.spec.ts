@@ -319,6 +319,25 @@ test.describe("Keyboard shortcuts", () => {
 		expect(focused).toBe("search-input");
 	});
 
+	test("Ctrl+B opens side panel", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		const overlay = page.locator("#side-overlay");
+		await expect(overlay).not.toHaveClass(/open/);
+		await page.keyboard.press("Control+b");
+		await expect(overlay).toHaveClass(/open/);
+	});
+
+	test("Ctrl+B closes side panel when open", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		const overlay = page.locator("#side-overlay");
+		await page.keyboard.press("Control+b");
+		await expect(overlay).toHaveClass(/open/);
+		await page.keyboard.press("Control+b");
+		await expect(overlay).not.toHaveClass(/open/);
+	});
+
 	test("Escape closes book index", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);

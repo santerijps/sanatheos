@@ -347,7 +347,7 @@ The `init()` function runs on page load and orchestrates everything:
    - Search input with 150ms debounce and auto-closing double quotes.
    - Index panel open/close with scroll locking.
    - Unified side panel (`#side-overlay`) open/close/tab-switching with scroll locking.
-   - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+I).
+   - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I).
    - Content click handlers (nav arrows, search results, chapter links, headings, copy buttons).
    - Verse context menu (left-click on verse numbers, long-press on touch).
    - Swipe navigation on touch devices.
@@ -944,7 +944,7 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 - **Book index panel** (4 tests) — Opens and closes via button, opens with Ctrl+I, shows books with OT/NT sections, hovering a book reveals its chapters.
 - **Settings modal** (4 tests) — Opens and closes, translation selector is populated, theme switching updates `data-theme` attribute, font size switching updates `data-font-size` attribute.
 - **Info modal** (3 tests) — Opens and closes, contains help sections, closes with Escape.
-- **Keyboard shortcuts** (2 tests) — Ctrl+K focuses search input, Escape closes book index.
+- **Keyboard shortcuts** (3 tests) — Ctrl+K focuses search input, Ctrl+B toggles side panel, Escape closes book index.
 - **URL state** (2 tests) — Navigation updates URL with book code, browser back restores previous state.
 - **Translation switching** (1 test) — Switching translation reloads content with new translation's text.
 - **Toast notifications** (1 test) — Toast appears when copying a verse.
