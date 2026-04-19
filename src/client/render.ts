@@ -646,7 +646,7 @@ export function renderChapterRange(
 		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}">${ICON_COPY}</button>${shareButtonHtml()}</h2>`;
 	}
 	const ilToggle = interlinearToggleHtml();
-	if (ilToggle) html += `<div style="text-align:right;margin-bottom:8px">${ilToggle}</div>`;
+	if (ilToggle) html += `<div style="text-align:center;margin: 10px 0;">${ilToggle}</div>`;
 	for (let c = chStart; c <= chEnd; c++) {
 		const ch = bd[String(c)];
 		if (!ch) continue;

@@ -274,8 +274,13 @@ async function init() {
 	const translationSelect = document.getElementById(
 		"translation-select",
 	) as HTMLSelectElement | null;
+	const headerTranslationSelect = document.getElementById(
+		"header-translation-select",
+	) as HTMLSelectElement | null;
+
+	const translations = await fetchTranslations();
+
 	if (translationSelect) {
-		const translations = await fetchTranslations();
 		translationSelect.innerHTML = translations
 			.map((t) => {
 				const info = TRANSLATION_NAMES[t];
@@ -283,73 +288,96 @@ async function init() {
 				return `<option value="${t}"${t === currentTranslation ? " selected" : ""}>${label}</option>`;
 			})
 			.join("");
+	}
 
-		translationSelect.addEventListener("change", async () => {
-			const code = translationSelect.value;
-			if (code === currentTranslation) return;
+	if (headerTranslationSelect) {
+		headerTranslationSelect.innerHTML = translations
+			.map(
+				(t) =>
+					`<option value="${t}"${t === currentTranslation ? " selected" : ""}>${t}</option>`,
+			)
+			.join("");
+	}
 
-			// Pre-parse query books with old translation's aliases
-			const state = readState();
-			const parsedBooks = state.query ? parseQueryBooks(state.query) : null;
+	async function applyTranslationChange(code: string, failedSelect: HTMLSelectElement | null) {
+		if (code === currentTranslation) return;
 
-			const requestId = ++translationRequestId;
-			content.innerHTML = `<p class="loading">${t().loadingTranslation(code)}</p>`;
+		// Pre-parse query books with old translation's aliases
+		const state = readState();
+		const parsedBooks = state.query ? parseQueryBooks(state.query) : null;
+
+		const requestId = ++translationRequestId;
+		content.innerHTML = `<p class="loading">${t().loadingTranslation(code)}</p>`;
+		try {
+			const newData = await fetchTranslation(code);
+			if (requestId !== translationRequestId) return; // stale request
+			data = newData;
+			currentTranslation = code;
+			setTranslation(code);
+			setTranslationCode(code);
+			localStorage.setItem("bible-translation", code);
+			initSearch(data);
+
+			// Sync both selects to the new value
+			if (translationSelect) translationSelect.value = code;
+			if (headerTranslationSelect) headerTranslationSelect.value = code;
+
+			// Reload descriptions for the new translation
+			const newDesc = await fetchDescriptions(code);
+			setDescriptions(newDesc);
+
+			// Reload subheadings for the new translation's language
+			const newShLang = TRANSLATION_LANG[code] || "en";
 			try {
-				const newData = await fetchTranslation(code);
-				if (requestId !== translationRequestId) return; // stale request
-				data = newData;
-				currentTranslation = code;
-				setTranslation(code);
-				setTranslationCode(code);
-				localStorage.setItem("bible-translation", code);
-				initSearch(data);
+				const shRes = await fetch(`./data/subheadings-${newShLang}.json`);
+				if (shRes.ok) setSubheadings(await shRes.json());
+			} catch {}
 
-				// Reload descriptions for the new translation
-				const newDesc = await fetchDescriptions(code);
-				setDescriptions(newDesc);
-
-				// Reload subheadings for the new translation's language
-				const newShLang = TRANSLATION_LANG[code] || "en";
-				try {
-					const shRes = await fetch(`./data/subheadings-${newShLang}.json`);
-					if (shRes.ok) setSubheadings(await shRes.json());
-				} catch {}
-
-				// Auto-switch UI language to match translation
-				const newLang = TRANSLATION_LANG[code];
-				if (newLang && newLang !== getLanguage()) {
-					setLanguage(newLang);
-					localStorage.setItem("bible-language", newLang);
-					activateSegmented(languageSegmented, newLang);
-					updateStaticText();
-				}
-
-				indexRendered = false;
-				indexScrollTo = null;
-				if (overlay.classList.contains("open")) openIndex();
-
-				// Translate query book names to new translation
-				if (parsedBooks) {
-					state.query = parsedBooks
-						.map((p) => {
-							if (!p.book) return p.original;
-							const name = displayName(p.book);
-							let result = p.rest ? `${name} ${p.rest}` : name;
-							if (p.quoted) result += ` ${p.quoted}`;
-							return result;
-						})
-						.join("; ");
-				}
-
-				searchInput.value = stateToInputText(state);
-				applyState(state);
-				replaceState(withTranslationParams(stateForUrl(state)));
-				updateFooter();
-			} catch {
-				content.innerHTML = `<p class="empty">${t().loadTranslationFailed(code)}</p>`;
-				translationSelect.value = currentTranslation;
+			// Auto-switch UI language to match translation
+			const newLang = TRANSLATION_LANG[code];
+			if (newLang && newLang !== getLanguage()) {
+				setLanguage(newLang);
+				localStorage.setItem("bible-language", newLang);
+				activateSegmented(languageSegmented, newLang);
+				updateStaticText();
 			}
-		});
+
+			indexRendered = false;
+			indexScrollTo = null;
+			if (overlay.classList.contains("open")) openIndex();
+
+			// Translate query book names to new translation
+			if (parsedBooks) {
+				state.query = parsedBooks
+					.map((p) => {
+						if (!p.book) return p.original;
+						const name = displayName(p.book);
+						let result = p.rest ? `${name} ${p.rest}` : name;
+						if (p.quoted) result += ` ${p.quoted}`;
+						return result;
+					})
+					.join("; ");
+			}
+
+			searchInput.value = stateToInputText(state);
+			applyState(state);
+			replaceState(withTranslationParams(stateForUrl(state)));
+			updateFooter();
+		} catch {
+			content.innerHTML = `<p class="empty">${t().loadTranslationFailed(code)}</p>`;
+			if (failedSelect) failedSelect.value = currentTranslation;
+		}
+	}
+
+	if (translationSelect) {
+		translationSelect.addEventListener("change", () =>
+			applyTranslationChange(translationSelect.value, translationSelect),
+		);
+	}
+	if (headerTranslationSelect) {
+		headerTranslationSelect.addEventListener("change", () =>
+			applyTranslationChange(headerTranslationSelect.value, headerTranslationSelect),
+		);
 	}
 
 	// Language segmented control
