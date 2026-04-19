@@ -357,8 +357,8 @@ The `init()` function runs on page load and orchestrates everything:
    - Theme and font size changes.
 
 **Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
-- `#side-tab-rail` — 52px icon column with three `.side-tab-btn[data-tab]` buttons (stories, settings, info) and `#side-close`
-- `#side-content` — scrollable area with three `.side-pane[data-pane]` divs; only the `.active` pane is visible (`display: flex`)
+- `#side-tab-rail` — 52px icon column with four `.side-tab-btn[data-tab]` buttons (stories, bookmarks, settings, info) and `#side-close`
+- `#side-content` — scrollable area with four `.side-pane[data-pane]` divs (stories, bookmarks, settings, info); only the `.active` pane is visible (`display: flex`)
 
 Key functions:
 - `activateSideTab(tab)` — toggles `.active` on both tab buttons and panes, saves to `localStorage` key `"side-panel-tab"`
@@ -489,15 +489,16 @@ All functions write to `$("content").innerHTML`. Functions:
 
 ### db.ts — IndexedDB Layer
 
-Database: `bible-app`, version 2. Two object stores:
+Database: `bible-app`, version 3. Three object stores:
 - `data` — Bible translation data keyed by translation code (e.g., `"NHEB"`), plus interlinear data keyed by `"interlinear-{Book}"` and Strong's dictionary keyed by `"strongs"`.
 - `highlights` — Highlight records with compound key `book:chapter:verse`.
+- `bookmarks` — Bookmark records with `keyPath: "id"`. Each record: `{ id: string, book?: string, chapter?: number, verse?: number, query?: string, addedAt: number }`. `id` is a structured key (`book:chapter:verse`, `book:chapter`, `book`, or `q:query`). Records are returned sorted by `addedAt` descending.
 
 Uses a persistent connection — opened once on first use and reused for all subsequent operations. The connection automatically re-opens if the browser closes it under memory pressure.
 
-Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`.
+Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`, `getBookmarks`, `addBookmark`, `removeBookmark`, `hasBookmark`.
 
-`getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup. `loadInterlinearBook()`/`saveInterlinearBook()` cache interlinear data per book in IndexedDB. `loadStrongsDict()`/`saveStrongsDict()` cache the Strong's Concordance dictionary.
+`getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup. `loadInterlinearBook()`/`saveInterlinearBook()` cache interlinear data per book in IndexedDB. `loadStrongsDict()`/`saveStrongsDict()` cache the Strong's Concordance dictionary. `getBookmarks()` returns all bookmark records sorted by `addedAt` descending. `hasBookmark(id)` checks whether a bookmark exists for the given id.
 
 ### i18n.ts — Internationalization
 
@@ -509,6 +510,7 @@ Two language tables: English (`EN`) and Finnish (`FI`), both implementing the `S
 - Index panel labels (Old Testament, New Testament)
 - Footer text, favicon attribution, dictionary link (`footerDictionary`), and styleguide attribution (`footerStyleguide`)
 - Feature strings (copied, copy verse, copy both, highlight, remove highlight, show more)
+- Bookmark strings (bookmarksTitle, bookmarkThis, removeBookmark, bookmarksEmpty, bookmarkAdded, bookmarkRemoved)
 - Share link strings (shareWith, shareWithout, linkCopied)
 - Interlinear strings (interlinear, interlinearTooltip, strongsDef, pronunciation, partOfSpeech, morphology, crossReferences, closePanel)
 - Deuterocanonical section label

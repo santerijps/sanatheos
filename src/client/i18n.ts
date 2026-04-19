@@ -90,6 +90,14 @@ interface Strings {
 	storiesTitle: string;
 	storiesFilterPlaceholder: string;
 	storiesEmpty: string;
+
+	// Bookmarks
+	bookmarksTitle: string;
+	bookmarkThis: string;
+	removeBookmark: string;
+	bookmarksEmpty: string;
+	bookmarkAdded: string;
+	bookmarkRemoved: string;
 }
 
 const EN: Strings = {
@@ -159,6 +167,7 @@ const EN: Strings = {
 	infoFeaturesTitle: "Features",
 	infoFeaturesItems: [
 		"<strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.",
+		"<strong>Bookmarks</strong> &mdash; Click the bookmark icon on a section heading to bookmark the current passage, or right-click a verse number to bookmark that specific verse. Bookmarks are saved across sessions and listed in the Bookmarks tab of the side panel.",
 		"<strong>Copy</strong> &mdash; Click the <strong>&#128203;</strong> button on a section heading to copy displayed verses. In parallel mode, both translations are included.",
 		"<strong>Descriptions</strong> &mdash; When reading a full chapter or book, a short description is shown below the title summarizing the content.",
 		"<strong>Swipe navigation</strong> &mdash; On touch devices, swipe left or right to move between chapters.",
@@ -209,6 +218,13 @@ const EN: Strings = {
 	storiesTitle: "Bible Stories",
 	storiesFilterPlaceholder: "Filter stories\u2026",
 	storiesEmpty: "No stories match your filter.",
+
+	bookmarksTitle: "Bookmarks",
+	bookmarkThis: "Bookmark",
+	removeBookmark: "Remove bookmark",
+	bookmarksEmpty: "No bookmarks yet.",
+	bookmarkAdded: "Bookmarked!",
+	bookmarkRemoved: "Bookmark removed",
 };
 
 const FI: Strings = {
@@ -278,6 +294,7 @@ const FI: Strings = {
 	infoFeaturesTitle: "Ominaisuudet",
 	infoFeaturesItems: [
 		"<strong>Korostus</strong> &mdash; Napsauta hiiren oikealla jaenumeroa ja valitse korostusväri (keltainen, vihreä, sininen, pinkki, oranssi). Valitse &ldquo;Poista korostus&rdquo; poistaaksesi sen.",
+		"<strong>Kirjanmerkit</strong> &mdash; Napsauta kirjanmerkki-kuvaketta otsikon vieressä lisätäksesi nykyisen kohdan kirjanmerkkeihin, tai napsauta hiiren oikealla jaenumeroa lisätäksesi kirjanmerkin yksittäiselle jakeelle. Kirjanmerkit tallennetaan ja löytyvät sivupaneelin Kirjanmerkit-välilehdeltä.",
 		"<strong>Kopioi</strong> &mdash; Napsauta <strong>&#128203;</strong>-painiketta otsikon vieressä kopioidaksesi näytetyt jakeet. Rinnakkaisnäkymässä molemmat käännökset kopioidaan.",
 		"<strong>Kuvaukset</strong> &mdash; Lukiessasi kokonaista lukua tai kirjaa otsikon alla näkyy lyhyt kuvaus sisällöstä.",
 		"<strong>Pyyhkäisynavigaatio</strong> &mdash; Kosketuslaitteilla pyyhkäise vasemmalle tai oikealle siirtyäksesi lukujen välillä.",
@@ -329,6 +346,13 @@ const FI: Strings = {
 	storiesTitle: "Raamatun kertomukset",
 	storiesFilterPlaceholder: "Suodata kertomuksia\u2026",
 	storiesEmpty: "Ei kertomuksia hakusanalla.",
+
+	bookmarksTitle: "Kirjanmerkit",
+	bookmarkThis: "Lisää kirjanmerkki",
+	removeBookmark: "Poista kirjanmerkki",
+	bookmarksEmpty: "Ei kirjanmerkkejä.",
+	bookmarkAdded: "Kirjanmerkki lisätty!",
+	bookmarkRemoved: "Kirjanmerkki poistettu",
 };
 
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };

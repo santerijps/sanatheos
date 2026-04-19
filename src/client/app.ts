@@ -5,6 +5,7 @@ import type {
 	DescriptionData,
 	InterlinearBook,
 	StrongsDict,
+	Bookmark,
 } from "./types.ts";
 import {
 	loadBible,
@@ -16,6 +17,10 @@ import {
 	saveInterlinearBook,
 	loadStrongsDict,
 	saveStrongsDict,
+	getBookmarks,
+	addBookmark,
+	removeBookmark,
+	hasBookmark,
 } from "./db.ts";
 import {
 	initSearch,
@@ -201,6 +206,8 @@ async function init() {
 	const storiesFilter = document.getElementById("stories-filter") as HTMLInputElement;
 	const storiesList = document.getElementById("stories-list")!;
 	const storiesTitleEl = document.getElementById("stories-title")!;
+	const bookmarksList = document.getElementById("bookmarks-list")!;
+	const bookmarksTitleEl = document.getElementById("bookmarks-title")!;
 
 	// Determine initial translation from URL or localStorage
 	const initialState = readState();
@@ -707,6 +714,10 @@ async function init() {
 				storiesFilter.focus();
 			}
 		}
+		if ((tab || lastActiveTab) === "bookmarks") {
+			bookmarksTitleEl.textContent = t().bookmarksTitle;
+			await renderBookmarksList();
+		}
 	}
 
 	function closeSidePanel() {
@@ -731,6 +742,11 @@ async function init() {
 				loadStoriesData().then((stories) =>
 					renderStoriesList(stories, storiesFilter.value),
 				);
+			}
+			// Load bookmarks when switching to bookmarks tab
+			if (tab === "bookmarks") {
+				bookmarksTitleEl.textContent = t().bookmarksTitle;
+				renderBookmarksList();
 			}
 		});
 	});
@@ -842,6 +858,52 @@ async function init() {
 		searchInput.dispatchEvent(new Event("input"));
 	});
 
+	// --- Bookmarks panel ---
+
+	async function renderBookmarksList() {
+		const s = t();
+		const items = await getBookmarks();
+		if (items.length === 0) {
+			bookmarksList.innerHTML = `<p class="bookmarks-empty">${escapeHtml(s.bookmarksEmpty)}</p>`;
+			return;
+		}
+		let html = "";
+		for (const bm of items) {
+			const label = bookmarkNavText(bm);
+			html += `<div class="bookmark-item">
+				<button class="bookmark-item-nav" type="button" data-query="${escapeHtml(label)}">${escapeHtml(label)}</button>
+				<button class="bookmark-item-remove" type="button" data-id="${escapeHtml(bm.id)}" title="${escapeHtml(s.removeBookmark)}" aria-label="${escapeHtml(s.removeBookmark)}">&times;</button>
+			</div>`;
+		}
+		bookmarksList.innerHTML = html;
+	}
+
+	bookmarksList.addEventListener("click", async (e) => {
+		const navBtn = (e.target as HTMLElement).closest(
+			".bookmark-item-nav",
+		) as HTMLElement | null;
+		if (navBtn) {
+			const query = navBtn.dataset.query;
+			if (!query) return;
+			closeSidePanel();
+			searchInput.value = query;
+			searchInput.dispatchEvent(new Event("input"));
+			return;
+		}
+		const removeBtn = (e.target as HTMLElement).closest(
+			".bookmark-item-remove",
+		) as HTMLElement | null;
+		if (removeBtn) {
+			const id = removeBtn.dataset.id;
+			if (!id) return;
+			await removeBookmark(id);
+			await renderBookmarksList();
+			await syncBookmarkBtn();
+			showToast(t().bookmarkRemoved);
+			return;
+		}
+	});
+
 	// Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "Escape") {
@@ -897,7 +959,7 @@ async function init() {
 				.forEach((w) => w.classList.remove("share-open"));
 		}
 	});
-	content.addEventListener("click", (e) => {
+	content.addEventListener("click", async (e) => {
 		// Click on nav arrow → navigate to prev/next chapter/verse
 		const arrow = (e.target as HTMLElement).closest(".nav-arrow") as HTMLElement;
 		if (arrow && !arrow.classList.contains("nav-disabled")) {
@@ -1128,6 +1190,35 @@ async function init() {
 			}
 			return;
 		}
+
+		// Click on bookmark button → toggle bookmark for current view
+		const bookmarkBtn = (e.target as HTMLElement).closest(
+			".bookmark-btn",
+		) as HTMLElement | null;
+		if (bookmarkBtn) {
+			e.preventDefault();
+			const s = readState();
+			const id = currentBookmarkId();
+			if (!id) return;
+			const alreadyBookmarked = await hasBookmark(id);
+			if (alreadyBookmarked) {
+				await removeBookmark(id);
+				showToast(t().bookmarkRemoved);
+			} else {
+				const bm: Bookmark = {
+					id,
+					book: s.book,
+					chapter: s.chapter,
+					verse: s.verse,
+					query: s.query,
+					addedAt: Date.now(),
+				};
+				await addBookmark(bm);
+				showToast(t().bookmarkAdded);
+			}
+			await syncBookmarkBtn();
+			return;
+		}
 	});
 
 	// --- Verse context menu (right-click / long-press on verse sup) ---
@@ -1138,7 +1229,7 @@ async function init() {
 		verseMenu.innerHTML = "";
 	}
 
-	function openVerseMenu(verseEl: HTMLElement, x: number, y: number) {
+	async function openVerseMenu(verseEl: HTMLElement, x: number, y: number) {
 		const book = verseEl.dataset.book!;
 		const chapter = +verseEl.dataset.chapter!;
 		const verse = +verseEl.dataset.verse!;
@@ -1158,6 +1249,11 @@ async function init() {
 
 		// Copy verse
 		html += `<button class="verse-menu-item" data-action="copy">&#128203; ${t().copyVerse}</button>`;
+
+		// Bookmark verse
+		const bmId = `${book}:${chapter}:${verse}`;
+		const isVerseBookmarked = await hasBookmark(bmId);
+		html += `<button class="verse-menu-item" data-action="bookmark">&#128278; ${isVerseBookmarked ? escapeHtml(t().removeBookmark) : escapeHtml(t().bookmarkThis)}</button>`;
 
 		// Highlight colors
 		html += `<div class="verse-menu-colors">`;
@@ -1200,6 +1296,18 @@ async function init() {
 					const full = `${sourceLabel}\n${displayName(book)} ${chapter}:${verse}\n${verse} ${text}`;
 					navigator.clipboard.writeText(full).then(() => showToast(t().copied));
 				}
+			} else if (action === "bookmark") {
+				const bmId = `${book}:${chapter}:${verse}`;
+				const alreadyBookmarked = await hasBookmark(bmId);
+				if (alreadyBookmarked) {
+					await removeBookmark(bmId);
+					showToast(t().bookmarkRemoved);
+				} else {
+					const bm: Bookmark = { id: bmId, book, chapter, verse, addedAt: Date.now() };
+					await addBookmark(bm);
+					showToast(t().bookmarkAdded);
+				}
+				await syncBookmarkBtn();
 			} else if (action === "highlight") {
 				const color = target.dataset.color as HighlightColor;
 				await setHighlight({ book, chapter, verse, color });
@@ -1480,6 +1588,40 @@ function stateForUrl(s: AppState): AppState {
 	return s;
 }
 
+function currentBookmarkId(): string {
+	const s = readState();
+	if (s.book && s.chapter && s.verse) return `${s.book}:${s.chapter}:${s.verse}`;
+	if (s.book && s.chapter) return `${s.book}:${s.chapter}`;
+	if (s.book) return s.book;
+	if (s.query) return `q:${s.query}`;
+	return "";
+}
+
+function bookmarkNavText(bm: Bookmark): string {
+	if (bm.book && bm.chapter !== undefined && bm.verse !== undefined)
+		return `${displayName(bm.book)} ${bm.chapter}:${bm.verse}`;
+	if (bm.book && bm.chapter !== undefined) return `${displayName(bm.book)} ${bm.chapter}`;
+	if (bm.book) return displayName(bm.book);
+	if (bm.query) return bm.query;
+	return bm.id;
+}
+
+async function syncBookmarkBtn() {
+	const btn = document.querySelector<HTMLElement>("#content .bookmark-btn");
+	if (!btn) return;
+	const id = currentBookmarkId();
+	if (!id) {
+		btn.classList.remove("bookmark-active");
+		btn.title = t().bookmarkThis;
+		btn.setAttribute("aria-label", t().bookmarkThis);
+		return;
+	}
+	const active = await hasBookmark(id);
+	btn.classList.toggle("bookmark-active", active);
+	btn.title = active ? t().removeBookmark : t().bookmarkThis;
+	btn.setAttribute("aria-label", active ? t().removeBookmark : t().bookmarkThis);
+}
+
 async function applyState(s: AppState) {
 	const useParallel = !!parallelData && !!parallelTranslation;
 
@@ -1577,6 +1719,7 @@ async function applyState(s: AppState) {
 	}
 	updateTitle(s);
 	updateFooter();
+	syncBookmarkBtn();
 }
 
 const TRANSLATION_NAMES: Record<string, { name: string; language: string }> = {
@@ -1613,6 +1756,8 @@ function updateStaticText() {
 	// Side tab button titles
 	const tabStories = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="stories"]');
 	if (tabStories) tabStories.title = s.storiesTitle;
+	const tabBookmarks = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="bookmarks"]');
+	if (tabBookmarks) tabBookmarks.title = s.bookmarksTitle;
 	const tabSettings = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="settings"]');
 	if (tabSettings) tabSettings.title = s.settings;
 	const tabInfo = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="info"]');

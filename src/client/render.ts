@@ -30,6 +30,7 @@ export function setTranslationCode(code: string) {
 
 const ICON_COPY = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
 const ICON_LINK = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`;
+const ICON_BOOKMARK = `<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>`;
 
 let descriptions: DescriptionData = [];
 let secondaryDescriptions: DescriptionData = [];
@@ -133,6 +134,10 @@ function descriptionHtml(text: string): string {
 
 function shareButtonHtml(): string {
 	return ` <span class="share-wrap"><button class="share-btn" title="${esc(t().shareWithout)}" aria-label="${esc(t().shareWithout)}">${ICON_LINK}</button><span class="share-dropdown"><button class="share-opt" data-share="with">${esc(t().shareWith)} (${esc(translationCode)})</button><button class="share-opt" data-share="without">${esc(t().shareWithout)}</button></span></span>`;
+}
+
+function bookmarkButtonHtml(): string {
+	return `<button class="bookmark-btn" title="${esc(t().bookmarkThis)}" aria-label="${esc(t().bookmarkThis)}">${ICON_BOOKMARK}</button>`;
 }
 
 function getHighlightClass(book: string, chapter: number, verse: number): string {
@@ -538,7 +543,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
 		.sort((a, b) => a - b);
 	let html = navArrowsHtml(prev, next);
 	html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-	html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">${ICON_COPY}</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
+	html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>`;
 	if (chapter === 1) html += descriptionHtml(getBookDescription(book));
 	html += descriptionHtml(getChapterDescription(book, chapter));
 
@@ -615,7 +620,7 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 	}
 
 	$("content").innerHTML = `
-    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">${ICON_COPY}</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>
+    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>
     ${verseHtml}
     <div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
 	window.scrollTo(0, 0);
@@ -643,11 +648,11 @@ export function renderChapterRange(
 	// For cross-chapter verse ranges (e.g. Gen 18:16-19:29), emit a titled section heading
 	if (verseStart !== undefined && verseEnd !== undefined) {
 		const rangeLabel = `${displayName(book)} ${chStart}:${verseStart}\u2013${chEnd}:${verseEnd}`;
-		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}">${ICON_COPY}</button>${shareButtonHtml()}</h2>`;
+		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}</h2>`;
 	} else {
 		// Plain chapter range (e.g. Genesis 1-2): emit a section heading with copy/share
 		const rangeLabel = `${displayName(book)} ${chStart}\u2013${chEnd}`;
-		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}">${ICON_COPY}</button>${shareButtonHtml()}</h2>`;
+		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}</h2>`;
 	}
 	const ilToggle = interlinearToggleHtml();
 	if (ilToggle) html += `<div style="text-align:center;margin: 10px 0;">${ilToggle}</div>`;
@@ -700,7 +705,7 @@ export function renderVerseSegments(
 	html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
 	const segNums: number[] = [];
 	for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
-	html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">${ICON_COPY}</button>${shareButtonHtml()}${interlinearToggleHtml()}</h2>`;
+	html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>`;
 
 	const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
 	const ilChapter = ilBook?.[String(chapter)];

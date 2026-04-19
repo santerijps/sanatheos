@@ -88,6 +88,12 @@ A secondary translation can be selected in Settings to display two translations 
 
 Click (or long-press on touch devices) a verse number to open a context menu with highlighting options. Five colors are available: yellow, green, blue, pink, and orange. Highlights are stored locally in IndexedDB and persist across sessions.
 
+### Bookmarks
+
+Save any passage for quick return. Click the bookmark icon (🔖) on a section heading to bookmark the current chapter, verse, or range. To bookmark an individual verse, right-click (or long-press) its verse number and choose Bookmark from the context menu. The bookmark icon fills to indicate a saved bookmark; clicking it again removes it.
+
+Saved bookmarks are listed in the **Bookmarks** tab of the side panel (bookmark ribbon icon). Clicking a bookmark navigates directly to that passage; the ×&thinsp;button removes it. Bookmark labels automatically adapt to the active UI language.
+
 ### Copy to Clipboard
 
 Click the clipboard button next to a section heading to copy all displayed verses as plain text. In parallel mode, both translations are included with labels. Individual verses can also be copied from the verse context menu.
@@ -102,9 +108,10 @@ The browser's print function (`Ctrl+P`) produces a clean, print-optimized layout
 
 ### Side Panel
 
-A single menu button in the header opens a unified right-side drawer with three tabs accessible via an icon rail on the left edge of the panel:
+A single menu button in the header opens a unified right-side drawer with four tabs accessible via an icon rail on the left edge of the panel:
 
 - **Stories** (open book) — Browse and filter Bible stories by name or category
+- **Bookmarks** (bookmark ribbon) — View, navigate, and remove saved bookmarks
 - **Settings** (gear) — Switch translation, parallel translation, theme, language, and font size
 - **Help** (info circle) — Search syntax guide, keyboard shortcuts, and feature overview
 

@@ -84,3 +84,12 @@ export interface StrongsEntry {
 }
 
 export type StrongsDict = Record<string, StrongsEntry>;
+
+export interface Bookmark {
+	id: string;
+	book?: string;
+	chapter?: number;
+	verse?: number;
+	query?: string;
+	addedAt: number;
+}

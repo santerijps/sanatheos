@@ -835,6 +835,89 @@ mark {
   font: 14px var(--sans);
 }
 
+/* --- Bookmarks pane --- */
+#bookmarks-header {
+  padding: 20px 20px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+#bookmarks-header h2 {
+  font: 600 15px/1 var(--sans);
+  margin: 0;
+  color: var(--text);
+}
+
+#bookmarks-list {
+  padding: 8px 8px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.bookmarks-empty {
+  padding: 24px 12px;
+  text-align: center;
+  color: var(--subtle);
+  font: 14px var(--sans);
+}
+
+.bookmark-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 8px;
+  padding: 2px 4px 2px 2px;
+}
+
+.bookmark-item:hover {
+  background: var(--hover);
+}
+
+.bookmark-item-nav {
+  flex: 1;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  outline: none;
+  text-align: left;
+  border: none;
+  background: none;
+  color: var(--text);
+  font: 600 13px/1.3 var(--sans);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.bookmark-item-nav:hover {
+  color: var(--accent);
+}
+
+.bookmark-item-nav:focus {
+  box-shadow: inset 0 0 0 2px var(--accent-focus);
+}
+
+.bookmark-item-remove {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: none;
+  color: var(--subtle);
+  font-size: 16px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+}
+
+.bookmark-item-remove:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
 /* --- Settings pane --- */
 #settings-modal-body {
   overflow-y: auto;
@@ -1385,6 +1468,37 @@ mark {
 .copy-btn.copy-success {
   color: var(--accent);
   transition: color 0.15s;
+}
+
+/* === Bookmark Button === */
+.bookmark-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  vertical-align: middle;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  padding: 4px;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--subtle);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  margin-left: 4px;
+}
+
+.bookmark-btn:hover {
+  background: var(--hover);
+  color: var(--text);
+}
+
+.bookmark-btn.bookmark-active {
+  color: var(--accent);
+}
+
+.bookmark-btn.bookmark-active .btn-icon {
+  fill: var(--accent);
 }
 
 .btn-icon {

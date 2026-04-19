@@ -3,6 +3,7 @@ import { setLanguage, t } from "../src/client/i18n.ts";
 import type {
 	Highlight,
 	HighlightColor,
+	Bookmark,
 	BookDescription,
 	DescriptionData,
 } from "../src/client/types.ts";
@@ -116,6 +117,12 @@ describe("i18n — all new keys are non-empty strings", () => {
 		"copyVerse",
 		"highlight",
 		"removeHighlight",
+		"bookmarksTitle",
+		"bookmarkThis",
+		"removeBookmark",
+		"bookmarksEmpty",
+		"bookmarkAdded",
+		"bookmarkRemoved",
 	] as const;
 
 	test("EN: all new keys are non-empty", () => {
@@ -134,6 +141,94 @@ describe("i18n — all new keys are non-empty strings", () => {
 			expect(typeof s[key]).toBe("string");
 			expect((s[key] as string).length).toBeGreaterThan(0);
 		}
+	});
+});
+
+// ---------------------------------------------------------------------------
+// i18n — bookmark strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — bookmark strings (EN)", () => {
+	beforeEach(() => setLanguage("en"));
+
+	test("bookmarksTitle is 'Bookmarks'", () => {
+		expect(t().bookmarksTitle).toBe("Bookmarks");
+	});
+
+	test("bookmarkThis is 'Bookmark'", () => {
+		expect(t().bookmarkThis).toBe("Bookmark");
+	});
+
+	test("removeBookmark is 'Remove bookmark'", () => {
+		expect(t().removeBookmark).toBe("Remove bookmark");
+	});
+
+	test("bookmarksEmpty is non-empty", () => {
+		expect(t().bookmarksEmpty.length).toBeGreaterThan(0);
+	});
+
+	test("bookmarkAdded and bookmarkRemoved are non-empty", () => {
+		expect(t().bookmarkAdded.length).toBeGreaterThan(0);
+		expect(t().bookmarkRemoved.length).toBeGreaterThan(0);
+	});
+});
+
+describe("i18n — bookmark strings (FI)", () => {
+	beforeEach(() => setLanguage("fi"));
+
+	test("bookmarksTitle is 'Kirjanmerkit'", () => {
+		expect(t().bookmarksTitle).toBe("Kirjanmerkit");
+	});
+
+	test("bookmarkThis is non-empty in Finnish", () => {
+		expect(t().bookmarkThis.length).toBeGreaterThan(0);
+	});
+
+	test("removeBookmark is non-empty in Finnish", () => {
+		expect(t().removeBookmark.length).toBeGreaterThan(0);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Types — Bookmark shape validation
+// ---------------------------------------------------------------------------
+
+describe("Bookmark type", () => {
+	test("verse-level bookmark has correct shape", () => {
+		const bm: Bookmark = {
+			id: "John:3:16",
+			book: "John",
+			chapter: 3,
+			verse: 16,
+			addedAt: Date.now(),
+		};
+		expect(bm.id).toBe("John:3:16");
+		expect(bm.book).toBe("John");
+		expect(bm.chapter).toBe(3);
+		expect(bm.verse).toBe(16);
+		expect(typeof bm.addedAt).toBe("number");
+	});
+
+	test("chapter-level bookmark omits verse", () => {
+		const bm: Bookmark = { id: "Genesis:1", book: "Genesis", chapter: 1, addedAt: Date.now() };
+		expect(bm.verse).toBeUndefined();
+	});
+
+	test("query-level bookmark uses query field", () => {
+		const bm: Bookmark = { id: "q:grace", query: "grace", addedAt: Date.now() };
+		expect(bm.book).toBeUndefined();
+		expect(bm.query).toBe("grace");
+	});
+
+	test("bookmark id key construction patterns", () => {
+		// verse-level
+		expect(`John:3:16`).toBe("John:3:16");
+		// chapter-level
+		expect(`Genesis:1`).toBe("Genesis:1");
+		// book-level
+		expect(`Revelation`).toBe("Revelation");
+		// query-level
+		expect(`q:grace`).toBe("q:grace");
 	});
 });
 
@@ -238,12 +333,13 @@ describe("i18n — info features section (EN)", () => {
 		expect(items.length).toBeGreaterThan(0);
 	});
 
-	test("infoFeaturesItems mentions highlights, copy, swipe, print", () => {
+	test("infoFeaturesItems mentions highlights, copy, swipe, print, bookmarks", () => {
 		const joined = t().infoFeaturesItems.join(" ").toLowerCase();
 		expect(joined).toContain("highlight");
 		expect(joined).toContain("copy");
 		expect(joined).toContain("swipe");
 		expect(joined).toContain("print");
+		expect(joined).toContain("bookmark");
 	});
 
 	test("infoSettingsText mentions parallel translation and theme", () => {
