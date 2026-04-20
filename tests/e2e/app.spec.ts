@@ -184,7 +184,7 @@ test.describe("Book index panel", () => {
 /** Open the side panel and switch to a specific tab. */
 async function openPanelTab(
 	page: Page,
-	tab: "stories" | "parables" | "theophanies" | "bookmarks" | "settings" | "info",
+	tab: "stories" | "parables" | "theophanies" | "typology" | "bookmarks" | "settings" | "info",
 ) {
 	await page.click("#panel-btn");
 	await expect(page.locator("#side-overlay")).toHaveClass(/open/);
@@ -841,6 +841,115 @@ test.describe("Theophanies pane", () => {
 		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
 		const overflowY = await page
 			.locator("#theophanies-list")
+			.evaluate((el) => getComputedStyle(el).overflowY);
+		expect(overflowY).toBe("auto");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Typology pane
+// ---------------------------------------------------------------------------
+
+test.describe("Typology pane", () => {
+	test("switching to typology tab shows typology pane", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#panel-btn");
+		await page.click('.side-tab-btn[data-tab="typology"]');
+		await expect(page.locator('.side-pane[data-pane="typology"]')).toHaveClass(/active/);
+		await expect(page.locator('.side-pane[data-pane="theophanies"]')).not.toHaveClass(/active/);
+	});
+
+	test("typology list is populated with items", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		await page.waitForSelector("#typology-list .story-item", { timeout: 10_000 });
+		const items = page.locator("#typology-list .story-item");
+		expect(await items.count()).toBeGreaterThan(0);
+	});
+
+	test("typology list shows category labels", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		await page.waitForSelector("#typology-list .stories-category-label", {
+			timeout: 10_000,
+		});
+		const labels = page.locator("#typology-list .stories-category-label");
+		const texts = await labels.allTextContents();
+		expect(texts.some((t) => t.includes("Types of Christ"))).toBe(true);
+	});
+
+	test("typology items show title, description, and reference", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		await page.waitForSelector("#typology-list .story-item", { timeout: 10_000 });
+		const firstItem = page.locator("#typology-list .story-item").first();
+		await expect(firstItem.locator(".story-item-title")).toBeVisible();
+		await expect(firstItem.locator(".story-item-desc")).toBeVisible();
+		await expect(firstItem.locator(".story-item-ref")).toBeVisible();
+	});
+
+	test("filter narrows typology results", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		await page.waitForSelector("#typology-list .story-item", { timeout: 10_000 });
+		const totalBefore = await page.locator("#typology-list .story-item").count();
+
+		await page.fill("#typology-filter", "Moses");
+		await page.waitForTimeout(100);
+		const totalAfter = await page.locator("#typology-list .story-item").count();
+		expect(totalAfter).toBeLessThan(totalBefore);
+		expect(totalAfter).toBeGreaterThan(0);
+	});
+
+	test("filter input is styled (has border-radius 8px)", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		const filter = page.locator("#typology-filter");
+		await expect(filter).toBeVisible();
+		const borderRadius = await filter.evaluate((el) => getComputedStyle(el).borderRadius);
+		expect(borderRadius).toBe("8px");
+	});
+
+	test("unmatched filter shows no-results message", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		await page.waitForSelector("#typology-list .story-item", { timeout: 10_000 });
+
+		await page.fill("#typology-filter", "xyznonexistent999");
+		await page.waitForTimeout(100);
+		await expect(page.locator("#typology-list .stories-empty")).toBeVisible();
+		await expect(page.locator("#typology-list .story-item")).toHaveCount(0);
+	});
+
+	test("clicking a typology entry closes panel and navigates", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		await page.waitForSelector("#typology-list .story-item", { timeout: 10_000 });
+
+		const firstItem = page.locator("#typology-list .story-item").first();
+		await firstItem.click();
+
+		// Panel should close
+		await expect(page.locator("#side-overlay")).not.toHaveClass(/open/);
+		// Search input should have been populated with the reference
+		await expect(page.locator("#search-input")).not.toHaveValue("", { timeout: 5_000 });
+	});
+
+	test("typology list is scrollable (overflow-y auto)", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "typology");
+		await page.waitForSelector("#typology-list .story-item", { timeout: 10_000 });
+		const overflowY = await page
+			.locator("#typology-list")
 			.evaluate((el) => getComputedStyle(el).overflowY);
 		expect(overflowY).toBe("auto");
 	});

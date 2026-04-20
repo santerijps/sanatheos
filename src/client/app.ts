@@ -9,6 +9,7 @@ import type {
 	StoryEntry,
 	ParableEntry,
 	TheophaniesEntry,
+	TypologyEntry,
 } from "./types.ts";
 import {
 	loadBible,
@@ -30,6 +31,8 @@ import {
 	saveParables,
 	loadTheophanies,
 	saveTheophanies,
+	loadTypology,
+	saveTypology,
 } from "./db.ts";
 import {
 	initSearch,
@@ -221,6 +224,9 @@ async function init() {
 	const theophaniesFilter = document.getElementById("theophanies-filter") as HTMLInputElement;
 	const theophaniesList = document.getElementById("theophanies-list")!;
 	const theophaniesTitleEl = document.getElementById("theophanies-title")!;
+	const typologyFilter = document.getElementById("typology-filter") as HTMLInputElement;
+	const typologyList = document.getElementById("typology-list")!;
+	const typologyTitleEl = document.getElementById("typology-title")!;
 	const bookmarksList = document.getElementById("bookmarks-list")!;
 	const bookmarksTitleEl = document.getElementById("bookmarks-title")!;
 
@@ -751,6 +757,17 @@ async function init() {
 				theophaniesFilter.focus();
 			}
 		}
+		// If opening typology tab, load data and reset filter
+		if ((tab || lastActiveTab) === "typology") {
+			typologyTitleEl.textContent = t().typologyTitle;
+			typologyFilter.placeholder = t().typologyFilterPlaceholder;
+			typologyFilter.value = "";
+			const typology = await loadTypologyData();
+			renderTypologyList(typology, "");
+			if (!window.matchMedia("(hover: none)").matches) {
+				typologyFilter.focus();
+			}
+		}
 		if ((tab || lastActiveTab) === "bookmarks") {
 			bookmarksTitleEl.textContent = t().bookmarksTitle;
 			await renderBookmarksList();
@@ -794,6 +811,14 @@ async function init() {
 				theophaniesFilter.placeholder = t().theophaniesFilterPlaceholder;
 				loadTheophaniesData().then((theophanies) =>
 					renderTheophaniesList(theophanies, theophaniesFilter.value),
+				);
+			}
+			// Load typology when switching to typology tab
+			if (tab === "typology") {
+				typologyTitleEl.textContent = t().typologyTitle;
+				typologyFilter.placeholder = t().typologyFilterPlaceholder;
+				loadTypologyData().then((typology) =>
+					renderTypologyList(typology, typologyFilter.value),
 				);
 			}
 			// Load bookmarks when switching to bookmarks tab
@@ -1068,6 +1093,96 @@ async function init() {
 	});
 
 	theophaniesList.addEventListener("click", (e) => {
+		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
+		if (!item) return;
+		const ref = item.dataset.ref;
+		if (!ref) return;
+		closeSidePanel();
+		searchInput.value = ref;
+		searchInput.dispatchEvent(new Event("input"));
+	});
+
+	// --- Typology panel ---
+
+	let typologyData: TypologyEntry[] | null = null;
+
+	async function loadTypologyData(): Promise<TypologyEntry[]> {
+		if (typologyData) return typologyData;
+		const cached = await loadTypology();
+		if (cached) {
+			typologyData = cached;
+			return typologyData;
+		}
+		const res = await fetch("./data/typology.json");
+		typologyData = (await res.json()) as TypologyEntry[];
+		await saveTypology(typologyData);
+		return typologyData;
+	}
+
+	function renderTypologyList(typology: TypologyEntry[], filter: string) {
+		const s = t();
+		const lang = getLanguage();
+		const getTitle = (ty: TypologyEntry) =>
+			lang === "fi" && ty.title_fi ? ty.title_fi : ty.title;
+		const getDesc = (ty: TypologyEntry) =>
+			lang === "fi" && ty.description_fi ? ty.description_fi : ty.description;
+		const getCatLabel = (cat: string) => {
+			const map: Record<string, string> = {
+				"Types of Christ (Persons)": s.typologyCatPersons,
+				"Types of Christ (Events)": s.typologyCatEvents,
+				"Types of the Theotokos": s.typologyCatTheotokos,
+				"Types of the Church & Sacraments": s.typologyCatChurch,
+				"Types of the Cross": s.typologyCatCross,
+				"Additional Types": s.typologyCatAdditional,
+			};
+			return map[cat] ?? cat;
+		};
+
+		const q = filter.trim().toLowerCase();
+		const filtered = q
+			? typology.filter(
+					(ty) =>
+						getTitle(ty).toLowerCase().includes(q) ||
+						getDesc(ty).toLowerCase().includes(q) ||
+						getCatLabel(ty.category).toLowerCase().includes(q),
+				)
+			: typology;
+
+		if (filtered.length === 0) {
+			typologyList.innerHTML = `<p class="stories-empty">${s.typologyEmpty}</p>`;
+			return;
+		}
+
+		const categories: string[] = [];
+		const byCategory: Record<string, TypologyEntry[]> = {};
+		for (const ty of filtered) {
+			if (!byCategory[ty.category]) {
+				byCategory[ty.category] = [];
+				categories.push(ty.category);
+			}
+			byCategory[ty.category].push(ty);
+		}
+
+		let html = "";
+		for (const cat of categories) {
+			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
+			for (const ty of byCategory[cat]) {
+				html += `<button class="story-item" type="button" data-ref="${escapeHtml(ty.ref)}">
+					<span class="story-item-title">${escapeHtml(getTitle(ty))}</span>
+					<span class="story-item-desc">${escapeHtml(getDesc(ty))}</span>
+					<span class="story-item-ref">${escapeHtml(localizeRef(ty.ref))}</span>
+				</button>`;
+			}
+		}
+		typologyList.innerHTML = html;
+	}
+
+	typologyFilter.addEventListener("input", async () => {
+		const typology = await loadTypologyData();
+		renderTypologyList(typology, typologyFilter.value);
+	});
+
+	typologyList.addEventListener("click", (e) => {
 		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
 		if (!item) return;
 		const ref = item.dataset.ref;
@@ -1981,6 +2096,8 @@ function updateStaticText() {
 		'.side-tab-btn[data-tab="theophanies"]',
 	);
 	if (tabTheophanies) tabTheophanies.title = s.theophaniesTitle;
+	const tabTypology = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="typology"]');
+	if (tabTypology) tabTypology.title = s.typologyTitle;
 	const tabBookmarks = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="bookmarks"]');
 	if (tabBookmarks) tabBookmarks.title = s.bookmarksTitle;
 	const tabSettings = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="settings"]');

@@ -724,14 +724,16 @@ mark {
 /* --- Stories & Parables panes --- */
 #stories-header,
 #parables-header,
-#theophanies-header {
+#theophanies-header,
+#typology-header {
   padding: 20px 20px 0;
   flex-shrink: 0;
 }
 
 #stories-title,
 #parables-title,
-#theophanies-title {
+#theophanies-title,
+#typology-title {
   margin: 0;
   font: 600 16px/1 var(--sans);
   letter-spacing: 0.02em;
@@ -740,14 +742,16 @@ mark {
 
 #stories-search-wrap,
 #parables-search-wrap,
-#theophanies-search-wrap {
+#theophanies-search-wrap,
+#typology-search-wrap {
   padding: 12px 16px 0;
   flex-shrink: 0;
 }
 
 #stories-filter,
 #parables-filter,
-#theophanies-filter {
+#theophanies-filter,
+#typology-filter {
   width: 100%;
   box-sizing: border-box;
   padding: 9px 14px;
@@ -762,20 +766,23 @@ mark {
 
 #stories-filter:focus,
 #parables-filter:focus,
-#theophanies-filter:focus {
+#theophanies-filter:focus,
+#typology-filter:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-focus);
 }
 
 #stories-filter::placeholder,
 #parables-filter::placeholder,
-#theophanies-filter::placeholder {
+#theophanies-filter::placeholder,
+#typology-filter::placeholder {
   color: var(--subtle);
 }
 
 #stories-list,
 #parables-list,
-#theophanies-list {
+#theophanies-list,
+#typology-list {
   padding: 12px 8px 16px;
   overflow-y: auto;
   flex: 1;
@@ -783,16 +790,20 @@ mark {
 
 #stories-list::-webkit-scrollbar,
 #parables-list::-webkit-scrollbar,
-#theophanies-list::-webkit-scrollbar { width: 6px; }
+#theophanies-list::-webkit-scrollbar,
+#typology-list::-webkit-scrollbar { width: 6px; }
 #stories-list::-webkit-scrollbar-track,
 #parables-list::-webkit-scrollbar-track,
-#theophanies-list::-webkit-scrollbar-track { background: transparent; }
+#theophanies-list::-webkit-scrollbar-track,
+#typology-list::-webkit-scrollbar-track { background: transparent; }
 #stories-list::-webkit-scrollbar-thumb,
 #parables-list::-webkit-scrollbar-thumb,
-#theophanies-list::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
+#theophanies-list::-webkit-scrollbar-thumb,
+#typology-list::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
 #stories-list::-webkit-scrollbar-thumb:hover,
 #parables-list::-webkit-scrollbar-thumb:hover,
-#theophanies-list::-webkit-scrollbar-thumb:hover { background: #aaa; }
+#theophanies-list::-webkit-scrollbar-thumb:hover,
+#typology-list::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
 .stories-category-label {
   padding: 8px 10px 4px;

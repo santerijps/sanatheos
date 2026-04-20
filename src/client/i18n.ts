@@ -101,6 +101,17 @@ interface Strings {
 	theophaniesFilterPlaceholder: string;
 	theophaniesEmpty: string;
 
+	// Typology
+	typologyTitle: string;
+	typologyFilterPlaceholder: string;
+	typologyEmpty: string;
+	typologyCatPersons: string;
+	typologyCatEvents: string;
+	typologyCatTheotokos: string;
+	typologyCatChurch: string;
+	typologyCatCross: string;
+	typologyCatAdditional: string;
+
 	// Bookmarks
 	bookmarksTitle: string;
 	bookmarkThis: string;
@@ -234,6 +245,15 @@ const EN: Strings = {
 	theophaniesTitle: "Theophanies",
 	theophaniesFilterPlaceholder: "Filter theophanies\u2026",
 	theophaniesEmpty: "No theophanies match your filter.",
+	typologyTitle: "Typology",
+	typologyFilterPlaceholder: "Filter typology\u2026",
+	typologyEmpty: "No typology entries match your filter.",
+	typologyCatPersons: "Types of Christ (Persons)",
+	typologyCatEvents: "Types of Christ (Events)",
+	typologyCatTheotokos: "Types of the Theotokos",
+	typologyCatChurch: "Types of the Church & Sacraments",
+	typologyCatCross: "Types of the Cross",
+	typologyCatAdditional: "Additional Types",
 	bookmarksTitle: "Bookmarks",
 	bookmarkThis: "Bookmark",
 	removeBookmark: "Remove bookmark",
@@ -367,6 +387,15 @@ const FI: Strings = {
 	theophaniesTitle: "Teofa\u006Eiat",
 	theophaniesFilterPlaceholder: "Suodata teofanioita\u2026",
 	theophaniesEmpty: "Ei teofanioita hakusanalla.",
+	typologyTitle: "Typologia",
+	typologyFilterPlaceholder: "Suodata typologiaa\u2026",
+	typologyEmpty: "Ei typologiaa hakusanalla.",
+	typologyCatPersons: "Kristuksen tyypit (henkil\u00f6t)",
+	typologyCatEvents: "Kristuksen tyypit (tapahtumat)",
+	typologyCatTheotokos: "Jumalansynnytt\u00e4j\u00e4n tyypit",
+	typologyCatChurch: "Kirkon ja sakramenttien tyypit",
+	typologyCatCross: "Ristin tyypit",
+	typologyCatAdditional: "Muita tyyppej\u00e4",
 	bookmarksTitle: "Kirjanmerkit",
 	bookmarkThis: "Lisää kirjanmerkki",
 	removeBookmark: "Poista kirjanmerkki",

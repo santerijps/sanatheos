@@ -1,0 +1,461 @@
+[
+  {
+    "id": "adam-new-adam",
+    "title": "Adam → Christ, the New Adam",
+    "title_fi": "Aatami → Kristus, uusi Aatami",
+    "description": "Adam is the first man, head of the old humanity in which all die. Christ is the New Adam, head of the new humanity in which all are made alive (1 Corinthians 15:22). Adam's disobedience in the Garden brought death; Christ's obedience and triumph in Gethsemane and on the Tree of the Cross brings life.",
+    "description_fi": "Aatami on ensimmäinen ihminen, vanhan ihmiskunnan pää, jossa kaikki kuolevat. Kristus on uusi Aatami, uuden ihmiskunnan pää, jossa kaikki tehdään eläviksi (1. Kor. 15:22). Aatamin tottelemattomuus puutarhassa toi kuoleman; Kristuksen kuuliaisuus ja voitto Getsemanessa ja ristin puussa tuo elämän.",
+    "ref": "Genesis 2-3; Romans 5:12-21; 1 Corinthians 15:22",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "eve-new-eve",
+    "title": "Eve → The Theotokos, the New Eve",
+    "title_fi": "Eeva → Jumalansynnyttäjä, uusi Eeva",
+    "description": "Eve, a virgin, heard the word of a fallen angel and brought death. Mary, a virgin, heard the word of the Archangel Gabriel and brought Life into the world. St. Irenaeus writes: 'The knot of Eve's disobedience was loosened by the obedience of Mary.' Eve is mother of all the living in nature; Mary is mother of all the living in grace.",
+    "description_fi": "Eeva, neitsyt, kuunteli langenneen enkelin sanaa ja toi kuoleman. Maria, neitsyt, kuunteli arkkienkeli Gabrielin sanaa ja toi Elämän maailmaan. Pyhä Irenaeus kirjoittaa: 'Eevan tottelemattomuuden solmu löyseni Marian kuuliaisuuden kautta.' Eeva on kaikkien elävien äiti luonnossa; Maria on kaikkien elävien äiti armossa.",
+    "ref": "Genesis 3:1-6; Luke 1:26-38",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "abel-christ",
+    "title": "Abel → Christ",
+    "title_fi": "Abel → Kristus",
+    "description": "Abel, the righteous shepherd, offered an acceptable sacrifice and was murdered by his brother out of envy. Christ, the Good Shepherd, offered the perfect sacrifice of Himself and was killed by His own people out of envy. Abel's blood cries out from the ground; Christ's blood 'speaks a better word than the blood of Abel' (Hebrews 12:24) — not for vengeance but for mercy.",
+    "description_fi": "Abel, vanhurskas paimen, toimitti hyväksytyn uhrin ja hänen veljensä murhasi hänet kateudesta. Kristus, hyvä paimen, toimitti täydellisen itsensä uhrin ja hänen omansa tappoivat Hänet kateudesta. Abelin veri huutaa maasta; Kristuksen veri 'puhuu parempaa sanaa kuin Abelin veri' (Hepr. 12:24) — ei kostoa vaan armoa.",
+    "ref": "Genesis 4:1-10; Hebrews 12:24",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "noah-christ",
+    "title": "Noah → Christ",
+    "title_fi": "Nooa → Kristus",
+    "description": "Noah is the savior of his household through the waters of the flood, building an ark at God's command. Christ saves the Church through the waters of baptism. 'Baptism, which corresponds to this, now saves you' (1 Peter 3:21). The ark is a type of the Church: the one vessel of salvation. The dove returning with the olive branch prefigures the Holy Spirit descending at Christ's baptism.",
+    "description_fi": "Nooa on kotinsa pelastaja vedenpaisumuksen vesien läpi, rakentaen arkin Jumalan käskystä. Kristus pelastaa kirkon kasteen vesien kautta. 'Kaste, joka tätä vastaa, pelastaa nyt teidät' (1. Piet. 3:21). Arkki on kirkon kuva: ainoa pelastuksen astia. Kyyhkynen palaavana oliivinhaaroineen esikuvaa Pyhää Henkeä, joka laskeutuu Kristuksen kasteella.",
+    "ref": "Genesis 6-9; 1 Peter 3:18-22",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "melchizedek-christ",
+    "title": "Melchizedek → Christ",
+    "title_fi": "Melkisedek → Kristus",
+    "description": "Melchizedek, king of Salem, 'priest of God Most High,' appeared to Abraham and offered bread and wine with no recorded genealogy, no beginning or end of life. The author of Hebrews sees in him a type of Christ: a priest not of the Levitical order but of an eternal, superior order. Christ is 'a priest forever after the order of Melchizedek' (Hebrews 5–7). The bread and wine prefigure the Eucharist.",
+    "description_fi": "Melkisedek, Salemin kuningas, 'Kaikkein Korkeimman Jumalan pappi', ilmestyi Abrahamille ja tarjosi leivän ja viinin ilman kirjattua sukupolvea, alkua tai loppua. Heprealaiskirjeen kirjoittaja näkee hänessä Kristuksen kuvan: pappi ei leeviläisestä järjestyksestä vaan ikuisesta, ylemmästä järjestyksestä. Kristus on 'pappi ikuisesti Melkisedekin järjestyksen mukaan' (Hepr. 5–7). Leipä ja viini esikuvaavat ehtoollista.",
+    "ref": "Genesis 14:18-20; Hebrews 5:6-10; Hebrews 7",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "isaac-crucifixion",
+    "title": "Abraham's Sacrifice of Isaac → The Crucifixion",
+    "title_fi": "Abrahamin Iisakin uhraaminen → Ristiinnaulitseminen",
+    "description": "Abraham was asked to sacrifice his only-begotten son on Mount Moriah — traditionally identified with Golgotha. Isaac carried the wood for his own sacrifice up the mountain, as Christ carried His Cross. A ram caught in the thicket was substituted, providing the lamb. Abraham received Isaac back 'as a figure' of resurrection (Hebrews 11:19). John 3:16 uses the same word: monogenes, only-begotten.",
+    "description_fi": "Abrahamia pyydettiin uhraamaan ainosyntyinen poikansa Morijan vuorella — perinteisesti tunnistettu Golgatan paikaksi. Iisak kantoi oman uhrinsa puita ylös vuorelle, kuten Kristus kantoi ristiään. Pensaaseen takertunut pässi annettiin sijaan, tarjoten karitsan. Abraham sai Iisakin takaisin 'vertauksena' ylösnousemuksesta (Hepr. 11:19). Joh. 3:16 käyttää samaa sanaa Kristuksesta: monogenes, ainosyntyinen.",
+    "ref": "Genesis 22:1-19; Hebrews 11:17-19; John 3:16",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "joseph-christ",
+    "title": "Joseph → Christ",
+    "title_fi": "Joosef → Kristus",
+    "description": "Joseph was beloved of his father, hated and sold by his brothers, descended into a pit (a kind of death), rose to become the savior of Egypt and of his own brothers who betrayed him, and forgave them. He provided bread to the starving world. Nearly every detail of Joseph's life is a type of Christ's passion, descent to Hades, resurrection, exaltation, and universal salvation.",
+    "description_fi": "Joosef oli isänsä rakastama, veljensä vihaama ja myymä, laski alas kuoppaan (eräänlaiseen kuolemaan), nousi Egyptin ja betrayaajaveliensä pelastajaksi ja antoi heille anteeksi. Hän toimitti leipää nälkäänäkevälle maailmalle. Melkein jokainen yksityiskohta Joosefin elämässä on kuva Kristuksen kärsimyksestä, Hadekseen laskeutumisesta, ylösnousemuksesta, ylentämisestä ja yleismaailmallisesta pelastuksesta.",
+    "ref": "Genesis 37-50",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "moses-christ",
+    "title": "Moses → Christ",
+    "title_fi": "Mooses → Kristus",
+    "description": "Moses is the lawgiver, deliverer, and mediator between God and Israel. Christ is the new Moses who gives the new Law (the Sermon on the Mount), delivers humanity from sin and death, and mediates the new covenant in His blood. Moses fasted forty days on the mountain; Christ fasted forty days in the wilderness. Moses' face shone with reflected glory; Christ's shone with His own uncreated glory at the Transfiguration.",
+    "description_fi": "Mooses on lainantaja, vapauttaja ja Jumalan ja Israelin välinen sovittelija. Kristus on uusi Mooses, joka antaa uuden lain (vuorisaarnan), vapauttaa ihmiskunnan synnistä ja kuolemasta ja välittää uuden liiton omassa veressään. Mooses paastosi neljäkymmentä päivää vuorella; Kristus paastosi neljäkymmentä päivää erämaassa. Mooseksen kasvot loistivat heijastetulla kirkkaudella; Kristuksen loistivat omalla luomattomalla kirkkaudellaan Kirkastumisessa.",
+    "ref": "Exodus; Matthew 5-7; Hebrews 3:1-6",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "joshua-christ",
+    "title": "Joshua → Christ",
+    "title_fi": "Joosua → Kristus",
+    "description": "Joshua (Yehoshua) bears the same name as Jesus (Iesous in Greek). He led Israel across the Jordan into the Promised Land; Christ leads humanity through the waters of baptism into the Kingdom of God. Joshua conquered Jericho by the power of God; Christ conquers death and Hades by the power of His resurrection.",
+    "description_fi": "Joosua (Jēhōšūa') kantaa samaa nimeä kuin Jeesus (Iēsous kreikaksi). Hän johti Israelin Jordanin yli luvattuun maahan; Kristus johtaa ihmiskunnan kasteen vesien läpi Jumalan valtakuntaan. Joosua voitti Jerikon Jumalan voimalla; Kristus voittaa kuoleman ja Hadeksen ylösnousemuksensa voimalla.",
+    "ref": "Joshua 1-6; Hebrews 4:8-10; Acts 7:45",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "david-christ",
+    "title": "David → Christ",
+    "title_fi": "Daavid → Kristus",
+    "description": "David is the anointed king, the shepherd who defeats Goliath, and the ancestor of the Messiah born in Bethlehem. Christ is the Son of David, the true King of Israel, the Shepherd who defeats death, and the one who sits on David's throne forever (Luke 1:32–33). David was a man after God's own heart; Christ is the very Heart of God incarnate.",
+    "description_fi": "Daavid on voideltu kuningas, paimen joka voittaa Goljatin ja Beetlehemissä syntyvän Messiaan esi-isä. Kristus on Daavidin Poika, Israelin todellinen kuningas, paimen joka voittaa kuoleman ja se joka istuu Daavidin valtaistuimella ikuisesti (Luuk. 1:32–33). Daavid oli Jumalan mielen mukainen mies; Kristus on itse ruumiillistunut Jumalan Sydän.",
+    "ref": "1 Samuel; 2 Samuel; Matthew 1:1; Luke 1:32-33; Acts 2:29-36",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "solomon-christ",
+    "title": "Solomon → Christ",
+    "title_fi": "Salomo → Kristus",
+    "description": "Solomon built the Temple, the dwelling place of God among men. Christ said, 'Destroy this temple, and in three days I will raise it up' (John 2:19) — His body is the true Temple. Solomon was famed for his wisdom; Christ is the Wisdom of God (1 Corinthians 1:24). The Queen of Sheba came from the ends of the earth to hear Solomon; 'something greater than Solomon is here' (Matthew 12:42).",
+    "description_fi": "Salomo rakensi temppelin, Jumalan asuntopaikan ihmisten keskuudessa. Kristus sanoi: 'Kukistakaa tämä temppeli, niin minä kolmessa päivässä rakennan sen uudelleen' (Joh. 2:19) — Hänen ruumiinsa on todellinen temppeli. Salomo oli kuuluisa viisaudestaan; Kristus on Jumalan viisaus (1. Kor. 1:24). Seban kuningatar tuli maan ääriltä kuulemaan Salomoa; 'tässä on enemmän kuin Salomo' (Matt. 12:42).",
+    "ref": "1 Kings 3-10; John 2:19-21; Matthew 12:42; 1 Corinthians 1:24",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "elijah-john",
+    "title": "Elijah → John the Baptist / Christ",
+    "title_fi": "Elia → Johannes Kastaja / Kristus",
+    "description": "Elijah was the great prophet who called Israel to repentance, was fed miraculously, and was taken up to heaven in a chariot of fire. He was expected to return before the Messiah (Malachi 4:5). Christ said that John the Baptist came 'in the spirit and power of Elijah' (Luke 1:17; Matthew 11:14). Elijah appeared at the Transfiguration representing the Prophets, witnessing to Christ.",
+    "description_fi": "Elia oli suuri profeetta, joka kutsui Israelin parannukseen, sai yliluonnollista ravintoa ja vietiin taivaaseen tulisessa vaunussa. Hänen odotettiin palaavan ennen Messiaata (Mal. 4:5). Kristus sanoi, että Johannes Kastaja tuli 'Elian hengessä ja voimassa' (Luuk. 1:17; Matt. 11:14). Elia ilmestyi Kirkastumisessa edustaen profeettoja todistaen Kristuksesta.",
+    "ref": "1 Kings 17; 2 Kings 2; Malachi 4:5; Matthew 11:14; Luke 1:17",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "jonah-resurrection",
+    "title": "Jonah → Christ's Death and Resurrection",
+    "title_fi": "Joonas → Kristuksen kuolema ja ylösnousemus",
+    "description": "Jonah spent three days and three nights in the belly of the great fish and then emerged alive. Christ declared this a type of His own death and resurrection: 'For just as Jonah was three days and three nights in the belly of the great fish, so will the Son of Man be three days and three nights in the heart of the earth' (Matthew 12:40). Jonah then preached repentance to the Gentiles; Christ's Gospel goes to all nations.",
+    "description_fi": "Joonas vietti kolme päivää ja kolme yötä suuren kalan mahassa ja nousi sitten elävänä ulos. Kristus itse julisti tämän olevan kuva omasta kuolemastaan ja ylösnousemuksestaan: 'Sillä niin kuin Joonas oli suuren kalan mahassa kolme päivää ja kolme yötä, niin on Ihmisen Poika maan sydämessä kolme päivää ja kolme yötä' (Matt. 12:40). Joonas saarnasi sitten pakanoille; Kristuksen evankeliumi menee kaikkiin kansakuntiin.",
+    "ref": "Jonah 1-3; Matthew 12:39-41; Luke 11:29-32",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "suffering-servant",
+    "title": "The Suffering Servant → Christ",
+    "title_fi": "Kärsivä palvelija → Kristus",
+    "description": "Isaiah's Suffering Servant (Isaiah 52:13–53:12) is the supreme Old Testament prophecy-type: 'He was wounded for our transgressions, He was bruised for our iniquities… and by His stripes we are healed.' The Ethiopian eunuch asked Philip, 'About whom does the prophet say this?' and Philip 'beginning from this Scripture, preached Jesus to him' (Acts 8:34–35).",
+    "description_fi": "Jesajan Kärsivä Palvelija (Jes. 52:13–53:12) on Vanhan testamentin korkein profetia-kuva: 'Hänen ylitsensä on langettu meidän rikkomuksemme rangaistus, ja Hänen haavainsa kautta meille tuli parannus.' Etiopialainen hovimies kysyi Filippukselta: 'Kenestä profeetta tämän sanoo?' ja Filippus 'alkaen tästä Raamatun kohdasta, julisti hänelle Jeesuksen' (Ap.t. 8:34–35).",
+    "ref": "Isaiah 52:13-53:12; Acts 8:26-35; 1 Peter 2:21-25",
+    "category": "Types of Christ (Persons)"
+  },
+  {
+    "id": "passover-lamb",
+    "title": "The Passover Lamb → Christ Crucified",
+    "title_fi": "Pääsiäiskaritsa → Ristiinnaulittu Kristus",
+    "description": "In Egypt, the Israelites slaughtered a lamb without blemish, put its blood on the doorposts, and death 'passed over' their homes (Exodus 12). Christ is 'the Lamb of God who takes away the sin of the world' (John 1:29). Not one bone of the Passover lamb was to be broken; not one of Christ's bones was broken (John 19:36). Paul states directly: 'Christ, our Passover lamb, has been sacrificed' (1 Corinthians 5:7).",
+    "description_fi": "Egyptissä israelilaiset teurastivat virheetöntä karitsaa, sivelisivät sen verta ovenpieliin ja kuolema 'ohitti' heidän kotinsa (2. Moos. 12). Kristus on 'Jumalan Karitsa, joka ottaa pois maailman synnin' (Joh. 1:29). Pääsiäiskaritsan yhtäkään luuta ei saanut murtaa; yhtäkään Kristuksen luuta ei murrettu (Joh. 19:36). Paavali toteaa suoraan: 'Kristus, meidän pääsiäislampaammekkin, on teurastettu' (1. Kor. 5:7).",
+    "ref": "Exodus 12; John 1:29; 1 Corinthians 5:7; 1 Peter 1:18-19",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "red-sea-baptism",
+    "title": "The Exodus through the Red Sea → Baptism",
+    "title_fi": "Exodus Punaisenmeren läpi → Kaste",
+    "description": "Israel passed through the waters of the Red Sea, delivered from slavery in Egypt, and emerged on the other side as a free people. This is the supreme Old Testament type of Baptism: passage through water, death to the old life (Egypt = bondage to sin), and birth into new life. Paul says, 'Our fathers were all baptized into Moses in the cloud and in the sea' (1 Corinthians 10:2).",
+    "description_fi": "Israel kulki Punaisenmeren vesien läpi, vapautui Egyptin orjuudesta ja nousi toiselle puolelle vapaana kansana. Tämä on Vanhan testamentin korkein kasteen kuva: kulku veden läpi, kuolema vanhalle elämälle (Egypti = synnin orjuus) ja syntyminen uuteen elämään. Paavali sanoo: 'Meidän isämme kastettiin kaikki Moosekseen pilvessä ja meressä' (1. Kor. 10:2).",
+    "ref": "Exodus 14; 1 Corinthians 10:1-4; Romans 6:3-4",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "manna-eucharist",
+    "title": "The Manna in the Wilderness → The Eucharist",
+    "title_fi": "Manna erämaassa → Ehtoollinen",
+    "description": "God fed Israel with bread from heaven in the wilderness (Exodus 16). Christ declares: 'I am the bread of life. Your fathers ate the manna in the wilderness, and they died. This is the bread that comes down from heaven, so that one may eat of it and not die' (John 6:48–50). The manna sustained physical life temporarily; the Eucharist gives eternal life.",
+    "description_fi": "Jumala ruokki Israelia taivaasta tulleella leivällä erämaassa (2. Moos. 16). Kristus julistaa: 'Minä olen elämän leipä. Teidän isänne söivät mannaa erämaassa ja kuolivat. Tämä on se leipä, joka tulee alas taivaasta, niin että ihminen siitä syö eikä kuole' (Joh. 6:48–50). Manna ylläpiti ruumiillista elämää väliaikaisesti; ehtoollinen antaa ikuisen elämän.",
+    "ref": "Exodus 16; John 6:30-58; 1 Corinthians 10:3",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "water-from-rock",
+    "title": "Water from the Rock → Christ",
+    "title_fi": "Vesi kalliosta → Kristus",
+    "description": "Moses struck the rock and water flowed to save the dying people (Exodus 17:6; Numbers 20:11). Paul says directly: 'They drank from the spiritual Rock that followed them, and the Rock was Christ' (1 Corinthians 10:4). From Christ's side, pierced on the Cross, flowed blood and water (John 19:34) — the Eucharist and Baptism.",
+    "description_fi": "Mooses löi kalliota ja vesi virtasi pelastamaan kuolevan kansan (2. Moos. 17:6; 4. Moos. 20:11). Paavali sanoo suoraan: 'He joivat hengellisestä kalliosta, joka seurasi heitä, ja tuo kallio oli Kristus' (1. Kor. 10:4). Kristuksen kyljestä, joka lävistettiin rississä, virtasi veri ja vesi (Joh. 19:34) — ehtoollinen ja kaste.",
+    "ref": "Exodus 17:1-7; Numbers 20:2-13; 1 Corinthians 10:4; John 19:34",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "brazen-serpent",
+    "title": "The Brazen Serpent → The Cross",
+    "title_fi": "Pronssikäärme → Risti",
+    "description": "When Israel was bitten by serpents, God told Moses to make a bronze serpent and lift it on a pole; anyone who looked at it would live (Numbers 21:8–9). Christ Himself cited this as a type of His crucifixion: 'As Moses lifted up the serpent in the wilderness, so must the Son of Man be lifted up, that whoever believes in Him may have eternal life' (John 3:14–15).",
+    "description_fi": "Kun käärmeet purivat Israelia, Jumala käski Moosesta tehdä pronssikäärme ja nostaa se salkoon; kuka katsoi sitä, hän eli (4. Moos. 21:8–9). Kristus itse mainitsi tämän esikuvana ristiinnaulitsemisestaan: 'Niin kuin Mooses ylenti käärmeen erämaassa, niin täytyy Ihmisen Pojankin tulla ylennettyksi, jotta jokainen, joka uskoo Häneen, saisi ikuisen elämän' (Joh. 3:14–15).",
+    "ref": "Numbers 21:4-9; John 3:14-15",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "jordan-crossing",
+    "title": "The Crossing of the Jordan → Baptism / Entry into the Kingdom",
+    "title_fi": "Jordanin ylitys → Kaste / Valtakuntaan astuminen",
+    "description": "Joshua led Israel across the Jordan River into the Promised Land, the waters parting as at the Red Sea. Christ was baptized in the Jordan, sanctifying its waters and opening the way into the Kingdom of God. The Jordan crossing completes the Exodus typology: Red Sea (baptism into death) → wilderness (spiritual struggle) → Jordan (entrance into glory).",
+    "description_fi": "Joosua johti Israelin Jordanjoen yli luvattuun maahan, vesien jakautuessa kuten Punaisessameressä. Kristus kastettiin Jordanissa, pyhitellen sen vedet ja avaten tien Jumalan valtakuntaan. Jordanin ylitys täydentää Exoduksen typologian: Punainen meri (kaste kuolemaan) → erämaa (hengellinen taistelu) → Jordan (kirkkauteen astuminen).",
+    "ref": "Joshua 3-4; Matthew 3:13-17",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "jericho-death",
+    "title": "The Fall of Jericho → The Destruction of Death",
+    "title_fi": "Jerikon kukistuminen → Kuoleman tuhoaminen",
+    "description": "Jericho's walls fell at the sound of seven trumpets and the shout of the people (Joshua 6). The Fathers see this as a type of the last day: at the sound of the trumpet (1 Thessalonians 4:16), the walls of death and Hades collapse. Rahab the harlot, who hung a scarlet cord from her window (Joshua 2:18), is a type of the Church — saved by faith and by the sign of the Blood of Christ.",
+    "description_fi": "Jerikon muurit sortuivat seitsemän pasuunan äänellä ja kansan huudolla (Joos. 6). Kirkon isät näkevät tässä kuvan viimeisestä päivästä: pasuunan äänellä (1. Tess. 4:16) kuoleman ja Hadeksen muurit sortuvat. Rahab, portto, joka ripusti punaisen nauhan ikkunaansa (Joos. 2:18), on kirkon kuva — pelastunut uskolla ja Kristuksen veren merkillä.",
+    "ref": "Joshua 2; Joshua 6; Hebrews 11:30-31; 1 Corinthians 15:52",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "flood-baptism",
+    "title": "The Flood → Baptism / Judgment",
+    "title_fi": "Vedenpaisumus → Kaste / Tuomio",
+    "description": "The great flood destroyed the old, corrupt world, and through the ark a remnant was saved through water into a new world. 'Baptism, which corresponds to this, now saves you' (1 Peter 3:21). The eight souls saved in the ark prefigure the eighth day — the day of Resurrection, the beginning of the new creation beyond the seven days of this world.",
+    "description_fi": "Suuri vedenpaisumus tuhosi vanhan turmeltueen maailman, ja arkissa jäljelle jäänyt joukko pelastui veden läpi uuteen maailmaan. 'Kaste, joka tätä vastaa, pelastaa nyt teidät' (1. Piet. 3:21). Arkissa pelastuneet kahdeksan sielua esikuvaavat kahdeksatta päivää — ylösnousemuksen päivää, tämän maailman seitsemää päivää seuraavan uuden luomisen alkua.",
+    "ref": "Genesis 6-9; 1 Peter 3:18-22; 2 Peter 2:5",
+    "category": "Types of Christ (Events)"
+  },
+  {
+    "id": "burning-bush-theotokos",
+    "title": "The Burning Bush → The Virgin Birth",
+    "title_fi": "Palava pensas → Neitseellinen syntymä",
+    "description": "The bush burned with fire but was not consumed (Exodus 3:2). The Fathers see in this a type of the Theotokos: she bore the divine fire — God Himself — in her womb and was not destroyed. Her virginity was not consumed by the Incarnation. This is one of the most beloved Marian types in Orthodox iconography and hymnography.",
+    "description_fi": "Pensas paloi tulessa eikä palanut (2. Moos. 3:2). Kirkon isät näkevät tässä Jumalansynnyttäjän kuvan: hän kantoi jumalallista tulta — itse Jumalaa — kohdussaan eikä tuhoutunut. Hänen neitsyytensä ei palanut inkarnaatiossa. Tämä on yksi rakastetuimmista Marian kuvista ortodoksisessa ikonografiassa ja hymnografiassa.",
+    "ref": "Exodus 3:1-6; Luke 1:35",
+    "category": "Types of the Theotokos"
+  },
+  {
+    "id": "ark-of-covenant",
+    "title": "The Ark of the Covenant → The Theotokos",
+    "title_fi": "Liitonarkki → Jumalansynnyttäjä",
+    "description": "The Ark contained the tablets of the Law (the Word of God in stone), manna (bread from heaven), and Aaron's rod that budded. Mary is the living Ark who carried the Word of God incarnate, the true Bread from Heaven, and the Life that sprang from her virgin womb. The Ark was overshadowed by the shekinah glory; Mary was 'overshadowed' by the Holy Spirit (Luke 1:35).",
+    "description_fi": "Arkki sisälsi lain taulut (Jumalan sana kivessä), mannaa (taivaan leivän) ja Aaronin puhjenneen sauvan. Maria on elävä arkki, joka kantoi ruumiillistuneen Jumalan Sanaa, todellista taivaan Leipää ja elämää, joka versoi hänen neitsytkohdustaan. Arkkia varjosti šekinah-kirkkaus; Mariaa 'varjosti' Pyhä Henki (Luuk. 1:35).",
+    "ref": "Exodus 25:10-22; Hebrews 9:4; Luke 1:35; Revelation 11:19-12:1",
+    "category": "Types of the Theotokos"
+  },
+  {
+    "id": "jacobs-ladder-theotokos",
+    "title": "Jacob's Ladder → The Theotokos",
+    "title_fi": "Jaakobin tikapuut → Jumalansynnyttäjä",
+    "description": "Jacob saw a ladder reaching from earth to heaven with angels ascending and descending (Genesis 28:12). The Fathers see Mary as the Ladder: through her, God descended to earth in the Incarnation, and through her, the way from earth to heaven was opened. Christ alludes to this: 'You will see heaven opened, and the angels of God ascending and descending on the Son of Man' (John 1:51).",
+    "description_fi": "Jaakob näki tikapuut, jotka ulottuivat maasta taivaaseen, enkeleita kulkemassa ylös ja alas (1. Moos. 28:12). Kirkon isät näkevät Marian tikapuina: hänen kauttaan Jumala laskeutui maahan inkarnaatiossa, ja hänen kauttaan avautui tie maasta taivaaseen. Kristus viittaa tähän: 'Te näette taivaan auki ja Jumalan enkelit nousevan ja laskevan Ihmisen Pojan luota' (Joh. 1:51).",
+    "ref": "Genesis 28:10-17; John 1:51",
+    "category": "Types of the Theotokos"
+  },
+  {
+    "id": "closed-gate",
+    "title": "The Closed Gate → The Ever-Virginity",
+    "title_fi": "Suljettu portti → Ikuinen neitsyys",
+    "description": "Ezekiel saw a gate in the Temple that was shut: 'This gate shall remain shut; it shall not be opened, and no one shall enter by it, for the Lord, the God of Israel, has entered by it; therefore it shall remain shut' (Ezekiel 44:2). The Fathers interpret this as a type of Mary's perpetual virginity: the Lord entered the world through her, and she remained ever-virgin.",
+    "description_fi": "Hesekiel näki temppelissä suljetun portin: 'Tämä portti pysyy suljettuna, sitä ei avata, eikä kukaan saa mennä siitä sisään; sillä Herra, Israelin Jumala, on mennyt siitä sisään; sen vuoksi se pysyy suljettuna' (Hes. 44:2). Kirkon isät tulkitsevat tämän Marian ikuisen neitsyyden kuvaksi: Herra astui maailmaan hänen kauttaan, ja hän pysyi ikuisena neitsyenä.",
+    "ref": "Ezekiel 44:1-3",
+    "category": "Types of the Theotokos"
+  },
+  {
+    "id": "gideons-fleece",
+    "title": "Gideon's Fleece → The Incarnation",
+    "title_fi": "Gideonin villatuppu → Inkarnaatio",
+    "description": "Gideon laid out a fleece and the dew fell on it alone, while the ground around remained dry; then the ground was wet and the fleece alone was dry (Judges 6:36–40). The Fathers see in this a type of the Incarnation: the dew of heaven (the Holy Spirit) descended silently and gently on Mary alone, filling her while the world around remained in darkness.",
+    "description_fi": "Gideon asetti villatupun maahan ja kaste lankesi siihen yksin, kun taas ympäristö pysyi kuivana; sitten maa oli kostea ja villatuppu yksin kuiva (Tuom. 6:36–40). Kirkon isät näkevät tässä inkarnaation kuvan: taivaan kaste (Pyhä Henki) laskeutui hiljaa ja lempeästi yksin Marian päälle, täyttäen hänet maailman pysyessä pimeydessä.",
+    "ref": "Judges 6:36-40",
+    "category": "Types of the Theotokos"
+  },
+  {
+    "id": "mountain-cut-without-hands",
+    "title": "The Mountain 'Cut Without Hands' → The Virgin Birth",
+    "title_fi": "Vuori 'ihmiskäsittä leikattu' → Neitseellinen syntymä",
+    "description": "Daniel saw a stone cut from a mountain without human hands that crushed the statue of the kingdoms (Daniel 2:34–35). The Fathers read the stone as Christ and the mountain as Mary: Christ came forth from her womb without the agency of a man ('cut without hands'), and will destroy all earthly kingdoms and establish the eternal Kingdom.",
+    "description_fi": "Daniel näki kiven, joka irtosi vuoresta ilman ihmiskäsiä ja mursi kuningaskuntien patsaan (Dan. 2:34–35). Kirkon isät tulkitsevat kiven Kristukseksi ja vuoren Mariaksi: Kristus tuli hänen kohdustaan ilman miehen toimintaa ('ihmiskäsittä leikattu'), ja Hän tuhoaa kaikki maanpäälliset kuninkuudet ja perustaa ikuisen valtakunnan.",
+    "ref": "Daniel 2:31-45",
+    "category": "Types of the Theotokos"
+  },
+  {
+    "id": "noahs-ark-church",
+    "title": "Noah's Ark → The Church",
+    "title_fi": "Nooan arkki → Kirkko",
+    "description": "The Ark is the one vessel of salvation in a dying world. Outside the Ark, all perish in the waters of judgment; inside, all are preserved alive. The Church is the Ark: the one Body of Christ in which humanity is saved from the flood of death and sin. 'He cannot have God for his Father who has not the Church for his mother' (St. Cyprian).",
+    "description_fi": "Arkki on ainoa pelastuksen astia kuolevassa maailmassa. Arkin ulkopuolella kaikki tuhoutuvat tuomion vesissä; sisällä kaikki säilyvät elossa. Kirkko on Arkki: Kristuksen yksi Ruumis, jossa ihmiskunta pelastetaan kuoleman ja synnin tulvalta. 'Hän ei voi pitää Jumalaa Isänään, jolla ei ole Kirkkoa äitinään' (Pyhä Cyprianus).",
+    "ref": "Genesis 6-9; 1 Peter 3:20-21",
+    "category": "Types of the Church & Sacraments"
+  },
+  {
+    "id": "tabernacle-temple",
+    "title": "The Tabernacle / Temple → The Church / Christ's Body",
+    "title_fi": "Tabernaakkeli / Temppeli → Kirkko / Kristuksen Ruumis",
+    "description": "The Tabernacle and Temple were the dwelling place of God among His people, filled with the shekinah glory. Christ is the true Temple ('Destroy this temple, and in three days I will raise it up,' John 2:19–21), and the Church is 'the temple of the living God' (2 Corinthians 6:16). Each individual Christian is also a temple of the Holy Spirit (1 Corinthians 6:19).",
+    "description_fi": "Tabernaakkeli ja temppeli olivat Jumalan asuntopaikka kansansa keskuudessa, täynnä šekinah-kirkkautta. Kristus on todellinen temppeli ('Kukistakaa tämä temppeli, niin minä kolmessa päivässä rakennan sen uudelleen,' Joh. 2:19–21), ja kirkko on 'elävän Jumalan temppeli' (2. Kor. 6:16). Jokainen yksittäinen kristitty on myös Pyhän Hengen temppeli (1. Kor. 6:19).",
+    "ref": "Exodus 25-40; 1 Kings 6-8; John 2:19-21; 2 Corinthians 6:16",
+    "category": "Types of the Church & Sacraments"
+  },
+  {
+    "id": "levitical-priesthood",
+    "title": "The Levitical Priesthood → The Priesthood of Christ",
+    "title_fi": "Leeviläinen papisto → Kristuksen pappeus",
+    "description": "The Levitical priests offered animal sacrifices daily, entering the holy places to mediate between God and the people. But these sacrifices could never take away sins (Hebrews 10:4). Christ is the true High Priest who offered Himself — once for all — and entered the true Holy of Holies (heaven itself) with His own blood (Hebrews 9:11–12). The entire Levitical system was 'a shadow of the good things to come' (Hebrews 10:1).",
+    "description_fi": "Leeviläiset papit toimittivat eläinuhreja päivittäin astuen pyhiin paikkoihin välittäen Jumalan ja kansan välillä. Mutta nämä uhrit eivät koskaan voineet poistaa syntejä (Hepr. 10:4). Kristus on todellinen ylipappi, joka uhrasi itsensä — kerran kaikkien edestä — ja astui todelliseen Kaikkeinpyhimpään (itse taivaaseen) omalla verellään (Hepr. 9:11–12). Koko leeviläinen järjestelmä oli 'varjo tulevista hyvistä asioista' (Hepr. 10:1).",
+    "ref": "Leviticus 1-16; Hebrews 5-10",
+    "category": "Types of the Church & Sacraments"
+  },
+  {
+    "id": "circumcision-baptism",
+    "title": "Circumcision → Baptism",
+    "title_fi": "Ympärileikkaus → Kaste",
+    "description": "Circumcision was the sign of the Old Covenant — the mark of belonging to God's people, performed on the eighth day. Baptism is the sign of the New Covenant — the entry into the Body of Christ. Paul calls baptism 'the circumcision made without hands' (Colossians 2:11–12). The eighth day symbolism persists: the day of resurrection is the 'eighth day,' the new creation, and many baptismal fonts are octagonal.",
+    "description_fi": "Ympärileikkaus oli vanhan liiton merkki — kuulumisen Jumalan kansaan merkki, toimitettu kahdeksantena päivänä. Kaste on uuden liiton merkki — astuminen Kristuksen Ruumiiseen. Paavali kutsuu kastetta 'ihmiskäsittä toimitetuksi ympärileikkaukseksi' (Kol. 2:11–12). Kahdeksannen päivän symboliikka jatkuu: ylösnousemuksen päivä on 'kahdeksas päivä', uusi luominen, ja monet kastepisteet ovat kahdeksankulmaiset.",
+    "ref": "Genesis 17:9-14; Colossians 2:11-12; Romans 2:28-29",
+    "category": "Types of the Church & Sacraments"
+  },
+  {
+    "id": "yom-kippur",
+    "title": "The Day of Atonement (Yom Kippur) → The Cross",
+    "title_fi": "Suuren sovituksen päivä (Jom Kippur) → Risti",
+    "description": "Once a year the High Priest entered the Holy of Holies with the blood of a goat to make atonement for the people. A second goat, the scapegoat, bore the sins of the people into the wilderness. Christ fulfills both: He is the High Priest who enters the heavenly sanctuary and the Sacrifice whose blood cleanses, and He bears the sins of the world away (John 1:29).",
+    "description_fi": "Kerran vuodessa ylipappi astui Kaikkeinpyhimpään vuohen verellä sovittaakseen kansan syntejä. Toinen vuohi, syntipukki, kantoi kansan synnit erämaahan. Kristus täyttää molemmat: Hän on ylipappi, joka astuu taivaalliseen pyhäkköön, ja uhri, jonka veri puhdistaa, ja Hän kantaa maailman synnit pois (Joh. 1:29).",
+    "ref": "Leviticus 16; Hebrews 9:6-14; Hebrews 9:24-28; John 1:29",
+    "category": "Types of the Church & Sacraments"
+  },
+  {
+    "id": "sabbath-rest",
+    "title": "The Sabbath → The Eternal Rest / The Lord's Day",
+    "title_fi": "Sapatti → Ikuinen lepo / Herran päivä",
+    "description": "God rested on the seventh day (Genesis 2:2–3), and the Sabbath was given to Israel as a sign of the covenant. Hebrews reinterprets it as a type of the eschatological rest: 'There remains a Sabbath rest for the people of God' (Hebrews 4:9). Christians worship on Sunday, the eighth day / first day of the new creation — the day of the Resurrection. Christ Himself is our Sabbath rest.",
+    "description_fi": "Jumala lepäsi seitsemäntenä päivänä (1. Moos. 2:2–3), ja sapatti annettiin Israelille liiton merkiksi. Heprealaiskirje tulkitsee sen uudelleen eskatologisen levon kuvaksi: 'Siispä jää sapatin lepo Jumalan kansalle' (Hepr. 4:9). Kristityt palvovat sunnuntaina, kahdeksantena / ensimmäisenä päivänä uudesta luomisesta — ylösnousemuksen päivänä. Kristus itse on meidän sapatin lepomme.",
+    "ref": "Genesis 2:2-3; Exodus 20:8-11; Hebrews 4:1-11; Colossians 2:16-17",
+    "category": "Types of the Church & Sacraments"
+  },
+  {
+    "id": "tree-of-life",
+    "title": "The Tree of Life → The Cross",
+    "title_fi": "Elämän puu → Risti",
+    "description": "In Eden, the Tree of Life stood at the center of the garden (Genesis 2:9), and access to it was barred after the Fall (Genesis 3:24). The Cross is the new Tree of Life: by it, death is destroyed and access to eternal life is restored. 'Blessed are those who… have the right to the tree of life' (Revelation 22:14). By a tree came death; by the Tree of the Cross comes life.",
+    "description_fi": "Eedenissä Elämän puu seisoi puutarhan keskellä (1. Moos. 2:9), ja pääsy sille estettiin syntiinlankeemuksen jälkeen (1. Moos. 3:24). Risti on uusi Elämän puu: sen kautta kuolema tuhoutuu ja pääsy ikuiseen elämään palautetaan. 'Autuaat, jotka pesevät vaatteensa... ja saavat oikeuden elämän puulle' (Ilm. 22:14). Puun kautta tuli kuolema; ristin puun kautta tulee elämä.",
+    "ref": "Genesis 2:9; Genesis 3:22-24; Revelation 2:7; Revelation 22:2",
+    "category": "Types of the Cross"
+  },
+  {
+    "id": "moses-arms",
+    "title": "Moses' Outstretched Arms → The Cross",
+    "title_fi": "Mooseksen ojennetut kädet → Risti",
+    "description": "When Israel fought Amalek, Moses stood on a hill with his arms raised. As long as his arms were up, Israel prevailed; when they dropped, Amalek prevailed (Exodus 17:11–12). The Fathers see in Moses' outstretched arms the shape of the Cross: Christ, with arms stretched out on the Cross, conquers the enemy of the human race.",
+    "description_fi": "Israelin taistellessa Amalekia vastaan Mooses seisoi kukkulalla kädet koholla. Niin kauan kuin hänen kätensä olivat ylhäällä, Israel voitti; kun ne laskeutuivat, Amalek voitti (2. Moos. 17:11–12). Kirkon isät näkevät Mooseksen ojennetuissa käsissä ristin muodon: Kristus, kädet ojennettuna ristillä, voittaa ihmissuvun vihollisen.",
+    "ref": "Exodus 17:8-16",
+    "category": "Types of the Cross"
+  },
+  {
+    "id": "rahab-scarlet-cord",
+    "title": "The Scarlet Cord of Rahab → The Blood of Christ",
+    "title_fi": "Rahabin punainen nauha → Kristuksen veri",
+    "description": "Rahab the harlot hung a scarlet cord from her window, and her household was saved when Jericho fell (Joshua 2:18, 6:25). The Fathers see in the scarlet cord a type of the Blood of Christ: the sign of red, displayed in faith, is the mark of salvation. Rahab, a Gentile sinner, is saved by faith and becomes an ancestor of Christ (Matthew 1:5).",
+    "description_fi": "Rahab, portto, ripusti punaisen nauhan ikkunaansa, ja hänen kotikuntansa pelastettiin Jerikon kukistuessa (Joos. 2:18, 6:25). Kirkon isät näkevät punaisessa nauhassa Kristuksen veren kuvan: punainen merkki, uskossa asetettu, on pelastuksen merkki. Rahab, pakananainen syntinen, pelastetaan uskolla ja tulee Kristuksen esi-äidiksi (Matt. 1:5).",
+    "ref": "Joshua 2:18-21; Joshua 6:22-25; Hebrews 11:31; Matthew 1:5",
+    "category": "Types of the Cross"
+  },
+  {
+    "id": "elishas-wood",
+    "title": "Elisha's Wood in the Water → The Cross",
+    "title_fi": "Elisan puu vedessä → Risti",
+    "description": "When an axe head fell into the Jordan, the prophet Elisha threw a stick of wood into the water, and the iron floated (2 Kings 6:5–7). The Fathers see in this a type of the Cross: when the wood of the Cross entered the waters of death, what had sunk (fallen human nature) was raised up.",
+    "description_fi": "Kun kirveenterä putosi Jordaniin, profeetta Elisa heitti puun kappaleen veteen, ja rauta nousi pintaan (2. Kun. 6:5–7). Kirkon isät näkevät tässä ristin kuvan: kun ristin puu astui kuoleman vesiin, se mikä oli uponnut (langennut ihmisluonto) nostettiin ylös.",
+    "ref": "2 Kings 6:1-7",
+    "category": "Types of the Cross"
+  },
+  {
+    "id": "wood-at-marah",
+    "title": "The Wood Cast into Marah → The Cross",
+    "title_fi": "Marahaan heitetty puu → Risti",
+    "description": "When the waters of Marah were bitter and the people could not drink, God showed Moses a tree (xylon), and when he cast it into the water, the water became sweet (Exodus 15:23–25). The Fathers see in this the Cross transforming the bitterness of death into the sweetness of life.",
+    "description_fi": "Kun Marahan vedet olivat karvaita eikä kansa voinut juoda, Jumala osoitti Moosekselle puun (xylon), ja kun tämä heitti sen veteen, vesi muuttui makeaksi (2. Moos. 15:23–25). Kirkon isät näkevät tässä ristin muuttavan kuoleman karvauden elämän makeudeksi.",
+    "ref": "Exodus 15:22-25",
+    "category": "Types of the Cross"
+  },
+  {
+    "id": "eve-from-adams-side",
+    "title": "The Creation of Eve from Adam's Side → The Church from Christ's Side",
+    "title_fi": "Eevan luominen Aatamin kyljestä → Kirkko Kristuksen kyljestä",
+    "description": "God caused Adam to fall into a deep sleep and from his side took a rib and formed Eve (Genesis 2:21–22). Christ fell into the 'sleep' of death on the Cross, and from His side flowed blood and water (John 19:34) — the Eucharist and Baptism, from which the Church, His Bride, is born. As Eve was bone of Adam's bone and flesh of his flesh, so the Church is the Body of Christ.",
+    "description_fi": "Jumala sai Aatamin vaipumaan syvään uneen ja otti hänen kyljestään kylkiluun ja muodosti Eevan (1. Moos. 2:21–22). Kristus vaipui ristillä kuoleman 'uneen', ja Hänen kyljestään virtasi veri ja vesi (Joh. 19:34) — ehtoollinen ja kaste, joista Hänen morsiamensa kirkko syntyy. Kuten Eeva oli Aatamin luusta ja lihasta, niin kirkko on Kristuksen Ruumis.",
+    "ref": "Genesis 2:21-23; John 19:34; Ephesians 5:25-32",
+    "category": "Additional Types"
+  },
+  {
+    "id": "coat-of-skins",
+    "title": "The Coat of Skins → Christ's Assumed Humanity",
+    "title_fi": "Nahkavaatteet → Kristuksen ottama ihmisyys",
+    "description": "After the Fall, God clothed Adam and Eve in garments of skin (Genesis 3:21). The Fathers read this as a type of mortality — the condition human nature took on after the Fall — which Christ assumed in the Incarnation to heal and transfigure it. Christ put on our 'garments of skin' — our mortal flesh — so that we might put on the garment of incorruption.",
+    "description_fi": "Syntiinlankeemuksen jälkeen Jumala puetti Aatamin ja Eevan nahkavaatteisiin (1. Moos. 3:21). Kirkon isät tulkitsevat tämän kuolevaisuuden kuvaksi — tilaksi, jonka ihmisluonto otti syntiinlankeemuksen jälkeen — jonka Kristus otti inkarnaatiossa parantaakseen ja muuttaakseen sen. Kristus pukeutui 'nahkavaatteisiimme' — kuolevaiseen lihaansa — jotta me voisimme pukeutua katoamattomuuden vaatteeseen.",
+    "ref": "Genesis 3:21",
+    "category": "Additional Types"
+  },
+  {
+    "id": "pillar-cloud-fire",
+    "title": "The Pillar of Cloud and Fire → The Holy Spirit / Christ",
+    "title_fi": "Pilvi- ja tulipatsas → Pyhä Henki / Kristus",
+    "description": "God guided Israel through the wilderness with a pillar of cloud by day and a pillar of fire by night (Exodus 13:21–22). The cloud both reveals and conceals God's presence. The cloud overshadowed the Tabernacle (Exodus 40:34) as the Holy Spirit overshadowed Mary (Luke 1:35). At the Transfiguration, a cloud overshadowed the disciples (Matthew 17:5).",
+    "description_fi": "Jumala ohjasi Israelia erämaassa pilvipatsaalla päivällä ja tulipatsaalla yöllä (2. Moos. 13:21–22). Pilvi sekä ilmaisee että peittää Jumalan läsnäolon. Pilvi varjosti tabernaakkelia (2. Moos. 40:34) kuten Pyhä Henki varjosti Mariaa (Luuk. 1:35). Kirkastumisessa pilvi varjosti opetuslapsia (Matt. 17:5).",
+    "ref": "Exodus 13:21-22; Exodus 40:34-38; Luke 1:35; Matthew 17:5",
+    "category": "Additional Types"
+  },
+  {
+    "id": "twelve-tribes-apostles",
+    "title": "The Twelve Tribes → The Twelve Apostles",
+    "title_fi": "Kaksitoista heimoa → Kaksitoista apostolia",
+    "description": "Israel was constituted as God's people through twelve tribes descended from Jacob's twelve sons. Christ chose twelve apostles to constitute the new Israel, the Church. 'You who have followed Me will also sit on twelve thrones, judging the twelve tribes of Israel' (Matthew 19:28). The twelve foundations of the heavenly Jerusalem bear the names of the twelve apostles (Revelation 21:14).",
+    "description_fi": "Israel perustettiin Jumalan kansaksi kahdestakymmenestä Jaakobin kahdentoista pojan heimosta. Kristus valitsi kaksitoista apostolia muodostamaan uuden Israelin, kirkon. 'Te, jotka olette seuranneet minua... istutte myös kaksitoista valtaistuinta tuomitsemassa Israelin kahtatoista heimoa' (Matt. 19:28). Taivaallisen Jerusalemin kaksitoista perustusta kantavat kahdentoista apostolin nimiä (Ilm. 21:14).",
+    "ref": "Genesis 49; Exodus 24:4; Matthew 10:1-4; Matthew 19:28; Revelation 21:12-14",
+    "category": "Additional Types"
+  },
+  {
+    "id": "covenant-abraham",
+    "title": "The Covenant with Abraham → The New Covenant",
+    "title_fi": "Abrahamin liitto → Uusi liitto",
+    "description": "God made a covenant with Abraham, promising him descendants as numerous as the stars and a land flowing with milk and honey. This covenant was sealed with circumcision and sacrifice. The New Covenant is sealed with baptism and the sacrifice of Christ. The true descendants of Abraham are those who share his faith: 'If you are Christ's, then you are Abraham's offspring, heirs according to promise' (Galatians 3:29).",
+    "description_fi": "Jumala teki liiton Abrahamin kanssa luvaten hänelle jälkeläisiä kuin tähtiä ja maan, jossa virtaa maito ja hunaja. Tämä liitto sinetöitiin ympärileikkauksella ja uhrilla. Uusi liitto sinetöidään kasteella ja Kristuksen uhrilla. Abrahamin todelliset jälkeläiset ovat ne, jotka jakavat hänen uskonsa: 'Jos te olette Kristuksen, niin te olette Abrahamin siemen, perillisiä lupauksen mukaan' (Gal. 3:29).",
+    "ref": "Genesis 12; Genesis 15; Genesis 17; Galatians 3:6-29; Romans 4",
+    "category": "Additional Types"
+  },
+  {
+    "id": "three-visitors-trinity",
+    "title": "The Three Visitors to Abraham → The Holy Trinity",
+    "title_fi": "Kolme vierasta Abrahamilla → Pyhä Kolminaisuus",
+    "description": "At the Oak of Mamre, three men appeared to Abraham, and he bowed to them as to the Lord (Genesis 18:1–3). The Fathers and the famous icon by St. Andrei Rublev see in this a type of the Holy Trinity: three Persons, one God. Abraham offered them a meal of bread, a calf, curds, and milk — a type of Eucharistic hospitality where God comes to dwell with His people.",
+    "description_fi": "Mamren tammistossa kolme miestä ilmestyi Abrahamille, ja hän kumartui heidän edessään kuin Herran edessä (1. Moos. 18:1–3). Kirkon isät ja Pyhän Andrei Rublevin kuuluisa ikoni näkevät tässä Pyhän Kolminaisuuden kuvan: kolme Persoonaa, yksi Jumala. Abraham tarjosi heille aterian leivästä, vasikasta, juustosta ja maidosta — eukaristisen vieraanvaraisuuden kuva.",
+    "ref": "Genesis 18:1-15",
+    "category": "Additional Types"
+  },
+  {
+    "id": "job-suffering",
+    "title": "The Suffering of Job → The Suffering of Christ / The Cross",
+    "title_fi": "Jobbin kärsimys → Kristuksen kärsimys / Risti",
+    "description": "Job, a righteous man, suffered unjustly, was stripped of everything, sat on an ash heap covered in wounds, and was mocked by his friends, yet maintained his faith. He is a type of Christ, the perfectly righteous One who suffered unjustly, was stripped, wounded, mocked, and yet entrusted Himself to the Father. Job was ultimately vindicated and restored — a type of the Resurrection. His readings dominate the Orthodox Holy Week liturgy.",
+    "description_fi": "Jobb, vanhurskas mies, kärsi väärin, häneltä riistettiin kaikki, hän istui tuhkaläjässä haavojensa peitossa, ystävänsä pilkkasivat häntä, mutta hän säilytti uskonsa. Hän on kuva Kristuksesta, täydellisesti vanhurskaasta, joka kärsi väärin, riistettiin, haavoitettiin, pilkattiin, mutta luotti Isään. Jobb viimein julistettiin vanhurskaaksi ja palautettiin — kuva ylösnousemuksesta. Hänen lukemansa hallitsevat ortodoksisen kirkon Pyhän viikon liturgiaa.",
+    "ref": "Job 1-42",
+    "category": "Additional Types"
+  },
+  {
+    "id": "three-young-men-furnace",
+    "title": "The Three Young Men in the Furnace → The Resurrection",
+    "title_fi": "Kolme nuorta miestä uunissa → Ylösnousemus",
+    "description": "Shadrach, Meshach, and Abednego were thrown into the fiery furnace but were preserved unharmed, and a fourth figure appeared with them 'like a son of the gods' (Daniel 3:25). The Fathers see in this a type of Christ's descent into death and resurrection: the fire of death cannot consume those who are united to the Son of God.",
+    "description_fi": "Sadraki, Mesak ja Abednego heitettiin tuliseen pätsiin mutta säilyivät vahingoittumattomina, ja heidän joukossaan nähtiin neljäs hahmo 'kuin jumalan poika' (Dan. 3:25). Kirkon isät näkevät tässä kuvan Kristuksen kuolemaan laskeutumisesta ja ylösnousemuksesta: kuoleman tuli ei voi polttaa niitä, jotka ovat yhdistyneet Jumalan Pojalle.",
+    "ref": "Daniel 3",
+    "category": "Additional Types"
+  },
+  {
+    "id": "daniel-lions-den",
+    "title": "Daniel in the Lions' Den → Christ in Hades",
+    "title_fi": "Daniel leijonan kuopassa → Kristus Hadeksessa",
+    "description": "Daniel was thrown into the den of lions, sealed with a stone, and emerged alive the next day (Daniel 6). Christ descended into Hades, the realm of death (sealed with a stone before the tomb), and rose on the third day. The lions could not devour Daniel because God 'shut the lions' mouths'; death could not hold Christ because 'it was not possible for Him to be held by it' (Acts 2:24).",
+    "description_fi": "Daniel heitettiin leijonien luolaan, suljettiin kivellä ja nousi elävänä seuraavana päivänä (Dan. 6). Kristus laskeutui Hadekseen, kuoleman valtakuntaan (suljettuna kivellä haudan eteen), ja nousi kolmantena päivänä. Leijonat eivät voineet syödä Danielia, sillä Jumala 'sulki leijonien suun'; kuolema ei voinut pitää Kristusta, sillä 'ei ollut mahdollista, että Hän jäisi sen valtaan' (Ap.t. 2:24).",
+    "ref": "Daniel 6; Acts 2:24",
+    "category": "Additional Types"
+  },
+  {
+    "id": "ruth-gentile-church",
+    "title": "Ruth the Moabite → The Gentile Church",
+    "title_fi": "Moabilainen Ruut → Pakanakirkon kuva",
+    "description": "Ruth, a Gentile woman, left her own people and gods to cling to Naomi and the God of Israel: 'Your people shall be my people, and your God my God' (Ruth 1:16). She married Boaz, the kinsman-redeemer (goel), and became an ancestor of David and Christ (Matthew 1:5). Ruth is a type of the Gentile Church grafted into Israel by faith, and Boaz a type of Christ, the true Kinsman-Redeemer.",
+    "description_fi": "Ruut, pakananainen, jätti oman kansansa ja jumalansa pitääkseen kiinni Noomista ja Israelin Jumalasta: 'Sinun kansasi on oleva kansani, ja sinun Jumalasi on oleva minun Jumalani' (Ruut 1:16). Hän meni naimisiin Boasin, lähisukulaislunastajan (go'el), kanssa ja tuli Daavidin ja Kristuksen esi-äidiksi (Matt. 1:5). Ruut on kuva pakanakirkon liittämisestä Israeliin uskolla, ja Boas on kuva Kristuksesta, todellisesta Lähisukulaislunastajasta.",
+    "ref": "Ruth 1-4; Matthew 1:5; Romans 11:17-24",
+    "category": "Additional Types"
+  },
+  {
+    "id": "esther-theotokos",
+    "title": "Esther → The Theotokos / The Church",
+    "title_fi": "Ester → Jumalansynnyttäjä / Kirkko",
+    "description": "Esther, a humble maiden, became queen and interceded before the king for her condemned people, risking her own life to save them from destruction (Esther 4–7). She is a type of the Theotokos, who intercedes before the King of Heaven for the human race, and also of the Church, the Bride of Christ who intercedes for the world.",
+    "description_fi": "Ester, nöyrä neito, tuli kuningattareksi ja anoi kuninkaalta tuomitun kansansa puolesta, riskaten oman henkensä pelastaakseen heidät tuholta (Est. 4–7). Hän on kuva Jumalansynnyttäjästä, joka rukoilee taivaankuninkaan edessä ihmiskunnan puolesta, ja myös kirkosta, Kristuksen morsiamesta, joka rukoilee maailman puolesta.",
+    "ref": "Esther 4-8",
+    "category": "Additional Types"
+  },
+  {
+    "id": "exodus-from-egypt",
+    "title": "The Exodus from Egypt → Salvation from Sin and Death",
+    "title_fi": "Exodus Egyptistä → Pelastus synnistä ja kuolemasta",
+    "description": "The entire Exodus narrative is the master typological sequence: Egypt = bondage to sin; Pharaoh = the devil; Moses = Christ the Deliverer; Red Sea = Baptism; Wilderness = the ascetic struggle; Manna = the Eucharist; Pillar of Cloud/Fire = the Holy Spirit; Law at Sinai = the New Commandment; Tabernacle = the Church; Promised Land = the Kingdom of God. This is why Exodus readings dominate the Orthodox Holy Saturday liturgy.",
+    "description_fi": "Koko Exoduksen kertomus on pääkuvan typologinen jakso: Egypti = synnin orjuus; Farao = paholainen; Mooses = Vapauttaja Kristus; Punainen meri = kaste; Erämaa = askeettinen taistelu; Manna = ehtoollinen; Pilvi-/tulipatsas = Pyhä Henki; Laki Siinainvuorella = uusi käsky; Tabernaakkeli = kirkko; Luvattu maa = Jumalan valtakunta. Siksi Exoduksen lukemat hallitsevat ortodoksisen kirkon Suuren Lauantain liturgiaa.",
+    "ref": "Exodus 1-40; 1 Corinthians 10:1-11; Hebrews 3-4",
+    "category": "Additional Types"
+  }
+]

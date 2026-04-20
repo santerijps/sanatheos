@@ -8,6 +8,7 @@ import type {
 	StoryEntry,
 	ParableEntry,
 	TheophaniesEntry,
+	TypologyEntry,
 } from "./types.ts";
 
 const DB_NAME = "bible-app";
@@ -244,6 +245,26 @@ export async function saveTheophanies(data: TheophaniesEntry[]): Promise<void> {
 	await new Promise<void>((resolve, reject) => {
 		const tx = db.transaction(DATA_STORE, "readwrite");
 		tx.objectStore(DATA_STORE).put(data, "theophanies");
+		tx.oncomplete = () => resolve();
+		tx.onerror = () => reject(tx.error);
+	});
+}
+
+export async function loadTypology(): Promise<TypologyEntry[] | null> {
+	const db = await open();
+	return new Promise((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readonly");
+		const req = tx.objectStore(DATA_STORE).get("typology");
+		req.onsuccess = () => resolve((req.result as TypologyEntry[]) ?? null);
+		req.onerror = () => reject(req.error);
+	});
+}
+
+export async function saveTypology(data: TypologyEntry[]): Promise<void> {
+	const db = await open();
+	await new Promise<void>((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readwrite");
+		tx.objectStore(DATA_STORE).put(data, "typology");
 		tx.oncomplete = () => resolve();
 		tx.onerror = () => reject(tx.error);
 	});
