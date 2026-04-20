@@ -218,6 +218,24 @@ export interface NavRef {
 }
 
 /**
+ * Detect "book ch1:v1-ch2:v2,trailing" (e.g. "Acts 6:8-7:5,47-60") and expand
+ * into two sub-terms: "Acts 6:8-7:5" and "Acts 7:47-60".
+ * Returns null when the term does not match this extended pattern.
+ */
+function expandCrossChapterTrailing(term: string): [string, string] | null {
+	const bm = matchBook(term);
+	if (!bm || !bm.rest) return null;
+	const rest = bm.rest.replace(/[-,:]+$/, "");
+	// Match ch1:v1-ch2:v2,trailing  e.g. "6:8-7:5,47-60"
+	const m = rest.match(/^(\d+):(\d+)-(\d+):(\d+),(.+)$/);
+	if (!m) return null;
+	const [, ch1, , ch2, , trailing] = m;
+	// Only accept trailing content that looks like verse segments (digits, commas, hyphens)
+	if (!/^[\d,\-]+$/.test(trailing)) return null;
+	return [`${bm.book} ${ch1}:${m[2]}-${ch2}:${m[4]}`, `${bm.book} ${ch2}:${trailing}`];
+}
+
+/**
  * Try to parse a query as pure references (no text filter).
  * Returns an array of NavRef for navigation, or null if any term is a search query.
  */
@@ -232,6 +250,25 @@ export function tryParseNav(query: string): NavRef[] | null {
 	for (const term of terms) {
 		// If it contains a quoted filter, it's a search
 		if (term.match(/"(.*?)"/)) return null;
+
+		// Expand cross-chapter range with trailing verse segments in the last chapter:
+		// "Acts 6:8-7:5,47-60" → "Acts 6:8-7:5" + "Acts 7:47-60"
+		const expanded = expandCrossChapterTrailing(term);
+		if (expanded !== null) {
+			for (const sub of expanded) {
+				const subRef = parseRef(sub);
+				if (!subRef) return null;
+				refs.push({
+					book: subRef.book,
+					chapterStart: subRef.chapterStart,
+					chapterEnd: subRef.chapterEnd,
+					verseSegments: subRef.verseSegments,
+					verseStart: subRef.verseStart,
+					verseEnd: subRef.verseEnd,
+				});
+			}
+			continue;
+		}
 
 		const ref = parseRef(term);
 		if (!ref) return null;

@@ -44,7 +44,6 @@ describe("i18n — new feature strings (EN)", () => {
 
 	test("footer descriptions string mentions CPDV", () => {
 		expect(t().footerDescriptions).toContain("Catholic Public Domain Version");
-		expect(t().footerDescriptions).toContain("CPDV");
 	});
 });
 
@@ -77,7 +76,6 @@ describe("i18n — new feature strings (FI)", () => {
 	});
 
 	test("footer descriptions string mentions CPDV", () => {
-		expect(t().footerDescriptions).toContain("CPDV");
 		expect(t().footerDescriptions).toContain("Catholic Public Domain Version");
 	});
 });

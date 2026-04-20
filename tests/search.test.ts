@@ -2048,3 +2048,57 @@ describe("search — cross-chapter verse ranges", () => {
 		expect(results.some((r) => r.chapter === 18 && r.verse === 1)).toBe(false);
 	});
 });
+
+describe("tryParseNav — cross-chapter range with trailing verse segments", () => {
+	test("expands ch:v-ch:v,trailing into two NavRefs", () => {
+		const nav = tryParseNav("Genesis 18:16-19:5,20-29");
+		expect(nav).not.toBeNull();
+		expect(nav).toHaveLength(2);
+		expect(nav![0]).toEqual({
+			book: "Genesis",
+			chapterStart: 18,
+			chapterEnd: 19,
+			verseSegments: undefined,
+			verseStart: 16,
+			verseEnd: 5,
+		});
+		expect(nav![1]).toEqual({
+			book: "Genesis",
+			chapterStart: 19,
+			chapterEnd: 19,
+			verseStart: undefined,
+			verseEnd: undefined,
+			verseSegments: [{ start: 20, end: 29 }],
+		});
+	});
+
+	test("single trailing segment ch:v-ch:v,v", () => {
+		const nav = tryParseNav("Genesis 18:16-19:5,29");
+		expect(nav).not.toBeNull();
+		expect(nav).toHaveLength(2);
+		expect(nav![1].verseSegments).toEqual([{ start: 29, end: 29 }]);
+		expect(nav![1].chapterStart).toBe(19);
+	});
+
+	test("multiple trailing segments ch:v-ch:v,v1-v2,v3", () => {
+		const nav = tryParseNav("Genesis 18:1-19:5,10,20-25");
+		expect(nav).not.toBeNull();
+		expect(nav).toHaveLength(2);
+		expect(nav![1].verseSegments).toEqual([
+			{ start: 10, end: 10 },
+			{ start: 20, end: 25 },
+		]);
+	});
+
+	test("invalid trailing content is not expanded (returns null)", () => {
+		// Trailing contains non-verse content — should not parse as nav
+		expect(tryParseNav("Genesis 18:16-19:5,foo")).toBeNull();
+	});
+
+	test("coexists with other terms in a multi-ref query", () => {
+		const nav = tryParseNav("Genesis 18:16-19:5,20-29; John 1:1");
+		expect(nav).not.toBeNull();
+		expect(nav).toHaveLength(3);
+		expect(nav![2].book).toBe("John");
+	});
+});

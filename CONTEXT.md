@@ -456,7 +456,7 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 
 **Results:** Returns `VerseResult[]` with deduplication via a `Set<string>` of `book:chapter:verse` keys. No limit on result count — all matches are returned.
 
-**`tryParseNav(query)`:** Attempts to parse the entire query as pure references (no text filter). Returns `NavRef[]` if successful, `null` if any term has a quoted filter. Used by `applyState()` to decide whether to navigate or search.
+**`tryParseNav(query)`:** Attempts to parse the entire query as pure references (no text filter). Returns `NavRef[]` if successful, `null` if any term has a quoted filter. Before calling `parseRef`, each term is checked by `expandCrossChapterTrailing()`: if the term matches the pattern `book ch1:v1-ch2:v2,segments` (e.g., `Acts 6:8-7:5,47-60`), it is split into two sub-terms (`Acts 6:8-7:5` and `Acts 7:47-60`) and each is parsed independently. The trailing content must consist of only digits, commas, and hyphens to qualify. Used by `applyState()` to decide whether to navigate or search.
 
 **`parseQueryBooks(query)`:** Parses each term to extract the English book key, rest (chapter/verse), and quoted filter. Used during translation switching to translate book names.
 
@@ -775,6 +775,7 @@ The search input in the sticky header accepts multiple query formats. Input is d
 - `John 3:16` → navigates to single verse
 - `Genesis 1-3` → navigates to chapter range
 - `Genesis 1:1-3,5,8-10` → navigates to specific verse segments
+- `Acts 6:8-7:5,47-60` → cross-chapter range plus trailing verse segments in the last chapter (expands to two refs: Acts 6:8–7:5 + Acts 7:47-60)
 - `John 3:16; Rev 1:1` → multi-reference navigation with sections and dividers
 - `"grace"` → full-text search across all verses
 - `"^grace"` → word-start boundary match
