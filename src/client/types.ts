@@ -93,3 +93,23 @@ export interface Bookmark {
 	query?: string;
 	addedAt: number;
 }
+
+export interface StoryEntry {
+	id: string;
+	title: string;
+	title_fi?: string;
+	description: string;
+	description_fi?: string;
+	ref: string;
+	category: string;
+}
+
+export interface ParableEntry {
+	id: string;
+	title: string;
+	title_fi?: string;
+	description: string;
+	description_fi?: string;
+	ref: string;
+	category: string;
+}

@@ -5,6 +5,8 @@ import type {
 	InterlinearBook,
 	StrongsDict,
 	Bookmark,
+	StoryEntry,
+	ParableEntry,
 } from "./types.ts";
 
 const DB_NAME = "bible-app";
@@ -181,5 +183,47 @@ export async function hasBookmark(id: string): Promise<boolean> {
 		const req = tx.objectStore(BOOKMARKS_STORE).getKey(id);
 		req.onsuccess = () => resolve(req.result !== undefined);
 		req.onerror = () => reject(req.error);
+	});
+}
+
+// --- Stories & Parables ---
+
+export async function loadStories(): Promise<StoryEntry[] | null> {
+	const db = await open();
+	return new Promise((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readonly");
+		const req = tx.objectStore(DATA_STORE).get("stories");
+		req.onsuccess = () => resolve((req.result as StoryEntry[]) ?? null);
+		req.onerror = () => reject(req.error);
+	});
+}
+
+export async function saveStories(data: StoryEntry[]): Promise<void> {
+	const db = await open();
+	await new Promise<void>((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readwrite");
+		tx.objectStore(DATA_STORE).put(data, "stories");
+		tx.oncomplete = () => resolve();
+		tx.onerror = () => reject(tx.error);
+	});
+}
+
+export async function loadParables(): Promise<ParableEntry[] | null> {
+	const db = await open();
+	return new Promise((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readonly");
+		const req = tx.objectStore(DATA_STORE).get("parables");
+		req.onsuccess = () => resolve((req.result as ParableEntry[]) ?? null);
+		req.onerror = () => reject(req.error);
+	});
+}
+
+export async function saveParables(data: ParableEntry[]): Promise<void> {
+	const db = await open();
+	await new Promise<void>((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readwrite");
+		tx.objectStore(DATA_STORE).put(data, "parables");
+		tx.oncomplete = () => resolve();
+		tx.onerror = () => reject(tx.error);
 	});
 }

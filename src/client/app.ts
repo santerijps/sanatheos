@@ -6,6 +6,8 @@ import type {
 	InterlinearBook,
 	StrongsDict,
 	Bookmark,
+	StoryEntry,
+	ParableEntry,
 } from "./types.ts";
 import {
 	loadBible,
@@ -21,6 +23,10 @@ import {
 	addBookmark,
 	removeBookmark,
 	hasBookmark,
+	loadStories,
+	saveStories,
+	loadParables,
+	saveParables,
 } from "./db.ts";
 import {
 	initSearch,
@@ -774,22 +780,19 @@ async function init() {
 	});
 
 	// --- Stories panel ---
-	interface StoryEntry {
-		id: string;
-		title: string;
-		title_fi?: string;
-		description: string;
-		description_fi?: string;
-		ref: string;
-		category: string;
-	}
 
 	let storiesData: StoryEntry[] | null = null;
 
 	async function loadStoriesData(): Promise<StoryEntry[]> {
 		if (storiesData) return storiesData;
+		const cached = await loadStories();
+		if (cached) {
+			storiesData = cached;
+			return storiesData;
+		}
 		const res = await fetch("./data/stories.json");
 		storiesData = (await res.json()) as StoryEntry[];
+		await saveStories(storiesData);
 		return storiesData;
 	}
 
@@ -886,22 +889,18 @@ async function init() {
 
 	// --- Parables panel ---
 
-	interface ParableEntry {
-		id: string;
-		title: string;
-		title_fi?: string;
-		description: string;
-		description_fi?: string;
-		ref: string;
-		category: string;
-	}
-
 	let parablesData: ParableEntry[] | null = null;
 
 	async function loadParablesData(): Promise<ParableEntry[]> {
 		if (parablesData) return parablesData;
+		const cached = await loadParables();
+		if (cached) {
+			parablesData = cached;
+			return parablesData;
+		}
 		const res = await fetch("./data/parables.json");
 		parablesData = (await res.json()) as ParableEntry[];
+		await saveParables(parablesData);
 		return parablesData;
 	}
 
