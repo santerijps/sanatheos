@@ -96,6 +96,11 @@ interface Strings {
 	parablesFilterPlaceholder: string;
 	parablesEmpty: string;
 
+	// Theophanies
+	theophaniesTitle: string;
+	theophaniesFilterPlaceholder: string;
+	theophaniesEmpty: string;
+
 	// Bookmarks
 	bookmarksTitle: string;
 	bookmarkThis: string;
@@ -226,6 +231,9 @@ const EN: Strings = {
 	parablesTitle: "Parables of Jesus",
 	parablesFilterPlaceholder: "Filter parables…",
 	parablesEmpty: "No parables match your filter.",
+	theophaniesTitle: "Theophanies",
+	theophaniesFilterPlaceholder: "Filter theophanies\u2026",
+	theophaniesEmpty: "No theophanies match your filter.",
 	bookmarksTitle: "Bookmarks",
 	bookmarkThis: "Bookmark",
 	removeBookmark: "Remove bookmark",
@@ -356,6 +364,9 @@ const FI: Strings = {
 	parablesTitle: "Jeesuksen vertaukset",
 	parablesFilterPlaceholder: "Suodata vertauksia…",
 	parablesEmpty: "Ei vertauksia hakusanalla.",
+	theophaniesTitle: "Teofa\u006Eiat",
+	theophaniesFilterPlaceholder: "Suodata teofanioita\u2026",
+	theophaniesEmpty: "Ei teofanioita hakusanalla.",
 	bookmarksTitle: "Kirjanmerkit",
 	bookmarkThis: "Lisää kirjanmerkki",
 	removeBookmark: "Poista kirjanmerkki",

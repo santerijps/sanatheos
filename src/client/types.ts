@@ -113,3 +113,13 @@ export interface ParableEntry {
 	ref: string;
 	category: string;
 }
+
+export interface TheophaniesEntry {
+	id: string;
+	title: string;
+	title_fi?: string;
+	description: string;
+	description_fi?: string;
+	ref: string;
+	category: string;
+}

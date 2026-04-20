@@ -7,6 +7,7 @@ import type {
 	Bookmark,
 	StoryEntry,
 	ParableEntry,
+	TheophaniesEntry,
 } from "./types.ts";
 
 const DB_NAME = "bible-app";
@@ -223,6 +224,26 @@ export async function saveParables(data: ParableEntry[]): Promise<void> {
 	await new Promise<void>((resolve, reject) => {
 		const tx = db.transaction(DATA_STORE, "readwrite");
 		tx.objectStore(DATA_STORE).put(data, "parables");
+		tx.oncomplete = () => resolve();
+		tx.onerror = () => reject(tx.error);
+	});
+}
+
+export async function loadTheophanies(): Promise<TheophaniesEntry[] | null> {
+	const db = await open();
+	return new Promise((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readonly");
+		const req = tx.objectStore(DATA_STORE).get("theophanies");
+		req.onsuccess = () => resolve((req.result as TheophaniesEntry[]) ?? null);
+		req.onerror = () => reject(req.error);
+	});
+}
+
+export async function saveTheophanies(data: TheophaniesEntry[]): Promise<void> {
+	const db = await open();
+	await new Promise<void>((resolve, reject) => {
+		const tx = db.transaction(DATA_STORE, "readwrite");
+		tx.objectStore(DATA_STORE).put(data, "theophanies");
 		tx.oncomplete = () => resolve();
 		tx.onerror = () => reject(tx.error);
 	});

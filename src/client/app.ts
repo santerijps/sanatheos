@@ -8,6 +8,7 @@ import type {
 	Bookmark,
 	StoryEntry,
 	ParableEntry,
+	TheophaniesEntry,
 } from "./types.ts";
 import {
 	loadBible,
@@ -27,6 +28,8 @@ import {
 	saveStories,
 	loadParables,
 	saveParables,
+	loadTheophanies,
+	saveTheophanies,
 } from "./db.ts";
 import {
 	initSearch,
@@ -215,6 +218,9 @@ async function init() {
 	const parablesFilter = document.getElementById("parables-filter") as HTMLInputElement;
 	const parablesList = document.getElementById("parables-list")!;
 	const parablesTitleEl = document.getElementById("parables-title")!;
+	const theophaniesFilter = document.getElementById("theophanies-filter") as HTMLInputElement;
+	const theophaniesList = document.getElementById("theophanies-list")!;
+	const theophaniesTitleEl = document.getElementById("theophanies-title")!;
 	const bookmarksList = document.getElementById("bookmarks-list")!;
 	const bookmarksTitleEl = document.getElementById("bookmarks-title")!;
 
@@ -734,6 +740,17 @@ async function init() {
 				parablesFilter.focus();
 			}
 		}
+		// If opening theophanies tab, load data and reset filter
+		if ((tab || lastActiveTab) === "theophanies") {
+			theophaniesTitleEl.textContent = t().theophaniesTitle;
+			theophaniesFilter.placeholder = t().theophaniesFilterPlaceholder;
+			theophaniesFilter.value = "";
+			const theophanies = await loadTheophaniesData();
+			renderTheophaniesList(theophanies, "");
+			if (!window.matchMedia("(hover: none)").matches) {
+				theophaniesFilter.focus();
+			}
+		}
 		if ((tab || lastActiveTab) === "bookmarks") {
 			bookmarksTitleEl.textContent = t().bookmarksTitle;
 			await renderBookmarksList();
@@ -769,6 +786,14 @@ async function init() {
 				parablesFilter.placeholder = t().parablesFilterPlaceholder;
 				loadParablesData().then((parables) =>
 					renderParablesList(parables, parablesFilter.value),
+				);
+			}
+			// Load theophanies when switching to theophanies tab
+			if (tab === "theophanies") {
+				theophaniesTitleEl.textContent = t().theophaniesTitle;
+				theophaniesFilter.placeholder = t().theophaniesFilterPlaceholder;
+				loadTheophaniesData().then((theophanies) =>
+					renderTheophaniesList(theophanies, theophaniesFilter.value),
 				);
 			}
 			// Load bookmarks when switching to bookmarks tab
@@ -958,6 +983,91 @@ async function init() {
 	});
 
 	parablesList.addEventListener("click", (e) => {
+		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
+		if (!item) return;
+		const ref = item.dataset.ref;
+		if (!ref) return;
+		closeSidePanel();
+		searchInput.value = ref;
+		searchInput.dispatchEvent(new Event("input"));
+	});
+
+	// --- Theophanies panel ---
+
+	let theophaniesData: TheophaniesEntry[] | null = null;
+
+	async function loadTheophaniesData(): Promise<TheophaniesEntry[]> {
+		if (theophaniesData) return theophaniesData;
+		const cached = await loadTheophanies();
+		if (cached) {
+			theophaniesData = cached;
+			return theophaniesData;
+		}
+		const res = await fetch("./data/theophanies.json");
+		theophaniesData = (await res.json()) as TheophaniesEntry[];
+		await saveTheophanies(theophaniesData);
+		return theophaniesData;
+	}
+
+	function renderTheophaniesList(theophanies: TheophaniesEntry[], filter: string) {
+		const s = t();
+		const lang = getLanguage();
+		const getTitle = (th: TheophaniesEntry) =>
+			lang === "fi" && th.title_fi ? th.title_fi : th.title;
+		const getDesc = (th: TheophaniesEntry) =>
+			lang === "fi" && th.description_fi ? th.description_fi : th.description;
+		const getCatLabel = (cat: string) => {
+			if (cat === "Old Testament") return s.oldTestament;
+			if (cat === "New Testament") return s.newTestament;
+			if (cat === "Deuterocanonical") return s.deuterocanonical;
+			return cat;
+		};
+
+		const q = filter.trim().toLowerCase();
+		const filtered = q
+			? theophanies.filter(
+					(th) =>
+						getTitle(th).toLowerCase().includes(q) ||
+						getDesc(th).toLowerCase().includes(q) ||
+						getCatLabel(th.category).toLowerCase().includes(q),
+				)
+			: theophanies;
+
+		if (filtered.length === 0) {
+			theophaniesList.innerHTML = `<p class="stories-empty">${s.theophaniesEmpty}</p>`;
+			return;
+		}
+
+		const categories: string[] = [];
+		const byCategory: Record<string, TheophaniesEntry[]> = {};
+		for (const th of filtered) {
+			if (!byCategory[th.category]) {
+				byCategory[th.category] = [];
+				categories.push(th.category);
+			}
+			byCategory[th.category].push(th);
+		}
+
+		let html = "";
+		for (const cat of categories) {
+			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
+			for (const th of byCategory[cat]) {
+				html += `<button class="story-item" type="button" data-ref="${escapeHtml(th.ref)}">
+					<span class="story-item-title">${escapeHtml(getTitle(th))}</span>
+					<span class="story-item-desc">${escapeHtml(getDesc(th))}</span>
+					<span class="story-item-ref">${escapeHtml(localizeRef(th.ref))}</span>
+				</button>`;
+			}
+		}
+		theophaniesList.innerHTML = html;
+	}
+
+	theophaniesFilter.addEventListener("input", async () => {
+		const theophanies = await loadTheophaniesData();
+		renderTheophaniesList(theophanies, theophaniesFilter.value);
+	});
+
+	theophaniesList.addEventListener("click", (e) => {
 		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
 		if (!item) return;
 		const ref = item.dataset.ref;
@@ -1867,6 +1977,10 @@ function updateStaticText() {
 	if (tabStories) tabStories.title = s.storiesTitle;
 	const tabParables = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="parables"]');
 	if (tabParables) tabParables.title = s.parablesTitle;
+	const tabTheophanies = document.querySelector<HTMLElement>(
+		'.side-tab-btn[data-tab="theophanies"]',
+	);
+	if (tabTheophanies) tabTheophanies.title = s.theophaniesTitle;
 	const tabBookmarks = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="bookmarks"]');
 	if (tabBookmarks) tabBookmarks.title = s.bookmarksTitle;
 	const tabSettings = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="settings"]');

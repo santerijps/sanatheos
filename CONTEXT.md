@@ -385,8 +385,8 @@ The `init()` function runs on page load and orchestrates everything:
    - Theme and font size changes.
 
 **Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
-- `#side-tab-rail` — 52px icon column with five `.side-tab-btn[data-tab]` buttons (stories, parables, bookmarks, settings, info) and `#side-close`
-- `#side-content` — scrollable area with five `.side-pane[data-pane]` divs (stories, parables, bookmarks, settings, info); only the `.active` pane is visible (`display: flex`)
+- `#side-tab-rail` — 52px icon column with six `.side-tab-btn[data-tab]` buttons (stories, parables, theophanies, bookmarks, settings, info) and `#side-close`
+- `#side-content` — scrollable area with six `.side-pane[data-pane]` divs (stories, parables, theophanies, bookmarks, settings, info); only the `.active` pane is visible (`display: flex`)
 
 Key functions:
 - `activateSideTab(tab)` — toggles `.active` on both tab buttons and panes, saves to `localStorage` key `"side-panel-tab"`
@@ -396,6 +396,8 @@ Key functions:
 **Stories data flow** — `loadStoriesData()` fetches `./data/stories.json` once and caches the result in a module-scoped variable. `renderStoriesList(stories, filter)` builds HTML from the filtered list, grouping entries by `category` with `.stories-category-label` headers and `.story-item` buttons. Clicking a story calls `closeSidePanel()`, sets the search input value to the story's `ref`, and dispatches an `input` event to trigger navigation.
 
 **Parables data flow** — `loadParablesData()` fetches `./data/parables.json` once and caches in memory. `renderParablesList(parables, filter)` builds HTML identically to stories (same CSS classes: `.stories-category-label`, `.story-item`, `.story-item-title`, `.story-item-desc`, `.story-item-ref`, `.stories-empty`). Category labels are gospel book names (`"Matthew"`, `"Mark"`, `"Luke"`) localized via `displayName()`. Clicking a parable navigates identically to stories.
+
+**Theophanies data flow** — `loadTheophaniesData()` fetches `./data/theophanies.json` once and caches in memory, with IndexedDB backing via `loadTheophanies()`/`saveTheophanies()`. `renderTheophaniesList(theophanies, filter)` builds HTML identically to stories (same CSS classes). Categories are `"Old Testament"` / `"New Testament"`, localized via `s.oldTestament`/`s.newTestament`. Clicking a theophany navigates identically to stories.
 
 **Bookmarks data flow** — `renderBookmarksList()` reads all records from IndexedDB via `getBookmarks()` and renders `.bookmark-item` divs, each containing a `.bookmark-item-nav` button (clicking navigates to the passage) and a `.bookmark-item-remove` button (×). The bookmark button (`.bookmark-btn`) appears in chapter, verse, chapter-range, and verse-segment heading rows (rendered by `render.ts`). Clicking it calls `addBookmark()` or `removeBookmark()` in `db.ts` and syncs the button's `.bookmark-active` class via `syncBookmarkBtn()`. Verse-level bookmarks can also be added via the verse context menu.
 
@@ -721,6 +723,7 @@ The page is a single HTML file with this DOM structure:
 - Settings/info modals — Centered cards with close buttons.
 - `.settings-group` — Fieldset grouping related settings (content vs appearance).
 - `.segmented` / `.seg-btn` — Horizontal segmented controls for theme, font size, and language. Active state uses `--accent` background.
+- **Filtered list pane CSS pattern** — Each side panel pane that contains a filter input and scrollable list requires explicit ID-based CSS rules in the `/* --- Stories & Parables panes --- */` block of `style.css`. When adding a new pane named `foo`, add `#foo-header`, `#foo-title`, `#foo-search-wrap`, `#foo-filter`, `#foo-filter:focus`, `#foo-filter::placeholder`, `#foo-list`, and all `#foo-list::-webkit-scrollbar*` selectors to each of the eight corresponding CSS rule groups alongside the existing stories/parables/theophanies selectors. Omitting any selector group causes the filter input to render unstyled or the list to be non-scrollable.
 - `@media print` — Hides header, overlays, nav arrows, buttons. Shows `.print-translation-label`.
 - `@media (max-width: 800px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels, smaller section titles.
 

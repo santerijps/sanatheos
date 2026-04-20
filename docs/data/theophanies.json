@@ -1,0 +1,227 @@
+[
+  {
+    "id": "voice-in-garden",
+    "title": "The Voice of God in the Garden",
+    "title_fi": "Jumalan ääni puutarhassa",
+    "description": "After the Fall, Adam and Eve hear the voice of the LORD God walking in the garden in the cool of the day — the first recorded theophany, understood by the Church Fathers as a pre-incarnate appearance of the Logos.",
+    "description_fi": "Syntiinlankeemuksen jälkeen Aadam ja Eeva kuulevat Herra Jumalan astuvan puutarhassa illan viileydessä — ensimmäinen tallennettu teofania, jonka kirkon isät ymmärtävät Logoksen inkarnaatiota edeltäväksi ilmestymiseksi.",
+    "ref": "Genesis 3:8",
+    "category": "Old Testament"
+  },
+  {
+    "id": "angel-hagar",
+    "title": "The Angel of the LORD and Hagar",
+    "title_fi": "Herran enkeli ja Hagar",
+    "description": "The Angel of the LORD appears twice to Hagar — once when she flees from Sarah, and once in the desert when she despairs for the life of Ishmael. Hagar names God 'El-Roi', meaning 'the God who sees me.' The Church Fathers identify the Angel of the LORD throughout the Old Testament as a pre-incarnate manifestation of the Son.",
+    "description_fi": "Herran enkeli ilmestyy Hagarille kahdesti — kerran hänen paetessaan Saaralta ja kerran autiomaassa hänen epätoivoissaan Ismaelin hengen puolesta. Hagar antaa Jumalalle nimen 'El-Roi', 'Jumala joka näkee minut.' Kirkon isät tunnistavat Herran enkelin kautta Vanhan testamentin inkarnaatiota edeltäväksi Pojan ilmestymiseksi.",
+    "ref": "Genesis 16:7-14; Genesis 21:17-21",
+    "category": "Old Testament"
+  },
+  {
+    "id": "three-visitors-mamre",
+    "title": "The Three Visitors at Mamre",
+    "title_fi": "Kolme vierasta Mamressa",
+    "description": "Three mysterious visitors appear to Abraham at the oaks of Mamre; he offers them hospitality and they promise that Sarah will bear a son. The text moves freely between 'three men' and 'the LORD.' In Eastern Orthodox tradition this scene is understood as a pre-incarnate manifestation of the Holy Trinity, made famous by Andrei Rublev's icon.",
+    "description_fi": "Kolme salaperäistä vierasta ilmestyy Abrahamille Mamren tammilehdossa; hän osoittaa heille vieraanvaraisuutta ja he lupaavat Saaran synnyttävän pojan. Teksti siirtylee vapaasti 'kolmen miehen' ja 'Herran' välillä. Itäisessä ortodoksisessa perinteessä tämä kohtaus ymmärretään Pyhän Kolminaisuuden ennen inkarnaatiota tapahtuneeksi ilmestymiseksi, jonka Andrei Rublev teki kuuluisaksi ikonillaan.",
+    "ref": "Genesis 18:1-15",
+    "category": "Old Testament"
+  },
+  {
+    "id": "angel-moriah",
+    "title": "The Angel of the LORD at Moriah",
+    "title_fi": "Herran enkeli Morijan vuorella",
+    "description": "At the last moment before Abraham slays Isaac, the Angel of the LORD calls from heaven, stops him, and provides a ram as a substitute offering. The Angel then swears by God's own name — indicating divine identity — and renews the covenant promises. The Church Fathers see the entire scene as a type of the Crucifixion and Resurrection.",
+    "description_fi": "Viime hetkellä ennen kuin Abraham uhraisi Iisakin, Herran enkeli huutaa taivaasta, pysäyttää hänet ja toimittaa pässin sijaisuhriksi. Enkeli vannoo sitten Jumalan omassa nimessä — osoittaen jumalallisen identiteettinsä — ja uudistaa liittolupaukset. Kirkon isät pitävät koko kohtausta Kristuksen ristiinnaulitsemisen ja ylösnousemuksen kuvana.",
+    "ref": "Genesis 22:11-18",
+    "category": "Old Testament"
+  },
+  {
+    "id": "jacobs-ladder",
+    "title": "Jacob's Ladder",
+    "title_fi": "Jaakobin tikapuut",
+    "description": "Jacob dreams of a stairway reaching heaven with angels ascending and descending, and the LORD stands above it renewing the covenant promises. Jesus cites this vision in John 1:51, applying it to himself as the true ladder between heaven and earth. The Church Fathers see the stairway as a type of the Incarnation.",
+    "description_fi": "Jaakob näkee unta portaista, jotka nousevat taivaaseen enkeleita ylös ja alas kulkien, ja Herra seisoo niiden yläpuolella uudistaen liittolupaukset. Jeesus viittaa tähän näkyyn Joh. 1:51:ssä soveltaen sen itseensä todellisena taivaita ja maata yhdistävänä tikkaina. Kirkon isät pitävät tikapuita inkarnaation kuvana.",
+    "ref": "Genesis 28:10-22",
+    "category": "Old Testament"
+  },
+  {
+    "id": "jacob-wrestling",
+    "title": "Jacob Wrestles the Angel",
+    "title_fi": "Jaakob painii enkelin kanssa",
+    "description": "Jacob wrestles through the night with a mysterious man at the ford of Jabbok; at dawn the man blesses him and renames him Israel — 'one who strives with God.' Jacob names the place Peniel, saying 'I have seen God face to face.' The Church Fathers identify this figure as the pre-incarnate Son of God.",
+    "description_fi": "Jaakob painii koko yön salaperäisen miehen kanssa Jabbokin ylityspaikalla; aamunkoitteessa mies siunaa hänet ja antaa hänelle uuden nimen Israel — 'Jumalan kanssa painija.' Jaakob antaa paikalle nimen Peniel sanoen 'Olen nähnyt Jumalan kasvoista kasvoihin.' Kirkon isät tunnistavat tässä hahmossa inkarnaatiota edeltäneen Jumalan Pojan.",
+    "ref": "Genesis 32:22-32",
+    "category": "Old Testament"
+  },
+  {
+    "id": "burning-bush",
+    "title": "The Burning Bush",
+    "title_fi": "Palava pensas",
+    "description": "God speaks to Moses from a burning bush that is not consumed, revealing the divine name 'I AM WHO I AM' and commissioning him to lead Israel out of Egypt. Jesus applies this divine name to himself throughout the Gospel of John with the seven 'I am' sayings. The bush burning yet not consumed is a classic Orthodox type of the Theotokos — who bore the divine fire without being destroyed.",
+    "description_fi": "Jumala puhuu Moosekselle palavasta pensaasta, joka ei pala loppuun, paljastaa jumalallisen nimen 'Minä olen se joka olen' ja antaa hänelle tehtävän johtaa Israel pois Egyptistä. Jeesus soveltaa tämän nimen itseensä Johanneksen evankeliumin seitsemällä 'Minä olen' -lausumalla. Palavana mutta palamaton pensas on klassinen ortodoksinen kuva Jumalansynnyttäjästä, joka kantoi jumalallista tulta tuhoamatta itseään.",
+    "ref": "Exodus 3:1-6",
+    "category": "Old Testament"
+  },
+  {
+    "id": "pillar-cloud-fire",
+    "title": "The Pillar of Cloud and Fire",
+    "title_fi": "Pilvi- ja tulipatsas",
+    "description": "The LORD goes before Israel as a pillar of cloud by day and a pillar of fire by night throughout the wilderness journey, protecting them from the pursuing Egyptians at the sea. The Fathers see the pillar of cloud as the pre-incarnate Christ leading his people, prefiguring the cloud of the Transfiguration and the Ascension.",
+    "description_fi": "Herra käy Israelin edellä pilvipatsaana päivällä ja tulipatsaana yöllä koko erämaamatkan ajan ja suojelee heitä Egyptin armeijalta merenrannalla. Kirkon isät pitävät pilvipatsasta inkarnaatiota edeltävänä Kristuksena, joka johtaa kansaansa — kuvana kirkastumisen ja taivaaseen astumisen pilvestä.",
+    "ref": "Exodus 13:21-22; Exodus 14:19-24",
+    "category": "Old Testament"
+  },
+  {
+    "id": "sinai-theophany",
+    "title": "The Theophany at Sinai",
+    "title_fi": "Siinain teofania",
+    "description": "God descends on Mount Sinai in thunder, lightning, thick cloud, and fire; the mountain shakes and the people tremble at the edge of the camp. Moses goes up into the cloud. This overwhelming revelation of divine holiness becomes the paradigm for all Old Testament theophanies.",
+    "description_fi": "Jumala laskeutuu Siinain vuorelle ukkosessa, salamoissa, tiheässä pilvessä ja tulessa; vuori vapisee ja kansa vaipuu pelkoon leirin reunalla. Mooses astuu pilveen. Tämä ylivoimainen jumalallisen pyhyyden ilmestys muodostaa kaiken Vanhan testamentin teofanian mallin.",
+    "ref": "Exodus 19:16-25",
+    "category": "Old Testament"
+  },
+  {
+    "id": "seventy-elders-see-god",
+    "title": "The Seventy Elders See God",
+    "title_fi": "Seitsemänkymmentä vanhinta näkevät Jumalan",
+    "description": "Moses, Aaron, Nadab, Abihu, and seventy elders of Israel go up the mountain and see the God of Israel; under his feet is as it were a pavement of sapphire, like the very heaven for clearness. They eat and drink in his presence — an extraordinary communal vision and a foretaste of the Eucharistic feast in the Kingdom.",
+    "description_fi": "Mooses, Aaron, Nadab, Abihu ja seitsemänkymmentä Israelin vanhinta nousevat vuorelle ja näkevät Israelin Jumalan; hänen jalkojensa alla on kuin safiiritiili, kirkas kuin taivas. He syövät ja juovat hänen läsnäolossaan — poikkeuksellinen yhteisöllinen näky ja esimaku Valtakunnan ehtoollisateriasta.",
+    "ref": "Exodus 24:9-11",
+    "category": "Old Testament"
+  },
+  {
+    "id": "moses-cleft-rock",
+    "title": "Moses in the Cleft of the Rock",
+    "title_fi": "Mooses kallion halkeamassa",
+    "description": "Moses asks to see God's glory; God places him in a cleft of the rock, covers him with his hand as his glory passes by, then allows Moses to see his back but not his face — 'for no one may see me and live.' Gregory of Nyssa sees this as the paradigm for contemplative prayer: always pressing toward the divine light yet never fully grasping it in this life.",
+    "description_fi": "Mooses pyytää saada nähdä Jumalan kirkkauden; Jumala asettaa hänet kallion halkeamaan, peittää hänet kädellään kirkkauden ohittaessa, ja antaa Mooseksen nähdä hänen selkänsä muttei kasvojaan — 'sillä kukaan ei voi nähdä minua ja jäädä eloon.' Gregorios Nyssalainen pitää tätä mietiskelevän rukouksen mallina: aina eteenpäin pyrkien kohti jumalallista valoa mutta koskaan täydellisesti saavuttamatta sitä tässä elämässä.",
+    "ref": "Exodus 33:17-23",
+    "category": "Old Testament"
+  },
+  {
+    "id": "glory-fills-tabernacle",
+    "title": "The Glory Fills the Tabernacle",
+    "title_fi": "Kirkkaus täyttää ilmestysmajan",
+    "description": "When Moses completes the Tabernacle, the cloud covers the tent of meeting and the glory of the LORD fills it — so overwhelming that Moses cannot enter. This same pattern recurs at Solomon's Temple and finds its ultimate fulfillment in the Incarnation: the divine glory taking up dwelling in the body of Christ.",
+    "description_fi": "Mooseksen viimeistellessä ilmestysmajan pilvi peittää kokoontumisteltan ja Herran kirkkaus täyttää sen — niin ylivoimaisesti, että Mooses ei voi astua sisään. Sama kaava toistuu Salomon temppelissä ja löytää lopullisen täyttymyksensä inkarnaatiossa: jumalallinen kirkkaus asettuu asumaan Kristuksen ruumiiseen.",
+    "ref": "Exodus 40:34-38",
+    "category": "Old Testament"
+  },
+  {
+    "id": "angel-balaam",
+    "title": "The Angel of the LORD and Balaam",
+    "title_fi": "Herran enkeli ja Bileam",
+    "description": "The Angel of the LORD blocks the road of the prophet Balaam, visible at first only to his donkey; the donkey speaks and then the angel appears with sword drawn. Balaam confesses his sin and the angel permits him to proceed — to bless Israel rather than curse it.",
+    "description_fi": "Herran enkeli estää tietä profeetta Bileamilta, aluksi vain hänen aasillensa näkyvänä; aasi puhuu ja sitten enkeli ilmestyy miekka paljastettuna. Bileam tunnustaa syntinsä ja enkeli sallii hänen mennä eteenpäin siunaamaan Israelia kiiroamisen sijaan.",
+    "ref": "Numbers 22:22-35",
+    "category": "Old Testament"
+  },
+  {
+    "id": "commander-lords-army",
+    "title": "The Commander of the LORD's Army",
+    "title_fi": "Herran armeijan päällikkö",
+    "description": "Before the fall of Jericho, Joshua encounters a man with a drawn sword who identifies himself as the Commander of the LORD's army; Joshua falls on his face and is told to remove his sandals, for the ground is holy — echoing the exact words spoken to Moses at the burning bush. The Church Fathers identify this figure as the pre-incarnate Christ.",
+    "description_fi": "Ennen Jerikon kaatumista Joosua kohtaa miekan kanssa miehen, joka ilmoittaa olevansa Herran armeijan päällikkö; Joosua lankeaa kasvoilleen ja häntä käsketään ottaa sandaalit pois, sillä maa on pyhää — kaikuen samoja sanoja kuin Moosekselle palavassa pensaassa. Kirkon isät tunnistavat tässä hahmossa inkarnaatiota edeltävän Kristuksen.",
+    "ref": "Joshua 5:13-15",
+    "category": "Old Testament"
+  },
+  {
+    "id": "angel-gideon",
+    "title": "The Angel of the LORD and Gideon",
+    "title_fi": "Herran enkeli ja Gideon",
+    "description": "The Angel of the LORD appears to Gideon under an oak tree and commissions him to deliver Israel from Midian. When Gideon presents an offering, the angel touches it with his staff and fire consumes it; the angel vanishes. Gideon cries out, 'I have seen the Angel of the LORD face to face!'",
+    "description_fi": "Herran enkeli ilmestyy Gideonille tammen alla ja antaa hänelle tehtävän pelastaa Israel midianilaisten käsistä. Gideonin tuodessa uhrin enkeli koskettaa sitä sauvallaan ja tuli kuluttaa sen; enkeli katoaa. Gideon huutaa: 'Olen nähnyt Herran enkelin kasvoista kasvoihin!'",
+    "ref": "Judges 6:11-24",
+    "category": "Old Testament"
+  },
+  {
+    "id": "angel-manoah",
+    "title": "The Angel of the LORD and Manoah",
+    "title_fi": "Herran enkeli ja Manoah",
+    "description": "The Angel of the LORD appears to Manoah's barren wife to announce the birth of Samson. When Manoah offers a sacrifice, the angel ascends in the flame and they fall on their faces. Manoah cries, 'We shall surely die, for we have seen God.' The angel's refusal to reveal his name — 'it is wonderful' — is understood by the Fathers as a divine title.",
+    "description_fi": "Herran enkeli ilmestyy Manoahin lapsettomalle vaimolle ilmoittaen Samsonin syntymästä. Manoahin uhratessa enkeli nousee liekin mukana ja he lankeavat kasvoilleen. Manoah huutaa: 'Me varmasti kuolemme, sillä olemme nähneet Jumalan.' Enkelin kieltäytyminen nimensä paljastamisesta — 'se on ihmeellinen' — ymmärretään kirkon isien mukaan jumalalliseksi titteliksi.",
+    "ref": "Judges 13:2-23",
+    "category": "Old Testament"
+  },
+  {
+    "id": "glory-fills-temple",
+    "title": "The Glory Fills Solomon's Temple",
+    "title_fi": "Kirkkaus täyttää Salomon temppelin",
+    "description": "When the priests bring the ark of the covenant into the Temple, the cloud fills the house of the LORD and the priests cannot stand to minister because of the glory. Solomon acknowledges that the LORD said he would dwell in thick darkness, and prays that God would hear the prayers of all who turn toward this place.",
+    "description_fi": "Pappien tuodessa liitonarkki temppeliin pilvi täyttää Herran huoneen eivätkä papit kykene enää palvelemaan kirkkauden takia. Salomon tunnustaa Herran sanoneen asuvansa tiheässä pilvessä ja rukoilee, että Jumala kuulisi kaikkien rukoukset, jotka kääntyvät tätä paikkaa kohti.",
+    "ref": "1 Kings 8:10-11",
+    "category": "Old Testament"
+  },
+  {
+    "id": "theophany-horeb",
+    "title": "God in the Still Small Voice",
+    "title_fi": "Jumala hiljaisessa äänessä",
+    "description": "Fleeing from Jezebel, the prophet Elijah hides in a cave on Mount Horeb — the same mountain as the Sinai revelation. Wind, earthquake, and fire pass by, but the LORD is not in them; then a still small voice speaks to Elijah and recommissions him. The God of overwhelming power is also the God of intimate, gentle presence.",
+    "description_fi": "Jeesebeliä paeten profeetta Elia piiloutuu luolaan Hoorebille — samalle vuorelle kuin Siinain ilmestys. Tuuli, maanjäristys ja tuli käyvät ohitse, mutta Herra ei ole niissä; sitten hiljainen ääni puhuu Elialle ja antaa hänelle uuden tehtävän. Ylivoimaisen voiman Jumala on myös läheisen, hellän läsnäolon Jumala.",
+    "ref": "1 Kings 19:11-18",
+    "category": "Old Testament"
+  },
+  {
+    "id": "elisha-heavenly-army",
+    "title": "Elisha's Servant Sees the Heavenly Army",
+    "title_fi": "Elisan palvelija näkee taivaallisen armeijan",
+    "description": "When the Syrian army surrounds Dothan to capture Elisha, his servant is terrified. Elisha prays that the servant's eyes would be opened, and he sees the mountains full of horses and chariots of fire all around them. This brief theophany reveals the invisible divine protection surrounding God's servants.",
+    "description_fi": "Aramilaisten armeijan ympäröidessä Dothanin Elisan vangitsemiseksi hänen palvelijansa pelästyy. Elisa rukoilee hänen silmiensä avautumista, ja palvelija näkee vuoret täynnä tuliheevosia ja -vaunuja heidän ympärillään. Tämä lyhyt teofania paljastaa näkymättömän jumalallisen suojelun Jumalan palvelijoiden ympärillä.",
+    "ref": "2 Kings 6:15-17",
+    "category": "Old Testament"
+  },
+  {
+    "id": "isaiah-vision-seraphim",
+    "title": "Isaiah's Vision of the Seraphim",
+    "title_fi": "Jesajan serafinäky",
+    "description": "Isaiah sees the Lord seated on a high and exalted throne, with seraphim crying 'Holy, Holy, Holy is the LORD of hosts; the whole earth is full of his glory.' His lips are cleansed with a burning coal from the altar. The Gospel of John (12:41) explicitly states that Isaiah saw the glory of Christ in this vision.",
+    "description_fi": "Jesaja näkee Herran korotettuna istuimellaan serafien julistaessa 'Pyhä, Pyhä, Pyhä on Herra Sebaot; koko maa on täynnä hänen kirkkauttaan.' Hänen huulensa puhdistetaan alttarihiilellä. Johanneksen evankeliumi (12:41) toteaa nimenomaisesti, että Jesaja näki tässä näyssä Kristuksen kirkkauden.",
+    "ref": "Isaiah 6:1-13",
+    "category": "Old Testament"
+  },
+  {
+    "id": "ezekiel-divine-chariot",
+    "title": "Ezekiel's Vision of the Divine Chariot",
+    "title_fi": "Hesekielin jumalallisen vaunun näky",
+    "description": "Ezekiel sees a storm cloud with flashing fire and brightness, four living creatures with four faces and wings, and wheels within wheels. Above them a firmament like crystal, and on it a throne of sapphire bearing the appearance of a human form blazing with fire, surrounded by a rainbow. He falls on his face and hears the voice of the LORD. This vision — known in Jewish mysticism as the Merkabah (chariot) — is the most elaborate theophany in Scripture.",
+    "description_fi": "Hesekiel näkee myrskyilmapilven tulessa ja kirkkaudessa, neljä elävää olentoa neljine kasvoineen ja siipineen sekä pyörät pyörien sisällä. Niiden yläpuolella kristallin kaltainen laakio ja sen päällä safiirinen valtaistuin, jolla on tulessa leimuava ja sateenkaaren ympäröimä ihmisen hahmo. Hän lankeaa kasvoilleen ja kuulee Herran äänen. Tämä näky — juutalaisessa mystiikassa Merkabah-nimellä tunnettu — on Raamatun laajin teofania.",
+    "ref": "Ezekiel 1:4-28",
+    "category": "Old Testament"
+  },
+  {
+    "id": "daniel-ancient-of-days",
+    "title": "Daniel's Vision of the Ancient of Days",
+    "title_fi": "Danielin näky Muinaisten Päivien Vanhuksesta",
+    "description": "Daniel sees the Ancient of Days seated on a fiery throne with ten thousand times ten thousand standing before him, and then 'one like a son of man' coming on the clouds of heaven who is given everlasting dominion over all nations. Jesus applies this vision to himself at his trial before the High Priest; it is the scriptural foundation for the title 'Son of Man' throughout the Gospels.",
+    "description_fi": "Daniel näkee Muinaisten Päivien Vanhan tuliaistuimellaan kymmenen tuhatta kertaa kymmenen tuhatta hänen edessään seisomassa, ja sitten 'ihmisen pojan kaltaisen' taivaan pilvissä saaden ikuisen hallintavallan kaikkien kansojen yli. Jeesus soveltaa tämän näyn itseensä ylipappia vastaan pidetyissä oikeudenkäynneissä; se on 'Ihmisen Poika' -tittelin raamatullinen perusta evankeliumeissa.",
+    "ref": "Daniel 7:9-14",
+    "category": "Old Testament"
+  },
+  {
+    "id": "baptism-theophany",
+    "title": "The Baptism of Jesus",
+    "title_fi": "Jeesuksen kasteessa tapahtunut teofania",
+    "description": "As Jesus is baptized in the Jordan River, the heavens open, the Spirit descends as a dove, and the Father's voice declares, 'This is my beloved Son, with whom I am well pleased.' This is the first explicitly Trinitarian theophany — all three Persons of the Holy Trinity manifesting simultaneously. The Church celebrates this event as the feast of Theophany (Epiphany), the revelation of God to the world.",
+    "description_fi": "Jeesuksen kastetessa Jordanissa taivaat avautuvat, Henki laskeutuu kyyhkysenä ja Isän ääni julistaa: 'Tämä on rakas Poikani, johon olen mielistynyt.' Tämä on ensimmäinen nimenomaisesti trinitaarinen teofania — kaikki kolme Pyhän Kolminaisuuden persoonaa ilmenevät samanaikaisesti. Kirkko viettää tätä tapahtumaa Teofanian juhlapäivänä (Loppiaisena), Jumalan ilmestymisenä maailmalle.",
+    "ref": "Matthew 3:13-17; Mark 1:9-11; Luke 3:21-22",
+    "category": "New Testament"
+  },
+  {
+    "id": "transfiguration-theophany",
+    "title": "The Transfiguration",
+    "title_fi": "Kirkastuminen",
+    "description": "On a high mountain, Jesus is transfigured before Peter, James, and John — his face shines like the sun, his garments become white as light, Moses and Elijah appear. A bright cloud overshadows them and the Father's voice speaks. In Orthodox theology the light of the Transfiguration is the uncreated divine light — the same light the saints behold in theosis.",
+    "description_fi": "Korkealla vuorella Jeesus muuttuu kirkkaiksi Pietarin, Jaakobin ja Johanneksen edessä — hänen kasvonsa säteilee kuin aurinko, hänen vaatteensa muuttuvat valkeiksi kuin valo, Mooses ja Elia ilmestyvät. Kirkas pilvi verhoo heidät ja Isän ääni puhuu. Ortodoksisessa teologiassa kirkastumisen valo on luoduton jumalallinen valo — sama valo jota pyhät näkevät teoosiksessa.",
+    "ref": "Matthew 17:1-8; Mark 9:2-8; Luke 9:28-36",
+    "category": "New Testament"
+  },
+  {
+    "id": "pentecost-theophany",
+    "title": "Pentecost",
+    "title_fi": "Helluntai",
+    "description": "On the day of Pentecost, the Holy Spirit descends on the disciples as a sound of rushing wind and tongues of fire resting on each of them; they are filled with the Spirit and speak in other tongues. This is the decisive theophany of the Third Person of the Trinity, constituting the Church as the temple of the Holy Spirit.",
+    "description_fi": "Helluntaipäivänä Pyhä Henki laskeutuu opetuslapsten päälle tulisina kielinä, jotka asettuvat kullekin; he täyttyvät Pyhällä Hengellä ja puhuvat vieraita kieliä. Tämä on Kolminaisuuden kolmannen persoonan ratkaiseva teofania, joka muodostaa kirkosta Pyhän Hengen temppelin.",
+    "ref": "Acts 2:1-4",
+    "category": "New Testament"
+  }
+]

@@ -184,7 +184,7 @@ test.describe("Book index panel", () => {
 /** Open the side panel and switch to a specific tab. */
 async function openPanelTab(
 	page: Page,
-	tab: "stories" | "parables" | "bookmarks" | "settings" | "info",
+	tab: "stories" | "parables" | "theophanies" | "bookmarks" | "settings" | "info",
 ) {
 	await page.click("#panel-btn");
 	await expect(page.locator("#side-overlay")).toHaveClass(/open/);
@@ -730,6 +730,119 @@ test.describe("Parables of Jesus pane", () => {
 		await expect(firstItem.locator(".story-item-title")).toBeVisible();
 		await expect(firstItem.locator(".story-item-desc")).toBeVisible();
 		await expect(firstItem.locator(".story-item-ref")).toBeVisible();
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Theophanies pane
+// ---------------------------------------------------------------------------
+
+test.describe("Theophanies pane", () => {
+	test("switching to theophanies tab shows theophanies pane", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#panel-btn");
+		await page.click('.side-tab-btn[data-tab="theophanies"]');
+		await expect(page.locator('.side-pane[data-pane="theophanies"]')).toHaveClass(/active/);
+		await expect(page.locator('.side-pane[data-pane="parables"]')).not.toHaveClass(/active/);
+	});
+
+	test("theophanies list is populated with items", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
+		const items = page.locator("#theophanies-list .story-item");
+		expect(await items.count()).toBeGreaterThan(0);
+	});
+
+	test("theophanies list shows Old Testament and New Testament category labels", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		await page.waitForSelector("#theophanies-list .stories-category-label", {
+			timeout: 10_000,
+		});
+		const labels = page.locator("#theophanies-list .stories-category-label");
+		const texts = await labels.allTextContents();
+		expect(texts.some((t) => t.includes("Old Testament"))).toBe(true);
+		expect(texts.some((t) => t.includes("New Testament"))).toBe(true);
+	});
+
+	test("theophany items show title, description, and reference", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
+		const firstItem = page.locator("#theophanies-list .story-item").first();
+		await expect(firstItem.locator(".story-item-title")).toBeVisible();
+		await expect(firstItem.locator(".story-item-desc")).toBeVisible();
+		await expect(firstItem.locator(".story-item-ref")).toBeVisible();
+	});
+
+	test("filter narrows theophany results", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
+		const totalBefore = await page.locator("#theophanies-list .story-item").count();
+
+		await page.fill("#theophanies-filter", "Moses");
+		await page.waitForTimeout(100);
+		const totalAfter = await page.locator("#theophanies-list .story-item").count();
+		expect(totalAfter).toBeLessThan(totalBefore);
+		expect(totalAfter).toBeGreaterThan(0);
+	});
+
+	test("filter input is styled (has border and padding)", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		const filter = page.locator("#theophanies-filter");
+		await expect(filter).toBeVisible();
+		// Verify the input has the expected computed style from the CSS rules
+		const borderRadius = await filter.evaluate((el) => getComputedStyle(el).borderRadius);
+		expect(borderRadius).toBe("8px");
+	});
+
+	test("unmatched filter shows no-results message", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
+
+		await page.fill("#theophanies-filter", "xyznonexistent999");
+		await page.waitForTimeout(100);
+		await expect(page.locator("#theophanies-list .stories-empty")).toBeVisible();
+		await expect(page.locator("#theophanies-list .story-item")).toHaveCount(0);
+	});
+
+	test("clicking a theophany closes panel and navigates", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
+
+		const firstItem = page.locator("#theophanies-list .story-item").first();
+		await firstItem.click();
+
+		// Panel should close
+		await expect(page.locator("#side-overlay")).not.toHaveClass(/open/);
+		// Search input should have been populated with the reference
+		await expect(page.locator("#search-input")).not.toHaveValue("", { timeout: 5_000 });
+	});
+
+	test("theophanies list is scrollable (overflow-y auto)", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "theophanies");
+		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
+		const overflowY = await page
+			.locator("#theophanies-list")
+			.evaluate((el) => getComputedStyle(el).overflowY);
+		expect(overflowY).toBe("auto");
 	});
 });
 

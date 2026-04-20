@@ -126,6 +126,9 @@
         <button class="side-tab-btn" data-tab="parables" type="button" title="Parables of Jesus">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </button>
+        <button class="side-tab-btn" data-tab="theophanies" type="button" title="Theophanies">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
         <button class="side-tab-btn" data-tab="bookmarks" type="button" title="Bookmarks">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </button>
@@ -163,8 +166,16 @@
             <input type="text" id="parables-filter" autocomplete="off" spellcheck="false" placeholder="Filter parables…">
           </div>
           <div id="parables-list"></div>
-        </div>
-        <!-- Bookmarks tab -->
+        </div>        <!-- Theophanies tab -->
+        <div class="side-pane" data-pane="theophanies">
+          <div id="theophanies-header">
+            <h2 id="theophanies-title">Theophanies</h2>
+          </div>
+          <div id="theophanies-search-wrap">
+            <input type="text" id="theophanies-filter" autocomplete="off" spellcheck="false" placeholder="Filter theophanies&#x2026;">
+          </div>
+          <div id="theophanies-list"></div>
+        </div>        <!-- Bookmarks tab -->
         <div class="side-pane" data-pane="bookmarks">
           <div id="bookmarks-header">
             <h2 id="bookmarks-title">Bookmarks</h2>
