@@ -642,6 +642,14 @@ mark {
   border-radius: 12px 0 0 12px;
 }
 
+.side-tab-sep {
+  width: 28px;
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 4px 0;
+  flex-shrink: 0;
+}
+
 .side-tab-btn {
   width: 40px;
   height: 40px;
