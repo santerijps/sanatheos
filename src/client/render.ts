@@ -721,6 +721,23 @@ export function renderVerseSegments(
 	$("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
+function navRefCopyButtonHtml(nav: NavRef): string {
+	const { book, chapterStart, chapterEnd, verseSegments, verseStart, verseEnd } = nav;
+	const ch = chapterStart ?? 1;
+	let attrs = `data-copy-book="${esc(book)}" data-copy-chapter="${ch}"`;
+	if (verseSegments) {
+		const segLabel = verseSegments
+			.map((s) => (s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`))
+			.join(",");
+		attrs += ` data-copy-segments="${esc(segLabel)}"`;
+	} else if (verseStart !== undefined && verseEnd !== undefined) {
+		attrs += ` data-copy-chapter-end="${chapterEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}"`;
+	} else if (chapterEnd !== undefined && chapterStart !== chapterEnd) {
+		attrs += ` data-copy-chapter-end="${chapterEnd}"`;
+	}
+	return `<button class="copy-btn" title="Copy text" ${attrs}>${ICON_COPY}</button>`;
+}
+
 export function navRefLabel(nav: NavRef): string {
 	const { book, chapterStart, chapterEnd, verseSegments, verseStart, verseEnd } = nav;
 	if (chapterStart !== undefined && chapterEnd !== undefined) {
@@ -796,7 +813,7 @@ export function renderMultiNav(data: BibleData, refs: NavRef[]) {
 	for (let i = 0; i < refs.length; i++) {
 		if (i > 0) html += `<hr class="multi-nav-divider">`;
 		html += `<section class="multi-nav-section">`;
-		html += `<h2 class="section-title">${esc(navRefLabel(refs[i]))}</h2>`;
+		html += `<h2 class="section-title">${esc(navRefLabel(refs[i]))} ${navRefCopyButtonHtml(refs[i])}${shareButtonHtml()}</h2>`;
 		html += navRefVersesHtml(data, refs[i]);
 		const ch = refs[i].chapterStart ?? 1;
 		html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(refs[i].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
@@ -1528,6 +1545,7 @@ export function renderParallelMultiNav(
 		if (i > 0) html += `<hr class="multi-nav-divider">`;
 		html += `<section class="multi-nav-section">`;
 		html += parallelNavRefHtml(primary, secondary, refs[i], primaryLabel, secondaryLabel);
+		html += `<div class="parallel-copy-both">${shareButtonHtml()}</div>`;
 		const ch = refs[i].chapterStart ?? 1;
 		html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(refs[i].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
 		html += `</section>`;
