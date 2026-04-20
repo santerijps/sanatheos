@@ -1531,20 +1531,21 @@ async function init() {
 		) as HTMLElement | null;
 		if (bookmarkBtn) {
 			e.preventDefault();
-			const s = readState();
-			const id = currentBookmarkId();
+			const ref = bookmarkBtn.dataset.bookmarkRef;
+			const id = ref ? `q:${ref}` : currentBookmarkId();
 			if (!id) return;
 			const alreadyBookmarked = await hasBookmark(id);
 			if (alreadyBookmarked) {
 				await removeBookmark(id);
 				showToast(t().bookmarkRemoved);
 			} else {
+				const s = readState();
 				const bm: Bookmark = {
 					id,
-					book: s.book,
-					chapter: s.chapter,
-					verse: s.verse,
-					query: s.query,
+					book: ref ? undefined : s.book,
+					chapter: ref ? undefined : s.chapter,
+					verse: ref ? undefined : s.verse,
+					query: ref ?? s.query,
 					addedAt: Date.now(),
 				};
 				await addBookmark(bm);
@@ -1941,19 +1942,21 @@ function bookmarkNavText(bm: Bookmark): string {
 }
 
 async function syncBookmarkBtn() {
-	const btn = document.querySelector<HTMLElement>("#content .bookmark-btn");
-	if (!btn) return;
-	const id = currentBookmarkId();
-	if (!id) {
-		btn.classList.remove("bookmark-active");
-		btn.title = t().bookmarkThis;
-		btn.setAttribute("aria-label", t().bookmarkThis);
-		return;
+	const btns = document.querySelectorAll<HTMLElement>("#content .bookmark-btn");
+	for (const btn of btns) {
+		const ref = btn.dataset.bookmarkRef;
+		const id = ref ? `q:${ref}` : currentBookmarkId();
+		if (!id) {
+			btn.classList.remove("bookmark-active");
+			btn.title = t().bookmarkThis;
+			btn.setAttribute("aria-label", t().bookmarkThis);
+			continue;
+		}
+		const active = await hasBookmark(id);
+		btn.classList.toggle("bookmark-active", active);
+		btn.title = active ? t().removeBookmark : t().bookmarkThis;
+		btn.setAttribute("aria-label", active ? t().removeBookmark : t().bookmarkThis);
 	}
-	const active = await hasBookmark(id);
-	btn.classList.toggle("bookmark-active", active);
-	btn.title = active ? t().removeBookmark : t().bookmarkThis;
-	btn.setAttribute("aria-label", active ? t().removeBookmark : t().bookmarkThis);
 }
 
 async function applyState(s: AppState) {
