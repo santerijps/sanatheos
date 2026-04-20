@@ -206,6 +206,9 @@ async function init() {
 	const storiesFilter = document.getElementById("stories-filter") as HTMLInputElement;
 	const storiesList = document.getElementById("stories-list")!;
 	const storiesTitleEl = document.getElementById("stories-title")!;
+	const parablesFilter = document.getElementById("parables-filter") as HTMLInputElement;
+	const parablesList = document.getElementById("parables-list")!;
+	const parablesTitleEl = document.getElementById("parables-title")!;
 	const bookmarksList = document.getElementById("bookmarks-list")!;
 	const bookmarksTitleEl = document.getElementById("bookmarks-title")!;
 
@@ -714,6 +717,17 @@ async function init() {
 				storiesFilter.focus();
 			}
 		}
+		// If opening parables tab, load data and reset filter
+		if ((tab || lastActiveTab) === "parables") {
+			parablesTitleEl.textContent = t().parablesTitle;
+			parablesFilter.placeholder = t().parablesFilterPlaceholder;
+			parablesFilter.value = "";
+			const parables = await loadParablesData();
+			renderParablesList(parables, "");
+			if (!window.matchMedia("(hover: none)").matches) {
+				parablesFilter.focus();
+			}
+		}
 		if ((tab || lastActiveTab) === "bookmarks") {
 			bookmarksTitleEl.textContent = t().bookmarksTitle;
 			await renderBookmarksList();
@@ -741,6 +755,14 @@ async function init() {
 				storiesFilter.placeholder = t().storiesFilterPlaceholder;
 				loadStoriesData().then((stories) =>
 					renderStoriesList(stories, storiesFilter.value),
+				);
+			}
+			// Load parables when switching to parables tab
+			if (tab === "parables") {
+				parablesTitleEl.textContent = t().parablesTitle;
+				parablesFilter.placeholder = t().parablesFilterPlaceholder;
+				loadParablesData().then((parables) =>
+					renderParablesList(parables, parablesFilter.value),
 				);
 			}
 			// Load bookmarks when switching to bookmarks tab
@@ -774,12 +796,16 @@ async function init() {
 	function localizeRef(ref: string): string {
 		// Sort canonical keys longest-first to avoid partial matches (e.g. "1 Samuel" before "Samuel")
 		const keys = getBookKeys().sort((a, b) => b.length - a.length);
-		for (const key of keys) {
-			if (ref === key || ref.startsWith(key + " ")) {
-				return displayName(key) + ref.slice(key.length);
+		function localizeSingle(part: string): string {
+			for (const key of keys) {
+				if (part === key || part.startsWith(key + " ")) {
+					return displayName(key) + part.slice(key.length);
+				}
 			}
+			return part;
 		}
-		return ref;
+		// Handle semicolon-separated multi-refs (e.g. "Genesis 25:19-34; Genesis 27")
+		return ref.split("; ").map(localizeSingle).join("; ");
 	}
 
 	function renderStoriesList(stories: StoryEntry[], filter: string) {
@@ -849,6 +875,90 @@ async function init() {
 	});
 
 	storiesList.addEventListener("click", (e) => {
+		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
+		if (!item) return;
+		const ref = item.dataset.ref;
+		if (!ref) return;
+		closeSidePanel();
+		searchInput.value = ref;
+		searchInput.dispatchEvent(new Event("input"));
+	});
+
+	// --- Parables panel ---
+
+	interface ParableEntry {
+		id: string;
+		title: string;
+		title_fi?: string;
+		description: string;
+		description_fi?: string;
+		ref: string;
+		category: string;
+	}
+
+	let parablesData: ParableEntry[] | null = null;
+
+	async function loadParablesData(): Promise<ParableEntry[]> {
+		if (parablesData) return parablesData;
+		const res = await fetch("./data/parables.json");
+		parablesData = (await res.json()) as ParableEntry[];
+		return parablesData;
+	}
+
+	function renderParablesList(parables: ParableEntry[], filter: string) {
+		const s = t();
+		const lang = getLanguage();
+		const getTitle = (p: ParableEntry) => (lang === "fi" && p.title_fi ? p.title_fi : p.title);
+		const getDesc = (p: ParableEntry) =>
+			lang === "fi" && p.description_fi ? p.description_fi : p.description;
+		// Category label is the gospel book name — localize via displayName
+		const getCatLabel = (cat: string) => displayName(cat);
+
+		const q = filter.trim().toLowerCase();
+		const filtered = q
+			? parables.filter(
+					(p) =>
+						getTitle(p).toLowerCase().includes(q) ||
+						getDesc(p).toLowerCase().includes(q) ||
+						getCatLabel(p.category).toLowerCase().includes(q),
+				)
+			: parables;
+
+		if (filtered.length === 0) {
+			parablesList.innerHTML = `<p class="stories-empty">${s.parablesEmpty}</p>`;
+			return;
+		}
+
+		const categories: string[] = [];
+		const byCategory: Record<string, ParableEntry[]> = {};
+		for (const p of filtered) {
+			if (!byCategory[p.category]) {
+				byCategory[p.category] = [];
+				categories.push(p.category);
+			}
+			byCategory[p.category].push(p);
+		}
+
+		let html = "";
+		for (const cat of categories) {
+			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
+			for (const p of byCategory[cat]) {
+				html += `<button class="story-item" type="button" data-ref="${escapeHtml(p.ref)}">
+					<span class="story-item-title">${escapeHtml(getTitle(p))}</span>
+					<span class="story-item-desc">${escapeHtml(getDesc(p))}</span>
+					<span class="story-item-ref">${escapeHtml(localizeRef(p.ref))}</span>
+				</button>`;
+			}
+		}
+		parablesList.innerHTML = html;
+	}
+
+	parablesFilter.addEventListener("input", async () => {
+		const parables = await loadParablesData();
+		renderParablesList(parables, parablesFilter.value);
+	});
+
+	parablesList.addEventListener("click", (e) => {
 		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
 		if (!item) return;
 		const ref = item.dataset.ref;
@@ -1756,6 +1866,8 @@ function updateStaticText() {
 	// Side tab button titles
 	const tabStories = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="stories"]');
 	if (tabStories) tabStories.title = s.storiesTitle;
+	const tabParables = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="parables"]');
+	if (tabParables) tabParables.title = s.parablesTitle;
 	const tabBookmarks = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="bookmarks"]');
 	if (tabBookmarks) tabBookmarks.title = s.bookmarksTitle;
 	const tabSettings = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="settings"]');

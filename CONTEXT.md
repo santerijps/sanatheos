@@ -54,9 +54,10 @@ sanatheos/
 │   │   ├── styleguide.json   # Paragraph/poetry formatting data (generated)
 │   │   ├── subheadings-en.json # Verse subheadings (English)
 │   │   ├── subheadings-fi.json # Verse subheadings (Finnish)
-│   │   ├── descriptions-en.json # Book/chapter descriptions (English)
-   │   ├── descriptions-fi.json # Book/chapter descriptions (Finnish)
-   │   └── stories.json      # Curated Bible stories list (bilingual EN/FI)
+││   │   ├── descriptions-en.json # Book/chapter descriptions (English)
+│   │   ├── descriptions-fi.json # Book/chapter descriptions (Finnish)
+│   │   ├── stories.json      # Curated Bible stories list (bilingual EN/FI)
+│   │   └── parables.json     # Parables of Jesus list (bilingual EN/FI)
 │   ├── more/                         # "More Content" — static reference pages
 │   │   ├── index.html                # Listing page for all reference guides
 │   │   ├── philosophy.html           # Philosophy & Worldview
@@ -224,6 +225,33 @@ Fields:
 
 Language selection follows the active UI language. The build script copies the entire `data/` directory (including `stories.json`) to `docs/data/`.
 
+## Parables Data Format
+
+The parables list lives in `public/data/parables.json`. It is fetched lazily (only when the Parables pane is first opened) and cached in memory. Structure:
+
+```json
+[
+  {
+    "id": "sower",
+    "title": "The Parable of the Sower",
+    "title_fi": "Kylväjä",
+    "description": "A sower scatters seed on four types of ground...",
+    "description_fi": "Kylväjä kylvää siemenen neljänlaiseen maahan...",
+    "ref": "Matthew 13:1-23",
+    "category": "Matthew"
+  }
+]
+```
+
+Fields:
+- `id` — unique slug identifier
+- `title` / `title_fi` — parable title in English and Finnish
+- `description` / `description_fi` — one-sentence summary in both languages
+- `ref` — Bible reference string passed directly to the search input on click
+- `category` — one of `"Matthew"`, `"Mark"`, `"Luke"` (gospel book names, localized via `displayName()` at render time)
+
+The file contains 31 parables grouped by gospel. The build script copies the entire `data/` directory (including `parables.json`) to `docs/data/`.
+
 ## Styleguide Data Format
 
 The `styleguide.json` file (in `public/` and `docs/`) contains paragraph and poetry formatting metadata derived from USFM (Unified Standard Format Markers) source files of the World English Bible (WEB) translation. It maps books → chapters → formatting instructions:
@@ -357,15 +385,21 @@ The `init()` function runs on page load and orchestrates everything:
    - Theme and font size changes.
 
 **Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
-- `#side-tab-rail` — 52px icon column with four `.side-tab-btn[data-tab]` buttons (stories, bookmarks, settings, info) and `#side-close`
-- `#side-content` — scrollable area with four `.side-pane[data-pane]` divs (stories, bookmarks, settings, info); only the `.active` pane is visible (`display: flex`)
+- `#side-tab-rail` — 52px icon column with five `.side-tab-btn[data-tab]` buttons (stories, parables, bookmarks, settings, info) and `#side-close`
+- `#side-content` — scrollable area with five `.side-pane[data-pane]` divs (stories, parables, bookmarks, settings, info); only the `.active` pane is visible (`display: flex`)
 
 Key functions:
 - `activateSideTab(tab)` — toggles `.active` on both tab buttons and panes, saves to `localStorage` key `"side-panel-tab"`
-- `openSidePanel(tab?)` — adds `.open` to `#side-overlay`, calls `activateSideTab`, loads stories data if opening stories tab
+- `openSidePanel(tab?)` — adds `.open` to `#side-overlay`, calls `activateSideTab`, loads stories/parables/bookmarks data for their respective tabs
 - `closeSidePanel()` — removes `.open` from `#side-overlay`
 
 **Stories data flow** — `loadStoriesData()` fetches `./data/stories.json` once and caches the result in a module-scoped variable. `renderStoriesList(stories, filter)` builds HTML from the filtered list, grouping entries by `category` with `.stories-category-label` headers and `.story-item` buttons. Clicking a story calls `closeSidePanel()`, sets the search input value to the story's `ref`, and dispatches an `input` event to trigger navigation.
+
+**Parables data flow** — `loadParablesData()` fetches `./data/parables.json` once and caches in memory. `renderParablesList(parables, filter)` builds HTML identically to stories (same CSS classes: `.stories-category-label`, `.story-item`, `.story-item-title`, `.story-item-desc`, `.story-item-ref`, `.stories-empty`). Category labels are gospel book names (`"Matthew"`, `"Mark"`, `"Luke"`) localized via `displayName()`. Clicking a parable navigates identically to stories.
+
+**Bookmarks data flow** — `renderBookmarksList()` reads all records from IndexedDB via `getBookmarks()` and renders `.bookmark-item` divs, each containing a `.bookmark-item-nav` button (clicking navigates to the passage) and a `.bookmark-item-remove` button (×). The bookmark button (`.bookmark-btn`) appears in chapter, verse, chapter-range, and verse-segment heading rows (rendered by `render.ts`). Clicking it calls `addBookmark()` or `removeBookmark()` in `db.ts` and syncs the button's `.bookmark-active` class via `syncBookmarkBtn()`. Verse-level bookmarks can also be added via the verse context menu.
+
+**`localizeRef(ref)`** — Splits semicolon-separated multi-refs (e.g., `"Genesis 25:19-34; Genesis 27"`) on `"; "`, localizes each segment by replacing the English book key with the current translation's display name, then rejoins.
 
 **Key design choice:** The app never routes to different pages. All navigation updates `#content` innerHTML and pushes URL state. The URL uses query parameters (`?t=NHEB&book=gen&chapter=3&verse=16`) not hash fragments.
 
@@ -511,6 +545,7 @@ Two language tables: English (`EN`) and Finnish (`FI`), both implementing the `S
 - Footer text, favicon attribution, dictionary link (`footerDictionary`), and styleguide attribution (`footerStyleguide`)
 - Feature strings (copied, copy verse, copy both, highlight, remove highlight, show more)
 - Bookmark strings (bookmarksTitle, bookmarkThis, removeBookmark, bookmarksEmpty, bookmarkAdded, bookmarkRemoved)
+- Parables strings (parablesTitle, parablesFilterPlaceholder, parablesEmpty)
 - Share link strings (shareWith, shareWithout, linkCopied)
 - Interlinear strings (interlinear, interlinearTooltip, strongsDef, pronunciation, partOfSpeech, morphology, crossReferences, closePanel)
 - Deuterocanonical section label
@@ -938,21 +973,27 @@ Unit tests across 4 files using `bun test` (scoped to `tests/` via `bunfig.toml`
 
 ### End-to-End Tests (Playwright)
 
-E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. Tests cover 12 areas (40 tests total):
+E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. Tests cover 14 areas (53 tests total):
 
 - **Page load** (5 tests) — Default chapter (Genesis 1 / NHEB), specific chapter from URL, specific verse from URL, different translation from URL (KJV), title bar text.
 - **Search** (4 tests) — Text search returns results (quoted query), reference query navigates to chapter, search URL param loads results directly, empty search returns to default view.
 - **Chapter navigation** (3 tests) — Next arrow navigates to next chapter, prev arrow navigates to previous chapter, nav arrows cross book boundaries.
 - **Book index panel** (4 tests) — Opens and closes via button, opens with Ctrl+I, shows books with OT/NT sections, hovering a book reveals its chapters.
-- **Settings modal** (4 tests) — Opens and closes, translation selector is populated, theme switching updates `data-theme` attribute, font size switching updates `data-font-size` attribute.
-- **Info modal** (3 tests) — Opens and closes, contains help sections, closes with Escape.
-- **Keyboard shortcuts** (3 tests) — Ctrl+K focuses search input, Ctrl+B toggles side panel, Escape closes book index.
+- **Side panel** (4 tests) — Opens/closes via panel-btn and side-close, closes on backdrop click, closes with Escape, switching tabs shows correct pane.
+- **Settings pane** (3 tests) — Translation selector is populated, theme switching updates `data-theme` attribute, font size switching updates `data-font-size` attribute.
+- **Info pane** (2 tests) — Opens info pane from panel, contains help sections.
+- **Keyboard shortcuts** (4 tests) — Ctrl+K focuses search input, Ctrl+B opens/closes side panel, Escape closes book index.
 - **URL state** (2 tests) — Navigation updates URL with book code, browser back restores previous state.
 - **Translation switching** (1 test) — Switching translation reloads content with new translation's text.
 - **Toast notifications** (1 test) — Toast appears when copying a verse.
 - **Parallel translation views** (8 tests) — Two-column layout renders with `.parallel-container` and `.parallel-col`, columns show different translation labels and different verse text, parallel single verse shows two columns, copy-both button visible, each column has its own copy button, enabling parallel via settings select, disabling parallel returns to single column.
+- **Bible Stories pane** (6 tests) — Default tab on open, list populated, category labels (OT/NT), filter narrows results, empty filter shows no-results message, clicking a story closes panel and navigates, items show title/description/reference.
+- **Parables of Jesus pane** (7 tests) — Switching to parables tab shows parables pane, list populated, category labels (Matthew/Mark/Luke), filter narrows results, unmatched filter shows no-results message, clicking a parable closes panel and navigates, items show title/description/reference.
+- **Bookmarks pane** (6 tests) — Empty state when no bookmarks, bookmark button visible in chapter view, clicking bookmark button shows toast and marks button active, bookmarked passage appears in list, removing bookmark from list deletes it, clicking a bookmark navigates to the passage.
 - **More Content pages** (2 tests) — Index page loads, philosophy page loads.
 - **Footer** (1 test) — Footer is rendered with attribution text.
+
+**Test helpers:** `openPanelTab(page, tab)` opens the side panel and clicks the specified tab button (supports `"stories"`, `"parables"`, `"bookmarks"`, `"settings"`, `"info"`). `clearBookmarks(page)` clears the IndexedDB `bookmarks` store via `page.evaluate()` to ensure a clean state for bookmark tests.
 
 **Configuration:** `playwright.config.ts` defines a single Chromium project, 30s test timeout, headless mode, `baseURL: http://localhost:3000`, and `webServer` that starts `bun run start` with 15s startup timeout. `reuseExistingServer` is enabled outside CI.
 

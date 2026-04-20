@@ -182,14 +182,32 @@ test.describe("Book index panel", () => {
 // ---------------------------------------------------------------------------
 
 /** Open the side panel and switch to a specific tab. */
-async function openPanelTab(page: Page, tab: "stories" | "settings" | "info") {
+async function openPanelTab(
+	page: Page,
+	tab: "stories" | "parables" | "bookmarks" | "settings" | "info",
+) {
 	await page.click("#panel-btn");
 	await expect(page.locator("#side-overlay")).toHaveClass(/open/);
-	if (tab !== "stories") {
-		// Stories is the default; only click the tab button for others
-		await page.click(`.side-tab-btn[data-tab="${tab}"]`);
-	}
+	// Always click the tab button explicitly so we don't rely on localStorage state
+	await page.click(`.side-tab-btn[data-tab="${tab}"]`);
 	await expect(page.locator(`.side-pane[data-pane="${tab}"]`)).toHaveClass(/active/);
+}
+
+/** Clear all bookmarks from IndexedDB so bookmark tests start from a clean state. */
+async function clearBookmarks(page: Page) {
+	await page.evaluate(async () => {
+		const db = await new Promise<IDBDatabase>((resolve, reject) => {
+			const req = indexedDB.open("bible-app");
+			req.onsuccess = () => resolve(req.result);
+			req.onerror = () => reject(req.error);
+		});
+		const tx = db.transaction("bookmarks", "readwrite");
+		tx.objectStore("bookmarks").clear();
+		await new Promise<void>((resolve) => {
+			tx.oncomplete = () => resolve();
+		});
+		db.close();
+	});
 }
 
 test.describe("Side panel", () => {
@@ -623,6 +641,189 @@ test.describe("Bible Stories pane", () => {
 		await expect(firstItem.locator(".story-item-title")).toBeVisible();
 		await expect(firstItem.locator(".story-item-desc")).toBeVisible();
 		await expect(firstItem.locator(".story-item-ref")).toBeVisible();
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Parables of Jesus pane
+// ---------------------------------------------------------------------------
+
+test.describe("Parables of Jesus pane", () => {
+	test("switching to parables tab shows parables pane", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#panel-btn");
+		await page.click('.side-tab-btn[data-tab="parables"]');
+		await expect(page.locator('.side-pane[data-pane="parables"]')).toHaveClass(/active/);
+		await expect(page.locator('.side-pane[data-pane="stories"]')).not.toHaveClass(/active/);
+	});
+
+	test("parables list is populated with items", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
+		const items = page.locator("#parables-list .story-item");
+		expect(await items.count()).toBeGreaterThan(0);
+	});
+
+	test("parables list shows Matthew, Mark, and Luke category labels", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .stories-category-label", { timeout: 10_000 });
+		const labels = page.locator("#parables-list .stories-category-label");
+		const texts = await labels.allTextContents();
+		expect(texts.some((txt) => txt.includes("Matthew"))).toBe(true);
+		expect(texts.some((txt) => txt.includes("Mark"))).toBe(true);
+		expect(texts.some((txt) => txt.includes("Luke"))).toBe(true);
+	});
+
+	test("filter narrows parable results", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
+		const totalBefore = await page.locator("#parables-list .story-item").count();
+
+		await page.fill("#parables-filter", "Prodigal");
+		await page.waitForTimeout(100);
+		const totalAfter = await page.locator("#parables-list .story-item").count();
+		expect(totalAfter).toBeLessThan(totalBefore);
+		await expect(page.locator("#parables-list .story-item").first()).toContainText("Prodigal");
+	});
+
+	test("unmatched filter shows no-results message", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
+
+		await page.fill("#parables-filter", "xyznonexistent999");
+		await page.waitForTimeout(100);
+		await expect(page.locator("#parables-list .stories-empty")).toBeVisible();
+		await expect(page.locator("#parables-list .story-item")).toHaveCount(0);
+	});
+
+	test("clicking a parable closes panel and navigates", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
+
+		const firstItem = page.locator("#parables-list .story-item").first();
+		await firstItem.click();
+
+		// Panel should close
+		await expect(page.locator("#side-overlay")).not.toHaveClass(/open/);
+		// Search input should have been populated with the reference
+		await expect(page.locator("#search-input")).not.toHaveValue("", { timeout: 5_000 });
+	});
+
+	test("parable items show title, description, and reference", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
+
+		const firstItem = page.locator("#parables-list .story-item").first();
+		await expect(firstItem.locator(".story-item-title")).toBeVisible();
+		await expect(firstItem.locator(".story-item-desc")).toBeVisible();
+		await expect(firstItem.locator(".story-item-ref")).toBeVisible();
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Bookmarks pane
+// ---------------------------------------------------------------------------
+
+test.describe("Bookmarks pane", () => {
+	test("bookmarks pane shows empty state when no bookmarks exist", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await clearBookmarks(page);
+		await openPanelTab(page, "bookmarks");
+		await expect(page.locator(".bookmarks-empty")).toBeVisible({ timeout: 5_000 });
+		await expect(page.locator(".bookmark-item")).toHaveCount(0);
+	});
+
+	test("bookmark button is visible in chapter view", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await expect(page.locator("#content .bookmark-btn")).toBeVisible();
+	});
+
+	test("clicking bookmark button shows toast and marks button active", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearBookmarks(page);
+
+		const btn = page.locator("#content .bookmark-btn");
+		await expect(btn).toBeVisible();
+		await btn.click();
+
+		// Toast should appear
+		await expect(page.locator("#toast")).toHaveClass(/show/, { timeout: 3_000 });
+		// Button should now have active class
+		await expect(btn).toHaveClass(/bookmark-active/);
+	});
+
+	test("bookmarked passage appears in bookmarks list", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearBookmarks(page);
+
+		// Add bookmark
+		await page.locator("#content .bookmark-btn").click();
+		await expect(page.locator("#toast")).toHaveClass(/show/, { timeout: 3_000 });
+
+		// Open bookmarks tab
+		await openPanelTab(page, "bookmarks");
+		const items = page.locator(".bookmark-item");
+		await expect(items).toHaveCount(1, { timeout: 5_000 });
+		await expect(items.first().locator(".bookmark-item-nav")).toContainText("John 3");
+	});
+
+	test("removing a bookmark from the list deletes it", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearBookmarks(page);
+
+		// Add bookmark
+		await page.locator("#content .bookmark-btn").click();
+		await expect(page.locator("#toast")).toHaveClass(/show/, { timeout: 3_000 });
+
+		// Open bookmarks tab and remove it
+		await openPanelTab(page, "bookmarks");
+		await expect(page.locator(".bookmark-item")).toHaveCount(1, { timeout: 5_000 });
+		await page.locator(".bookmark-item-remove").first().click();
+
+		// List should now be empty
+		await expect(page.locator(".bookmark-item")).toHaveCount(0, { timeout: 5_000 });
+		await expect(page.locator(".bookmarks-empty")).toBeVisible();
+	});
+
+	test("clicking a bookmark in the list navigates to the passage", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearBookmarks(page);
+
+		// Add bookmark for John 3
+		await page.locator("#content .bookmark-btn").click();
+		await expect(page.locator("#toast")).toHaveClass(/show/, { timeout: 3_000 });
+
+		// Navigate away
+		await page.fill("#search-input", "Genesis 1");
+		await expect(page.locator("#content")).toContainText("Genesis", { timeout: 5_000 });
+
+		// Open bookmarks and click the saved bookmark
+		await openPanelTab(page, "bookmarks");
+		await expect(page.locator(".bookmark-item")).toHaveCount(1, { timeout: 5_000 });
+		await page.locator(".bookmark-item-nav").first().click();
+
+		// Panel closes and navigates back to John 3
+		await expect(page.locator("#side-overlay")).not.toHaveClass(/open/);
+		await expect(page.locator("#content")).toContainText("John 3", { timeout: 5_000 });
 	});
 });
 

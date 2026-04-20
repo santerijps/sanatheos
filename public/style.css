@@ -84,6 +84,7 @@ header {
   align-items: center;
   gap: 10px;
   padding: 10px 20px;
+  justify-content: center;
 }
 
 #search-wrap {
@@ -95,6 +96,7 @@ header {
   background: var(--bg);
   overflow: hidden;
   transition: border-color 0.15s, box-shadow 0.15s;
+  max-width: 90ch;
 }
 
 #search-wrap:focus-within {
@@ -719,25 +721,29 @@ mark {
   display: flex;
 }
 
-/* --- Stories pane --- */
-#stories-header {
+/* --- Stories & Parables panes --- */
+#stories-header,
+#parables-header {
   padding: 20px 20px 0;
   flex-shrink: 0;
 }
 
-#stories-title {
+#stories-title,
+#parables-title {
   margin: 0;
   font: 600 16px/1 var(--sans);
   letter-spacing: 0.02em;
   color: var(--text);
 }
 
-#stories-search-wrap {
+#stories-search-wrap,
+#parables-search-wrap {
   padding: 12px 16px 0;
   flex-shrink: 0;
 }
 
-#stories-filter {
+#stories-filter,
+#parables-filter {
   width: 100%;
   box-sizing: border-box;
   padding: 9px 14px;
@@ -750,25 +756,32 @@ mark {
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-#stories-filter:focus {
+#stories-filter:focus,
+#parables-filter:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px var(--accent-focus);
 }
 
-#stories-filter::placeholder {
+#stories-filter::placeholder,
+#parables-filter::placeholder {
   color: var(--subtle);
 }
 
-#stories-list {
+#stories-list,
+#parables-list {
   padding: 12px 8px 16px;
   overflow-y: auto;
   flex: 1;
 }
 
-#stories-list::-webkit-scrollbar { width: 6px; }
-#stories-list::-webkit-scrollbar-track { background: transparent; }
-#stories-list::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
-#stories-list::-webkit-scrollbar-thumb:hover { background: #aaa; }
+#stories-list::-webkit-scrollbar,
+#parables-list::-webkit-scrollbar { width: 6px; }
+#stories-list::-webkit-scrollbar-track,
+#parables-list::-webkit-scrollbar-track { background: transparent; }
+#stories-list::-webkit-scrollbar-thumb,
+#parables-list::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
+#stories-list::-webkit-scrollbar-thumb:hover,
+#parables-list::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
 .stories-category-label {
   padding: 8px 10px 4px;

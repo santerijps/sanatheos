@@ -36,7 +36,7 @@
     header {
       position: sticky; top: 0; z-index: 100; background: var(--surface);
       border-bottom: 1px solid var(--border); display: flex;
-      align-items: center; gap: 10px; padding: 10px 20px;
+      align-items: center; gap: 10px; padding: 10px 20px; justify-content: center;
     }
     #search-input {
       flex: 1; height: 42px; padding: 0 12px;
@@ -47,7 +47,7 @@
     #search-wrap {
       flex: 1; position: relative; display: flex; align-items: center;
       border: 1px solid var(--border); border-radius: 8px;
-      background: var(--bg); overflow: hidden;
+      background: var(--bg); overflow: hidden; max-width: 90ch;
     }
     #header-translation-select {
       flex-shrink: 0; height: 42px; padding: 0 8px;
@@ -123,6 +123,9 @@
         <button class="side-tab-btn active" data-tab="stories" type="button" title="Bible Stories">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         </button>
+        <button class="side-tab-btn" data-tab="parables" type="button" title="Parables of Jesus">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
         <button class="side-tab-btn" data-tab="bookmarks" type="button" title="Bookmarks">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
         </button>
@@ -150,6 +153,16 @@
             <input type="text" id="stories-filter" autocomplete="off" spellcheck="false" placeholder="Filter stories…">
           </div>
           <div id="stories-list"></div>
+        </div>
+        <!-- Parables tab -->
+        <div class="side-pane" data-pane="parables">
+          <div id="parables-header">
+            <h2 id="parables-title">Parables of Jesus</h2>
+          </div>
+          <div id="parables-search-wrap">
+            <input type="text" id="parables-filter" autocomplete="off" spellcheck="false" placeholder="Filter parables…">
+          </div>
+          <div id="parables-list"></div>
         </div>
         <!-- Bookmarks tab -->
         <div class="side-pane" data-pane="bookmarks">

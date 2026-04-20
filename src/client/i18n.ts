@@ -91,6 +91,11 @@ interface Strings {
 	storiesFilterPlaceholder: string;
 	storiesEmpty: string;
 
+	// Parables
+	parablesTitle: string;
+	parablesFilterPlaceholder: string;
+	parablesEmpty: string;
+
 	// Bookmarks
 	bookmarksTitle: string;
 	bookmarkThis: string;
@@ -218,7 +223,9 @@ const EN: Strings = {
 	storiesTitle: "Bible Stories",
 	storiesFilterPlaceholder: "Filter stories\u2026",
 	storiesEmpty: "No stories match your filter.",
-
+	parablesTitle: "Parables of Jesus",
+	parablesFilterPlaceholder: "Filter parables…",
+	parablesEmpty: "No parables match your filter.",
 	bookmarksTitle: "Bookmarks",
 	bookmarkThis: "Bookmark",
 	removeBookmark: "Remove bookmark",
@@ -346,7 +353,9 @@ const FI: Strings = {
 	storiesTitle: "Raamatun kertomukset",
 	storiesFilterPlaceholder: "Suodata kertomuksia\u2026",
 	storiesEmpty: "Ei kertomuksia hakusanalla.",
-
+	parablesTitle: "Jeesuksen vertaukset",
+	parablesFilterPlaceholder: "Suodata vertauksia…",
+	parablesEmpty: "Ei vertauksia hakusanalla.",
 	bookmarksTitle: "Kirjanmerkit",
 	bookmarkThis: "Lisää kirjanmerkki",
 	removeBookmark: "Poista kirjanmerkki",
