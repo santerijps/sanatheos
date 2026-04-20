@@ -133,3 +133,12 @@ export interface TypologyEntry {
 	ref: string;
 	category: string;
 }
+
+export interface VerseNote {
+	id: string; // "book:chapter:verse"
+	book: string;
+	chapter: number;
+	verse: number;
+	text: string;
+	updatedAt: number;
+}

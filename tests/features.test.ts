@@ -1469,4 +1469,330 @@ describe("HTML — structural elements", () => {
 	test("has verse menu element", () => {
 		expect(html).toContain('id="verse-menu"');
 	});
+
+	test("has note panel overlay element", () => {
+		expect(html).toContain('id="note-panel-overlay"');
+	});
+
+	test("has note panel element", () => {
+		expect(html).toContain('id="note-panel"');
+	});
+
+	test("has sidenotes rail element", () => {
+		expect(html).toContain('id="sidenotes-rail"');
+	});
+
+	test("has page-layout wrapper element", () => {
+		expect(html).toContain('id="page-layout"');
+	});
+
+	test("sidenotes-rail is a sibling of main inside page-layout", () => {
+		// Both elements should be inside page-layout
+		const layoutStart = html.indexOf('id="page-layout"');
+		expect(layoutStart).not.toBe(-1);
+		const mainPos = html.indexOf('id="content"', layoutStart);
+		const railPos = html.indexOf('id="sidenotes-rail"', layoutStart);
+		expect(mainPos).not.toBe(-1);
+		expect(railPos).not.toBe(-1);
+		// main comes before the rail
+		expect(mainPos).toBeLessThan(railPos);
+	});
+
+	test("note panel has textarea, save, cancel and delete buttons", () => {
+		expect(html).toContain('id="note-panel-textarea"');
+		expect(html).toContain('id="note-panel-save"');
+		expect(html).toContain('id="note-panel-cancel"');
+		expect(html).toContain('id="note-panel-delete"');
+	});
+
+	test("notes tab button exists in side panel", () => {
+		expect(html).toContain('data-tab="notes"');
+		expect(html).toContain('data-pane="notes"');
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Types — VerseNote shape validation
+// ---------------------------------------------------------------------------
+
+import type { VerseNote } from "../src/client/types.ts";
+
+describe("VerseNote type", () => {
+	test("VerseNote has required fields", () => {
+		const note: VerseNote = {
+			id: "John:3:16",
+			book: "John",
+			chapter: 3,
+			verse: 16,
+			text: "God is love.",
+			updatedAt: Date.now(),
+		};
+		expect(note.id).toBe("John:3:16");
+		expect(note.book).toBe("John");
+		expect(note.chapter).toBe(3);
+		expect(note.verse).toBe(16);
+		expect(note.text).toBe("God is love.");
+		expect(typeof note.updatedAt).toBe("number");
+	});
+
+	test("note id follows book:chapter:verse pattern", () => {
+		const note: VerseNote = {
+			id: "Genesis:1:1",
+			book: "Genesis",
+			chapter: 1,
+			verse: 1,
+			text: "Creation note",
+			updatedAt: 0,
+		};
+		const [b, c, v] = note.id.split(":");
+		expect(b).toBe("Genesis");
+		expect(Number(c)).toBe(1);
+		expect(Number(v)).toBe(1);
+	});
+
+	test("getNoteMap key construction", () => {
+		const notes: VerseNote[] = [
+			{
+				id: "John:3:16",
+				book: "John",
+				chapter: 3,
+				verse: 16,
+				text: "For God so loved",
+				updatedAt: 1,
+			},
+			{
+				id: "Genesis:1:1",
+				book: "Genesis",
+				chapter: 1,
+				verse: 1,
+				text: "In the beginning",
+				updatedAt: 2,
+			},
+		];
+		const map = new Map<string, string>();
+		for (const n of notes) map.set(n.id, n.text);
+		expect(map.get("John:3:16")).toBe("For God so loved");
+		expect(map.get("Genesis:1:1")).toBe("In the beginning");
+		expect(map.size).toBe(2);
+	});
+
+	test("later note overwrites earlier one for same verse", () => {
+		const notes: VerseNote[] = [
+			{
+				id: "John:3:16",
+				book: "John",
+				chapter: 3,
+				verse: 16,
+				text: "First note",
+				updatedAt: 1,
+			},
+			{
+				id: "John:3:16",
+				book: "John",
+				chapter: 3,
+				verse: 16,
+				text: "Updated note",
+				updatedAt: 2,
+			},
+		];
+		const map = new Map<string, string>();
+		for (const n of notes) map.set(n.id, n.text);
+		expect(map.get("John:3:16")).toBe("Updated note");
+		expect(map.size).toBe(1);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// i18n — notes strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — notes strings (EN)", () => {
+	beforeEach(() => setLanguage("en"));
+
+	test("notesTitle is 'Notes'", () => {
+		expect(t().notesTitle).toBe("Notes");
+	});
+
+	test("addNote is 'Add note'", () => {
+		expect(t().addNote).toBe("Add note");
+	});
+
+	test("editNote is 'Edit note'", () => {
+		expect(t().editNote).toBe("Edit note");
+	});
+
+	test("noteSaved is non-empty", () => {
+		expect(t().noteSaved.length).toBeGreaterThan(0);
+	});
+
+	test("noteDeleted is non-empty", () => {
+		expect(t().noteDeleted.length).toBeGreaterThan(0);
+	});
+
+	test("notesEmpty is 'No notes yet.'", () => {
+		expect(t().notesEmpty).toBe("No notes yet.");
+	});
+
+	test("notePlaceholder is non-empty", () => {
+		expect(t().notePlaceholder.length).toBeGreaterThan(0);
+	});
+
+	test("noteDeleteConfirm is non-empty", () => {
+		expect(t().noteDeleteConfirm.length).toBeGreaterThan(0);
+	});
+
+	test("noteSave is 'Save'", () => {
+		expect(t().noteSave).toBe("Save");
+	});
+
+	test("noteRemove is 'Remove'", () => {
+		expect(t().noteRemove).toBe("Remove");
+	});
+
+	test("cancel is 'Cancel'", () => {
+		expect(t().cancel).toBe("Cancel");
+	});
+});
+
+describe("i18n — notes strings (FI)", () => {
+	beforeEach(() => setLanguage("fi"));
+
+	test("notesTitle is 'Muistiinpanot'", () => {
+		expect(t().notesTitle).toBe("Muistiinpanot");
+	});
+
+	test("addNote is non-empty", () => {
+		expect(t().addNote.length).toBeGreaterThan(0);
+	});
+
+	test("editNote is non-empty", () => {
+		expect(t().editNote.length).toBeGreaterThan(0);
+	});
+
+	test("noteSaved is non-empty", () => {
+		expect(t().noteSaved.length).toBeGreaterThan(0);
+	});
+
+	test("noteDeleted is non-empty", () => {
+		expect(t().noteDeleted.length).toBeGreaterThan(0);
+	});
+
+	test("notesEmpty is non-empty", () => {
+		expect(t().notesEmpty.length).toBeGreaterThan(0);
+	});
+
+	test("noteSave is 'Tallenna'", () => {
+		expect(t().noteSave).toBe("Tallenna");
+	});
+
+	test("noteRemove is 'Poista'", () => {
+		expect(t().noteRemove).toBe("Poista");
+	});
+
+	test("cancel is 'Peruuta'", () => {
+		expect(t().cancel).toBe("Peruuta");
+	});
+});
+
+describe("i18n — notes keys present in new keys list", () => {
+	const noteKeys = [
+		"notesTitle",
+		"addNote",
+		"editNote",
+		"noteSaved",
+		"noteDeleted",
+		"notesEmpty",
+		"notePlaceholder",
+		"noteDeleteConfirm",
+		"noteSave",
+		"noteRemove",
+		"cancel",
+	] as const;
+
+	test("EN: all note keys are non-empty strings", () => {
+		setLanguage("en");
+		const s = t();
+		for (const key of noteKeys) {
+			expect(typeof s[key]).toBe("string");
+			expect((s[key] as string).length).toBeGreaterThan(0);
+		}
+	});
+
+	test("FI: all note keys are non-empty strings", () => {
+		setLanguage("fi");
+		const s = t();
+		for (const key of noteKeys) {
+			expect(typeof s[key]).toBe("string");
+			expect((s[key] as string).length).toBeGreaterThan(0);
+		}
+	});
+});
+
+// ---------------------------------------------------------------------------
+// CSS — sidenotes and note panel styles
+// ---------------------------------------------------------------------------
+
+describe("CSS — sidenote styles", () => {
+	const css = readFileSync(join(ROOT, "public", "style.css"), "utf-8");
+
+	test("has .verse-sidenote rule", () => {
+		expect(css).toContain(".verse-sidenote");
+	});
+
+	test("has .verse-sidenote-num rule", () => {
+		expect(css).toContain(".verse-sidenote-num");
+	});
+
+	test("has .verse-sidenote.note-open rule", () => {
+		expect(css).toContain(".verse-sidenote.note-open");
+	});
+
+	test("has #sidenotes-rail rule", () => {
+		expect(css).toContain("#sidenotes-rail");
+	});
+
+	test("#sidenotes-rail is hidden by default (display: none)", () => {
+		// The base (non-media-query) rule should set display:none
+		const baseMatch = css.match(/#sidenotes-rail\s*\{[^}]*display:\s*none/);
+		expect(baseMatch).not.toBeNull();
+	});
+
+	test("sidenotes are displayed in ≥768px media query", () => {
+		const idx768 = css.indexOf("min-width: 768px");
+		expect(idx768).not.toBe(-1);
+		// Within that block, sidenotes-rail should be display:block
+		const block768 = css.slice(idx768, css.indexOf("}", idx768 + 200) + 200);
+		expect(block768).toContain("#sidenotes-rail");
+		expect(block768).toContain("display: block");
+	});
+
+	test("≥1456px media query contains ghost spacer", () => {
+		expect(css).toContain("min-width: 1456px");
+		const idx1456 = css.indexOf("min-width: 1456px");
+		const block1456end = css.indexOf("}", css.indexOf("{", idx1456) + 1) + 200;
+		const block1456 = css.slice(idx1456, block1456end);
+		expect(block1456).toContain("#page-layout::before");
+	});
+});
+
+describe("CSS — note panel styles", () => {
+	const css = readFileSync(join(ROOT, "public", "style.css"), "utf-8");
+
+	test("has #note-panel-overlay rule", () => {
+		expect(css).toContain("#note-panel-overlay");
+	});
+
+	test("has #note-panel rule", () => {
+		expect(css).toContain("#note-panel");
+	});
+
+	test("note panel uses fixed positioning", () => {
+		const match = css.match(/#note-panel-overlay\s*\{[^}]*position:\s*fixed/);
+		expect(match).not.toBeNull();
+	});
+
+	test("note panel slide-in uses transform", () => {
+		const match = css.match(/#note-panel\s*\{[^}]*transform:/);
+		expect(match).not.toBeNull();
+	});
 });

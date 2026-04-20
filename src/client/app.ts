@@ -10,6 +10,7 @@ import type {
 	ParableEntry,
 	TheophaniesEntry,
 	TypologyEntry,
+	VerseNote,
 } from "./types.ts";
 import {
 	loadBible,
@@ -33,6 +34,10 @@ import {
 	saveTheophanies,
 	loadTypology,
 	saveTypology,
+	getNotes,
+	saveNote,
+	deleteNote,
+	getNoteMap,
 } from "./db.ts";
 import {
 	initSearch,
@@ -73,6 +78,8 @@ import {
 	setStrongsDict,
 	getStrongsDict,
 	renderStrongsPanel,
+	setNoteMap,
+	getNoteMap as getRenderNoteMap,
 } from "./render.ts";
 import { setTranslation, displayName, displayNameFor, getBookKeys } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
@@ -82,6 +89,7 @@ let currentTranslation = "NHEB";
 const DEFAULT_TRANSLATION = "NHEB";
 let translationRequestId = 0;
 let parallelTranslation = "";
+let syncSidenotes = () => {}; // set by init()
 let parallelData: BibleData | null = null;
 let highlightMap = new Map<string, HighlightColor>();
 
@@ -205,6 +213,7 @@ async function ensureInterlinear(book: string): Promise<void> {
 
 async function init() {
 	const content = document.getElementById("content")!;
+	const sidenoteRail = document.getElementById("sidenotes-rail")!;
 	const searchInput = document.getElementById("search-input") as HTMLInputElement;
 	const indexBtn = document.getElementById("index-btn")!;
 	const overlay = document.getElementById("index-overlay")!;
@@ -229,6 +238,20 @@ async function init() {
 	const typologyTitleEl = document.getElementById("typology-title")!;
 	const bookmarksList = document.getElementById("bookmarks-list")!;
 	const bookmarksTitleEl = document.getElementById("bookmarks-title")!;
+	const notesList = document.getElementById("notes-list")!;
+	const notesTitleEl = document.getElementById("notes-title")!;
+	// Note editor left panel elements
+	const noteDialogOverlay = document.getElementById("note-panel-overlay")!;
+	const noteDialogTitle = document.getElementById("note-panel-title")!;
+	const noteDialogRef = document.getElementById("note-panel-ref")!;
+	const noteDialogTextarea = document.getElementById(
+		"note-panel-textarea",
+	) as HTMLTextAreaElement;
+	const noteDialogSave = document.getElementById("note-panel-save")!;
+	const noteDialogCancel = document.getElementById("note-panel-cancel")!;
+	const noteDialogDelete = document.getElementById("note-panel-delete")!;
+	const notePanelClose = document.getElementById("note-panel-close")!;
+	const notePanelVerse = document.getElementById("note-panel-verse")!;
 
 	// Determine initial translation from URL or localStorage
 	const initialState = readState();
@@ -269,6 +292,10 @@ async function init() {
 	const hlMap = await getHighlightMap();
 	highlightMap = hlMap;
 	setHighlightMap(hlMap);
+
+	// Load verse notes
+	const noteMapData = await getNoteMap();
+	setNoteMap(noteMapData);
 
 	// Load Bible data: try IndexedDB first, then fetch from API
 	content.innerHTML = `<p class="loading">${t().loadingBible}</p>`;
@@ -522,8 +549,17 @@ async function init() {
 	strongsPanel.style.removeProperty("visibility");
 	// Remove inline visibility:hidden from side overlay (set in HTML to prevent FOUC)
 	sideOverlay.style.removeProperty("visibility");
+	// Remove inline visibility:hidden from note panel overlay (set in HTML to prevent FOUC)
+	noteDialogOverlay.style.removeProperty("visibility");
 	// Remove preload class to re-enable CSS transitions after initial paint
 	document.body.classList.remove("preload");
+
+	// Reposition sidenotes on window resize (debounced)
+	let syncSidenotesTimer: ReturnType<typeof setTimeout>;
+	window.addEventListener("resize", () => {
+		clearTimeout(syncSidenotesTimer);
+		syncSidenotesTimer = setTimeout(syncSidenotes, 150);
+	});
 
 	const savedIl =
 		initialState.interlinear || (isKJV() && localStorage.getItem("bible-interlinear") === "1");
@@ -772,6 +808,10 @@ async function init() {
 			bookmarksTitleEl.textContent = t().bookmarksTitle;
 			await renderBookmarksList();
 		}
+		if ((tab || lastActiveTab) === "notes") {
+			notesTitleEl.textContent = t().notesTitle;
+			await renderNotesList();
+		}
 	}
 
 	function closeSidePanel() {
@@ -825,6 +865,11 @@ async function init() {
 			if (tab === "bookmarks") {
 				bookmarksTitleEl.textContent = t().bookmarksTitle;
 				renderBookmarksList();
+			}
+			// Load notes when switching to notes tab
+			if (tab === "notes") {
+				notesTitleEl.textContent = t().notesTitle;
+				renderNotesList();
 			}
 		});
 	});
@@ -1238,9 +1283,341 @@ async function init() {
 		}
 	});
 
+	// --- Notes panel ---
+
+	function sortedBookIndex(book: string): number {
+		const keys = getBookKeys();
+		const idx = keys.indexOf(book);
+		return idx === -1 ? 9999 : idx;
+	}
+
+	async function renderNotesList() {
+		const s = t();
+		const notes = await getNotes();
+		notes.sort((a, b) => {
+			const bi = sortedBookIndex(a.book) - sortedBookIndex(b.book);
+			if (bi !== 0) return bi;
+			if (a.chapter !== b.chapter) return a.chapter - b.chapter;
+			return a.verse - b.verse;
+		});
+		if (notes.length === 0) {
+			notesList.innerHTML = `<p class="notes-empty">${escapeHtml(s.notesEmpty)}</p>`;
+			return;
+		}
+		let html = "";
+		for (const note of notes) {
+			const refLabel = `${displayName(note.book)} ${note.chapter}:${note.verse}`;
+			html += `<div class="note-item">
+				<button class="note-item-body" type="button" data-query="${escapeHtml(refLabel)}" title="${escapeHtml(note.text)}">
+					<span class="note-item-ref">${escapeHtml(refLabel)}</span>
+					<span class="note-item-text">${escapeHtml(note.text)}</span>
+				</button>
+				<button class="note-item-remove" type="button" data-id="${escapeHtml(note.id)}" title="${escapeHtml(s.noteDeleteConfirm)}" aria-label="${escapeHtml(s.noteDeleteConfirm)}">&times;</button>
+			</div>`;
+		}
+		notesList.innerHTML = html;
+	}
+
+	notesList.addEventListener("click", async (e) => {
+		const navBtn = (e.target as HTMLElement).closest(".note-item-body") as HTMLElement | null;
+		if (navBtn) {
+			const query = navBtn.dataset.query;
+			if (!query) return;
+			closeSidePanel();
+			searchInput.value = query;
+			searchInput.dispatchEvent(new Event("input"));
+			return;
+		}
+		const removeBtn = (e.target as HTMLElement).closest(
+			".note-item-remove",
+		) as HTMLElement | null;
+		if (removeBtn) {
+			const id = removeBtn.dataset.id;
+			if (!id) return;
+			await deleteNote(id);
+			const newMap = await getNoteMap();
+			setNoteMap(newMap);
+			updateSidenoteDom(id, null);
+			requestAnimationFrame(syncSidenotes);
+			await renderNotesList();
+			return;
+		}
+	});
+
+	// --- Note editor dialog ---
+
+	let noteDialogCurrentId = "";
+
+	function openNoteDialog(book: string, chapter: number, verse: number) {
+		const id = `${book}:${chapter}:${verse}`;
+		const existingText = getRenderNoteMap().get(id) ?? "";
+		const refLabel = `${displayName(book)} ${chapter}:${verse}`;
+		noteDialogCurrentId = id;
+		noteDialogTitle.textContent = existingText ? t().editNote : t().addNote;
+		noteDialogRef.textContent = refLabel;
+		// Show the verse text in the panel header
+		const verseText = data?.[book]?.[String(chapter)]?.[String(verse)] ?? "";
+		notePanelVerse.textContent = verseText ?? "";
+		notePanelVerse.style.display = verseText ? "" : "none";
+		noteDialogTextarea.value = existingText;
+		noteDialogTextarea.placeholder = t().notePlaceholder;
+		noteDialogSave.textContent = t().noteSave;
+		noteDialogDelete.textContent = t().noteRemove;
+		noteDialogDelete.style.display = existingText ? "inline-flex" : "none";
+		noteDialogCancel.textContent = t().cancel;
+		noteDialogOverlay.classList.add("open");
+		// Focus textarea after transition completes
+		setTimeout(() => noteDialogTextarea.focus(), 300);
+	}
+
+	function closeNoteDialog() {
+		noteDialogOverlay.classList.remove("open");
+		noteDialogCurrentId = "";
+	}
+
+	noteDialogCancel.addEventListener("click", closeNoteDialog);
+	notePanelClose.addEventListener("click", closeNoteDialog);
+
+	noteDialogOverlay.addEventListener("click", (e) => {
+		if (e.target === noteDialogOverlay) closeNoteDialog();
+	});
+
+	noteDialogSave.addEventListener("click", async () => {
+		const text = noteDialogTextarea.value.trim();
+		if (!text || !noteDialogCurrentId) {
+			closeNoteDialog();
+			return;
+		}
+		const [bookPart, chapterStr, verseStr] = noteDialogCurrentId.split(":");
+		// Handle book names that contain colons (none do, but defensive parse)
+		const note: VerseNote = {
+			id: noteDialogCurrentId,
+			book: bookPart,
+			chapter: +chapterStr,
+			verse: +verseStr,
+			text,
+			updatedAt: Date.now(),
+		};
+		await saveNote(note);
+		const newMap = await getNoteMap();
+		setNoteMap(newMap);
+		// Update the sidenote in the DOM if the verse is currently displayed
+		updateSidenoteDom(noteDialogCurrentId, text);
+		requestAnimationFrame(() => requestAnimationFrame(syncSidenotes));
+		closeNoteDialog();
+		showToast(t().noteSaved);
+	});
+
+	noteDialogDelete.addEventListener("click", async () => {
+		if (!noteDialogCurrentId) return;
+		await deleteNote(noteDialogCurrentId);
+		const newMap = await getNoteMap();
+		setNoteMap(newMap);
+		// Remove the sidenote from DOM if visible
+		updateSidenoteDom(noteDialogCurrentId, null);
+		requestAnimationFrame(() => requestAnimationFrame(syncSidenotes));
+		closeNoteDialog();
+		showToast(t().noteDeleted);
+	});
+
+	/** Update or remove a sidenote element in the currently rendered content without full re-render. */
+	function updateSidenoteDom(noteId: string, text: string | null) {
+		const aside = (content.querySelector(
+			`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
+		) ??
+			sidenoteRail.querySelector(
+				`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
+			)) as HTMLElement | null;
+		const marker = content.querySelector(
+			`.verse-note-marker[data-note-id="${CSS.escape(noteId)}"]`,
+		) as HTMLElement | null;
+
+		if (text === null) {
+			// Delete: remove aside and marker, then renumber remaining sidenotes
+			aside?.remove();
+			marker?.remove();
+			content.querySelectorAll<HTMLElement>(".verse-note-marker").forEach((m, i) => {
+				const label = `[${i + 1}]`;
+				m.textContent = label;
+				m.setAttribute("aria-label", `Note ${i + 1}`);
+				const id = m.dataset.noteId;
+				if (id) {
+					const numEl =
+						content.querySelector(
+							`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
+						) ??
+						sidenoteRail.querySelector(
+							`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
+						);
+					if (numEl) numEl.textContent = String(i + 1);
+				}
+			});
+		} else if (aside) {
+			// Update existing sidenote text
+			const textEl = aside.querySelector(".verse-sidenote-text");
+			if (textEl) textEl.textContent = text;
+		} else {
+			// New note: inject marker + aside directly without re-render
+			const [book, chapterStr, verseStr] = noteId.split(":");
+			const verseEl = content.querySelector(
+				`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
+			) as HTMLElement | null;
+			if (verseEl) {
+				const num = content.querySelectorAll(".verse-note-marker").length + 1;
+				const label = `[${num}]`;
+
+				const sup = document.createElement("sup");
+				sup.className = "verse-note-marker";
+				sup.dataset.noteId = noteId;
+				sup.setAttribute("role", "button");
+				sup.setAttribute("tabindex", "0");
+				sup.setAttribute("aria-label", `Note ${num}`);
+				sup.textContent = label;
+				verseEl.appendChild(sup);
+
+				const newAside = document.createElement("aside");
+				newAside.className = "verse-sidenote";
+				newAside.dataset.noteId = noteId;
+				const numSpan = document.createElement("span");
+				numSpan.className = "verse-sidenote-num";
+				numSpan.textContent = String(num);
+				const textSpan = document.createElement("span");
+				textSpan.className = "verse-sidenote-text";
+				textSpan.textContent = text;
+				newAside.appendChild(numSpan);
+				newAside.appendChild(textSpan);
+				verseEl.insertAdjacentElement("afterend", newAside);
+			}
+		}
+	}
+
+	/**
+	 * On desktop (≥1024px): move all `.verse-sidenote` asides from `content` to
+	 * `#sidenotes-rail` and position each one opposite its verse element.
+	 * On mobile: restore any previously moved asides back into `content`.
+	 */
+	syncSidenotes = function () {
+		// Step 1: restore asides from rail back to their verse in content.
+		// If the verse is no longer in the current view, discard the aside —
+		// it will be re-created by the renderer when that chapter is visited again.
+		for (const aside of Array.from(
+			sidenoteRail.querySelectorAll<HTMLElement>(".verse-sidenote"),
+		)) {
+			const noteId = aside.dataset.noteId;
+			if (!noteId) {
+				aside.remove();
+				continue;
+			}
+			aside.style.top = "";
+			const [book, chapterStr, verseStr] = noteId.split(":");
+			const verseEl = content.querySelector(
+				`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
+			) as HTMLElement | null;
+			if (verseEl) {
+				// Remove any freshly-rendered aside already in content to prevent duplication
+				content
+					.querySelector(`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`)
+					?.remove();
+				verseEl.insertAdjacentElement("afterend", aside);
+			} else aside.remove(); // verse not in current view — discard
+		}
+
+		if (window.innerWidth < 768) return; // tablet/mobile: keep in content
+
+		// Step 2: collect from content, compute positions, then move to rail
+		const asides = Array.from(content.querySelectorAll<HTMLElement>(".verse-sidenote"));
+		if (!asides.length) return;
+
+		const railRect = sidenoteRail.getBoundingClientRect();
+		const entries = asides.map((aside) => {
+			const noteId = aside.dataset.noteId!;
+			const [book, chapterStr, verseStr] = noteId.split(":");
+			const verseEl = content.querySelector(
+				`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
+			) as HTMLElement | null;
+			const top = verseEl ? verseEl.getBoundingClientRect().top - railRect.top : 0;
+			return { aside, top };
+		});
+
+		// Sort by desired position, then cascade downward to prevent overlap
+		entries.sort((a, b) => a.top - b.top);
+		let minTop = 0;
+		for (const { aside, top } of entries) {
+			const actualTop = Math.max(top, minTop);
+			aside.style.top = `${actualTop}px`;
+			sidenoteRail.appendChild(aside);
+			minTop = actualTop + aside.offsetHeight + 8; // 8px gap between stacked notes
+		}
+	};
+
+	// Handle .verse-note-marker clicks: toggle sidenote on mobile, do nothing on desktop.
+	// Must use stopImmediatePropagation so the verse-menu sup handler never fires.
+	content.addEventListener("click", (e) => {
+		const marker = (e.target as HTMLElement).closest(
+			".verse-note-marker",
+		) as HTMLElement | null;
+		if (!marker) return;
+		e.stopImmediatePropagation();
+		// On wide screens sidenotes are always visible — nothing to toggle
+		if (window.innerWidth >= 768) return;
+		const noteId = marker.dataset.noteId;
+		if (!noteId) return;
+		const aside = content.querySelector(
+			`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
+		) as HTMLElement | null;
+		if (aside) aside.classList.toggle("note-open");
+	});
+
+	// Clicking the sidenote number opens the note editor panel (both in content and rail).
+	function handleSidenoteNumClick(e: MouseEvent) {
+		const num = (e.target as HTMLElement).closest(".verse-sidenote-num") as HTMLElement | null;
+		if (!num) return;
+		e.stopImmediatePropagation();
+		const aside = num.closest(".verse-sidenote") as HTMLElement | null;
+		const noteId = aside?.dataset.noteId;
+		if (!noteId) return;
+		const [book, chapterStr, verseStr] = noteId.split(":");
+		openNoteDialog(book, Number(chapterStr), Number(verseStr));
+	}
+	content.addEventListener("click", handleSidenoteNumClick);
+	sidenoteRail.addEventListener("click", handleSidenoteNumClick);
+
+	// Hovering a sidenote highlights the referenced verse with an animated underline.
+	function setVerseHighlight(noteId: string, on: boolean) {
+		const [book, chapterStr, verseStr] = noteId.split(":");
+		const target = content.querySelector(
+			`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
+		) as HTMLElement | null;
+		if (target) target.classList.toggle("note-hover", on);
+	}
+	function handleSidenoteMouseEnter(e: MouseEvent) {
+		// Only fire when entering the aside itself (not moving between children)
+		const related = e.relatedTarget as HTMLElement | null;
+		const aside = (e.target as HTMLElement).closest(".verse-sidenote") as HTMLElement | null;
+		if (!aside) return;
+		if (related && aside.contains(related)) return;
+		setVerseHighlight(aside.dataset.noteId!, true);
+	}
+	function handleSidenoteMouseLeave(e: MouseEvent) {
+		// Only fire when leaving the aside entirely
+		const related = e.relatedTarget as HTMLElement | null;
+		const aside = (e.target as HTMLElement).closest(".verse-sidenote") as HTMLElement | null;
+		if (!aside) return;
+		if (related && aside.contains(related)) return;
+		setVerseHighlight(aside.dataset.noteId!, false);
+	}
+	sidenoteRail.addEventListener("mouseover", handleSidenoteMouseEnter);
+	sidenoteRail.addEventListener("mouseout", handleSidenoteMouseLeave);
+	content.addEventListener("mouseover", handleSidenoteMouseEnter);
+	content.addEventListener("mouseout", handleSidenoteMouseLeave);
+
 	// Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "Escape") {
+			if (noteDialogOverlay.classList.contains("open")) {
+				closeNoteDialog();
+				return;
+			}
 			if (document.querySelectorAll(".share-wrap.share-open").length > 0) {
 				document
 					.querySelectorAll<HTMLElement>(".share-wrap.share-open")
@@ -1590,6 +1967,11 @@ async function init() {
 		const isVerseBookmarked = await hasBookmark(bmId);
 		html += `<button class="verse-menu-item" data-action="bookmark">&#128278; ${isVerseBookmarked ? escapeHtml(t().removeBookmark) : escapeHtml(t().bookmarkThis)}</button>`;
 
+		// Note verse
+		const noteId = `${book}:${chapter}:${verse}`;
+		const hasNote = getRenderNoteMap().has(noteId);
+		html += `<button class="verse-menu-item" data-action="note">&#9998; ${hasNote ? escapeHtml(t().editNote) : escapeHtml(t().addNote)}</button>`;
+
 		// Highlight colors
 		html += `<div class="verse-menu-colors">`;
 		for (const c of colors) {
@@ -1643,6 +2025,10 @@ async function init() {
 					showToast(t().bookmarkAdded);
 				}
 				await syncBookmarkBtn();
+			} else if (action === "note") {
+				closeVerseMenu();
+				openNoteDialog(book, chapter, verse);
+				return;
 			} else if (action === "highlight") {
 				const color = target.dataset.color as HighlightColor;
 				await setHighlight({ book, chapter, verse, color });
@@ -1673,6 +2059,8 @@ async function init() {
 		(e) => {
 			const sup = (e.target as HTMLElement).closest("sup");
 			if (!sup) return;
+			// Note markers are handled separately — don't open verse menu
+			if (sup.classList.contains("verse-note-marker")) return;
 			const verseEl = sup.closest(".verse") as HTMLElement;
 			if (!verseEl || !verseEl.dataset.book) return;
 			const touch = e.touches[0];
@@ -2057,6 +2445,8 @@ async function applyState(s: AppState) {
 	updateTitle(s);
 	updateFooter();
 	syncBookmarkBtn();
+	// Double-rAF ensures the browser has fully laid out the new content before measuring
+	requestAnimationFrame(() => requestAnimationFrame(syncSidenotes));
 }
 
 const TRANSLATION_NAMES: Record<string, { name: string; language: string }> = {
@@ -2103,6 +2493,8 @@ function updateStaticText() {
 	if (tabTypology) tabTypology.title = s.typologyTitle;
 	const tabBookmarks = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="bookmarks"]');
 	if (tabBookmarks) tabBookmarks.title = s.bookmarksTitle;
+	const tabNotes = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="notes"]');
+	if (tabNotes) tabNotes.title = s.notesTitle;
 	const tabSettings = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="settings"]');
 	if (tabSettings) tabSettings.title = s.settings;
 	const tabInfo = document.querySelector<HTMLElement>('.side-tab-btn[data-tab="info"]');

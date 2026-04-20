@@ -119,6 +119,19 @@ interface Strings {
 	bookmarksEmpty: string;
 	bookmarkAdded: string;
 	bookmarkRemoved: string;
+
+	// Notes
+	notesTitle: string;
+	addNote: string;
+	editNote: string;
+	noteSaved: string;
+	noteDeleted: string;
+	notesEmpty: string;
+	notePlaceholder: string;
+	noteDeleteConfirm: string;
+	noteSave: string;
+	noteRemove: string;
+	cancel: string;
 }
 
 const EN: Strings = {
@@ -209,9 +222,9 @@ const EN: Strings = {
 
 	footerLine1: "All available Bible translations are in the public domain.",
 	footerDescriptions:
-		'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> (CPDV).',
+		'Book and chapter descriptions are sourced from the <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a>.',
 	footerStyleguide:
-		'Paragraph and poetry formatting is based on the <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) translation.',
+		'Paragraph and poetry formatting is based on the <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> translation.',
 	footerDictionary:
 		'Browse the <a href="./dictionary.html">Strong\u2019s Concordance Dictionary</a> for Hebrew and Greek word definitions.',
 	footerFavicon:
@@ -260,6 +273,18 @@ const EN: Strings = {
 	bookmarksEmpty: "No bookmarks yet.",
 	bookmarkAdded: "Bookmarked!",
 	bookmarkRemoved: "Bookmark removed",
+
+	notesTitle: "Notes",
+	addNote: "Add note",
+	editNote: "Edit note",
+	noteSaved: "Note saved",
+	noteDeleted: "Note deleted",
+	notesEmpty: "No notes yet.",
+	notePlaceholder: "Write a note about this verse\u2026",
+	noteDeleteConfirm: "Delete note",
+	noteSave: "Save",
+	noteRemove: "Remove",
+	cancel: "Cancel",
 };
 
 const FI: Strings = {
@@ -351,9 +376,9 @@ const FI: Strings = {
 	footerLine1:
 		"Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
 	footerDescriptions:
-		'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä (CPDV).',
+		'Kirjojen ja lukujen kuvaukset ovat peräisin <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a> -käännöksestä.',
 	footerStyleguide:
-		'Kappalejako ja runomuotoilu perustuvat <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> (WEB) -käännökseen.',
+		'Kappalejako ja runomuotoilu perustuvat <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a> -käännökseen.',
 	footerDictionary:
 		'Selaa <a href="./dictionary.html">Strongin konkordanssisanakirjaa</a> heprean ja kreikan sananmääritelmille.',
 	footerFavicon:
@@ -402,6 +427,18 @@ const FI: Strings = {
 	bookmarksEmpty: "Ei kirjanmerkkejä.",
 	bookmarkAdded: "Kirjanmerkki lisätty!",
 	bookmarkRemoved: "Kirjanmerkki poistettu",
+
+	notesTitle: "Muistiinpanot",
+	addNote: "Lisää muistiinpano",
+	editNote: "Muokkaa muistiinpanoa",
+	noteSaved: "Muistiinpano tallennettu",
+	noteDeleted: "Muistiinpano poistettu",
+	notesEmpty: "Ei muistiinpanoja.",
+	notePlaceholder: "Kirjoita muistiinpano t\u00e4st\u00e4 jakeesta\u2026",
+	noteDeleteConfirm: "Poista muistiinpano",
+	noteSave: "Tallenna",
+	noteRemove: "Poista",
+	cancel: "Peruuta",
 };
 
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };

@@ -102,6 +102,17 @@ export function getStrongsDict(): StrongsDict {
 	return strongsDict;
 }
 
+// --- Verse notes ---
+let noteMap = new Map<string, string>();
+
+export function setNoteMap(m: Map<string, string>) {
+	noteMap = m;
+}
+
+export function getNoteMap(): Map<string, string> {
+	return noteMap;
+}
+
 /** Look up the book-level description from a given description dataset. */
 function bookDescFrom(descs: DescriptionData, book: string): string {
 	const entry = descs.find((b) => b.name === book);
@@ -182,6 +193,7 @@ function renderStyledVerses(
 	const parts: string[] = [];
 	let mode: "prose" | "poetry" = "prose";
 	let poetryLevel = 1;
+	let noteCounter = 0;
 
 	for (let i = 0; i < nums.length; i++) {
 		const n = nums[i];
@@ -212,9 +224,20 @@ function renderStyledVerses(
 
 		const poetryClass = sg && mode === "poetry" ? ` poetry-q${poetryLevel}` : "";
 		const secAttr = secondary ? ` data-secondary="1"` : "";
-		parts.push(
-			`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}</span> `,
-		);
+		const noteId = `${book}:${chapter}:${n}`;
+		const noteText = noteMap.get(noteId);
+
+		if (noteText) {
+			noteCounter++;
+			const num = noteCounter;
+			parts.push(
+				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}<sup class="verse-note-marker" data-note-id="${esc(noteId)}" role="button" tabindex="0" aria-label="Note ${num}">[${num}]</sup></span><aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside> `,
+			);
+		} else {
+			parts.push(
+				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}</span> `,
+			);
+		}
 	}
 
 	return parts.join("");
@@ -617,7 +640,15 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 	if (ilWords) {
 		verseHtml = `<div class="verses il-verses single-verse">${renderInterlinearVerse(book, chapter, verse, ilWords)}</div>`;
 	} else {
-		verseHtml = `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}</span></div>`;
+		const noteId = `${book}:${chapter}:${verse}`;
+		const noteText = noteMap.get(noteId);
+		const noteMarker = noteText
+			? `<sup class="verse-note-marker" data-note-id="${esc(noteId)}" role="button" tabindex="0" aria-label="Note 1">[1]</sup></span>`
+			: `</span>`;
+		const noteSidenote = noteText
+			? `<aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">1</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`
+			: "";
+		verseHtml = `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}${noteMarker}${noteSidenote}</div>`;
 	}
 
 	$("content").innerHTML = `

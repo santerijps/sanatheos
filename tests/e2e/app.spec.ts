@@ -184,7 +184,15 @@ test.describe("Book index panel", () => {
 /** Open the side panel and switch to a specific tab. */
 async function openPanelTab(
 	page: Page,
-	tab: "stories" | "parables" | "theophanies" | "typology" | "bookmarks" | "settings" | "info",
+	tab:
+		| "stories"
+		| "parables"
+		| "theophanies"
+		| "typology"
+		| "bookmarks"
+		| "notes"
+		| "settings"
+		| "info",
 ) {
 	await page.click("#panel-btn");
 	await expect(page.locator("#side-overlay")).toHaveClass(/open/);
@@ -1062,5 +1070,270 @@ test.describe("More Content pages", () => {
 	test("philosophy page loads", async ({ page }) => {
 		await page.goto("/more/philosophy.html");
 		await expect(page.locator("h1")).toContainText("Philosophy");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Verse Notes
+// ---------------------------------------------------------------------------
+
+/** Clear all notes from IndexedDB so note tests start from a clean state. */
+async function clearNotes(page: Page) {
+	await page.evaluate(async () => {
+		const db = await new Promise<IDBDatabase>((resolve, reject) => {
+			const req = indexedDB.open("bible-app");
+			req.onsuccess = () => resolve(req.result);
+			req.onerror = () => reject(req.error);
+		});
+		if (!db.objectStoreNames.contains("notes")) {
+			db.close();
+			return;
+		}
+		const tx = db.transaction("notes", "readwrite");
+		tx.objectStore("notes").clear();
+		await new Promise<void>((resolve) => {
+			tx.oncomplete = () => resolve();
+		});
+		db.close();
+	});
+}
+
+/** Click a verse sup number to open the verse context menu. */
+async function openVerseMenu(page: Page) {
+	await page.waitForSelector(".verse sup", { timeout: 10_000 });
+	const sup = page.locator(".verse sup").first();
+	await sup.click();
+	await expect(page.locator("#verse-menu")).toHaveClass(/open/, { timeout: 5_000 });
+}
+
+test.describe("Verse notes", () => {
+	test("notes pane shows empty state when no notes exist", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await clearNotes(page);
+		await openPanelTab(page, "notes");
+		await expect(page.locator(".notes-empty")).toBeVisible({ timeout: 5_000 });
+		await expect(page.locator(".note-item")).toHaveCount(0);
+	});
+
+	test("notes tab button exists in side panel", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#panel-btn");
+		const notesTab = page.locator('.side-tab-btn[data-tab="notes"]');
+		await expect(notesTab).toBeVisible();
+	});
+
+	test("note panel opens from verse context menu", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		await openVerseMenu(page);
+
+		// Click the "Add note" button
+		const noteBtn = page.locator('.verse-menu-item[data-action="note"]');
+		await expect(noteBtn).toBeVisible({ timeout: 5_000 });
+		await noteBtn.click();
+
+		// Note panel overlay should open
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await expect(page.locator("#note-panel-textarea")).toBeVisible();
+	});
+
+	test("note panel shows 'Add note' title when no existing note", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await expect(page.locator("#note-panel-title")).toContainText("Add note");
+	});
+
+	test("note panel can be closed via close button", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+
+		await page.locator("#note-panel-close").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+	});
+
+	test("note panel can be closed via cancel button", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+
+		await page.locator("#note-panel-cancel").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+	});
+
+	test("adding a note shows toast and closes panel", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+
+		await page.locator("#note-panel-textarea").fill("Test note content");
+		await page.locator("#note-panel-save").click();
+
+		// Toast should appear with "Note saved" text
+		await expect(page.locator("#toast")).toHaveClass(/show/, { timeout: 3_000 });
+		// Panel should close
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+	});
+
+	test("saved note appears in notes pane", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		// Add a note
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-textarea").fill("Saved note text");
+		await page.locator("#note-panel-save").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// Open notes pane
+		await openPanelTab(page, "notes");
+		const items = page.locator(".note-item");
+		await expect(items).toHaveCount(1, { timeout: 5_000 });
+		await expect(items.first()).toContainText("Saved note text");
+	});
+
+	test("note marker (superscript) appears on verse after adding a note", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		// Add a note
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-textarea").fill("Marker test note");
+		await page.locator("#note-panel-save").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// A note marker should appear on the verse
+		const marker = page.locator(".verse-note-marker");
+		await expect(marker.first()).toBeVisible({ timeout: 5_000 });
+	});
+
+	test("clicking note marker opens note panel in edit mode", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		// Add a note first
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-textarea").fill("Edit mode note");
+		await page.locator("#note-panel-save").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// Click the sidenote number to open the panel in edit mode
+		await page.locator(".verse-sidenote-num").first().click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await expect(page.locator("#note-panel-title")).toContainText("Edit note");
+		await expect(page.locator("#note-panel-textarea")).toHaveValue("Edit mode note");
+	});
+
+	test("delete button is visible when editing an existing note", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		// Add a note
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-textarea").fill("Note to delete");
+		await page.locator("#note-panel-save").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// Reopen in edit mode
+		await page.locator(".verse-sidenote-num").first().click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+
+		// Delete button should now be visible
+		await expect(page.locator("#note-panel-delete")).toBeVisible();
+	});
+
+	test("deleting a note removes it from the notes pane", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		// Add a note
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-textarea").fill("Note to delete");
+		await page.locator("#note-panel-save").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// Reopen in edit mode then delete
+		await page.locator(".verse-sidenote-num").first().click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-delete").click();
+
+		// Toast should appear
+		await expect(page.locator("#toast")).toHaveClass(/show/, { timeout: 3_000 });
+		// Panel should close
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// Notes pane should be empty
+		await openPanelTab(page, "notes");
+		await expect(page.locator(".notes-empty")).toBeVisible({ timeout: 5_000 });
+		await expect(page.locator(".note-item")).toHaveCount(0);
+	});
+
+	test("note panel reference shows verse reference", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+
+		// Reference should show something like "John 3:X"
+		const ref = page.locator("#note-panel-ref");
+		await expect(ref).toContainText("John", { timeout: 5_000 });
 	});
 });

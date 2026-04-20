@@ -357,6 +357,15 @@ interface StrongsEntry {
 }
 
 type StrongsDict = Record<string, StrongsEntry>;
+
+interface VerseNote {
+  id: string;       // "book:chapter:verse" composite key
+  book: string;
+  chapter: number;
+  verse: number;
+  text: string;
+  updatedAt: number; // Unix timestamp ms
+}
 ```
 
 ## Module-by-Module Description
@@ -525,16 +534,17 @@ All functions write to `$("content").innerHTML`. Functions:
 
 ### db.ts — IndexedDB Layer
 
-Database: `bible-app`, version 3. Three object stores:
+Database: `bible-app`, version 4. Four object stores:
 - `data` — Bible translation data keyed by translation code (e.g., `"NHEB"`), plus interlinear data keyed by `"interlinear-{Book}"` and Strong's dictionary keyed by `"strongs"`.
 - `highlights` — Highlight records with compound key `book:chapter:verse`.
 - `bookmarks` — Bookmark records with `keyPath: "id"`. Each record: `{ id: string, book?: string, chapter?: number, verse?: number, query?: string, addedAt: number }`. `id` is a structured key (`book:chapter:verse`, `book:chapter`, `book`, or `q:query`). Records are returned sorted by `addedAt` descending.
+- `notes` — Verse note records with `keyPath: "id"`. Each record is a `VerseNote`: `{ id: "book:chapter:verse", book, chapter, verse, text, updatedAt }`. Records are returned sorted by `updatedAt` descending.
 
 Uses a persistent connection — opened once on first use and reused for all subsequent operations. The connection automatically re-opens if the browser closes it under memory pressure.
 
-Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`, `getBookmarks`, `addBookmark`, `removeBookmark`, `hasBookmark`.
+Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`, `getBookmarks`, `addBookmark`, `removeBookmark`, `hasBookmark`, `getNotes`, `saveNote`, `deleteNote`, `getNoteMap`.
 
-`getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup. `loadInterlinearBook()`/`saveInterlinearBook()` cache interlinear data per book in IndexedDB. `loadStrongsDict()`/`saveStrongsDict()` cache the Strong's Concordance dictionary. `getBookmarks()` returns all bookmark records sorted by `addedAt` descending. `hasBookmark(id)` checks whether a bookmark exists for the given id.
+`getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup. `loadInterlinearBook()`/`saveInterlinearBook()` cache interlinear data per book in IndexedDB. `loadStrongsDict()`/`saveStrongsDict()` cache the Strong's Concordance dictionary. `getBookmarks()` returns all bookmark records sorted by `addedAt` descending. `hasBookmark(id)` checks whether a bookmark exists for the given id. `getNotes()` returns all `VerseNote` records sorted by `updatedAt` descending. `saveNote(note)` upserts a note. `deleteNote(id)` removes a note. `getNoteMap()` returns a `Map<string, string>` of note id → text for fast per-verse lookup during rendering.
 
 ### i18n.ts — Internationalization
 
@@ -547,6 +557,7 @@ Two language tables: English (`EN`) and Finnish (`FI`), both implementing the `S
 - Footer text, favicon attribution, dictionary link (`footerDictionary`), and styleguide attribution (`footerStyleguide`)
 - Feature strings (copied, copy verse, copy both, highlight, remove highlight, show more)
 - Bookmark strings (bookmarksTitle, bookmarkThis, removeBookmark, bookmarksEmpty, bookmarkAdded, bookmarkRemoved)
+- Note strings (notesTitle, addNote, editNote, noteSaved, noteDeleted, notesEmpty, notePlaceholder, noteDeleteConfirm, noteSave, noteRemove, cancel)
 - Parables strings (parablesTitle, parablesFilterPlaceholder, parablesEmpty)
 - Share link strings (shareWith, shareWithout, linkCopied)
 - Interlinear strings (interlinear, interlinearTooltip, strongsDef, pronunciation, partOfSpeech, morphology, crossReferences, closePanel)
@@ -645,7 +656,9 @@ The page is a single HTML file with this DOM structure:
     #info-btn         — ⓘ help button (right of search input)
   </header>
 
-  <main #content>     — Dynamic content area (chapters, verses, results)
+  #page-layout        — Flex wrapper for main content + sidenotes rail
+    <main #content>   — Dynamic content area (chapters, verses, results)
+    #sidenotes-rail   — Hidden on mobile; shown as 200px right column on ≥768px, 240px on ≥1456px
 
   #index-overlay      — Full-screen overlay for book index
     #index-panel
@@ -673,6 +686,22 @@ The page is a single HTML file with this DOM structure:
   #verse-menu         — Floating context menu for verse actions
   #strongs-panel      — Side panel for Strong's word definitions
   #toast              — Toast notification element
+
+  #note-panel-overlay — Full-screen overlay (visibility:hidden by default) for the note editor panel
+    #note-panel       — Slide-in panel (transforms from left edge)
+      #note-panel-header
+        #note-panel-meta
+          #note-panel-title  — Reads "Add note" or "Edit note"
+          #note-panel-ref    — Verse reference label (e.g. "John 3:16")
+          #note-panel-verse  — Verse text preview (hidden when unavailable)
+        #note-panel-close    — × close button
+      #note-panel-body
+        #note-panel-textarea — Note text input
+      #note-panel-footer
+        #note-panel-delete        — Delete button (display:none until editing existing note)
+        #note-panel-main-actions
+          #note-panel-cancel
+          #note-panel-save
 
   <footer #footer>    — Translation info, descriptions attribution, styleguide attribution, favicon attribution
 
@@ -720,12 +749,21 @@ The page is a single HTML file with this DOM structure:
 - `.il-word` — Interlinear word display (original text, transliteration, Strong's number).
 - `#strongs-panel` — Slide-in panel for Strong's word definitions, pronunciation, morphology.
 - `.strongs-panel-header` / `.strongs-panel-body` — Strong's panel layout components.
+- `.verse-sidenote` — `display: none` on mobile; `display: block; position: absolute` in the sidenotes rail on desktop (≥768px). Styled with `--accent` border-left and `--surface` background.
+- `.verse-sidenote.note-open` — Applied on mobile when user taps the sidenote marker; makes the aside `display: block` inline within the verse content.
+- `.verse-sidenote-num` — Superscript note marker (`ᴺ`) next to the verse number. Styled with `--accent` color, `font-weight: 700`, `cursor: pointer`.
+- `.verse.note-hover` — Added/removed by JS when hovering a sidenote; grows an animated accent-coloured underline on the verse via `background-size` transition (0%→100% at 2px height, 350ms ease).
+- `#sidenotes-rail` — `display: none` by default. At ≥768px: `display: block; flex: 0 0 200px; position: relative`. At ≥1456px: `flex: 0 1 240px; min-width: 0`. `#sidenotes-rail:empty` collapses to `flex: 0 0 0; width: 0` at both breakpoints so `<main>` re-centres when no notes are present.
+- `#page-layout` — At ≥768px: `display: flex; align-items: flex-start; justify-content: center; gap: 24px; margin-top: 24px; padding: 0 16px` (16px side padding keeps content and rail off viewport edges). At ≥1456px: `#page-layout::before { content: ''; flex: 0 1 240px; min-width: 0 }` — ghost spacer that pushes `<main>` back to visual center when the 240px rail is present.
+- `#note-panel-overlay` — `position: fixed; inset: 0; visibility: hidden`. Gets `visibility: visible` and backdrop when `.open` class added.
+- `#note-panel` — `position: fixed; left: 0; top: 0; height: 100%; width: min(clamp(320px, 28vw, 520px), 92vw); transform: translateX(-100%); transition: transform 0.28s`. Slides in from left edge when overlay has `.open`.
 - Settings/info modals — Centered cards with close buttons.
 - `.settings-group` — Fieldset grouping related settings (content vs appearance).
 - `.segmented` / `.seg-btn` — Horizontal segmented controls for theme, font size, and language. Active state uses `--accent` background.
 - **Filtered list pane CSS pattern** — Each side panel pane that contains a filter input and scrollable list requires explicit ID-based CSS rules in the `/* --- Stories & Parables panes --- */` block of `style.css`. When adding a new pane named `foo`, add `#foo-header`, `#foo-title`, `#foo-search-wrap`, `#foo-filter`, `#foo-filter:focus`, `#foo-filter::placeholder`, `#foo-list`, and all `#foo-list::-webkit-scrollbar*` selectors to each of the eight corresponding CSS rule groups alongside the existing stories/parables/theophanies selectors. Omitting any selector group causes the filter input to render unstyled or the list to be non-scrollable.
-- `@media print` — Hides header, overlays, nav arrows, buttons. Shows `.print-translation-label`.
+- `@media print` — Hides header, overlays, nav arrows, buttons, bookmark buttons, sidenote rail and inline sidenotes. Shows `.print-translation-label`.
 - `@media (max-width: 800px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels, smaller section titles.
+- **Keyframe animations:** `contentFadeIn` (applied to `#content` on render) and `fadeInResult` (applied to search result cards) both animate opacity only (`from { opacity: 0 }` → `to { opacity: 1 }`). No `translateY` transform is used — this prevents Cumulative Layout Shift (CLS). Layout dimensions for `#page-layout` at all breakpoints are also declared as inline `<style>` in `index.html` so the browser can establish the correct layout before the main stylesheet loads.
 
 ## Features in Detail
 
@@ -903,6 +941,29 @@ A toast notification confirms the link was copied. The share functionality uses 
 
 18 deuterocanonical/apocryphal books are supported (Tobit, Judith, Wisdom, Sirach, Baruch, 1–4 Maccabees, etc.). These appear in translations that include them (e.g., CPDV). The book index panel displays a "Deuterocanonical" section label between Old and New Testament sections. Book codes for URL routing cover all 84 books.
 
+### 21. Verse Notes
+
+Users can annotate individual verses with free-text notes. Notes persist in IndexedDB and are displayed in a side rail (desktop) or inline (mobile).
+
+**Creating/editing a note:** Left-clicking (or long-pressing on touch) the verse superscript number opens the verse context menu. The menu includes a "✎ Add note" (or "✎ Edit note" if a note already exists) button. Clicking it opens the `#note-panel-overlay`, a slide-in panel from the left edge containing:
+- A header with title ("Add note" / "Edit note"), the verse reference, and verse text preview.
+- A `<textarea>` for the note text.
+- Save, Cancel, and Delete buttons (Delete is hidden for new notes).
+
+**Saving:** `saveNote(VerseNote)` is called with the composite `id = "book:chapter:verse"`. A "Note saved" toast appears and the panel closes. The verse re-renders with a `<sup class="verse-note-marker">` element and a `<aside class="verse-sidenote">` placed after the verse span.
+
+**Deleting:** `deleteNote(id)` removes the note from IndexedDB. A "Note deleted" toast appears. The note marker and sidenote are removed from the DOM.
+
+**Note marker click:** Clicking the `<sup class="verse-note-marker">` superscript re-opens the note panel in edit mode (pre-filled textarea, "Edit note" title, Delete button visible).
+
+**Sidenote display on desktop (≥768px):** `syncSidenotes()` runs after every render and on window resize. When `window.innerWidth >= 768`, it moves all `<aside class="verse-sidenote">` elements from the content area into `#sidenotes-rail` and positions them absolutely using the vertical offset of their corresponding verse element. Before re-inserting a rail aside, any duplicate aside already present in the content (placed by fresh renderer HTML) is removed first to prevent duplication when navigating between single-verse and chapter view. On mobile, sidenotes remain in the content area and toggle `.note-open` via tap.
+
+**Sidenote hover highlight:** Hovering a `.verse-sidenote` (in the rail or inline in content) adds `.note-hover` to the referenced `.verse` element, triggering an animated accent-coloured underline via a CSS `background-size` transition (0%→100%, 2px height, 350ms ease). Mouse enter/leave is tracked via `mouseover`/`mouseout` with `relatedTarget` checking so the class is only toggled when the pointer truly enters or leaves the aside.
+
+**Notes side panel tab:** A dedicated "Notes" tab in the side panel (`data-tab="notes"` / `data-pane="notes"`) lists all saved notes. Each `.note-item` shows the verse reference and note text. Clicking a note item navigates to that verse and opens the note panel. An empty state (`.notes-empty`) is shown when no notes exist.
+
+**i18n strings:** `notesTitle`, `addNote`, `editNote`, `noteSaved`, `noteDeleted`, `notesEmpty`, `notePlaceholder`, `noteDeleteConfirm`, `noteSave`, `noteRemove`, `cancel`.
+
 ### 20. More Content Pages
 
 A collection of self-contained HTML reference pages in `public/more/`, covering Orthodox Christian theology and philosophy. These are static HTML pages — not part of the SPA — living in their own subdirectory.
@@ -945,6 +1006,7 @@ A collection of self-contained HTML reference pages in `public/more/`, covering 
 | Interlinear data | IndexedDB `data` store | Per-book interlinear data (keyed `interlinear-{Book}`) | Permanent (per-origin) |
 | Strong's dict | IndexedDB `data` store | Strong's Concordance (keyed `strongs`) | Permanent (per-origin) |
 | Highlights | IndexedDB `highlights` store | Verse highlight colors | Permanent (per-origin) |
+| Notes | IndexedDB `notes` store | Verse annotations (`VerseNote` records) | Permanent (per-origin) |
 | Translation | `localStorage` `bible-translation` | Last-used translation code | Permanent |
 | Parallel | `localStorage` `bible-parallel` | Parallel translation code | Permanent |
 | Theme | `localStorage` `bible-theme` | "light" / "dark" / "system" | Permanent |
@@ -998,9 +1060,10 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 - **Parables of Jesus pane** (7 tests) — Switching to parables tab shows parables pane, list populated, category labels (Matthew/Mark/Luke), filter narrows results, unmatched filter shows no-results message, clicking a parable closes panel and navigates, items show title/description/reference.
 - **Bookmarks pane** (6 tests) — Empty state when no bookmarks, bookmark button visible in chapter view, clicking bookmark button shows toast and marks button active, bookmarked passage appears in list, removing bookmark from list deletes it, clicking a bookmark navigates to the passage.
 - **More Content pages** (2 tests) — Index page loads, philosophy page loads.
+- **Verse notes** (10 tests) — Empty state when no notes, notes tab button exists, note panel opens from verse context menu, "Add note" title shown for new notes, close via close button, close via cancel button, adding a note shows toast and closes panel, saved note appears in notes pane, note marker appears on verse after adding, clicking note marker opens panel in edit mode, delete button visible when editing, deleting a note removes it from the pane, verse reference shown in panel header.
 - **Footer** (1 test) — Footer is rendered with attribution text.
 
-**Test helpers:** `openPanelTab(page, tab)` opens the side panel and clicks the specified tab button (supports `"stories"`, `"parables"`, `"bookmarks"`, `"settings"`, `"info"`). `clearBookmarks(page)` clears the IndexedDB `bookmarks` store via `page.evaluate()` to ensure a clean state for bookmark tests.
+**Test helpers:** `openPanelTab(page, tab)` opens the side panel and clicks the specified tab button (supports `"stories"`, `"parables"`, `"bookmarks"`, `"notes"`, `"settings"`, `"info"`). `clearBookmarks(page)` clears the IndexedDB `bookmarks` store via `page.evaluate()` to ensure a clean state for bookmark tests. `clearNotes(page)` clears the IndexedDB `notes` store. `openVerseMenu(page)` clicks the first verse superscript to open the verse context menu.
 
 **Configuration:** `playwright.config.ts` defines a single Chromium project, 30s test timeout, headless mode, `baseURL: http://localhost:3000`, and `webServer` that starts `bun run start` with 15s startup timeout. `reuseExistingServer` is enabled outside CI.
 
