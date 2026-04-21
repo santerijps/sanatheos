@@ -231,7 +231,7 @@ function expandCrossChapterTrailing(term: string): [string, string] | null {
 	if (!m) return null;
 	const [, ch1, , ch2, , trailing] = m;
 	// Only accept trailing content that looks like verse segments (digits, commas, hyphens)
-	if (!/^[\d,\-]+$/.test(trailing)) return null;
+	if (!/^[\d,-]+$/.test(trailing)) return null;
 	return [`${bm.book} ${ch1}:${m[2]}-${ch2}:${m[4]}`, `${bm.book} ${ch2}:${trailing}`];
 }
 

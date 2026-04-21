@@ -1428,65 +1428,101 @@ async function init() {
 			sidenoteRail.querySelector(
 				`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
 			)) as HTMLElement | null;
-		const marker = content.querySelector(
-			`.verse-note-marker[data-note-id="${CSS.escape(noteId)}"]`,
-		) as HTMLElement | null;
+		// All markers with this noteId — may be >1 in parallel mode (one per column)
+		const markers = Array.from(
+			content.querySelectorAll<HTMLElement>(
+				`.verse-note-marker[data-note-id="${CSS.escape(noteId)}"]`,
+			),
+		);
 
 		if (text === null) {
-			// Delete: remove aside and marker, then renumber remaining sidenotes
+			// Delete: remove aside and all markers (may be >1 in parallel mode), then renumber
 			aside?.remove();
-			marker?.remove();
-			content.querySelectorAll<HTMLElement>(".verse-note-marker").forEach((m, i) => {
-				const label = `[${i + 1}]`;
-				m.textContent = label;
-				m.setAttribute("aria-label", `Note ${i + 1}`);
+			markers.forEach((m) => m.remove());
+			// Renumber remaining markers, grouping by noteId so all markers for the
+			// same note share the same number (parallel mode has one marker per column).
+			const seenIds = new Map<string, number>();
+			let counter = 0;
+			content.querySelectorAll<HTMLElement>(".verse-note-marker").forEach((m) => {
 				const id = m.dataset.noteId;
-				if (id) {
-					const numEl =
-						content.querySelector(
-							`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
-						) ??
-						sidenoteRail.querySelector(
-							`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
-						);
-					if (numEl) numEl.textContent = String(i + 1);
-				}
+				if (!id) return;
+				if (!seenIds.has(id)) seenIds.set(id, ++counter);
+				const num = seenIds.get(id)!;
+				m.textContent = `[${num}]`;
+				m.setAttribute("aria-label", `Note ${num}`);
 			});
+			for (const [id, num] of seenIds) {
+				const numEl =
+					content.querySelector(
+						`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
+					) ??
+					sidenoteRail.querySelector(
+						`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
+					);
+				if (numEl) numEl.textContent = String(num);
+			}
 		} else if (aside) {
-			// Update existing sidenote text
+			// Update existing sidenote text (also update secondary aside if present)
 			const textEl = aside.querySelector(".verse-sidenote-text");
 			if (textEl) textEl.textContent = text;
-		} else {
-			// New note: inject marker + aside directly without re-render
-			const [book, chapterStr, verseStr] = noteId.split(":");
-			const verseEl = content.querySelector(
-				`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
+			const secondaryAside = content.querySelector(
+				`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"][data-secondary]`,
 			) as HTMLElement | null;
-			if (verseEl) {
-				const num = content.querySelectorAll(".verse-note-marker").length + 1;
+			const secTextEl = secondaryAside?.querySelector(".verse-sidenote-text");
+			if (secTextEl) secTextEl.textContent = text;
+		} else {
+			// New note: inject marker into every matching verse span (parallel has one per column),
+			// and insert a primary aside after the first verse element and a secondary aside
+			// (data-secondary="1") after each additional verse element (for mobile inline toggle).
+			const [book, chapterStr, verseStr] = noteId.split(":");
+			const verseEls = Array.from(
+				content.querySelectorAll<HTMLElement>(
+					`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
+				),
+			);
+			if (verseEls.length > 0) {
+				// Count unique notes already in DOM — each note has one marker per column
+				const existingIds = new Set(
+					Array.from(content.querySelectorAll<HTMLElement>(".verse-note-marker")).map(
+						(m) => m.dataset.noteId,
+					),
+				);
+				const num = existingIds.size + 1;
 				const label = `[${num}]`;
 
-				const sup = document.createElement("sup");
-				sup.className = "verse-note-marker";
-				sup.dataset.noteId = noteId;
-				sup.setAttribute("role", "button");
-				sup.setAttribute("tabindex", "0");
-				sup.setAttribute("aria-label", `Note ${num}`);
-				sup.textContent = label;
-				verseEl.appendChild(sup);
+				for (const verseEl of verseEls) {
+					const sup = document.createElement("sup");
+					sup.className = "verse-note-marker";
+					sup.dataset.noteId = noteId;
+					sup.setAttribute("role", "button");
+					sup.setAttribute("tabindex", "0");
+					sup.setAttribute("aria-label", `Note ${num}`);
+					sup.textContent = label;
+					verseEl.appendChild(sup);
+				}
 
-				const newAside = document.createElement("aside");
-				newAside.className = "verse-sidenote";
-				newAside.dataset.noteId = noteId;
-				const numSpan = document.createElement("span");
-				numSpan.className = "verse-sidenote-num";
-				numSpan.textContent = String(num);
-				const textSpan = document.createElement("span");
-				textSpan.className = "verse-sidenote-text";
-				textSpan.textContent = text;
-				newAside.appendChild(numSpan);
-				newAside.appendChild(textSpan);
-				verseEl.insertAdjacentElement("afterend", newAside);
+				function makeAside(secondary: boolean): HTMLElement {
+					const el = document.createElement("aside");
+					el.className = "verse-sidenote";
+					el.dataset.noteId = noteId;
+					if (secondary) el.dataset.secondary = "1";
+					const numSpan = document.createElement("span");
+					numSpan.className = "verse-sidenote-num";
+					numSpan.textContent = String(num);
+					const textSpan = document.createElement("span");
+					textSpan.className = "verse-sidenote-text";
+					textSpan.textContent = text;
+					el.appendChild(numSpan);
+					el.appendChild(textSpan);
+					return el;
+				}
+
+				// Primary aside after first verse element (moved to rail on desktop)
+				verseEls[0].insertAdjacentElement("afterend", makeAside(false));
+				// Secondary aside after each additional verse element (mobile inline toggle only)
+				for (let i = 1; i < verseEls.length; i++) {
+					verseEls[i].insertAdjacentElement("afterend", makeAside(true));
+				}
 			}
 		}
 	}
@@ -1524,8 +1560,15 @@ async function init() {
 
 		if (window.innerWidth < 768) return; // tablet/mobile: keep in content
 
-		// Step 2: collect from content, compute positions, then move to rail
-		const asides = Array.from(content.querySelectorAll<HTMLElement>(".verse-sidenote"));
+		// Step 2: collect from content, compute positions, then move to rail.
+		// Skip secondary asides (parallel column) — they are only for mobile inline toggling.
+		const asides = Array.from(
+			content.querySelectorAll<HTMLElement>(".verse-sidenote:not([data-secondary])"),
+		);
+		// Discard any secondary asides still in content — not needed on desktop
+		content
+			.querySelectorAll<HTMLElement>(".verse-sidenote[data-secondary]")
+			.forEach((el) => el.remove());
 		if (!asides.length) return;
 
 		const railRect = sidenoteRail.getBoundingClientRect();
@@ -1562,7 +1605,10 @@ async function init() {
 		if (window.innerWidth >= 768) return;
 		const noteId = marker.dataset.noteId;
 		if (!noteId) return;
-		const aside = content.querySelector(
+		// Find the aside in the same parallel column as the tapped marker (or anywhere in content)
+		const col = marker.closest(".parallel-col") as HTMLElement | null;
+		const scope = col ?? content;
+		const aside = scope.querySelector(
 			`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
 		) as HTMLElement | null;
 		if (aside) aside.classList.toggle("note-open");
@@ -1585,10 +1631,10 @@ async function init() {
 	// Hovering a sidenote highlights the referenced verse with an animated underline.
 	function setVerseHighlight(noteId: string, on: boolean) {
 		const [book, chapterStr, verseStr] = noteId.split(":");
-		const target = content.querySelector(
+		const targets = content.querySelectorAll(
 			`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
-		) as HTMLElement | null;
-		if (target) target.classList.toggle("note-hover", on);
+		);
+		targets.forEach((el) => (el as HTMLElement).classList.toggle("note-hover", on));
 	}
 	function handleSidenoteMouseEnter(e: MouseEvent) {
 		// Only fire when entering the aside itself (not moving between children)
@@ -2033,11 +2079,23 @@ async function init() {
 				const color = target.dataset.color as HighlightColor;
 				await setHighlight({ book, chapter, verse, color });
 				highlightMap.set(hlKey, color);
-				verseEl.className = `verse hl-${color}`;
+				content
+					.querySelectorAll(
+						`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
+					)
+					.forEach((el) => {
+						(el as HTMLElement).className = `verse hl-${color}`;
+					});
 			} else if (action === "remove-highlight") {
 				await removeHighlight(book, chapter, verse);
 				highlightMap.delete(hlKey);
-				verseEl.className = "verse";
+				content
+					.querySelectorAll(
+						`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
+					)
+					.forEach((el) => {
+						(el as HTMLElement).className = "verse";
+					});
 			}
 			closeVerseMenu();
 		};

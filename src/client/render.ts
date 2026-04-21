@@ -230,8 +230,13 @@ function renderStyledVerses(
 		if (noteText) {
 			noteCounter++;
 			const num = noteCounter;
+			// Secondary column gets its own aside (for mobile inline toggle) but tagged
+			// data-secondary="1" so syncSidenotes never moves it to the desktop rail.
+			const aside = secondary
+				? `<aside class="verse-sidenote" data-note-id="${esc(noteId)}" data-secondary="1"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`
+				: `<aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`;
 			parts.push(
-				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}<sup class="verse-note-marker" data-note-id="${esc(noteId)}" role="button" tabindex="0" aria-label="Note ${num}">[${num}]</sup></span><aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside> `,
+				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}<sup class="verse-note-marker" data-note-id="${esc(noteId)}" data-secondary="${secondary ? "1" : ""}" role="button" tabindex="0" aria-label="Note ${num}">[${num}]</sup></span>${aside} `,
 			);
 		} else {
 			parts.push(

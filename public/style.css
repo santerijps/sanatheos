@@ -1117,14 +1117,22 @@ mark {
   background-size: 100% 2px;
 }
 
+/*
+ * ─── Breakpoints ────────────────────────────────────────────────────────────
+ *  --bp-tablet : 768px   flex layout, sidenotes rail appears
+ *  --bp-wide   : 800px   max-width threshold for responsive overrides
+ *  --bp-desktop: 1300px  centering spacer + wider index columns
+ * ────────────────────────────────────────────────────────────────────────────
+ */
+
 /* On wide screens, show notes in a dedicated rail beside the text column */
 #sidenotes-rail {
   display: none;
 }
 
-/* ≥768px (tablet landscape / small desktop): flex layout, rail on the right.
-   No ghost spacer here — main is left-of-centre; it naturally shifts left
-   as the viewport narrows while the rail keeps its width on the right. */
+/* ≥768px: flex layout, rail on the right.
+   No ghost spacer — justify-content: center centres the {main + rail} group,
+   so main sits slightly left-of-centre with the rail to its right. */
 @media (min-width: 768px) {
   #page-layout {
     display: flex;
@@ -1137,6 +1145,7 @@ mark {
 
   #page-layout main {
     margin: 0;
+    flex-grow: 1;
     padding-left: 32px;
     padding-right: 32px;
   }
@@ -1167,26 +1176,21 @@ mark {
   }
 }
 
-/* ≥1456px (wide desktop): add a matching ghost spacer on the left so the
-   reading column is centred under the search bar. Both ghost and rail use
-   flex: 0 1 240px so they shrink symmetrically as the viewport narrows. */
-@media (min-width: 1456px) {
+/* ≥1300px: inject a ghost spacer on the left that mirrors the rail so main
+   is truly centred under the search bar. The spacer collapses automatically
+   when the rail is empty, keeping the layout balanced in both states.
+   Also widens the index panel columns. */
+@media (min-width: 1300px) {
   #page-layout::before {
     content: '';
-    flex: 0 1;
-    min-width: 0;
+    flex: 0 0 200px;
   }
 
-  #sidenotes-rail {
-    flex: 0 1 240px;
-    min-width: 0;
-  }
-
-  #sidenotes-rail:empty {
+  #page-layout:has(#sidenotes-rail:empty)::before {
     flex: 0 0 0;
-    width: 0;
-    overflow: hidden;
   }
+
+  .idx-col { width: 320px; }
 }
 
 /* Note editor left panel — mirrors right sidebar */
@@ -1385,6 +1389,15 @@ mark {
 
 [data-theme="dark"] #note-panel-delete:hover {
   background: #3a1a1a;
+}
+
+[data-theme="dark"] #header-translation-select {
+  color-scheme: dark;
+}
+
+[data-theme="dark"] #header-translation-select option {
+  background: var(--surface);
+  color: var(--text);
 }
 
 /* --- Settings pane --- */
@@ -1701,15 +1714,10 @@ mark {
   letter-spacing: 0.3px;
 }
 
-/* === Wide screens — larger index panel === */
-@media (min-width: 1200px) {
-  .idx-col { width: 320px; }
-}
-
-/* === Responsive === */
+/* === Responsive (≤800px) === */
 @media (max-width: 800px) {
   header { padding: 8px 12px; }
-  main { padding: 20px 16px 20px; margin-top: 0; border-radius: 0; }
+  main { padding: 20px 16px 20px; margin-top: 0; }
   #index-panel { flex-direction: column; height: 90vh; width: 90vw; max-width: 90vw; }
   .idx-col { width: 100%; flex: 1; height: 0; max-height: none; min-height: 140px; border-right: none; border-bottom: 1px solid var(--border); padding-top: 0; }
   .idx-col:last-child { border-bottom: none; }
@@ -1732,7 +1740,6 @@ mark {
   .parallel-col { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
   .nav-full { display: none; }
   .nav-short { display: inline; }
-  .section-title { font-size: 18px; }
   .parallel-col .section-title { font-size: 14px; }
 }
 
