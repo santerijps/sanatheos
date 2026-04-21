@@ -1764,12 +1764,12 @@ describe("CSS — sidenote styles", () => {
 		expect(block768).toContain("display: block");
 	});
 
-	test("≥1456px media query contains ghost spacer", () => {
-		expect(css).toContain("min-width: 1456px");
-		const idx1456 = css.indexOf("min-width: 1456px");
-		const block1456end = css.indexOf("}", css.indexOf("{", idx1456) + 1) + 200;
-		const block1456 = css.slice(idx1456, block1456end);
-		expect(block1456).toContain("#page-layout::before");
+	test("≥1300px media query contains ghost spacer", () => {
+		expect(css).toContain("min-width: 1300px");
+		const idx1300 = css.indexOf("min-width: 1300px");
+		const block1300end = css.indexOf("}", css.indexOf("{", idx1300) + 1) + 200;
+		const block1300 = css.slice(idx1300, block1300end);
+		expect(block1300).toContain("#page-layout::before");
 	});
 });
 
