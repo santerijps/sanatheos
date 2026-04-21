@@ -153,14 +153,29 @@ function parseVerseSegments(s: string): VerseSegment[] | null {
 }
 
 function parseRef(term: string): ParsedRef | null {
-	const t = term.trim();
+	// Strip trailing non-reference symbols from the whole term (e.g. "Gen 1:1!" → "Gen 1:1")
+	const t = term
+		.trim()
+		.replace(/[^a-zA-ZÄÖÅäöå0-9\-:,\s]+$/, "")
+		.trim();
 	if (!t) return null;
 	const bm = matchBook(t);
 	if (!bm) return null;
 	if (!bm.rest) return { book: bm.book };
 
-	// Strip trailing incomplete operators (dash, comma, colon) while user is still typing
-	const rest = bm.rest.replace(/[-,:]+$/, "");
+	// Normalize the chapter/verse/range part:
+	// 1. Strip periods everywhere (e.g. "ch.1" → "ch1", "1:1." → "1:1")
+	// 2. Strip whitespace (e.g. "1 : 1" → "1:1", "1 - 3" → "1-3")
+	// 3. Strip letters immediately before a digit (e.g. "ch1" → "1", "v5" → "5")
+	// 4. Strip letters immediately after a digit (e.g. "1a" → "1", "16b" → "16")
+	// 5. Strip trailing non-reference chars and incomplete operators
+	const rest = bm.rest
+		.replace(/\./g, "")
+		.replace(/\s+/g, "")
+		.replace(/[a-zA-ZÄÖÅäöå]+(?=\d)/g, "")
+		.replace(/(?<=\d)[a-zA-ZÄÖÅäöå]+/g, "")
+		.replace(/[^a-zA-ZÄÖÅäöå0-9:,-]+$/, "")
+		.replace(/[-,:]+$/, "");
 	if (!rest) return { book: bm.book };
 
 	// cross-chapter verse range: chapter1:verse1-chapter2:verse2  e.g. 18:16-19:29
@@ -225,8 +240,13 @@ export interface NavRef {
 function expandCrossChapterTrailing(term: string): [string, string] | null {
 	const bm = matchBook(term);
 	if (!bm || !bm.rest) return null;
-	const rest = bm.rest.replace(/[-,:]+$/, "");
-	// Match ch1:v1-ch2:v2,trailing  e.g. "6:8-7:5,47-60"
+	const rest = bm.rest
+		.replace(/\./g, "")
+		.replace(/\s+/g, "")
+		.replace(/[a-zA-ZÄÖÅäöå]+(?=\d)/g, "")
+		.replace(/(?<=\d)[a-zA-ZÄÖÅäöå]+/g, "")
+		.replace(/[^a-zA-ZÄÖÅäöå0-9:,-]+$/, "")
+		.replace(/[-,:]+$/, "");
 	const m = rest.match(/^(\d+):(\d+)-(\d+):(\d+),(.+)$/);
 	if (!m) return null;
 	const [, ch1, , ch2, , trailing] = m;
@@ -236,28 +256,31 @@ function expandCrossChapterTrailing(term: string): [string, string] | null {
 }
 
 /**
- * Try to parse a query as pure references (no text filter).
- * Returns an array of NavRef for navigation, or null if any term is a search query.
+ * A single parsed term result: either a list of refs (1 or 2 for cross-chapter)
+ * or null if the term could not be parsed as a reference.
  */
-export function tryParseNav(query: string): NavRef[] | null {
+export type NavTermResult = { refs: NavRef[]; term: string } | { refs: null; term: string };
+
+/**
+ * Parse each semicolon-separated term of a query individually.
+ * Terms containing quoted strings are treated as search terms (refs: null).
+ * Used to support mixed valid/invalid reference rendering.
+ */
+export function parseNavTerms(query: string): NavTermResult[] {
 	const terms = normalizeQuery(query)
 		.split(/;/)
 		.map((t) => t.trim())
 		.filter(Boolean);
-	if (!terms.length) return null;
 
-	const refs: NavRef[] = [];
-	for (const term of terms) {
-		// If it contains a quoted filter, it's a search
-		if (term.match(/"(.*?)"/)) return null;
+	return terms.map((term) => {
+		if (term.match(/"(.*?)"/)) return { refs: null, term };
 
-		// Expand cross-chapter range with trailing verse segments in the last chapter:
-		// "Acts 6:8-7:5,47-60" → "Acts 6:8-7:5" + "Acts 7:47-60"
 		const expanded = expandCrossChapterTrailing(term);
 		if (expanded !== null) {
+			const refs: NavRef[] = [];
 			for (const sub of expanded) {
 				const subRef = parseRef(sub);
-				if (!subRef) return null;
+				if (!subRef) return { refs: null, term };
 				refs.push({
 					book: subRef.book,
 					chapterStart: subRef.chapterStart,
@@ -267,22 +290,84 @@ export function tryParseNav(query: string): NavRef[] | null {
 					verseEnd: subRef.verseEnd,
 				});
 			}
+			return { refs, term };
+		}
+
+		const ref = parseRef(term);
+		if (!ref) return { refs: null, term };
+		return {
+			refs: [
+				{
+					book: ref.book,
+					chapterStart: ref.chapterStart,
+					chapterEnd: ref.chapterEnd,
+					verseSegments: ref.verseSegments,
+					verseStart: ref.verseStart,
+					verseEnd: ref.verseEnd,
+				},
+			],
+			term,
+		};
+	});
+}
+
+/**
+ * Returns an array of NavRef for navigation, or null if any term is a search query.
+ * Refs are grouped by input term so that cross-chapter trailing expansions
+ * (e.g. "Acts 6:8-7:5,47-60" → two refs) stay in the same group.
+ */
+export function tryParseNavGroups(query: string): NavRef[][] | null {
+	const terms = normalizeQuery(query)
+		.split(/;/)
+		.map((t) => t.trim())
+		.filter(Boolean);
+	if (!terms.length) return null;
+
+	const groups: NavRef[][] = [];
+	for (const term of terms) {
+		if (term.match(/"(.*?)"/)) return null;
+
+		const expanded = expandCrossChapterTrailing(term);
+		if (expanded !== null) {
+			const group: NavRef[] = [];
+			for (const sub of expanded) {
+				const subRef = parseRef(sub);
+				if (!subRef) return null;
+				group.push({
+					book: subRef.book,
+					chapterStart: subRef.chapterStart,
+					chapterEnd: subRef.chapterEnd,
+					verseSegments: subRef.verseSegments,
+					verseStart: subRef.verseStart,
+					verseEnd: subRef.verseEnd,
+				});
+			}
+			groups.push(group);
 			continue;
 		}
 
 		const ref = parseRef(term);
 		if (!ref) return null;
-
-		refs.push({
-			book: ref.book,
-			chapterStart: ref.chapterStart,
-			chapterEnd: ref.chapterEnd,
-			verseSegments: ref.verseSegments,
-			verseStart: ref.verseStart,
-			verseEnd: ref.verseEnd,
-		});
+		groups.push([
+			{
+				book: ref.book,
+				chapterStart: ref.chapterStart,
+				chapterEnd: ref.chapterEnd,
+				verseSegments: ref.verseSegments,
+				verseStart: ref.verseStart,
+				verseEnd: ref.verseEnd,
+			},
+		]);
 	}
-	return refs;
+	return groups;
+}
+
+/**
+ * Returns an array of NavRef for navigation, or null if any term is a search query.
+ */
+export function tryParseNav(query: string): NavRef[] | null {
+	const groups = tryParseNavGroups(query);
+	return groups ? groups.flat() : null;
 }
 
 function escapeRegex(s: string): string {

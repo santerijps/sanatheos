@@ -845,15 +845,48 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
 	return html;
 }
 
-export function renderMultiNav(data: BibleData, refs: NavRef[]) {
+function renderNavRefGroup(data: BibleData, group: NavRef[]): string {
+	let html = "";
+	for (let j = 0; j < group.length; j++) {
+		const ref = group[j];
+		if (j === 0) {
+			html += `<h2 class="section-title">${esc(navRefLabel(ref))} ${navRefCopyButtonHtml(ref)}${shareButtonHtml()}${bookmarkButtonHtml(navRefLabel(ref))}</h2>`;
+		} else {
+			html += `<h3 class="multi-nav-subheading">${esc(navRefLabel(ref))}</h3>`;
+		}
+		html += navRefVersesHtml(data, ref);
+	}
+	const ch = group[0].chapterStart ?? 1;
+	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(group[0].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
+	return html;
+}
+
+export function renderMultiNav(data: BibleData, groups: NavRef[][]) {
 	let html = '<div class="translation-label"><span class="nav-translation"></span></div>';
-	for (let i = 0; i < refs.length; i++) {
+	for (let i = 0; i < groups.length; i++) {
 		if (i > 0) html += `<hr class="multi-nav-divider">`;
 		html += `<section class="multi-nav-section">`;
-		html += `<h2 class="section-title">${esc(navRefLabel(refs[i]))} ${navRefCopyButtonHtml(refs[i])}${shareButtonHtml()}${bookmarkButtonHtml(navRefLabel(refs[i]))}</h2>`;
-		html += navRefVersesHtml(data, refs[i]);
-		const ch = refs[i].chapterStart ?? 1;
-		html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(refs[i].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
+		html += renderNavRefGroup(data, groups[i]);
+		html += `</section>`;
+	}
+	$("content").innerHTML = html;
+	window.scrollTo(0, 0);
+}
+
+export type MixedNavItem = { refs: NavRef[]; term: string } | { refs: null; term: string };
+
+export function renderMixedMultiNav(data: BibleData, items: MixedNavItem[]) {
+	let html = '<div class="translation-label"><span class="nav-translation"></span></div>';
+	let first = true;
+	for (const item of items) {
+		if (!first) html += `<hr class="multi-nav-divider">`;
+		first = false;
+		html += `<section class="multi-nav-section">`;
+		if (item.refs === null) {
+			html += `<p class="empty">${esc(t().invalidRef(item.term))}</p>`;
+		} else {
+			html += renderNavRefGroup(data, item.refs);
+		}
 		html += `</section>`;
 	}
 	$("content").innerHTML = html;
@@ -1570,21 +1603,75 @@ function parallelNavRefHtml(
 	return html;
 }
 
+function renderParallelNavRefGroup(
+	primary: BibleData,
+	secondary: BibleData,
+	group: NavRef[],
+	primaryLabel: string,
+	secondaryLabel: string,
+): string {
+	let html = "";
+	for (let j = 0; j < group.length; j++) {
+		const ref = group[j];
+		if (j > 0) {
+			html += `<h3 class="multi-nav-subheading">${esc(navRefLabel(ref))}</h3>`;
+		}
+		html += parallelNavRefHtml(primary, secondary, ref, primaryLabel, secondaryLabel);
+	}
+	const ch = group[0].chapterStart ?? 1;
+	html += `<div class="parallel-copy-both">${shareButtonHtml()}${bookmarkButtonHtml(navRefLabel(group[0]))}</div>`;
+	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(group[0].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
+	return html;
+}
+
 export function renderParallelMultiNav(
 	primary: BibleData,
 	secondary: BibleData,
-	refs: NavRef[],
+	groups: NavRef[][],
 	primaryLabel: string,
 	secondaryLabel: string,
 ) {
 	let html = '<div class="translation-label"><span class="nav-translation"></span></div>';
-	for (let i = 0; i < refs.length; i++) {
+	for (let i = 0; i < groups.length; i++) {
 		if (i > 0) html += `<hr class="multi-nav-divider">`;
 		html += `<section class="multi-nav-section">`;
-		html += parallelNavRefHtml(primary, secondary, refs[i], primaryLabel, secondaryLabel);
-		html += `<div class="parallel-copy-both">${shareButtonHtml()}${bookmarkButtonHtml(navRefLabel(refs[i]))}</div>`;
-		const ch = refs[i].chapterStart ?? 1;
-		html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(refs[i].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
+		html += renderParallelNavRefGroup(
+			primary,
+			secondary,
+			groups[i],
+			primaryLabel,
+			secondaryLabel,
+		);
+		html += `</section>`;
+	}
+	$("content").innerHTML = html;
+	window.scrollTo(0, 0);
+}
+
+export function renderParallelMixedMultiNav(
+	primary: BibleData,
+	secondary: BibleData,
+	items: MixedNavItem[],
+	primaryLabel: string,
+	secondaryLabel: string,
+) {
+	let html = '<div class="translation-label"><span class="nav-translation"></span></div>';
+	let first = true;
+	for (const item of items) {
+		if (!first) html += `<hr class="multi-nav-divider">`;
+		first = false;
+		html += `<section class="multi-nav-section">`;
+		if (item.refs === null) {
+			html += `<p class="empty">${esc(t().invalidRef(item.term))}</p>`;
+		} else {
+			html += renderParallelNavRefGroup(
+				primary,
+				secondary,
+				item.refs,
+				primaryLabel,
+				secondaryLabel,
+			);
+		}
 		html += `</section>`;
 	}
 	$("content").innerHTML = html;

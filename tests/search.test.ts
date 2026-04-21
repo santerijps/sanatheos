@@ -187,6 +187,58 @@ describe("parseRef", () => {
 	test("nonexistent book returns null", () => {
 		expect(_parseRef("Bogus 1:1")).toBeNull();
 	});
+
+	test("trailing period ignored", () => {
+		expect(_parseRef("John 3:16.")).toEqual({
+			book: "John",
+			chapterStart: 3,
+			chapterEnd: 3,
+			verseSegments: [{ start: 16, end: 16 }],
+		});
+	});
+
+	test("trailing symbol ignored", () => {
+		expect(_parseRef("Genesis 1!")).toEqual({
+			book: "Genesis",
+			chapterStart: 1,
+			chapterEnd: 1,
+		});
+	});
+
+	test("whitespace around colon ignored", () => {
+		expect(_parseRef("John 3 : 16")).toEqual({
+			book: "John",
+			chapterStart: 3,
+			chapterEnd: 3,
+			verseSegments: [{ start: 16, end: 16 }],
+		});
+	});
+
+	test("whitespace around hyphen in verse range ignored", () => {
+		expect(_parseRef("Genesis 1 : 1 - 3")).toEqual({
+			book: "Genesis",
+			chapterStart: 1,
+			chapterEnd: 1,
+			verseSegments: [{ start: 1, end: 3 }],
+		});
+	});
+
+	test("letter suffix on verse number ignored", () => {
+		expect(_parseRef("John 3:16a")).toEqual({
+			book: "John",
+			chapterStart: 3,
+			chapterEnd: 3,
+			verseSegments: [{ start: 16, end: 16 }],
+		});
+	});
+
+	test("letter suffix on chapter number ignored", () => {
+		expect(_parseRef("Genesis 1a")).toEqual({
+			book: "Genesis",
+			chapterStart: 1,
+			chapterEnd: 1,
+		});
+	});
 });
 
 // --- search (reference queries) ---

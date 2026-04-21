@@ -132,6 +132,7 @@ interface Strings {
 	noteSave: string;
 	noteRemove: string;
 	cancel: string;
+	invalidRef: (term: string) => string;
 }
 
 const EN: Strings = {
@@ -285,6 +286,7 @@ const EN: Strings = {
 	noteSave: "Save",
 	noteRemove: "Remove",
 	cancel: "Cancel",
+	invalidRef: (term) => `Invalid reference: “${term}”`,
 };
 
 const FI: Strings = {
@@ -439,6 +441,7 @@ const FI: Strings = {
 	noteSave: "Tallenna",
 	noteRemove: "Poista",
 	cancel: "Peruuta",
+	invalidRef: (term) => `Virheellinen viite: “${term}”`,
 };
 
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };

@@ -43,6 +43,8 @@ import {
 	initSearch,
 	search,
 	tryParseNav,
+	tryParseNavGroups,
+	parseNavTerms,
 	parseQueryBooks,
 	setSearchInterlinearData,
 } from "./search.ts";
@@ -69,6 +71,8 @@ import {
 	renderParallelVerse,
 	renderParallelVerseSegments,
 	renderParallelMultiNav,
+	renderMixedMultiNav,
+	renderParallelMixedMultiNav,
 	setTranslationCode,
 	setInterlinearEnabled,
 	getInterlinearEnabled,
@@ -400,6 +404,13 @@ async function init() {
 			indexRendered = false;
 			indexScrollTo = null;
 			if (overlay.classList.contains("open")) openIndex();
+
+			// Turn off interlinear mode when switching away from KJV
+			if (getInterlinearEnabled()) {
+				setInterlinearEnabled(false);
+				localStorage.setItem("bible-interlinear", "0");
+				updateIlToggle();
+			}
 
 			// Translate query book names to new translation
 			if (parsedBooks) {
@@ -2412,9 +2423,14 @@ async function applyState(s: AppState) {
 	if (getInterlinearEnabled() && isKJV()) {
 		let books: string[] = [];
 		if (s.query) {
-			const navRefs = tryParseNav(s.query);
-			if (navRefs && navRefs.every((r) => !!data[r.book])) {
-				books = navRefs.map((r) => r.book);
+			const navGroups = tryParseNavGroups(s.query);
+			if (navGroups && navGroups.flat().every((r) => !!data[r.book])) {
+				books = navGroups.flat().map((r) => r.book);
+			} else if (!s.query.includes('"')) {
+				const termResults = parseNavTerms(s.query);
+				books = termResults
+					.flatMap((tr) => (tr.refs ? tr.refs.map((r) => r.book) : []))
+					.filter((b) => !!data[b]);
 			}
 		} else if (s.book) {
 			books = [s.book];
@@ -2426,22 +2442,51 @@ async function applyState(s: AppState) {
 
 	if (s.query) {
 		// Check if the query is pure reference(s) → navigate instead of search
-		const navRefs = tryParseNav(s.query);
-		if (navRefs && navRefs.every((r) => !!data[r.book])) {
-			if (navRefs.length === 1) {
-				renderNavRef(navRefs[0]);
+		const navGroups = tryParseNavGroups(s.query);
+		if (navGroups && navGroups.flat().every((r) => !!data[r.book])) {
+			const allRefs = navGroups.flat();
+			if (navGroups.length === 1 && allRefs.length === 1) {
+				renderNavRef(allRefs[0]);
 			} else {
 				if (useParallel) {
 					renderParallelMultiNav(
 						data,
 						parallelData!,
-						navRefs,
+						navGroups,
 						currentTranslation,
 						parallelTranslation,
 					);
 				} else {
-					renderMultiNav(data, navRefs);
+					renderMultiNav(data, navGroups);
 				}
+			}
+		} else if (!s.query.includes('"')) {
+			// No quoted text filters — try per-term ref parsing for mixed valid/invalid refs
+			const termResults = parseNavTerms(s.query);
+			const hasAnyValidRef = termResults.some(
+				(tr) => tr.refs !== null && tr.refs.every((r) => !!data[r.book]),
+			);
+			if (hasAnyValidRef) {
+				// Mark terms whose book is missing in data as invalid
+				const mixed = termResults.map((tr) =>
+					tr.refs !== null && tr.refs.every((r) => !!data[r.book])
+						? tr
+						: { refs: null as null, term: tr.term },
+				);
+				if (useParallel) {
+					renderParallelMixedMultiNav(
+						data,
+						parallelData!,
+						mixed,
+						currentTranslation,
+						parallelTranslation,
+					);
+				} else {
+					renderMixedMultiNav(data, mixed);
+				}
+			} else {
+				const results = search(data, s.query);
+				renderResults(results, s.query);
 			}
 		} else {
 			const results = search(data, s.query);
