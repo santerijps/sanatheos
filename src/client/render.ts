@@ -16,6 +16,17 @@ import { t } from "./i18n.ts";
 
 const $ = (id: string) => document.getElementById(id)!;
 
+/** Convert a 1-based counter to an alphabetic label: 1→a, 2→b, …, 26→z, 27→aa, … */
+function noteLabel(n: number): string {
+	let s = "";
+	while (n > 0) {
+		n--;
+		s = String.fromCharCode(97 + (n % 26)) + s;
+		n = Math.floor(n / 26);
+	}
+	return s;
+}
+
 let highlightMap = new Map<string, HighlightColor>();
 
 export function setHighlightMap(m: Map<string, HighlightColor>) {
@@ -229,14 +240,14 @@ function renderStyledVerses(
 
 		if (noteText) {
 			noteCounter++;
-			const num = noteCounter;
+			const num = noteLabel(noteCounter);
 			// Secondary column gets its own aside (for mobile inline toggle) but tagged
 			// data-secondary="1" so syncSidenotes never moves it to the desktop rail.
 			const aside = secondary
 				? `<aside class="verse-sidenote" data-note-id="${esc(noteId)}" data-secondary="1"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`
 				: `<aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`;
 			parts.push(
-				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}<sup class="verse-note-marker" data-note-id="${esc(noteId)}" data-secondary="${secondary ? "1" : ""}" role="button" tabindex="0" aria-label="Note ${num}">[${num}]</sup></span>${aside} `,
+				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}⁠<sup class="verse-note-marker" data-note-id="${esc(noteId)}" data-secondary="${secondary ? "1" : ""}" role="button" tabindex="0" aria-label="Note ${num}">[${num}]</sup></span>${aside} `,
 			);
 		} else {
 			parts.push(
@@ -648,10 +659,10 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 		const noteId = `${book}:${chapter}:${verse}`;
 		const noteText = noteMap.get(noteId);
 		const noteMarker = noteText
-			? `<sup class="verse-note-marker" data-note-id="${esc(noteId)}" role="button" tabindex="0" aria-label="Note 1">[1]</sup></span>`
+			? `⁠<sup class="verse-note-marker" data-note-id="${esc(noteId)}" role="button" tabindex="0" aria-label="Note a">[a]</sup></span>`
 			: `</span>`;
 		const noteSidenote = noteText
-			? `<aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">1</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`
+			? `<aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">a</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`
 			: "";
 		verseHtml = `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}${noteMarker}${noteSidenote}</div>`;
 	}
