@@ -57,7 +57,9 @@ sanatheos/
 ││   │   ├── descriptions-en.json # Book/chapter descriptions (English)
 │   │   ├── descriptions-fi.json # Book/chapter descriptions (Finnish)
 │   │   ├── stories.json      # Curated Bible stories list (bilingual EN/FI)
-│   │   └── parables.json     # Parables of Jesus list (bilingual EN/FI)
+│   │   ├── parables.json     # Parables of Jesus list (bilingual EN/FI)
+│   │   ├── theophanies.json  # Theophanies list (bilingual EN/FI)
+│   │   └── typology.json     # Biblical typology list (bilingual EN/FI)
 │   ├── more/                         # "More Content" — static reference pages
 │   │   ├── index.html                # Listing page for all reference guides
 │   │   ├── philosophy.html           # Philosophy & Worldview
@@ -118,7 +120,11 @@ sanatheos/
 │       ├── subheadings-en.json
 │       ├── subheadings-fi.json
 │       ├── descriptions-en.json
-│       └── descriptions-fi.json
+│       ├── descriptions-fi.json
+│       ├── stories.json
+│       ├── parables.json
+│       ├── theophanies.json
+│       └── typology.json
 │
 ├── scripts/
 │   ├── build-static.ts       # Builds docs/ — bundle, minify, combine translations
@@ -300,7 +306,7 @@ Subheadings are loaded on app startup via `fetch("./data/subheadings-LANG.json")
 
 English and Finnish files have matching structure (same book keys, same number of entries per book). There are approximately 1400 entries per language covering all 66 books.
 
-Subheadings are rendered by `renderStyledVerses()` as `<div class="subheading">` elements above the relevant verse.
+Subheadings are rendered by `renderStyledVerses()` as `<h3 class="subheading">` elements above the relevant verse.
 
 ## TypeScript Interfaces (types.ts)
 
@@ -358,6 +364,39 @@ interface StrongsEntry {
 
 type StrongsDict = Record<string, StrongsEntry>;
 
+interface Bookmark {
+  id: string;       // structured key: "book:chapter:verse", "book:chapter", "book", or "q:query"
+  book?: string;
+  chapter?: number;
+  verse?: number;
+  query?: string;
+  addedAt: number;  // Unix timestamp ms
+}
+
+interface StoryEntry {
+  id: string; title: string; title_fi?: string;
+  description: string; description_fi?: string;
+  ref: string; category: string;
+}
+
+interface ParableEntry {
+  id: string; title: string; title_fi?: string;
+  description: string; description_fi?: string;
+  ref: string; category: string;
+}
+
+interface TheophaniesEntry {
+  id: string; title: string; title_fi?: string;
+  description: string; description_fi?: string;
+  ref: string; category: string;
+}
+
+interface TypologyEntry {
+  id: string; title: string; title_fi?: string;
+  description: string; description_fi?: string;
+  ref: string; category: string;
+}
+
 interface VerseNote {
   id: string;       // "book:chapter:verse" composite key
   book: string;
@@ -394,8 +433,8 @@ The `init()` function runs on page load and orchestrates everything:
    - Theme and font size changes.
 
 **Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
-- `#side-tab-rail` — 52px icon column with six `.side-tab-btn[data-tab]` buttons (stories, parables, theophanies, bookmarks, settings, info) and `#side-close`
-- `#side-content` — scrollable area with six `.side-pane[data-pane]` divs (stories, parables, theophanies, bookmarks, settings, info); only the `.active` pane is visible (`display: flex`)
+- `#side-tab-rail` — 52px icon column with eight `.side-tab-btn[data-tab]` buttons (stories, parables, theophanies, typology, bookmarks, notes, settings, info) and `#side-close`
+- `#side-content` — scrollable area with eight `.side-pane[data-pane]` divs (stories, parables, theophanies, typology, bookmarks, notes, settings, info); only the `.active` pane is visible (`display: flex`)
 
 Key functions:
 - `activateSideTab(tab)` — toggles `.active` on both tab buttons and panes, saves to `localStorage` key `"side-panel-tab"`
@@ -408,6 +447,8 @@ Key functions:
 
 **Theophanies data flow** — `loadTheophaniesData()` fetches `./data/theophanies.json` once and caches in memory, with IndexedDB backing via `loadTheophanies()`/`saveTheophanies()`. `renderTheophaniesList(theophanies, filter)` builds HTML identically to stories (same CSS classes). Categories are `"Old Testament"` / `"New Testament"`, localized via `s.oldTestament`/`s.newTestament`. Clicking a theophany navigates identically to stories.
 
+**Typology data flow** — `loadTypologyData()` fetches `./data/typology.json` once and caches in memory, with IndexedDB backing via `loadTypology()`/`saveTypology()`. `renderTypologyList(typology, filter)` builds HTML using the same CSS classes as stories/parables/theophanies. Categories are: `"Types of Christ (Persons)"`, `"Types of Christ (Events)"`, `"Types of the Theotokos"`, `"Types of the Church & Sacraments"`, `"Types of the Cross"`, and `"Additional Types"` — each localized via the typology category i18n strings. Clicking a typology entry navigates identically to stories.
+
 **Bookmarks data flow** — `renderBookmarksList()` reads all records from IndexedDB via `getBookmarks()` and renders `.bookmark-item` divs, each containing a `.bookmark-item-nav` button (clicking navigates to the passage) and a `.bookmark-item-remove` button (×). The bookmark button (`.bookmark-btn`) appears in chapter, verse, chapter-range, and verse-segment heading rows (rendered by `render.ts`). Clicking it calls `addBookmark()` or `removeBookmark()` in `db.ts` and syncs the button's `.bookmark-active` class via `syncBookmarkBtn()`. Verse-level bookmarks can also be added via the verse context menu.
 
 **`localizeRef(ref)`** — Splits semicolon-separated multi-refs (e.g., `"Genesis 25:19-34; Genesis 27"`) on `"; "`, localizes each segment by replacing the English book key with the current translation's display name, then rejoins.
@@ -418,7 +459,11 @@ Key functions:
 
 **State flow:** User input → `applyState()` → rendering function → `replaceState()`/`pushState()` → URL updated. On `popstate`, the reverse: URL → `readState()` → `applyState()`.
 
-**`applyState()` dispatch:** If the query parses as pure navigation references (via `tryParseNav`) and all books exist in data, it navigates directly. Otherwise it calls `search()` and renders results — this handles both quoted text searches and unquoted reference-style queries that `tryParseNav` rejected.
+**`applyState()` dispatch:** Uses `tryParseNavGroups(query)` to attempt parsing the entire query as grouped references. If successful and all referenced books exist in the loaded data:
+- Single group with one ref → `renderNavRef` (direct navigation).
+- Multiple groups → `renderMultiNav(data, navGroups)` or `renderParallelMultiNav` in parallel mode.
+
+If `tryParseNavGroups` fails and the query contains no quoted text, `parseNavTerms(query)` is called to parse each semicolon-separated term independently. Terms that resolve to valid refs are rendered; terms that don't (e.g. a misspelled book) are shown as `<p class="empty">` "Invalid reference" messages via `renderMixedMultiNav` / `renderParallelMixedMultiNav`. If no term resolves to a valid ref, or if the query contains quoted text, `search()` is called and results are rendered.
 
 **Translation metadata** is hardcoded in `TRANSLATION_NAMES` and `TRANSLATION_LANG` constants:
 - `NHEB` → English (default), `KJV` → English, `CPDV` → English, `KR38` → Finnish (Suomi)
@@ -446,7 +491,7 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 6. Fuzzy match via Levenshtein distance (threshold: ≤1 edit for names ≤5 chars, ≤2 edits otherwise, minimum 3 chars).
 
 **Reference parsing (`parseRef`):**
-- Strips trailing incomplete operators (`-`, `,`, `:`) for progressive typing support.
+- Strips trailing incomplete operators (`-`, `,`, `:`), trailing non-ref symbols, whitespace, and stray letter suffixes for progressive typing support.
 - Supports: book only, book + chapter, book + chapter range, book + chapter:verse, book + chapter:verseSegments (ranges and comma-separated).
 
 **Text matching (`buildTextMatcher`):**
@@ -456,7 +501,11 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 
 **Results:** Returns `VerseResult[]` with deduplication via a `Set<string>` of `book:chapter:verse` keys. No limit on result count — all matches are returned.
 
-**`tryParseNav(query)`:** Attempts to parse the entire query as pure references (no text filter). Returns `NavRef[]` if successful, `null` if any term has a quoted filter. Before calling `parseRef`, each term is checked by `expandCrossChapterTrailing()`: if the term matches the pattern `book ch1:v1-ch2:v2,segments` (e.g., `Acts 6:8-7:5,47-60`), it is split into two sub-terms (`Acts 6:8-7:5` and `Acts 7:47-60`) and each is parsed independently. The trailing content must consist of only digits, commas, and hyphens to qualify. Used by `applyState()` to decide whether to navigate or search.
+**`tryParseNavGroups(query)`:** Attempts to parse the entire query as pure references grouped by input term. Returns `NavRef[][]` (one inner array per semicolon-separated term) if successful, `null` if any term has a quoted filter. Each term is first checked by `expandCrossChapterTrailing()`: if the term matches a cross-chapter range with trailing segments (e.g., `Acts 6:8-7:5,47-60`), it is split into two sub-refs (`Acts 6:8-7:5` and `Acts 7:47-60`). Trailing segments from cross-chapter expansion are kept in the same group as the original term. This is the primary navigation parser used by `applyState()`.
+
+**`tryParseNav(query)`:** Thin wrapper around `tryParseNavGroups` — returns `navGroups.flat()` if parsing succeeds, `null` otherwise. Retained for backward compatibility.
+
+**`parseNavTerms(query)`:** Parses each semicolon-separated term independently and returns a `NavTermResult[]` — an array where each element is either `{ refs: NavRef[]; term: string }` (valid reference) or `{ refs: null; term: string }` (unresolvable term). Used by `applyState()` when `tryParseNavGroups` fails and there is no quoted text, to support rendering a mix of valid and invalid references in the same query.
 
 **`parseQueryBooks(query)`:** Parses each term to extract the English book key, rest (chapter/verse), and quoted filter. Used during translation switching to translate book names.
 
@@ -471,7 +520,11 @@ All functions write to `$("content").innerHTML`. Functions:
 | `renderVerse` | Single verse with nav arrows and "Read full chapter" link |
 | `renderChapterRange` | Multiple chapters (e.g., Genesis 1-3) |
 | `renderVerseSegments` | Specific verse selections (e.g., Genesis 1:1-3,5) |
-| `renderMultiNav` | Multiple semicolon-separated references |
+| `renderMultiNav` | Multiple semicolon-separated references (accepts `NavRef[][]` groups) |
+| `renderMixedMultiNav` | Mixed valid/invalid references; invalid terms render as "Invalid reference" error paragraphs |
+| `renderParallelMixedMultiNav` | Two-column parallel version of `renderMixedMultiNav` |
+| `renderNavRefGroup` | Renders a single group of `NavRef[]` — first ref gets `<h2>`, subsequent get `<h3>` |
+| `renderParallelNavRefGroup` | Two-column parallel version of `renderNavRefGroup` |
 | `renderResults` | Search results with pagination (50 per page), highlighting |
 | `renderIndex` | Three-column book index panel with keyboard navigation |
 | `renderParallelChapter` | Two-column side-by-side chapter view |
@@ -487,6 +540,8 @@ All functions write to `$("content").innerHTML`. Functions:
 | `setSecondarySubheadings` | Stores secondary translation's subheadings (for parallel view) |
 | `setStyleguide` | Sets the styleguide formatting data for rendering |
 | `setTranslationCode` | Sets the current translation code for rendering |
+| `setNoteMap` | Updates the in-memory note id→text map used when rendering note markers |
+| `getNoteMap` | Returns the current in-memory note map |
 | `setInterlinearEnabled` | Enables/disables interlinear mode |
 | `getInterlinearEnabled` | Returns whether interlinear mode is active |
 | `setInterlinearBook` | Stores loaded interlinear data for a book |
@@ -505,7 +560,9 @@ All functions write to `$("content").innerHTML`. Functions:
 
 **Highlight rendering:** `getHighlightClass()` (aliased as `hlClass()`) returns ` hl-yellow` (etc.) CSS classes based on the in-memory highlight map. Applied to each `<span class="verse">`.
 
-**Subheadings rendering:** `setSubheadings()` stores the primary translation's subheadings. `setSecondarySubheadings()` stores the secondary translation's subheadings for parallel views. `renderStyledVerses()` selects the appropriate subheadings source based on the `secondary` parameter and renders `<div class="subheading">` elements above the relevant verses.
+**Note markers:** `noteLabel(n)` converts a 1-based counter to an alphabetic label (a, b, c, … z, aa, ab, …). When a verse has a note, `renderStyledVerses` prefixes the note marker with U+2060 (WORD JOINER) so the marker stays on the same line as the preceding verse text: `⁠<sup class="verse-note-marker">[a]</sup>`. Each chapter view resets `noteCounter` to 0 and increments it per noted verse.
+
+**Subheadings rendering:** `setSubheadings()` stores the primary translation's subheadings. `setSecondarySubheadings()` stores the secondary translation's subheadings for parallel views. `renderStyledVerses()` selects the appropriate subheadings source based on the `secondary` parameter and renders `<h3 class="subheading">` elements above the relevant verses.
 
 **Styleguide rendering:** `setStyleguide()` stores an in-memory `StyleguideData` object (type `Record<string, Record<string, ChapterStyle>>`). `renderStyledVerses(book, chapter, nums, ch, secondary?, showSubheadings?)` is a shared helper used by `renderChapter`, `renderBook`, `renderChapterRange`, `renderVerseSegments`, `navRefVersesHtml`, `renderParallelChapter`, `renderParallelBook`, `renderParallelVerseSegments`, and `parallelNavRefHtml`. It uses `parts.push()` + `.join("")` (instead of `html +=`) to build HTML efficiently in O(n) time. It tracks prose/poetry mode per-verse and emits: `<span class="stanza-break">` for stanza breaks, `<span class="para-break">` for paragraph breaks, and `.poetry-q1`/`.poetry-q2`/`.poetry-q3` CSS classes on verse spans for poetry indentation.
 
@@ -542,7 +599,7 @@ Database: `bible-app`, version 4. Four object stores:
 
 Uses a persistent connection — opened once on first use and reused for all subsequent operations. The connection automatically re-opens if the browser closes it under memory pressure.
 
-Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`, `getBookmarks`, `addBookmark`, `removeBookmark`, `hasBookmark`, `getNotes`, `saveNote`, `deleteNote`, `getNoteMap`.
+Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`, `getBookmarks`, `addBookmark`, `removeBookmark`, `hasBookmark`, `loadStories`, `saveStories`, `loadParables`, `saveParables`, `loadTheophanies`, `saveTheophanies`, `loadTypology`, `saveTypology`, `getNotes`, `saveNote`, `deleteNote`, `getNoteMap`.
 
 `getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup. `loadInterlinearBook()`/`saveInterlinearBook()` cache interlinear data per book in IndexedDB. `loadStrongsDict()`/`saveStrongsDict()` cache the Strong's Concordance dictionary. `getBookmarks()` returns all bookmark records sorted by `addedAt` descending. `hasBookmark(id)` checks whether a bookmark exists for the given id. `getNotes()` returns all `VerseNote` records sorted by `updatedAt` descending. `saveNote(note)` upserts a note. `deleteNote(id)` removes a note. `getNoteMap()` returns a `Map<string, string>` of note id → text for fast per-verse lookup during rendering.
 
@@ -557,8 +614,10 @@ Two language tables: English (`EN`) and Finnish (`FI`), both implementing the `S
 - Footer text, favicon attribution, dictionary link (`footerDictionary`), and styleguide attribution (`footerStyleguide`)
 - Feature strings (copied, copy verse, copy both, highlight, remove highlight, show more)
 - Bookmark strings (bookmarksTitle, bookmarkThis, removeBookmark, bookmarksEmpty, bookmarkAdded, bookmarkRemoved)
-- Note strings (notesTitle, addNote, editNote, noteSaved, noteDeleted, notesEmpty, notePlaceholder, noteDeleteConfirm, noteSave, noteRemove, cancel)
+- Note strings (notesTitle, addNote, editNote, noteSaved, noteDeleted, notesEmpty, notePlaceholder, noteDeleteConfirm, noteSave, noteRemove, cancel, invalidRef)
 - Parables strings (parablesTitle, parablesFilterPlaceholder, parablesEmpty)
+- Theophanies strings (theophaniesTitle, theophaniesFilterPlaceholder, theophaniesEmpty)
+- Typology strings (typologyTitle, typologyFilterPlaceholder, typologyEmpty, typologyCatPersons, typologyCatEvents, typologyCatTheotokos, typologyCatChurch, typologyCatCross, typologyCatAdditional)
 - Share link strings (shareWith, shareWithout, linkCopied)
 - Interlinear strings (interlinear, interlinearTooltip, strongsDef, pronunciation, partOfSpeech, morphology, crossReferences, closePanel)
 - Deuterocanonical section label
@@ -658,7 +717,7 @@ The page is a single HTML file with this DOM structure:
 
   #page-layout        — Flex wrapper for main content + sidenotes rail
     <main #content>   — Dynamic content area (chapters, verses, results)
-    #sidenotes-rail   — Hidden on mobile; shown as 200px right column on ≥768px, 240px on ≥1456px
+    #sidenotes-rail   — Hidden on mobile; shown as 200px right column on ≥768px, 240px on ≥1300px
 
   #index-overlay      — Full-screen overlay for book index
     #index-panel
@@ -716,7 +775,7 @@ The page is a single HTML file with this DOM structure:
 
 ## CSS Design (style.css)
 
-**Theme system:** CSS custom properties on `:root` (light) and `[data-theme="dark"]`. Variables: `--bg`, `--surface`, `--text`, `--verse-num`, `--subtle`, `--border`, `--hover`, `--accent` (muted steel blue: `#4a6fa5` light / `#7da2d4` dark), `--muted`, `--mark-bg`, and 5 highlight colors (`--hl-yellow`, `--hl-green`, `--hl-blue`, `--hl-pink`, `--hl-orange`).
+**Theme system:** CSS custom properties on `:root` (light) and `[data-theme="dark"]`. Variables: `--bg`, `--surface`, `--text`, `--verse-num`, `--subtle`, `--border`, `--hover`, `--accent` (warm amber: `#8a6018` light / `#c9963a` dark), `--accent-focus`, `--muted`, `--mark-bg`, and 5 highlight colors (`--hl-yellow`, `--hl-green`, `--hl-blue`, `--hl-pink`, `--hl-orange`).
 
 **Font size system:** `[data-font-size]` attribute on `<html>` sets `.verses` font size: small (14px), medium (17px, default), large (20px), xl (23px), xxl (26px).
 
@@ -753,8 +812,8 @@ The page is a single HTML file with this DOM structure:
 - `.verse-sidenote.note-open` — Applied on mobile when user taps the sidenote marker; makes the aside `display: block` inline within the verse content.
 - `.verse-sidenote-num` — Superscript note marker (`ᴺ`) next to the verse number. Styled with `--accent` color, `font-weight: 700`, `cursor: pointer`.
 - `.verse.note-hover` — Added/removed by JS when hovering a sidenote; grows an animated accent-coloured underline on the verse via `background-size` transition (0%→100% at 2px height, 350ms ease).
-- `#sidenotes-rail` — `display: none` by default. At ≥768px: `display: block; flex: 0 0 200px; position: relative`. At ≥1456px: `flex: 0 1 240px; min-width: 0`. `#sidenotes-rail:empty` collapses to `flex: 0 0 0; width: 0` at both breakpoints so `<main>` re-centres when no notes are present.
-- `#page-layout` — At ≥768px: `display: flex; align-items: flex-start; justify-content: center; gap: 24px; margin-top: 24px; padding: 0 16px` (16px side padding keeps content and rail off viewport edges). At ≥1456px: `#page-layout::before { content: ''; flex: 0 1 240px; min-width: 0 }` — ghost spacer that pushes `<main>` back to visual center when the 240px rail is present.
+- `#sidenotes-rail` — `display: none` by default. At ≥768px: `display: block; flex: 0 0 200px; position: relative`. At ≥1300px: `flex: 0 1 240px; min-width: 0`. `#sidenotes-rail:empty` collapses to `flex: 0 0 0; width: 0` at both breakpoints so `<main>` re-centres when no notes are present.
+- `#page-layout` — At ≥768px: `display: flex; align-items: flex-start; justify-content: center; gap: 24px; margin-top: 24px; padding: 0 16px` (16px side padding keeps content and rail off viewport edges). At ≥1300px: `#page-layout::before { content: ''; flex: 0 1 240px; min-width: 0 }` — ghost spacer that pushes `<main>` back to visual center when the 240px rail is present.
 - `#note-panel-overlay` — `position: fixed; inset: 0; visibility: hidden`. Gets `visibility: visible` and backdrop when `.open` class added.
 - `#note-panel` — `position: fixed; left: 0; top: 0; height: 100%; width: min(clamp(320px, 28vw, 520px), 92vw); transform: translateX(-100%); transition: transform 0.28s`. Slides in from left edge when overlay has `.open`.
 - Settings/info modals — Centered cards with close buttons.
@@ -763,7 +822,7 @@ The page is a single HTML file with this DOM structure:
 - **Filtered list pane CSS pattern** — Each side panel pane that contains a filter input and scrollable list requires explicit ID-based CSS rules in the `/* --- Stories & Parables panes --- */` block of `style.css`. When adding a new pane named `foo`, add `#foo-header`, `#foo-title`, `#foo-search-wrap`, `#foo-filter`, `#foo-filter:focus`, `#foo-filter::placeholder`, `#foo-list`, and all `#foo-list::-webkit-scrollbar*` selectors to each of the eight corresponding CSS rule groups alongside the existing stories/parables/theophanies selectors. Omitting any selector group causes the filter input to render unstyled or the list to be non-scrollable.
 - `@media print` — Hides header, overlays, nav arrows, buttons, bookmark buttons, sidenote rail and inline sidenotes. Shows `.print-translation-label`.
 - `@media (max-width: 800px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels, smaller section titles.
-- **Keyframe animations:** `contentFadeIn` (applied to `#content` on render) and `fadeInResult` (applied to search result cards) both animate opacity only (`from { opacity: 0 }` → `to { opacity: 1 }`). No `translateY` transform is used — this prevents Cumulative Layout Shift (CLS). Layout dimensions for `#page-layout` at all breakpoints are also declared as inline `<style>` in `index.html` so the browser can establish the correct layout before the main stylesheet loads.
+- **Keyframe animations:** `contentFadeIn` (applied to `#content` on render) and `fadeInResult` (applied to search result cards) both animate opacity only (`from { opacity: 0 }` → `to { opacity: 1 }`). No `translateY` transform is used — this prevents Cumulative Layout Shift (CLS).
 
 ## Features in Detail
 
@@ -910,7 +969,7 @@ The footer attributes the formatting to the WEB translation via the `footerStyle
 
 Verse subheadings provide topical headings before groups of verses (e.g., "The Creation", "The Fall of Man"). Each language has its own subheadings file in `public/data/` — `subheadings-en.json` (English) and `subheadings-fi.json` (Finnish).
 
-Subheadings are loaded on app startup based on the current UI language and stored via `setSubheadings()` in `render.ts`. The `renderStyledVerses()` helper renders them as `<div class="subheading">` elements above the relevant verse.
+Subheadings are loaded on app startup based on the current UI language and stored via `setSubheadings()` in `render.ts`. The `renderStyledVerses()` helper renders them as `<h3 class="subheading">` elements above the relevant verse.
 
 **Parallel mode:** In parallel views, each column displays subheadings in its own language. The primary translation uses `setSubheadings()` and the secondary translation uses `setSecondarySubheadings()`. `renderStyledVerses()` selects the appropriate source based on its `secondary` parameter.
 
@@ -951,7 +1010,7 @@ Users can annotate individual verses with free-text notes. Notes persist in Inde
 - A `<textarea>` for the note text.
 - Save, Cancel, and Delete buttons (Delete is hidden for new notes).
 
-**Saving:** `saveNote(VerseNote)` is called with the composite `id = "book:chapter:verse"`. A "Note saved" toast appears and the panel closes. The verse re-renders with a `<sup class="verse-note-marker">` element and a `<aside class="verse-sidenote">` placed after the verse span.
+**Saving:** `saveNote(VerseNote)` is called with the composite `id = "book:chapter:verse"`. A "Note saved" toast appears and the panel closes. The verse re-renders with a `<sup class="verse-note-marker">[a]</sup>` element (alphabetic label generated by `noteLabel()`) preceded by U+2060 (WORD JOINER) to prevent line-breaking, plus a `<aside class="verse-sidenote">` placed after the verse span.
 
 **Deleting:** `deleteNote(id)` removes the note from IndexedDB. A "Note deleted" toast appears. The note marker and sidenote are removed from the DOM.
 
@@ -963,7 +1022,7 @@ Users can annotate individual verses with free-text notes. Notes persist in Inde
 
 **Notes side panel tab:** A dedicated "Notes" tab in the side panel (`data-tab="notes"` / `data-pane="notes"`) lists all saved notes. Each `.note-item` shows the verse reference and note text. Clicking a note item navigates to that verse and opens the note panel. An empty state (`.notes-empty`) is shown when no notes exist.
 
-**i18n strings:** `notesTitle`, `addNote`, `editNote`, `noteSaved`, `noteDeleted`, `notesEmpty`, `notePlaceholder`, `noteDeleteConfirm`, `noteSave`, `noteRemove`, `cancel`.
+**i18n strings:** `notesTitle`, `addNote`, `editNote`, `noteSaved`, `noteDeleted`, `notesEmpty`, `notePlaceholder`, `noteDeleteConfirm`, `noteSave`, `noteRemove`, `cancel`, `invalidRef`.
 
 ### 20. More Content Pages
 
