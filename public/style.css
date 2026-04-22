@@ -1175,6 +1175,10 @@ mark {
     position: relative;
     overflow: visible;
   }
+
+  #search-wrap {
+    max-width: 100%;
+  }
 }
 
 /* ≥1300px: inject a ghost spacer on the left that mirrors the rail so main
@@ -1192,6 +1196,10 @@ mark {
   }
 
   .idx-col { width: 320px; }
+
+  #search-wrap {
+    max-width: 80ch;
+  }
 }
 
 /* Note editor left panel — mirrors right sidebar */
