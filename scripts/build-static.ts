@@ -35,28 +35,10 @@ const staticFiles = [
 	"sw.js",
 ];
 
-const moreFiles = [
-	"more/index.html",
-	"more/christology.html",
-	"more/soteriology.html",
-	"more/ecclesiology.html",
-	"more/mariology.html",
-	"more/pneumatology.html",
-	"more/essence-energies.html",
-	"more/theological-terms.html",
-	"more/angelology.html",
-	"more/typology.html",
-	"more/philosophy.html",
-];
-
 const staticDirs = ["icon", "data"];
 
 // Copy static files (HTML, CSS, PWA)
 for (const name of staticFiles) {
-	await cp(join(PUBLIC, name), join(OUT, name));
-}
-await mkdir(join(OUT, "more"), { recursive: true });
-for (const name of moreFiles) {
 	await cp(join(PUBLIC, name), join(OUT, name));
 }
 for (const dir of staticDirs) {
@@ -76,7 +58,7 @@ if (cssResult.success && cssResult.outputs.length > 0) {
 }
 
 // Minify HTML files
-for (const htmlFile of ["index.html", ...moreFiles]) {
+for (const htmlFile of ["index.html", "dictionary.html"]) {
 	const htmlPath = join(OUT, htmlFile);
 	let html = await readFile(htmlPath, "utf-8");
 	html = html

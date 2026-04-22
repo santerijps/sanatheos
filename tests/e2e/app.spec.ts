@@ -1058,22 +1058,6 @@ test.describe("Bookmarks pane", () => {
 });
 
 // ---------------------------------------------------------------------------
-// More Content pages
-// ---------------------------------------------------------------------------
-
-test.describe("More Content pages", () => {
-	test("more index page loads", async ({ page }) => {
-		await page.goto("/more/index.html");
-		await expect(page.locator("body")).toContainText("More Content");
-	});
-
-	test("philosophy page loads", async ({ page }) => {
-		await page.goto("/more/philosophy.html");
-		await expect(page.locator("h1")).toContainText("Philosophy");
-	});
-});
-
-// ---------------------------------------------------------------------------
 // Verse Notes
 // ---------------------------------------------------------------------------
 
