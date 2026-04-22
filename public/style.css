@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Faculty+Glyphic&family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
 /* === Reset === */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -5,8 +7,8 @@
 body.preload * { transition: none !important; }
 
 :root {
-  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  --serif: Georgia, "Times New Roman", Times, serif;
+  --sans: "Faculty Glyphic", -apple-system, BlinkMacSystemFont, sans-serif;
+  --serif: "IBM Plex Serif", Georgia, Times, serif;
   --mono: monospace;
   --bg: #ffffff;
   --surface: #ffffff;
@@ -52,11 +54,12 @@ body {
   color: var(--text);
   background: var(--bg);
   line-height: 1.9;
-  letter-spacing: 0.1ch;
+  letter-spacing: 0.12ch;
   word-spacing: 0.3ch;
   min-height: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body.panel-open {
@@ -78,8 +81,10 @@ header {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--surface);
-  border-bottom: none;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -96,7 +101,7 @@ header {
   background: var(--bg);
   overflow: hidden;
   transition: border-color 0.15s, box-shadow 0.15s;
-  max-width: 80ch;
+  max-width: 90ch;
 }
 
 #search-wrap:focus-within {
@@ -203,10 +208,10 @@ main {
   background-color: var(--surface);
   max-width: 90ch;
   margin: 0 auto;
-  padding: 0 64px 24px 64px;
+  padding: 32px 64px 40px;
   margin-top: 24px;
-  box-shadow: 0 0 0 1px var(--border), 0 4px 16px rgba(0, 0, 0, 0.04);
-  border-radius: 10px 10px 10px 10px;
+  box-shadow: 0 0 0 1px var(--border), 0 2px 4px rgba(0, 0, 0, 0.04), 0 8px 32px rgba(0, 0, 0, 0.07);
+  border-radius: 12px;
 }
 
 .book-title {
@@ -264,7 +269,7 @@ main {
 /* === Subheadings === */
 .subheading {
   font-family: var(--sans);
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   color: var(--muted);
   margin: 28px 0 14px;
@@ -275,8 +280,9 @@ main {
 .verses {
   font-size: 17px;
   line-height: 1.7;
+  letter-spacing: 0.12ch;
   text-align: justify;
-  text-justify: inter-character;
+  text-justify: inter-word;
 }
 
 [data-font-size="small"] .verses { font-size: 14px; }
@@ -471,7 +477,7 @@ mark {
   overflow: hidden;
   height: 75vh;
   gap: 0;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25), 0 8px 24px rgba(0, 0, 0, 0.1), 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
 .idx-col {
@@ -481,6 +487,8 @@ mark {
   background: var(--surface);
   padding: 8px;
   border-right: 1px solid var(--border);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
 
 #idx-chapters {
@@ -616,7 +624,7 @@ mark {
   width: min(clamp(460px, 30vw, 660px), 92vw);
   background: var(--surface);
   border-radius: 12px 0 0 12px;
-  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.18);
+  box-shadow: -4px 0 48px rgba(0, 0, 0, 0.18), -1px 0 8px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: row;
   overflow: hidden;
@@ -820,6 +828,13 @@ mark {
 #notes-list::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 3px; }
 #notes-list::-webkit-scrollbar-thumb:hover { background: #aaa; }
 
+/* Firefox scrollbar styling for all scrollable containers */
+#stories-list, #parables-list, #theophanies-list, #typology-list,
+#notes-list, #bookmarks-list, #info-modal-body, #strongs-panel, #note-panel-body {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
 .stories-category-label {
   padding: 8px 10px 4px;
   font: 700 11px/1 var(--sans);
@@ -847,6 +862,7 @@ mark {
   background: none;
   color: inherit;
   font-family: inherit;
+  letter-spacing: 0.12ch;
 }
 
 .story-item:hover {
@@ -1198,7 +1214,7 @@ mark {
   .idx-col { width: 320px; }
 
   #search-wrap {
-    max-width: 80ch;
+    max-width: 90ch;
   }
 }
 
@@ -1230,7 +1246,7 @@ mark {
   width: min(clamp(320px, 28vw, 520px), 92vw);
   background: var(--surface);
   border-radius: 0 12px 12px 0;
-  box-shadow: 6px 0 32px rgba(0, 0, 0, 0.18);
+  box-shadow: 4px 0 48px rgba(0, 0, 0, 0.18), 1px 0 8px rgba(0, 0, 0, 0.06);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1692,7 +1708,7 @@ mark {
 
 /* === Footer === */
 #footer {
-  max-width: 720px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 32px 24px 40px;
   text-align: center;
@@ -1751,6 +1767,7 @@ mark {
   .nav-short { display: inline; }
   .parallel-col .section-title { font-size: 14px; }
   .verses { text-justify: inter-word; }
+  .section-title { font-size: 16px; }
 }
 
 /* === Verse Context Menu === */
