@@ -84,6 +84,9 @@ import {
 	renderStrongsPanel,
 	setNoteMap,
 	getNoteMap as getRenderNoteMap,
+	ICON_COPY,
+	ICON_BOOKMARK,
+	ICON_NOTE,
 } from "./render.ts";
 import { setTranslation, displayName, displayNameFor, getBookKeys } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
@@ -2017,17 +2020,17 @@ async function init() {
 		let html = "";
 
 		// Copy verse
-		html += `<button class="verse-menu-item" data-action="copy">&#128203; ${t().copyVerse}</button>`;
+		html += `<button class="verse-menu-item" data-action="copy">${ICON_COPY} ${t().copyVerse}</button>`;
 
 		// Bookmark verse
 		const bmId = `${book}:${chapter}:${verse}`;
 		const isVerseBookmarked = await hasBookmark(bmId);
-		html += `<button class="verse-menu-item" data-action="bookmark">&#128278; ${isVerseBookmarked ? escapeHtml(t().removeBookmark) : escapeHtml(t().bookmarkThis)}</button>`;
+		html += `<button class="verse-menu-item" data-action="bookmark">${ICON_BOOKMARK} ${isVerseBookmarked ? escapeHtml(t().removeBookmark) : escapeHtml(t().bookmarkThis)}</button>`;
 
 		// Note verse
 		const noteId = `${book}:${chapter}:${verse}`;
 		const hasNote = getRenderNoteMap().has(noteId);
-		html += `<button class="verse-menu-item" data-action="note">&#9998; ${hasNote ? escapeHtml(t().editNote) : escapeHtml(t().addNote)}</button>`;
+		html += `<button class="verse-menu-item" data-action="note">${ICON_NOTE} ${hasNote ? escapeHtml(t().editNote) : escapeHtml(t().addNote)}</button>`;
 
 		// Highlight colors
 		html += `<div class="verse-menu-colors">`;
@@ -2088,15 +2091,27 @@ async function init() {
 				return;
 			} else if (action === "highlight") {
 				const color = target.dataset.color as HighlightColor;
-				await setHighlight({ book, chapter, verse, color });
-				highlightMap.set(hlKey, color);
-				content
-					.querySelectorAll(
-						`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
-					)
-					.forEach((el) => {
-						(el as HTMLElement).className = `verse hl-${color}`;
-					});
+				if (color === currentColor) {
+					await removeHighlight(book, chapter, verse);
+					highlightMap.delete(hlKey);
+					content
+						.querySelectorAll(
+							`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
+						)
+						.forEach((el) => {
+							(el as HTMLElement).className = "verse";
+						});
+				} else {
+					await setHighlight({ book, chapter, verse, color });
+					highlightMap.set(hlKey, color);
+					content
+						.querySelectorAll(
+							`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
+						)
+						.forEach((el) => {
+							(el as HTMLElement).className = `verse hl-${color}`;
+						});
+				}
 			} else if (action === "remove-highlight") {
 				await removeHighlight(book, chapter, verse);
 				highlightMap.delete(hlKey);
