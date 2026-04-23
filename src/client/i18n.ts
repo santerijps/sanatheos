@@ -487,7 +487,176 @@ const FI: Strings = {
 	qrClose: "Sulje",
 };
 
-const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };
+const SV: Strings = {
+	helpInfo: "Hjälp & info",
+	settings: "Inställningar",
+	searchPlaceholder: "Sök i Bibeln",
+	browseBooks: "Bläddra bland böcker",
+
+	notFound: "Hittades inte.",
+	readFullChapter: "Läs hela kapitlet",
+	loadingBible: "Laddar Bibeln\u2026",
+	loadingTranslation: (code) => `Laddar ${code}\u2026`,
+	loadFailed: "Misslyckades med att ladda Bibeldata. Uppdatera sidan.",
+	loadTranslationFailed: (code) => `Misslyckades med att ladda ${code}. Försök igen.`,
+	chapter: "Kapitel",
+	noResults: (q) => `Inga resultat för \u201c${q}\u201d`,
+	resultCount: (n) => `${n} resultat`,
+
+	settingsTitle: "Inställningar",
+	translationLabel: "Bibelöversättning",
+	languageLabel: "Applikationsspråk",
+	themeLabel: "Tema",
+	themeLight: "Ljust",
+	themeDark: "Mörkt",
+	themeSystem: "System",
+	parallelLabel: "Parallell översättning",
+	parallelNone: "Ingen",
+	fontSizeLabel: "Teckenstorlek",
+	fontSizeSmall: "S",
+	fontSizeMedium: "M",
+	fontSizeLarge: "L",
+	fontSizeXL: "XL",
+	fontSizeXXL: "XXL",
+
+	infoTitle: "Sanatheos",
+	infoSearchTitle: "Sökfält",
+	infoSearchIntro: "Skriv i sökfältet för att hitta verser. Sökformat som stöds:",
+	infoSearchItems: [
+		"<strong>Bokreferens</strong> &mdash; <code>Johannes</code>, <code>1 Mos</code>",
+		"<strong>Kapitel</strong> &mdash; <code>Joh 3</code>, <code>1 Mos 1</code>",
+		"<strong>Kapitelintervall</strong> &mdash; <code>1 Mos 1-3</code>",
+		"<strong>Vers</strong> &mdash; <code>Joh 3:16</code>",
+		"<strong>Versintervall</strong> &mdash; <code>1 Mos 1:1-5</code>",
+		"<strong>Flera verser</strong> &mdash; <code>1 Mos 1:1-3,5,8-10</code>",
+		'<strong>Textsökning</strong> &mdash; <code>"nåd"</code> (inom citattecken). Använd <code>"^nåd"</code> (börjar med), <code>"nåd$"</code> (slutar med), <code>"^nåd$"</code> (exakt ord) för ordgränser.',
+		'<strong>Kombinerad</strong> &mdash; <code>Rom "tro"</code>, <code>1 Mos 1-3 "ljus"</code>',
+		"<strong>Flera sökningar</strong> &mdash; separera med <code>;</code>, t.ex. <code>Joh 3:16; Upp 1:1</code>",
+	],
+	infoSearchNote:
+		'Att trycka på <kbd>"</kbd> lägger automatiskt till ett avslutande citattecken. Förkortningar som <code>1 mos</code>, <code>upp</code>, <code>ef</code> stöds.',
+	infoBrowseTitle: "Bläddra bland böcker",
+	infoBrowseText:
+		"Klicka på förstoringsglaset inuti sökfältet (eller tryck <kbd>Ctrl+I</kbd>) för att öppna bokindexpanelen. Bläddra bland böcker, kapitel och verser i tre kolumner. Använd piltangenterna och Enter för att navigera och välja.",
+	infoShortcutsTitle: "Kortkommandon",
+	infoShortcuts: [
+		"<kbd>Ctrl+K</kbd> &mdash; Fokusera sökfältet",
+		"<kbd>Ctrl+B</kbd> &mdash; Visa/dölj sidopanelen",
+		"<kbd>Ctrl+I</kbd> &mdash; Visa/dölj bokindexpanelen",
+		"<kbd>Escape</kbd> &mdash; Stäng öppna paneler",
+		"<kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Navigera i indexet",
+		"<kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>Tab</kbd> &mdash; Byt kolumn i indexet",
+		"<kbd>Enter</kbd> &mdash; Välj objekt i indexet",
+	],
+	infoSettingsTitle: "Inställningar",
+	infoSettingsText:
+		"Klicka på <strong>&#9881;</strong>-kugghjulsknappen för att öppna inställningarna. Du kan byta Bibelöversättning (t.ex. NHEB, SV17), välja en <strong>parallell översättning</strong> (sida vid sida), ange <strong>tema</strong> (Ljust, Mörkt eller System) och ändra applikationsspråk. Alla val sparas.",
+	infoFeaturesTitle: "Funktioner",
+	infoFeaturesItems: [
+		"<strong>Markeringar</strong> &mdash; Högerklicka på ett versnummer och välj en markeringsfärg (gul, grön, blå, rosa, orange). Välj &ldquo;Ta bort markering&rdquo; för att rensa den.",
+		"<strong>Bokmärken</strong> &mdash; Klicka på bokmärkesikonen vid en avsnittsrubrik för att bokmärka det aktuella stycket, eller högerklicka på ett versnummer för att bokmärka den specifika versen. Bokmärken sparas och listas i sidopanelens Bokmärken-flik.",
+		"<strong>Kopiera</strong> &mdash; Klicka på <strong>&#128203;</strong>-knappen vid en avsnittsrubrik för att kopiera de visade verserna. I parallellläge inkluderas båda översättningarna.",
+		"<strong>Beskrivningar</strong> &mdash; När du läser ett helt kapitel eller en bok visas en kort beskrivning under titeln.",
+		"<strong>Svepnavigation</strong> &mdash; På pekskärmar sveper du vänster eller höger för att bläddra mellan kapitel.",
+		"<strong>Skriv ut</strong> &mdash; Använd <kbd>Ctrl+P</kbd> för en ren utskriftslayout.",
+		"<strong>Installera som app</strong> &mdash; Sanatheos är en progressiv webbapp (PWA). Använd webbläsarens \u201cInstallera\u201d eller \u201cLägg till på startskärmen\u201d för att installera den för snabb offline-åtkomst.",
+		'<strong>Ordbok</strong> &mdash; Bläddra och sök i Strongs konkordans (hebreiska och grekiska) på <a href="./dictionary.html">Ordbok</a>-sidan.',
+	],
+	infoDataTitle: "Data & lagring",
+	infoDataText:
+		"Bibeltexten hämtas en gång från servern och cachelagras lokalt i din webbläsare med <strong>IndexedDB</strong> för snabb offline-åtkomst. Inga data skickas till tredje part. Allt körs i din webbläsare.",
+
+	oldTestament: "Gamla testamentet",
+	newTestament: "Nya testamentet",
+	deuterocanonical: "Deuterokanoniska böcker",
+	idxBooksLabel: "Böcker",
+	idxChaptersLabel: "Kapitel",
+	idxVersesLabel: "Verser",
+
+	footerLine1: "Alla tillgängliga Bibelöversättningar är i det allmänna domänet.",
+	footerDescriptions:
+		'Bok- och kapitelbeskrivningar är hämtade från <a href="https://www.sacredbible.org/catholic/index.htm" target="_blank" rel="noopener noreferrer">Catholic Public Domain Version</a>.',
+	footerStyleguide:
+		'Stycke- och poesiformatering är baserad på <a href="https://worldenglish.bible" target="_blank" rel="noopener noreferrer">World English Bible</a>-översättningen.',
+	footerDictionary:
+		'Bläddra i <a href="./dictionary.html">Strongs konkordansordbok</a> för definitioner på hebreiska och grekiska ord.',
+	footerFavicon:
+		'Applikationsikon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; av Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+
+	copied: "Kopierat!",
+	copyVerse: "Kopiera",
+	copyBoth: "Kopiera båda",
+	shareWith: "Dela länk med",
+	shareWithout: "Dela länk",
+	linkCopied: "Länk kopierad!",
+	highlight: "Markera",
+	removeHighlight: "Ta bort markering",
+	showMore: "Visa mer",
+
+	interlinear: "Interlineär",
+	interlinearTooltip: "Visa original hebreiska/grekiska med Strongs nummer",
+	strongsDef: "Strongs definition",
+	pronunciation: "Uttal",
+	partOfSpeech: "Ordklass",
+	morphology: "Morfologi",
+	crossReferences: "Hänvisningar",
+	closePanel: "Stäng",
+
+	storiesTitle: "Bibelberättelser",
+	storiesFilterPlaceholder: "Filtrera berättelser\u2026",
+	storiesEmpty: "Inga berättelser matchar filtret.",
+	parablesTitle: "Jesu liknelser",
+	parablesFilterPlaceholder: "Filtrera liknelser\u2026",
+	parablesEmpty: "Inga liknelser matchar filtret.",
+	theophaniesTitle: "Teofa\u006Eier",
+	theophaniesFilterPlaceholder: "Filtrera teofa\u006Eier\u2026",
+	theophaniesEmpty: "Inga teofa\u006Eier matchar filtret.",
+	typologyTitle: "Typologi",
+	typologyFilterPlaceholder: "Filtrera typologi\u2026",
+	typologyEmpty: "Inga typologiposter matchar filtret.",
+	typologyCatPersons: "Typer av Kristus (personer)",
+	typologyCatEvents: "Typer av Kristus (händelser)",
+	typologyCatTheotokos: "Typer av Gudaföderska",
+	typologyCatChurch: "Typer av kyrkan och sakramenten",
+	typologyCatCross: "Typer av korset",
+	typologyCatAdditional: "Ytterligare typer",
+
+	bookmarksTitle: "Bokmärken",
+	bookmarkThis: "Lägg till bokmärke",
+	removeBookmark: "Ta bort bokmärke",
+	bookmarksEmpty: "Inga bokmärken än.",
+	bookmarkAdded: "Bokmärkt!",
+	bookmarkRemoved: "Bokmärke borttaget",
+
+	notesTitle: "Anteckningar",
+	addNote: "Lägg till anteckning",
+	editNote: "Redigera anteckning",
+	noteSaved: "Anteckning sparad",
+	noteDeleted: "Anteckning borttagen",
+	notesEmpty: "Inga anteckningar än.",
+	notePlaceholder: "Skriv en anteckning om denna vers\u2026",
+	noteDeleteConfirm: "Ta bort anteckning",
+	noteSave: "Spara",
+	noteRemove: "Ta bort",
+	cancel: "Avbryt",
+	invalidRef: (term) => `Ogiltig referens: "${term}"`,
+
+	fontLabel: "Teckensnitt",
+	fontDefault: "Standard",
+	fontDyslexic: "OpenDyslexic",
+
+	dataLabel: "Data",
+	exportData: "Exportera",
+	importData: "Importera",
+	exportSuccess: "Data exporterad!",
+	importSuccess: "Data importerad!",
+	importError: "Ogiltig fil. Kunde inte importera data.",
+
+	qrCode: "QR-kod",
+	qrClose: "Stäng",
+};
+
+const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI, sv: SV };
 
 let current: Strings = EN;
 let currentLang = "en";

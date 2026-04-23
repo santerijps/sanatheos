@@ -1016,9 +1016,17 @@ async function init() {
 		const s = t();
 		const lang = getLanguage();
 		const getTitle = (st: StoryEntry) =>
-			lang === "fi" && st.title_fi ? st.title_fi : st.title;
+			lang === "fi" && st.title_fi
+				? st.title_fi
+				: lang === "sv" && st.title_sv
+					? st.title_sv
+					: st.title;
 		const getDesc = (st: StoryEntry) =>
-			lang === "fi" && st.description_fi ? st.description_fi : st.description;
+			lang === "fi" && st.description_fi
+				? st.description_fi
+				: lang === "sv" && st.description_sv
+					? st.description_sv
+					: st.description;
 		const getCatLabel = (cat: string) => {
 			if (cat === "Old Testament") return s.oldTestament;
 			if (cat === "New Testament") return s.newTestament;
@@ -1108,9 +1116,18 @@ async function init() {
 	function renderParablesList(parables: ParableEntry[], filter: string) {
 		const s = t();
 		const lang = getLanguage();
-		const getTitle = (p: ParableEntry) => (lang === "fi" && p.title_fi ? p.title_fi : p.title);
+		const getTitle = (p: ParableEntry) =>
+			lang === "fi" && p.title_fi
+				? p.title_fi
+				: lang === "sv" && p.title_sv
+					? p.title_sv
+					: p.title;
 		const getDesc = (p: ParableEntry) =>
-			lang === "fi" && p.description_fi ? p.description_fi : p.description;
+			lang === "fi" && p.description_fi
+				? p.description_fi
+				: lang === "sv" && p.description_sv
+					? p.description_sv
+					: p.description;
 		// Category label is the gospel book name — localize via displayName
 		const getCatLabel = (cat: string) => displayName(cat);
 
@@ -1189,9 +1206,17 @@ async function init() {
 		const s = t();
 		const lang = getLanguage();
 		const getTitle = (th: TheophaniesEntry) =>
-			lang === "fi" && th.title_fi ? th.title_fi : th.title;
+			lang === "fi" && th.title_fi
+				? th.title_fi
+				: lang === "sv" && th.title_sv
+					? th.title_sv
+					: th.title;
 		const getDesc = (th: TheophaniesEntry) =>
-			lang === "fi" && th.description_fi ? th.description_fi : th.description;
+			lang === "fi" && th.description_fi
+				? th.description_fi
+				: lang === "sv" && th.description_sv
+					? th.description_sv
+					: th.description;
 		const getCatLabel = (cat: string) => {
 			if (cat === "Old Testament") return s.oldTestament;
 			if (cat === "New Testament") return s.newTestament;
@@ -1274,9 +1299,17 @@ async function init() {
 		const s = t();
 		const lang = getLanguage();
 		const getTitle = (ty: TypologyEntry) =>
-			lang === "fi" && ty.title_fi ? ty.title_fi : ty.title;
+			lang === "fi" && ty.title_fi
+				? ty.title_fi
+				: lang === "sv" && ty.title_sv
+					? ty.title_sv
+					: ty.title;
 		const getDesc = (ty: TypologyEntry) =>
-			lang === "fi" && ty.description_fi ? ty.description_fi : ty.description;
+			lang === "fi" && ty.description_fi
+				? ty.description_fi
+				: lang === "sv" && ty.description_sv
+					? ty.description_sv
+					: ty.description;
 		const getCatLabel = (cat: string) => {
 			const map: Record<string, string> = {
 				"Types of Christ (Persons)": s.typologyCatPersons,
@@ -2681,6 +2714,7 @@ const TRANSLATION_NAMES: Record<string, { name: string; language: string }> = {
 	KJV: { name: "King James Version", language: "English" },
 	CPDV: { name: "Catholic Public Domain Version", language: "English" },
 	KR38: { name: "Raamattu 1933/1938", language: "Suomi" },
+	SV17: { name: "Svenska Bibeln 1917", language: "Svenska" },
 };
 
 const TRANSLATION_LANG: Record<string, string> = {
@@ -2688,6 +2722,7 @@ const TRANSLATION_LANG: Record<string, string> = {
 	KJV: "en",
 	CPDV: "en",
 	KR38: "fi",
+	SV17: "sv",
 };
 
 function updateStaticText() {

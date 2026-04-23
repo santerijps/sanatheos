@@ -6,7 +6,9 @@
     "description": "A farmer scatters seed on four kinds of ground — the path, rocky soil, thorns, and good soil — representing different responses to the word of God.",
     "description_fi": "Maanviljelijä kylvää siementä neljänlaiseen maahan — tielle, kivikkoon, ohdakkeiden sekaan ja hyvään maahan — kuvaten erilaisia tapoja vastaanottaa Jumalan sana.",
     "ref": "Matthew 13:1-23",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Sådden",
+    "description_sv": "En bonde sår frö på fyra slags mark — stigen, stenig jord, törnen och god jord — vilket skildrar olika sätt att ta emot Guds ord."
   },
   {
     "id": "weeds",
@@ -15,7 +17,9 @@
     "description": "An enemy sows weeds among wheat; the owner instructs his servants to let both grow until the harvest, when the weeds will be burned and the wheat gathered.",
     "description_fi": "Vihollinen kylvää rikkaruohoja vehnän joukkoon; isäntä käskee palvelijoidensa antaa molempien kasvaa yhdessä korjuuseen, jolloin rikkaruohot poltetaan ja vehnä kootaan.",
     "ref": "Matthew 13:24-30; Matthew 13:36-43",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Ogräset bland vetet",
+    "description_sv": "En fiende sår ogräs bland vete; ägaren befaller sina tjänare att låta båda växa till skörden, då ogräset bränns och vetet samlas in."
   },
   {
     "id": "mustard-seed-mt",
@@ -24,7 +28,9 @@
     "description": "The kingdom of heaven is like a mustard seed, the smallest of all seeds, which grows into the greatest of shrubs and becomes a tree where birds nest.",
     "description_fi": "Taivasten valtakunta on kuin sinapinsiemen, kaikkein pienin siemen, josta kasvaa suurin pensas ja puu, johon linnut pesivät.",
     "ref": "Matthew 13:31-32",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Senapskornet",
+    "description_sv": "Himmelriket är likt ett senapsfrö, det minsta av alla frön, som växer upp till den störste av buskar och blir ett träd där fåglarna häckar."
   },
   {
     "id": "leaven-mt",
@@ -33,7 +39,9 @@
     "description": "The kingdom of heaven is like leaven that a woman hid in three measures of flour, which leavened the whole lump.",
     "description_fi": "Taivasten valtakunta on kuin hapatus, jonka nainen sekoitti kolmeen vakaan jauhoja, kunnes koko taikina hapattui.",
     "ref": "Matthew 13:33",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Surdegen",
+    "description_sv": "Himmelriket är likt surdeg som en kvinna blandade i tre mått mjöl tills hela degen var syrad."
   },
   {
     "id": "hidden-treasure",
@@ -42,7 +50,9 @@
     "description": "A man finds treasure hidden in a field, covers it again, and in his joy sells all he has to buy that field.",
     "description_fi": "Mies löytää pellosta kätketyn aarteen, peittää sen uudelleen ja iloissaan myy kaiken, mitä hänellä on, ostaakseen tuon pellon.",
     "ref": "Matthew 13:44",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Den dolda skatten",
+    "description_sv": "En man finner en skatt gömd i en åker, täcker igen den och säljer i sin glädje allt han har för att köpa den åkern."
   },
   {
     "id": "pearl",
@@ -51,7 +61,9 @@
     "description": "A merchant seeking fine pearls finds one of great value and sells everything he has to buy it.",
     "description_fi": "Kauppias etsii hienoja helmiä ja löytää yhden suuriarvoisen; hän myy kaiken, mitä hänellä on, ostaakseen sen.",
     "ref": "Matthew 13:45-46",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Den dyrbara pärlan",
+    "description_sv": "En köpman söker fina pärlor och finner en av stort värde; han säljer allt han äger för att köpa den."
   },
   {
     "id": "net",
@@ -60,7 +72,9 @@
     "description": "The kingdom of heaven is like a net thrown into the sea that catches fish of every kind; at the end of the age the angels will separate the evil from the righteous.",
     "description_fi": "Taivasten valtakunta on kuin mereen heitetty nuotta, joka kokoaa kaikenlaiset kalat; aikojen lopussa enkelit erottavat pahat vanhurskaitten joukosta.",
     "ref": "Matthew 13:47-50",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Noten",
+    "description_sv": "Himmelriket är likt ett nät kastat i havet som fångar fiskar av alla slag; vid tidens slut skall änglarna skilja de onda från de rättfärdiga."
   },
   {
     "id": "unforgiving-servant",
@@ -69,7 +83,9 @@
     "description": "A king forgives a servant an enormous debt, but that servant refuses to forgive a fellow servant a small debt; the king then hands him over to the jailers until he pays all.",
     "description_fi": "Kuningas antaa palvelijalleen anteeksi valtavan velan, mutta palvelija kieltäytyy antamasta anteeksi toiselle palvelijalle pientä velkaa; kuningas antaa hänet vankilaan, kunnes hän maksaa kaiken.",
     "ref": "Matthew 18:21-35",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Den obarmhärtige tjänaren",
+    "description_sv": "En kung efterskänker en tjänares enorma skuld, men denne tjänare vägrar förlåta en medtjänare en liten skuld; kungen överlämnar honom till fångvaktarna tills han betalt allt."
   },
   {
     "id": "workers-vineyard",
@@ -78,7 +94,9 @@
     "description": "A landowner hires workers at different hours of the day and pays them all the same wage; those hired first grumble, but the owner insists on his right to be generous.",
     "description_fi": "Maanomistaja palkkaa päivän eri aikoina työntekijöitä ja maksaa heille kaikille saman palkan; ensin palkatut nurkkuvat, mutta omistaja puolustaa oikeuttaan olla antelias.",
     "ref": "Matthew 20:1-16",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Arbetarna i vingården",
+    "description_sv": "En godsägare anställer arbetare vid olika tider på dagen och betalar dem alla samma lön; de som anlitades först klagar, men ägaren hävdar sin rätt att vara generös."
   },
   {
     "id": "two-sons",
@@ -87,7 +105,9 @@
     "description": "A father asks two sons to work in the vineyard; one refuses but then goes, the other agrees but does not go. Jesus uses this to contrast repentant sinners with self-righteous religious leaders.",
     "description_fi": "Isä pyytää kahta poikaansa töihin viinitarhaan; toinen kieltäytyy mutta menee, toinen lupaa mennä mutta ei mene. Jeesus vertaa tällä parannuksen tehneistä syntisistä omavanhurskaisiin uskonnollisiin johtajiin.",
     "ref": "Matthew 21:28-32",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "De två sönerna",
+    "description_sv": "En far ber sina två söner arbeta i vingården; den ene vägrar men går ändå, den andre lovar men går inte. Jesus använder detta för att ställa botfärdiga syndare mot självgoda religiösa ledare."
   },
   {
     "id": "wicked-tenants-mt",
@@ -96,7 +116,9 @@
     "description": "A landowner leases his vineyard to tenants who beat and kill his servants and even his son; he will destroy them and give the vineyard to others.",
     "description_fi": "Maanomistaja vuokraa viinitarhansa vuokraajille, jotka lyövät ja tappavat hänen palvelijansa ja jopa poikansa; hän tuhoaa heidät ja antaa viinitarhan muille.",
     "ref": "Matthew 21:33-45",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "De onda vingårdsarbetarna",
+    "description_sv": "En godsägare arrenderar ut sin vingård till arrendatorer som misshandlar och dödar hans tjänare och till och med hans son; han skall förgöra dem och ge vingården åt andra."
   },
   {
     "id": "wedding-banquet",
@@ -105,7 +127,9 @@
     "description": "A king throws a wedding banquet for his son; invited guests refuse to come, so he sends his servants to the street corners to fill the hall with anyone they find.",
     "description_fi": "Kuningas kutsuu vieraat poikansa häihin; kutsutut kieltäytyvät tulemasta, joten hän lähettää palvelijansa kaduille kutsumaan kaikki, jotka he löytävät.",
     "ref": "Matthew 22:1-14",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Bröllopsmåltiden",
+    "description_sv": "En kung ordnar bröllopsbankett för sin son; de inbjudna gästerna vägrar komma, varför han sänder tjänarna till gathörnen för att fylla salen med alla de kan finna."
   },
   {
     "id": "ten-virgins",
@@ -114,7 +138,9 @@
     "description": "Ten virgins go to meet the bridegroom; five are wise and bring extra oil, five are foolish and their lamps go out — a call to stay alert for the coming of the Lord.",
     "description_fi": "Kymmenen neitsyttä lähtee tapaamaan ylkää; viisi viisasta ottaa ylimääräistä öljyä, viisi tyhmää antaa lamppujensa sammua — kehotus pysyä valppaina Herran tuloa odottaen.",
     "ref": "Matthew 25:1-13",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "De tio jungfrurna",
+    "description_sv": "Tio jungfrur går ut för att möta brudgummen; fem är kloka och tar med extra olja, fem är dåraktiga och deras lampor slocknar — en uppmaning att hålla sig vakna inför Herrens ankomst."
   },
   {
     "id": "talents",
@@ -123,7 +149,9 @@
     "description": "A master entrusts servants with talents before a journey; two invest and double what they received, one buries his and is condemned.",
     "description_fi": "Isäntä antaa palvelijoilleen talentit ennen matkaansa; kaksi sijoittaa ne ja tuplaa omansa, yksi hautaa talentinsa ja saa tuomion.",
     "ref": "Matthew 25:14-30",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Talenterna",
+    "description_sv": "En herre anförtror sina tjänare talenter innan han reser; två investerar och fördubblar vad de fått, en gräver ner sitt och fördöms."
   },
   {
     "id": "sheep-goats",
@@ -132,7 +160,9 @@
     "description": "At the final judgment the Son of Man separates people as a shepherd separates sheep from goats, welcoming those who served him by caring for the least of his brothers.",
     "description_fi": "Viimeisellä tuomiolla Ihmisen Poika erottaa ihmiset kuten paimen erottaa lampaat vuohista, tervetuliaissanoilla niille, jotka palvelivat häntä palvelemalla kaikkein pienimpiä veljiään.",
     "ref": "Matthew 25:31-46",
-    "category": "Matthew"
+    "category": "Matthew",
+    "title_sv": "Fåren och getterna",
+    "description_sv": "Vid den sista domen skiljer Människosonen folk åt som en herde skiljer får från getter, och välkomnar dem som tjänat honom genom att ta hand om de minsta av hans bröder."
   },
   {
     "id": "growing-seed",
@@ -141,7 +171,9 @@
     "description": "The kingdom of God is like a man who scatters seed on the ground and sleeps; the seed sprouts and grows of itself, and he does not know how.",
     "description_fi": "Jumalan valtakunta on kuin mies, joka kylvää siemenen maahan ja nukkuu; siemen itää ja kasvaa itsestään, eikä mies tiedä miten.",
     "ref": "Mark 4:26-29",
-    "category": "Mark"
+    "category": "Mark",
+    "title_sv": "Det självväxande fröet",
+    "description_sv": "Guds rike är likt en man som sår frö i marken och sover; fröet gror och växer av sig självt, och han vet inte hur."
   },
   {
     "id": "absent-master",
@@ -150,7 +182,9 @@
     "description": "A man goes on a journey and leaves his servants in charge, each with his own work; the doorkeeper is commanded to stay awake, for no one knows when the master will return — a call to constant watchfulness.",
     "description_fi": "Mies lähtee matkalle ja jättää palvelijansa hoitamaan asioita, kukin omaa työtänsä; ovenvartijaa käsketään pysyä hereillä, sillä kukaan ei tiedä milloin isäntä palaa — kehotus jatkuvaan valppauteen.",
     "ref": "Mark 13:34-37",
-    "category": "Mark"
+    "category": "Mark",
+    "title_sv": "Den bortavarande herren och hans tjänare",
+    "description_sv": "En man reser bort och lämnar sina tjänare ansvariga, var och en med sin uppgift; dörrvakten befalls att hålla sig vaken, för ingen vet när herren återvänder — en uppmaning till ständig vaksamhet."
   },
   {
     "id": "good-samaritan",
@@ -159,7 +193,9 @@
     "description": "A man beaten by robbers is passed by a priest and a Levite, but a Samaritan stops to care for him — defining 'neighbour' as anyone in need.",
     "description_fi": "Rosvojen ryöstämää miestä ohittavat pappi ja leeviläinen, mutta samarialainen pysähtyy huolehtimaan hänestä — määrittäen 'lähimmäisen' kaikeksi avun tarvitsijaksi.",
     "ref": "Luke 10:25-37",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Den barmhärtige samariten",
+    "description_sv": "En man slagen av rövare förbigås av en präst och en levit, men en samarit stannar för att ta hand om honom — och definierar 'nästan' som var och en som behöver hjälp."
   },
   {
     "id": "friend-midnight",
@@ -168,7 +204,9 @@
     "description": "A man goes to his friend at midnight to borrow bread for a guest; the friend reluctantly gets up and gives him what he needs — teaching persistent prayer.",
     "description_fi": "Mies menee ystävänsä luo keskiyöllä lainaamaan leipää vieraalleen; ystävä nousee epähaluisena ylös ja antaa hänelle mitä hän tarvitsee — opettaen sinnikästä rukousta.",
     "ref": "Luke 11:5-8",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Vännen vid midnatt",
+    "description_sv": "En man går till sin vän vid midnatt för att låna bröd till en gäst; vännen reser sig motvilligt och ger honom vad han behöver — en lärdom om uthållig bön."
   },
   {
     "id": "rich-fool",
@@ -177,7 +215,9 @@
     "description": "A rich man tears down his barns to build bigger ones and plans to relax, but God tells him his soul will be required of him that very night.",
     "description_fi": "Rikas mies kaataa aittansa rakentaakseen suuremmat ja suunnittelee lepäämistä, mutta Jumala sanoo hänelle, että hänen sielunsa vaaditaan häneltä jo sinä yönä.",
     "ref": "Luke 12:13-21",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Den rike dårren",
+    "description_sv": "En rik man river sina lador för att bygga större och planerar att vila, men Gud säger att hans själ skall utkrävas av honom samma natt."
   },
   {
     "id": "barren-fig-tree",
@@ -186,7 +226,9 @@
     "description": "A vineyard owner wants to cut down a fruitless fig tree; the gardener pleads for one more year to dig around it and fertilize it, hoping it will bear fruit.",
     "description_fi": "Viinitarhan omistaja haluaa kaataa hedelmättömän viikunapuun; puutarhuri pyytää vielä yhtä vuotta — kaivaa sen ympäriltä ja lannoittaa, toivoen hedelmää.",
     "ref": "Luke 13:6-9",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Det ofruktbara fikonträdet",
+    "description_sv": "En vingårdsägare vill hugga ner ett fruktlöst fikonträd; trädgårdsmästaren ber om ytterligare ett år för att gräva runt det och gödsla, i hopp om att det skall bära frukt."
   },
   {
     "id": "great-banquet",
@@ -195,7 +237,9 @@
     "description": "A man prepares a great banquet, but all the invited guests make excuses; the host sends his servant to bring in the poor, crippled, blind, and lame from the streets.",
     "description_fi": "Mies valmistaa suuren päivällisen, mutta kaikki kutsutut vieraat keksivät tekosyitä; isäntä lähettää palvelijansa kaduille tuomaan köyhiä, rampia, sokeita ja lamaantuneita.",
     "ref": "Luke 14:15-24",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Den stora middagen",
+    "description_sv": "En man ordnar en stor middag, men alla inbjudna gäster ursäktar sig; värden sänder sin tjänare ut på gatorna för att hämta in fattiga, krymplingar, blinda och halta."
   },
   {
     "id": "lost-sheep",
@@ -204,7 +248,9 @@
     "description": "A shepherd leaves ninety-nine sheep to search for the one that is lost; when he finds it he rejoices more over that one than over the ninety-nine.",
     "description_fi": "Paimen jättää yhdeksänkymmentäyhdeksän lammasta etsimään yhtä kadonnutta; löydettyään sen hän iloitsee siitä enemmän kuin yhdeksänkymmentäyhdeksästä muusta.",
     "ref": "Luke 15:3-7",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Det förlorade fåret",
+    "description_sv": "En herde lämnar nittionio får för att söka det enda som gått vilse; när han finner det fröjdar han sig mer över detta enda än över de nittionio."
   },
   {
     "id": "lost-coin",
@@ -213,7 +259,9 @@
     "description": "A woman with ten silver coins loses one, lights a lamp, sweeps the house, and searches carefully until she finds it — then calls her friends to rejoice with her.",
     "description_fi": "Naisella on kymmenen hopeakolikko ja hän kadottaa yhden; hän sytyttää lampun, lakaisee huoneen ja etsii huolellisesti kunnes löytää sen — sitten kutsuu ystäviänsä iloitsemaan.",
     "ref": "Luke 15:8-10",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Det förlorade silvermyntet",
+    "description_sv": "En kvinna med tio silvermynt tappar ett; hon tänder ett ljus, sopar huset och söker noga tills hon finner det — och kallar sedan vännerna att glädjas med henne."
   },
   {
     "id": "prodigal-son",
@@ -222,7 +270,9 @@
     "description": "A son demands his inheritance, squanders it in reckless living, and returns destitute to his father — who runs to meet him, throws a feast, and restores him fully.",
     "description_fi": "Poika vaatii perintöosansa, tuhlaa sen hurjaan elämään ja palaa kotiin köyhänä isänsä luo — isä juoksee häntä vastaan, järjestää juhlan ja palauttaa hänelle kaiken.",
     "ref": "Luke 15:11-32",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Den förlorade sonen",
+    "description_sv": "En son kräver sin arvedel, slösar bort den i ett utsvävande liv och återvänder utblottad till sin far — som springer emot honom, ordnar ett gästabud och återupprättar honom helt."
   },
   {
     "id": "shrewd-manager",
@@ -231,7 +281,9 @@
     "description": "An unfaithful manager, about to be dismissed, reduces his master's debtors' bills to secure future favours; Jesus commends his shrewdness and calls his disciples to be wise in using worldly wealth.",
     "description_fi": "Epärehellinen taloudenhoitaja pienentää isäntänsä velallisten laskuja turvatakseen tulevaisuutensa; Jeesus kehuu hänen neuvokkuuttaan ja kehottaa oppilaisiaan käyttämään maallista omaisuutta viisaasti.",
     "ref": "Luke 16:1-13",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Den kloke förvaltaren",
+    "description_sv": "En otrogen förvaltare, som snart skall avskedas, minskar sin herres gäldenärers skulder för att trygga sin framtid; Jesus lovprisar hans klokskap och uppmanar sina lärjungar att vara visa i bruket av jordisk rikedom."
   },
   {
     "id": "rich-man-lazarus",
@@ -240,7 +292,9 @@
     "description": "A rich man ignores the beggar Lazarus at his gate; both die, and their fates are reversed in the afterlife — a warning against indifference to suffering.",
     "description_fi": "Rikas mies ei huomaa portillaan makaavaa köyhää Lasarusta; molemmat kuolevat, ja heidän kohtalonsa kääntyy päinvastaiseksi kuoleman jälkeen — varoituksena välinpitämättömyyttä kohtaan.",
     "ref": "Luke 16:19-31",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Den rike mannen och Lasarus",
+    "description_sv": "En rik man ignorerar den fattige Lasarus vid sin port; båda dör och deras öden är omvända i livet efter detta — en varning mot likgiltighet inför lidande."
   },
   {
     "id": "master-servant",
@@ -249,7 +303,9 @@
     "description": "A servant who has been ploughing or tending sheep is not thanked or invited to eat first; he serves his master's meal before his own. Jesus uses this to teach that his disciples should regard themselves as unworthy servants who have only done what was required.",
     "description_fi": "Palvelija, joka on kyntänyt tai paimennut lampaita, ei saa kiitosta eikä pääse syömään ensin; hän tarjoilee isännälleen aterian ennen omaansa. Jeesus opettaa tällä, että hänen oppilaansa tulisi pitää itseään kelpaamattomina palvelijoina, jotka ovat vain tehneet velvollisuutensa.",
     "ref": "Luke 17:7-10",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Herren och tjänaren",
+    "description_sv": "En tjänare som plöjt eller vallat tackas inte och inbjuds inte att äta först; han serverar sin herres mål innan sitt eget. Jesus lär därigenom att hans lärjungar bör betrakta sig som onyttiga tjänare som bara gjort sin plikt."
   },
   {
     "id": "persistent-widow",
@@ -258,7 +314,9 @@
     "description": "A widow keeps coming to an unjust judge demanding justice until he finally grants it — teaching that God will answer the persistent prayers of his people.",
     "description_fi": "Leski pyytää toistuvasti epäoikeudenmukaiselta tuomarilta oikeutta kunnes hän viimein suostuu — opettaen, että Jumala vastaa kansansa sinnikäisiin rukouksiin.",
     "ref": "Luke 18:1-8",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Den ihärdiga änkan",
+    "description_sv": "En änka vänder sig gång på gång till en orättfärdig domare och kräver rättvisa tills han till slut beviljar den — en lärdom om att Gud svarar på sitt folks ihärdiga böner."
   },
   {
     "id": "pharisee-tax-collector",
@@ -267,7 +325,9 @@
     "description": "A self-righteous Pharisee thanks God he is not like others; a tax collector beats his breast and asks for mercy — and it is the latter who goes home justified.",
     "description_fi": "Omavanhurskas fariseus kiittää Jumalaa ettei ole kuin muut; publikaani lyö rintaansa ja pyytää armahdusta — ja juuri tämä lähtee kotiin vanhurskautettuna.",
     "ref": "Luke 18:9-14",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "Farisén och tullindrivaren",
+    "description_sv": "En självgod farisé tackar Gud att han inte är som andra; en tullindrivare slår sig för bröstet och ber om nåd — och det är den senare som går hem rättfärdigad."
   },
   {
     "id": "ten-minas",
@@ -276,6 +336,8 @@
     "description": "A nobleman goes to receive a kingdom and gives ten servants one mina each; on his return the faithful servants are rewarded with authority over cities, while the unfaithful one loses even what he had.",
     "description_fi": "Ylimys lähtee ottamaan vastaansa kuningasvallan ja antaa kymmenelle palvelijalleen kukin yhden minan; palatessaan hän palkitsee uskollisia palvelijoita vallalla kaupunkien yli, kun taas uskottomalta otetaan pois kin se mitä hänellä on.",
     "ref": "Luke 19:11-27",
-    "category": "Luke"
+    "category": "Luke",
+    "title_sv": "De tio minorna",
+    "description_sv": "En furste reser bort för att ta emot ett konungarike och ger tio tjänare en mina var; när han återvänder belönas de trogna med makt över städer, medan den otrognes mina tas ifrån honom."
   }
 ]

@@ -80,6 +80,55 @@ describe("i18n — new feature strings (FI)", () => {
 	});
 });
 
+describe("i18n — new feature strings (SV)", () => {
+	beforeEach(() => setLanguage("sv"));
+
+	test("theme strings exist", () => {
+		const s = t();
+		expect(s.themeLabel).toBe("Tema");
+		expect(s.themeLight).toBe("Ljust");
+		expect(s.themeDark).toBe("Mörkt");
+		expect(s.themeSystem).toBe("System");
+	});
+
+	test("parallel translation strings exist", () => {
+		const s = t();
+		expect(s.parallelLabel).toBe("Parallell översättning");
+		expect(s.parallelNone).toBe("Ingen");
+	});
+
+	test("copy string exists", () => {
+		expect(t().copied).toBe("Kopierat!");
+		expect(t().copyVerse).toBe("Kopiera");
+	});
+
+	test("highlight strings exist", () => {
+		const s = t();
+		expect(s.highlight).toBe("Markera");
+		expect(s.removeHighlight).toBe("Ta bort markering");
+	});
+
+	test("footer descriptions string mentions Catholic Public Domain Version", () => {
+		expect(t().footerDescriptions).toContain("Catholic Public Domain Version");
+	});
+});
+
+describe("i18n — bookmark strings (SV)", () => {
+	beforeEach(() => setLanguage("sv"));
+
+	test("bookmarksTitle is 'Bokmärken'", () => {
+		expect(t().bookmarksTitle).toBe("Bokmärken");
+	});
+
+	test("bookmarkThis is non-empty in Swedish", () => {
+		expect(t().bookmarkThis.length).toBeGreaterThan(0);
+	});
+
+	test("removeBookmark is non-empty in Swedish", () => {
+		expect(t().removeBookmark.length).toBeGreaterThan(0);
+	});
+});
+
 describe("i18n — language switching preserves new strings", () => {
 	test("switching en → fi → en returns correct strings", () => {
 		setLanguage("en");
@@ -93,6 +142,18 @@ describe("i18n — language switching preserves new strings", () => {
 		setLanguage("en");
 		expect(t().themeLabel).toBe("Theme");
 		expect(t().highlight).toBe("Highlight");
+	});
+
+	test("switching en → sv → en returns correct strings", () => {
+		setLanguage("en");
+		expect(t().themeLabel).toBe("Theme");
+
+		setLanguage("sv");
+		expect(t().themeLabel).toBe("Tema");
+		expect(t().highlight).toBe("Markera");
+
+		setLanguage("en");
+		expect(t().themeLabel).toBe("Theme");
 	});
 
 	test("unknown language falls back to EN for new strings", () => {
@@ -134,6 +195,15 @@ describe("i18n — all new keys are non-empty strings", () => {
 
 	test("FI: all new keys are non-empty", () => {
 		setLanguage("fi");
+		const s = t();
+		for (const key of newKeys) {
+			expect(typeof s[key]).toBe("string");
+			expect((s[key] as string).length).toBeGreaterThan(0);
+		}
+	});
+
+	test("SV: all new keys are non-empty", () => {
+		setLanguage("sv");
 		const s = t();
 		for (const key of newKeys) {
 			expect(typeof s[key]).toBe("string");
