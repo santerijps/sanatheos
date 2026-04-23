@@ -33,10 +33,11 @@ sanatheos/
 │       ├── search.ts         # Search engine — parsing, matching, fuzzy
 │       ├── render.ts         # All DOM rendering functions
 │       ├── state.ts          # URL state management (read/push/replace)
-│       ├── db.ts             # IndexedDB layer (Bible cache + highlights)
+│       ├── db.ts             # IndexedDB layer (Bible cache + highlights + export/import)
 │       ├── i18n.ts           # Internationalization — EN and FI string tables
 │       ├── bookNames.ts      # Translation-aware book names and aliases
-│       └── bookCodes.ts      # Short 3-char codes for URL-friendly book refs
+│       ├── bookCodes.ts      # Short 3-char codes for URL-friendly book refs
+│       └── qr.ts             # QR code wrapper around the `qrcode` npm package
 │
 ├── public/                   # Static assets served in dev mode
 │   ├── index.html            # Single HTML page — all UI skeleton
@@ -60,6 +61,11 @@ sanatheos/
 │   │   ├── parables.json     # Parables of Jesus list (bilingual EN/FI)
 │   │   ├── theophanies.json  # Theophanies list (bilingual EN/FI)
 │   │   └── typology.json     # Biblical typology list (bilingual EN/FI)
+│   ├── font/                         # OpenDyslexic font files (OTF)
+│   │   ├── OpenDyslexic-Regular.otf
+│   │   ├── OpenDyslexic-Bold.otf
+│   │   ├── OpenDyslexic-Italic.otf
+│   │   └── OpenDyslexic-BoldItalic.otf
 │   ├── more/                         # "More Content" — static reference pages
 │   │   ├── index.html                # Listing page for all reference guides
 │   │   ├── philosophy.html           # Philosophy & Worldview
@@ -115,6 +121,11 @@ sanatheos/
 │   │   ├── translations.json # Available translations list
 │   │   ├── strongs.json      # Strong's Concordance (copied)
 │   │   └── interlinear/      # Per-book interlinear data (copied)
+│   ├── font/                 # OpenDyslexic font files (copied from public/font/)
+│   │   ├── OpenDyslexic-Regular.otf
+│   │   ├── OpenDyslexic-Bold.otf
+│   │   ├── OpenDyslexic-Italic.otf
+│   │   └── OpenDyslexic-BoldItalic.otf
 │   └── data/                 # Data files (copied from public/data/)
 │       ├── styleguide.json
 │       ├── subheadings-en.json
@@ -430,7 +441,9 @@ The `init()` function runs on page load and orchestrates everything:
    - Browser back/forward (`popstate`).
    - Translation switching with automatic query book name translation.
    - Parallel translation loading and toggling.
-   - Theme and font size changes.
+   - Theme, font size, and font family changes.
+   - Data export/import handlers.
+   - QR code overlay open/close.
 
 **Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
 - `#side-tab-rail` — 52px icon column with eight `.side-tab-btn[data-tab]` buttons (stories, parables, theophanies, typology, bookmarks, notes, settings, info) and `#side-close`
@@ -464,6 +477,12 @@ Key functions:
 - Multiple groups → `renderMultiNav(data, navGroups)` or `renderParallelMultiNav` in parallel mode.
 
 If `tryParseNavGroups` fails and the query contains no quoted text, `parseNavTerms(query)` is called to parse each semicolon-separated term independently. Terms that resolve to valid refs are rendered; terms that don't (e.g. a misspelled book) are shown as `<p class="empty">` "Invalid reference" messages via `renderMixedMultiNav` / `renderParallelMixedMultiNav`. If no term resolves to a valid ref, or if the query contains quoted text, `search()` is called and results are rendered.
+
+**Font family setting:** `savedFont = localStorage.getItem("bible-font") || "default"`. Sets `data-font` attribute on `document.documentElement` (omitted when `"default"`). The `#font-segmented` control has `"default"` and `"dyslexic"` values; selecting `"dyslexic"` sets `data-font="dyslexic"` which activates the `[data-font="dyslexic"]` CSS rule overriding `--sans` and `--serif` to OpenDyslexic. Saved in `localStorage` as `"bible-font"`.
+
+**Data export/import:** `exportUserData()` collects all highlights, bookmarks, and notes into a `UserDataExport` JSON object, then triggers a browser file download named `sanatheos-export-YYYY-MM-DD.json`. `importUserData(data)` replaces all existing user data. Both show toast notifications on success. Import errors (invalid JSON or wrong version) show an error toast.
+
+**QR code overlay:** `showQrOverlay(url)` opens `#qr-overlay` (a fixed overlay with a `<canvas>`) and lazily imports `./qr.ts` to call `drawQR()`. The overlay is closed by clicking its close button or the backdrop. Pressing Escape also closes it. The overlay is triggered from share buttons when the `navigator.share` API is unavailable.
 
 **Translation metadata** is hardcoded in `TRANSLATION_NAMES` and `TRANSLATION_LANG` constants:
 - `NHEB` → English (default), `KJV` → English, `CPDV` → English, `KR38` → Finnish (Suomi)
@@ -599,7 +618,9 @@ Database: `bible-app`, version 4. Four object stores:
 
 Uses a persistent connection — opened once on first use and reused for all subsequent operations. The connection automatically re-opens if the browser closes it under memory pressure.
 
-Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`, `getBookmarks`, `addBookmark`, `removeBookmark`, `hasBookmark`, `loadStories`, `saveStories`, `loadParables`, `saveParables`, `loadTheophanies`, `saveTheophanies`, `loadTypology`, `saveTypology`, `getNotes`, `saveNote`, `deleteNote`, `getNoteMap`.
+Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHighlight`, `loadInterlinearBook`, `saveInterlinearBook`, `loadStrongsDict`, `saveStrongsDict`, `getBookmarks`, `addBookmark`, `removeBookmark`, `hasBookmark`, `loadStories`, `saveStories`, `loadParables`, `saveParables`, `loadTheophanies`, `saveTheophanies`, `loadTypology`, `saveTypology`, `getNotes`, `saveNote`, `deleteNote`, `getNoteMap`, `exportUserData`, `importUserData`.
+
+**Data export/import:** `UserDataExport` is a serialisable interface `{ version: 1; exportedAt: string; highlights: Array<Highlight & { id: string }>; bookmarks: Bookmark[]; notes: VerseNote[] }`. `exportUserData()` reads all three user data stores and returns a `UserDataExport` object. `importUserData(data)` validates the version field then clears and repopulates all three stores in sequence. Both functions are used by the Data management section in the settings side panel.
 
 `getHighlightMap()` retrieves all highlights and converts them to a `Map<string, HighlightColor>` for fast lookup. `loadInterlinearBook()`/`saveInterlinearBook()` cache interlinear data per book in IndexedDB. `loadStrongsDict()`/`saveStrongsDict()` cache the Strong's Concordance dictionary. `getBookmarks()` returns all bookmark records sorted by `addedAt` descending. `hasBookmark(id)` checks whether a bookmark exists for the given id. `getNotes()` returns all `VerseNote` records sorted by `updatedAt` descending. `saveNote(note)` upserts a note. `deleteNote(id)` removes a note. `getNoteMap()` returns a `Map<string, string>` of note id → text for fast per-verse lookup during rendering.
 
@@ -608,7 +629,7 @@ Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHig
 Two language tables: English (`EN`) and Finnish (`FI`), both implementing the `Strings` interface. Covers:
 - Header labels and placeholder text
 - Content messages (not found, loading, result count)
-- Settings modal labels (translation, language, theme, parallel, font size with 5 levels)
+- Settings modal labels (translation, language, theme, parallel, font size with 5 levels, font family, data export/import)
 - Info modal sections (search help, browse, shortcuts, settings, features, data/storage)
 - Index panel labels (Old Testament, New Testament)
 - Footer text, favicon attribution, dictionary link (`footerDictionary`), and styleguide attribution (`footerStyleguide`)
@@ -620,6 +641,9 @@ Two language tables: English (`EN`) and Finnish (`FI`), both implementing the `S
 - Typology strings (typologyTitle, typologyFilterPlaceholder, typologyEmpty, typologyCatPersons, typologyCatEvents, typologyCatTheotokos, typologyCatChurch, typologyCatCross, typologyCatAdditional)
 - Share link strings (shareWith, shareWithout, linkCopied)
 - Interlinear strings (interlinear, interlinearTooltip, strongsDef, pronunciation, partOfSpeech, morphology, crossReferences, closePanel)
+- Font strings (fontLabel, fontDefault, fontDyslexic)
+- Data management strings (dataLabel, exportData, importData, exportSuccess, importSuccess, importError)
+- QR code strings (qrCode, qrClose)
 - Deuterocanonical section label
 
 `setLanguage(lang)` / `getLanguage()` / `t()` (returns current strings).
@@ -676,7 +700,7 @@ Produces the `docs/` directory for GitHub Pages deployment. Uses `loadBible` and
 2. Bundles `app.ts` → `docs/bundle.js` (minified, browser target).
 3. Copies static files: `index.html`, `dictionary.html`, `style.css`, `robots.txt`, `manifest.json`, `sw.js`.
 4. Creates `docs/more/` and copies all `moreFiles` (11 HTML pages from `public/more/`).
-5. Copies static directories recursively: `icon/` (PWA icons), `data/` (styleguide, subheadings, descriptions).
+5. Copies static directories recursively: `icon/` (PWA icons), `data/` (styleguide, subheadings, descriptions), `font/` (OpenDyslexic OTF files).
 6. Copies interlinear data directory and `strongs.json` for dictionary support.
 7. Minifies CSS using Bun's bundler.
 8. Minifies HTML by stripping comments, collapsing whitespace, removing inter-tag spaces. Iterates over `["index.html", ...moreFiles]`.
@@ -741,6 +765,16 @@ The page is a single HTML file with this DOM structure:
           #theme-segmented       — System / Light / Dark (segmented control)
           #fontsize-segmented    — S / M / L / XL / XXL (segmented control)
           #language-segmented    — English / Suomi (segmented control)
+          #font-segmented        — Default / OpenDyslexic (segmented control)
+        fieldset.settings-group  — Data group
+          #export-data-btn       — Download all user data as JSON
+          #import-data-btn       — Upload a previously exported JSON file
+          #import-data-input     — Hidden <input type="file"> triggered by import button
+
+  #qr-overlay         — Fixed overlay displaying a QR code canvas for the current URL
+    #qr-title         — Label (localised via i18n)
+    <canvas>          — QR code drawn by qr.ts via the `qrcode` npm package
+    #qr-close-btn     — Close button
 
   #verse-menu         — Floating context menu for verse actions
   #strongs-panel      — Side panel for Strong's word definitions
@@ -779,7 +813,9 @@ The page is a single HTML file with this DOM structure:
 
 **Font size system:** `[data-font-size]` attribute on `<html>` sets `.verses` font size: small (14px), medium (17px, default), large (20px), xl (23px), xxl (26px).
 
-**Fonts:** Sans-serif system stack for UI (`--sans`), serif for Bible text (`--serif`: Georgia / Times New Roman).
+**Font family system:** `[data-font="dyslexic"]` attribute on `<html>` overrides `--sans` and `--serif` to `"OpenDyslexic"`, switching all text in the app to the dyslexia-friendly font. The attribute is absent (not `"default"`) when the default font is active, so only one rule is needed. `@font-face` declarations in `style.css` point to `./font/OpenDyslexic-{variant}.otf` files for all four variants (Regular, Bold, Italic, BoldItalic) with `font-display: swap`. The `[data-font="dyslexic"]` rule is placed after both `:root` and `[data-theme="dark"]` in the stylesheet — this is required because all three selectors have equal specificity, so the last one wins; placing it earlier would cause `:root` to silently override it.
+
+**Fonts:** Default: sans-serif system stack for UI (`--sans`: Faculty Glyphic), serif for Bible text (`--serif`: IBM Plex Serif). Dyslexic mode: both `--sans` and `--serif` use OpenDyslexic (served from `./font/`).
 
 **Layout:** Full-width single column. Max-width constraints on content. Sticky header. Overlays use fixed positioning with backdrop.
 
@@ -818,7 +854,9 @@ The page is a single HTML file with this DOM structure:
 - `#note-panel` — `position: fixed; left: 0; top: 0; height: 100%; width: min(clamp(320px, 28vw, 520px), 92vw); transform: translateX(-100%); transition: transform 0.28s`. Slides in from left edge when overlay has `.open`.
 - Settings/info modals — Centered cards with close buttons.
 - `.settings-group` — Fieldset grouping related settings (content vs appearance).
-- `.segmented` / `.seg-btn` — Horizontal segmented controls for theme, font size, and language. Active state uses `--accent` background.
+- `.segmented` / `.seg-btn` — Horizontal segmented controls for theme, font size, language, and font family. Active state uses `--accent` background.
+- `.settings-data-btns` — Flex row containing the Export and Import buttons in the Data settings section.
+- `#qr-overlay` — Fixed full-screen overlay containing a `<canvas>` for QR code display and a close button. Opened programmatically by `showQrOverlay()`. Hidden by default via `hidden` attribute.
 - **Filtered list pane CSS pattern** — Each side panel pane that contains a filter input and scrollable list requires explicit ID-based CSS rules in the `/* --- Stories & Parables panes --- */` block of `style.css`. When adding a new pane named `foo`, add `#foo-header`, `#foo-title`, `#foo-search-wrap`, `#foo-filter`, `#foo-filter:focus`, `#foo-filter::placeholder`, `#foo-list`, and all `#foo-list::-webkit-scrollbar*` selectors to each of the eight corresponding CSS rule groups alongside the existing stories/parables/theophanies selectors. Omitting any selector group causes the filter input to render unstyled or the list to be non-scrollable.
 - `@media print` — Hides header, overlays, nav arrows, buttons, bookmark buttons, sidenote rail and inline sidenotes. Shows `.print-translation-label`.
 - `@media (max-width: 800px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels, smaller section titles.
@@ -997,6 +1035,49 @@ A share button on verses and sections allows copying a link to the current passa
 
 A toast notification confirms the link was copied. The share functionality uses the i18n strings `shareWith`, `shareWithout`, and `linkCopied`.
 
+### 22. Data Export / Import
+
+Users can export all their personal data (highlights, bookmarks, notes) to a JSON file and later import it back — useful for backup or migrating between devices/browsers. The controls live in the **Data** fieldset of the settings side panel.
+
+**Export:** Clicking the Export button calls `exportUserData()` from `db.ts`, which reads all three IndexedDB stores and returns a `UserDataExport` object. The result is serialised to JSON and downloaded as `sanatheos-export-YYYY-MM-DD.json` via a transient `<a>` element with an object URL. An "Export successful" toast confirms completion.
+
+**Import:** Clicking the Import button triggers the hidden `#import-data-input` file picker (`.json` accept filter). When a file is selected, it is read via `FileReader`, parsed as JSON, and passed to `importUserData(data)` from `db.ts`. This validates the `version` field (must be `1`), then clears and repopulates all three stores atomically per-store. After import, all in-memory state (highlight map, bookmarks list, notes map) is refreshed and the current view re-renders. An "Import successful" toast confirms completion. A separate error toast is shown if the file cannot be parsed or has an unsupported version.
+
+**`UserDataExport` interface:**
+```typescript
+interface UserDataExport {
+  version: 1;
+  exportedAt: string; // ISO 8601
+  highlights: Array<Highlight & { id: string }>;
+  bookmarks: Bookmark[];
+  notes: VerseNote[];
+}
+```
+
+**i18n strings:** `dataLabel`, `exportData`, `importData`, `exportSuccess`, `importSuccess`, `importError`.
+
+### 23. QR Code
+
+A QR code for the current page URL can be displayed as an overlay for easy sharing to mobile devices. The feature is surfaced via the share button flow — when the Web Share API is unavailable, a "QR code" button appears that opens `#qr-overlay`.
+
+**`qr.ts`:** A thin async wrapper around the `qrcode` npm package. Exports `drawQR(text, canvas, opts?)` which calls `QRCode.toCanvas()` with error correction level M, configurable scale (default 6) and quiet-zone margin (default 4 modules).
+
+**`showQrOverlay(url)`:** Lazily imports `./qr.ts` (so the `qrcode` bundle is only loaded when needed), sets the overlay title from `t().qrCode`, and draws the QR code onto the `<canvas>` inside `#qr-overlay`. The overlay is dismissed by clicking the close button (`#qr-close-btn`), clicking the backdrop, or pressing Escape.
+
+**i18n strings:** `qrCode`, `qrClose`.
+
+### 24. OpenDyslexic Font
+
+An optional dyslexia-friendly font setting replaces all text in the app with [OpenDyslexic](https://opendyslexic.org/). The font files are served locally from `./font/` (4 OTF variants: Regular, Bold, Italic, BoldItalic) and declared via `@font-face` rules in `style.css`.
+
+**Activation:** Selecting "OpenDyslexic" in the **Font** segmented control in settings sets `data-font="dyslexic"` on `<html>`. The CSS rule `[data-font="dyslexic"] { --sans: "OpenDyslexic", sans-serif; --serif: "OpenDyslexic", serif; }` overrides both font variables, switching every font-family declaration in the app (since all use `var(--sans)` or `var(--serif)`). Selecting "Default" removes the attribute.
+
+**CSS placement:** The `[data-font="dyslexic"]` rule must appear *after* both `:root` and `[data-theme="dark"]` in the stylesheet. All three selectors have equal specificity (one pseudo-class or attribute selector), so later position wins. Placing it earlier would cause `:root` to silently override it and the font would never load.
+
+**Persistence:** Saved in `localStorage` as `"bible-font"`. On startup, `app.ts` reads the value and sets `data-font` before the first render to avoid a flash of unstyled text. When `"default"`, no attribute is set on `<html>` (the attribute is removed via `removeAttribute`).
+
+**i18n strings:** `fontLabel`, `fontDefault`, `fontDyslexic`.
+
 ### 19. Deuterocanonical Books
 
 18 deuterocanonical/apocryphal books are supported (Tobit, Judith, Wisdom, Sirach, Baruch, 1–4 Maccabees, etc.). These appear in translations that include them (e.g., CPDV). The book index panel displays a "Deuterocanonical" section label between Old and New Testament sections. Book codes for URL routing cover all 84 books.
@@ -1071,6 +1152,7 @@ A collection of self-contained HTML reference pages in `public/more/`, covering 
 | Parallel | `localStorage` `bible-parallel` | Parallel translation code | Permanent |
 | Theme | `localStorage` `bible-theme` | "light" / "dark" / "system" | Permanent |
 | Font size | `localStorage` `bible-font-size` | "small" thru "xxl" | Permanent |
+| Font family | `localStorage` `bible-font` | "default" / "dyslexic" | Permanent |
 | Language | `localStorage` `bible-language` | "en" / "fi" | Permanent |
 | App shell | Service worker Cache API | HTML, CSS, JS, icons | Until cache version changes |
 
@@ -1137,7 +1219,7 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 4. **IndexedDB caching:** Bible data fetched once and persisted. Subsequent visits load from IndexedDB, making the app work fully offline.
 5. **Canonical English keys:** Internal book keys are always English (e.g., "Genesis"). Translation-specific display names and aliases are layered on top via `bookNames.ts`.
 6. **3-character URL codes:** URL book parameters use compact codes (`gen`, `jhn`, `rev`) to keep URLs short and language-independent.
-7. **Minimal build dependencies:** `@types/bun`, `@types/node`, `@playwright/test`, `lefthook`, `oxlint`, `oxfmt`, and `typescript` as devDependencies. No runtime npm packages.
+7. **Minimal dependencies:** `@types/bun`, `@types/node`, `@types/qrcode`, `@playwright/test`, `lefthook`, `oxlint`, `oxfmt`, and `typescript` as devDependencies. `qrcode` (v1.5.4) is the only runtime npm dependency — used for standards-compliant QR code generation via `src/client/qr.ts`.
 8. **Static deployment:** The `docs/` output is a self-contained static site. GitHub Pages serves it directly. The Bun server is dev-only.
 9. **CSS custom properties:** All theming via CSS variables, toggled by `data-theme` attribute. No CSS-in-JS.
 10. **oxlint & oxfmt:** Rust-based linter (`oxlint`) and formatter (`oxfmt`) with zero config. Run via `bun run lint` and `bun run fmt`. All source files pass with 0 warnings and 0 errors.

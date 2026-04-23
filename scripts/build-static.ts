@@ -35,7 +35,7 @@ const staticFiles = [
 	"sw.js",
 ];
 
-const staticDirs = ["icon", "data"];
+const staticDirs = ["icon", "data", "font"];
 
 // Copy static files (HTML, CSS, PWA)
 for (const name of staticFiles) {

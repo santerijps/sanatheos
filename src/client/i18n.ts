@@ -134,6 +134,11 @@ interface Strings {
 	cancel: string;
 	invalidRef: (term: string) => string;
 
+	// Font setting
+	fontLabel: string;
+	fontDefault: string;
+	fontDyslexic: string;
+
 	// Data export / import
 	dataLabel: string;
 	exportData: string;
@@ -299,6 +304,10 @@ const EN: Strings = {
 	noteRemove: "Remove",
 	cancel: "Cancel",
 	invalidRef: (term) => `Invalid reference: “${term}”`,
+	fontLabel: "Font",
+	fontDefault: "Default",
+	fontDyslexic: "OpenDyslexic",
+
 	dataLabel: "Data",
 	exportData: "Export",
 	importData: "Import",
@@ -463,6 +472,10 @@ const FI: Strings = {
 	noteRemove: "Poista",
 	cancel: "Peruuta",
 	invalidRef: (term) => `Virheellinen viite: “${term}”`,
+	fontLabel: "Fontti",
+	fontDefault: "Oletus",
+	fontDyslexic: "OpenDyslexic",
+
 	dataLabel: "Tiedot",
 	exportData: "Vie",
 	importData: "Tuo",

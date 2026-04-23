@@ -313,6 +313,12 @@ async function init() {
 	const fontSizeSegmented = document.getElementById("fontsize-segmented");
 	activateSegmented(fontSizeSegmented, savedFontSize);
 
+	// Apply font family
+	const savedFont = localStorage.getItem("bible-font") || "default";
+	if (savedFont !== "default") document.documentElement.setAttribute("data-font", savedFont);
+	const fontSegmented = document.getElementById("font-segmented");
+	activateSegmented(fontSegmented, savedFont);
+
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
 		const theme = localStorage.getItem("bible-theme") || "system";
 		if (theme === "system") applyTheme("system");
@@ -576,6 +582,22 @@ async function init() {
 			activateSegmented(fontSizeSegmented, size);
 			document.documentElement.setAttribute("data-font-size", size);
 			localStorage.setItem("bible-font-size", size);
+		});
+	}
+
+	// Font family segmented control
+	if (fontSegmented) {
+		fontSegmented.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement).closest(".seg-btn") as HTMLElement | null;
+			if (!btn || btn.classList.contains("seg-active")) return;
+			const font = btn.dataset.value!;
+			activateSegmented(fontSegmented, font);
+			if (font === "default") {
+				document.documentElement.removeAttribute("data-font");
+			} else {
+				document.documentElement.setAttribute("data-font", font);
+			}
+			localStorage.setItem("bible-font", font);
 		});
 	}
 
@@ -2724,6 +2746,16 @@ function updateStaticText() {
 	if (parallelLabel) parallelLabel.textContent = s.parallelLabel;
 	const fontSizeLabel = document.getElementById("settings-fontsize-label");
 	if (fontSizeLabel) fontSizeLabel.textContent = s.fontSizeLabel;
+	const fontLabel = document.getElementById("settings-font-label");
+	if (fontLabel) fontLabel.textContent = s.fontLabel;
+	const fontSeg = document.getElementById("font-segmented");
+	if (fontSeg) {
+		const fontBtns = fontSeg.querySelectorAll<HTMLElement>(".seg-btn");
+		const fontLabels = [s.fontDefault, s.fontDyslexic];
+		fontBtns.forEach((btn, i) => {
+			if (i < fontLabels.length) btn.textContent = fontLabels[i];
+		});
+	}
 	const dataLabel = document.getElementById("settings-data-label");
 	if (dataLabel) dataLabel.textContent = s.dataLabel;
 	const exportBtn2 = document.getElementById("export-data-btn");
