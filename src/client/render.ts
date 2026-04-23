@@ -156,7 +156,7 @@ function descriptionHtml(text: string): string {
 }
 
 function shareButtonHtml(): string {
-	return ` <span class="share-wrap"><button class="share-btn" title="${esc(t().shareWithout)}" aria-label="${esc(t().shareWithout)}">${ICON_LINK}</button><span class="share-dropdown"><button class="share-opt" data-share="with">${esc(t().shareWith)} (${esc(translationCode)})</button><button class="share-opt" data-share="without">${esc(t().shareWithout)}</button></span></span>`;
+	return ` <span class="share-wrap"><button class="share-btn" title="${esc(t().shareWithout)}" aria-label="${esc(t().shareWithout)}">${ICON_LINK}</button><span class="share-dropdown"><button class="share-opt" data-share="with">${esc(t().shareWith)} (${esc(translationCode)})</button><button class="share-opt" data-share="without">${esc(t().shareWithout)}</button><button class="share-opt" data-share="qr">${esc(t().qrCode)}</button></span></span>`;
 }
 
 function bookmarkButtonHtml(ref?: string): string {

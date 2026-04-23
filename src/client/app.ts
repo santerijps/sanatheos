@@ -38,6 +38,8 @@ import {
 	saveNote,
 	deleteNote,
 	getNoteMap,
+	exportUserData,
+	importUserData,
 } from "./db.ts";
 import {
 	initSearch,
@@ -182,6 +184,27 @@ function showToast(msg: string) {
 	el.classList.add("show");
 	clearTimeout(toastTimer);
 	toastTimer = window.setTimeout(() => el.classList.remove("show"), 2000);
+}
+
+function showQrOverlay(url: string) {
+	const overlay = document.getElementById("qr-overlay");
+	const canvas = document.getElementById("qr-canvas") as HTMLCanvasElement | null;
+	const titleEl = document.getElementById("qr-modal-title");
+	if (!overlay || !canvas) return;
+	if (titleEl) titleEl.textContent = t().qrCode;
+	import("./qr.ts").then(({ drawQR }) => {
+		drawQR(url, canvas, { moduleSize: 6, quiet: 4 }).then(() => {
+			overlay.removeAttribute("hidden");
+			overlay.classList.add("open");
+		});
+	});
+}
+
+function closeQrOverlay() {
+	const overlay = document.getElementById("qr-overlay");
+	if (!overlay) return;
+	overlay.classList.remove("open");
+	overlay.setAttribute("hidden", "");
 }
 
 // --- Theme management ---
@@ -553,6 +576,53 @@ async function init() {
 			activateSegmented(fontSizeSegmented, size);
 			document.documentElement.setAttribute("data-font-size", size);
 			localStorage.setItem("bible-font-size", size);
+		});
+	}
+
+	// Export / import data
+	const exportBtn = document.getElementById("export-data-btn");
+	const importBtn = document.getElementById("import-data-btn");
+	const importInput = document.getElementById("import-data-input") as HTMLInputElement | null;
+
+	if (exportBtn) {
+		exportBtn.addEventListener("click", async () => {
+			const payload = await exportUserData();
+			const json = JSON.stringify(payload, null, 2);
+			const blob = new Blob([json], { type: "application/json" });
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement("a");
+			a.href = url;
+			a.download = `sanatheos-export-${new Date().toISOString().slice(0, 10)}.json`;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			URL.revokeObjectURL(url);
+			showToast(t().exportSuccess);
+		});
+	}
+
+	if (importBtn && importInput) {
+		importBtn.addEventListener("click", () => importInput.click());
+		importInput.addEventListener("change", async () => {
+			const file = importInput.files?.[0];
+			if (!file) return;
+			importInput.value = "";
+			try {
+				const text = await file.text();
+				const parsed = JSON.parse(text);
+				await importUserData(parsed);
+				// Reload highlight map and note map into memory
+				const newHlMap = await getHighlightMap();
+				highlightMap = newHlMap;
+				setHighlightMap(newHlMap);
+				const newNoteMap = await getNoteMap();
+				setNoteMap(newNoteMap);
+				// Re-render current view so highlights/notes appear
+				applyState(readState());
+				showToast(t().importSuccess);
+			} catch {
+				showToast(t().importError);
+			}
 		});
 	}
 
@@ -1396,6 +1466,15 @@ async function init() {
 		if (e.target === noteDialogOverlay) closeNoteDialog();
 	});
 
+	// QR overlay close
+	const qrCloseBtn = document.getElementById("qr-close-btn");
+	if (qrCloseBtn) qrCloseBtn.addEventListener("click", closeQrOverlay);
+	const qrOverlay = document.getElementById("qr-overlay");
+	if (qrOverlay)
+		qrOverlay.addEventListener("click", (e) => {
+			if (e.target === qrOverlay) closeQrOverlay();
+		});
+
 	noteDialogSave.addEventListener("click", async () => {
 		const text = noteDialogTextarea.value.trim();
 		if (!text || !noteDialogCurrentId) {
@@ -1674,6 +1753,10 @@ async function init() {
 	// Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "Escape") {
+			if (document.getElementById("qr-overlay")?.classList.contains("open")) {
+				closeQrOverlay();
+				return;
+			}
 			if (noteDialogOverlay.classList.contains("open")) {
 				closeNoteDialog();
 				return;
@@ -1826,7 +1909,11 @@ async function init() {
 				url.searchParams.delete("t");
 			}
 			shareOpt.closest(".share-wrap")?.classList.remove("share-open");
-			navigator.clipboard.writeText(url.toString()).then(() => showToast(t().linkCopied));
+			if (shareOpt.dataset.share === "qr") {
+				showQrOverlay(url.toString());
+			} else {
+				navigator.clipboard.writeText(url.toString()).then(() => showToast(t().linkCopied));
+			}
 			return;
 		}
 
@@ -2637,6 +2724,12 @@ function updateStaticText() {
 	if (parallelLabel) parallelLabel.textContent = s.parallelLabel;
 	const fontSizeLabel = document.getElementById("settings-fontsize-label");
 	if (fontSizeLabel) fontSizeLabel.textContent = s.fontSizeLabel;
+	const dataLabel = document.getElementById("settings-data-label");
+	if (dataLabel) dataLabel.textContent = s.dataLabel;
+	const exportBtn2 = document.getElementById("export-data-btn");
+	if (exportBtn2) exportBtn2.textContent = s.exportData;
+	const importBtn2 = document.getElementById("import-data-btn");
+	if (importBtn2) importBtn2.textContent = s.importData;
 
 	// Theme segmented button labels
 	const themeSeg = document.getElementById("theme-segmented");

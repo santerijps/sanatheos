@@ -323,3 +323,94 @@ export async function getNoteMap(): Promise<Map<string, string>> {
 	for (const n of notes) map.set(n.id, n.text);
 	return map;
 }
+
+// --- Export / Import ---
+
+export interface UserDataExport {
+	version: 1;
+	exportedAt: string; // ISO 8601
+	highlights: Array<Highlight & { id: string }>;
+	bookmarks: Bookmark[];
+	notes: VerseNote[];
+}
+
+/** Collect all user data (highlights, bookmarks, notes) into a serialisable object. */
+export async function exportUserData(): Promise<UserDataExport> {
+	const db = await open();
+
+	const highlights = await new Promise<Array<Highlight & { id: string }>>((resolve, reject) => {
+		const tx = db.transaction(HIGHLIGHTS_STORE, "readonly");
+		const req = tx.objectStore(HIGHLIGHTS_STORE).getAll();
+		req.onsuccess = () => resolve(req.result as Array<Highlight & { id: string }>);
+		req.onerror = () => reject(req.error);
+	});
+
+	const bookmarks = await getBookmarks();
+	const notes = await getNotes();
+
+	return {
+		version: 1,
+		exportedAt: new Date().toISOString(),
+		highlights,
+		bookmarks,
+		notes,
+	};
+}
+
+/** Replace all user data with the contents of an export file. Existing records are cleared first. */
+export async function importUserData(data: UserDataExport): Promise<void> {
+	if (data.version !== 1) throw new Error(`Unsupported export version: ${data.version}`);
+
+	const db = await open();
+
+	// Clear and re-populate highlights
+	await new Promise<void>((resolve, reject) => {
+		const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
+		tx.objectStore(HIGHLIGHTS_STORE).clear();
+		tx.oncomplete = () => resolve();
+		tx.onerror = () => reject(tx.error);
+	});
+	if (data.highlights?.length) {
+		await new Promise<void>((resolve, reject) => {
+			const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
+			const store = tx.objectStore(HIGHLIGHTS_STORE);
+			for (const h of data.highlights) store.put(h);
+			tx.oncomplete = () => resolve();
+			tx.onerror = () => reject(tx.error);
+		});
+	}
+
+	// Clear and re-populate bookmarks
+	await new Promise<void>((resolve, reject) => {
+		const tx = db.transaction(BOOKMARKS_STORE, "readwrite");
+		tx.objectStore(BOOKMARKS_STORE).clear();
+		tx.oncomplete = () => resolve();
+		tx.onerror = () => reject(tx.error);
+	});
+	if (data.bookmarks?.length) {
+		await new Promise<void>((resolve, reject) => {
+			const tx = db.transaction(BOOKMARKS_STORE, "readwrite");
+			const store = tx.objectStore(BOOKMARKS_STORE);
+			for (const b of data.bookmarks) store.put(b);
+			tx.oncomplete = () => resolve();
+			tx.onerror = () => reject(tx.error);
+		});
+	}
+
+	// Clear and re-populate notes
+	await new Promise<void>((resolve, reject) => {
+		const tx = db.transaction(NOTES_STORE, "readwrite");
+		tx.objectStore(NOTES_STORE).clear();
+		tx.oncomplete = () => resolve();
+		tx.onerror = () => reject(tx.error);
+	});
+	if (data.notes?.length) {
+		await new Promise<void>((resolve, reject) => {
+			const tx = db.transaction(NOTES_STORE, "readwrite");
+			const store = tx.objectStore(NOTES_STORE);
+			for (const n of data.notes) store.put(n);
+			tx.oncomplete = () => resolve();
+			tx.onerror = () => reject(tx.error);
+		});
+	}
+}

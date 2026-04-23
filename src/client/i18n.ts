@@ -133,6 +133,18 @@ interface Strings {
 	noteRemove: string;
 	cancel: string;
 	invalidRef: (term: string) => string;
+
+	// Data export / import
+	dataLabel: string;
+	exportData: string;
+	importData: string;
+	exportSuccess: string;
+	importSuccess: string;
+	importError: string;
+
+	// QR code
+	qrCode: string;
+	qrClose: string;
 }
 
 const EN: Strings = {
@@ -287,6 +299,15 @@ const EN: Strings = {
 	noteRemove: "Remove",
 	cancel: "Cancel",
 	invalidRef: (term) => `Invalid reference: “${term}”`,
+	dataLabel: "Data",
+	exportData: "Export",
+	importData: "Import",
+	exportSuccess: "Data exported!",
+	importSuccess: "Data imported!",
+	importError: "Invalid file. Could not import data.",
+
+	qrCode: "QR code",
+	qrClose: "Close",
 };
 
 const FI: Strings = {
@@ -442,6 +463,15 @@ const FI: Strings = {
 	noteRemove: "Poista",
 	cancel: "Peruuta",
 	invalidRef: (term) => `Virheellinen viite: “${term}”`,
+	dataLabel: "Tiedot",
+	exportData: "Vie",
+	importData: "Tuo",
+	exportSuccess: "Tiedot viety!",
+	importSuccess: "Tiedot tuotu!",
+	importError: "Virheellinen tiedosto. Tietojen tuominen epäonnistui.",
+
+	qrCode: "QR-koodi",
+	qrClose: "Sulje",
 };
 
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI };
