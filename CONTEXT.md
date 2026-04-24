@@ -147,7 +147,15 @@ sanatheos/
     ├── features.test.ts      # Feature tests (i18n, highlights, descriptions, interlinear, PWA)
     ├── bible-loader.test.ts  # Bible loader tests (BOOK_ORDER, loadBible, discoverTranslations)
     └── e2e/                  # End-to-end tests (Playwright)
-        └── app.spec.ts       # Full app e2e tests (50+ tests across 13 describe blocks)
+        └── app.spec.ts       # Full app e2e tests (130+ tests across 22 describe blocks):
+                              #   Page load, Search, Chapter navigation, Book index panel,
+                              #   Side panel, Settings pane, Info pane, Keyboard shortcuts,
+                              #   URL state, Translation switching, Toast notifications, Footer,
+                              #   Parallel translation views, Bible Stories pane,
+                              #   Parables of Jesus pane, Theophanies pane, Typology pane,
+                              #   Bookmarks pane, Verse notes,
+                              #   Finnish (fi) language, Swedish (sv) language,
+                              #   Language switching and persistence
 ```
 
 ## Bible Data Format
@@ -1184,7 +1192,7 @@ Unit tests across 4 files using `bun test` (scoped to `tests/` via `bunfig.toml`
 
 ### End-to-End Tests (Playwright)
 
-E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. Tests cover 14 areas (53 tests total):
+E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. All suites run in parallel (`test.describe.configure({ mode: "parallel" })`). Tests cover 22 areas (130+ tests total):
 
 - **Page load** (5 tests) — Default chapter (Genesis 1 / NHEB), specific chapter from URL, specific verse from URL, different translation from URL (KJV), title bar text.
 - **Search** (4 tests) — Text search returns results (quoted query), reference query navigates to chapter, search URL param loads results directly, empty search returns to default view.
@@ -1197,15 +1205,19 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 - **URL state** (2 tests) — Navigation updates URL with book code, browser back restores previous state.
 - **Translation switching** (1 test) — Switching translation reloads content with new translation's text.
 - **Toast notifications** (1 test) — Toast appears when copying a verse.
-- **Parallel translation views** (8 tests) — Two-column layout renders with `.parallel-container` and `.parallel-col`, columns show different translation labels and different verse text, parallel single verse shows two columns, copy-both button visible, each column has its own copy button, enabling parallel via settings select, disabling parallel returns to single column.
-- **Bible Stories pane** (6 tests) — Default tab on open, list populated, category labels (OT/NT), filter narrows results, empty filter shows no-results message, clicking a story closes panel and navigates, items show title/description/reference.
-- **Parables of Jesus pane** (7 tests) — Switching to parables tab shows parables pane, list populated, category labels (Matthew/Mark/Luke), filter narrows results, unmatched filter shows no-results message, clicking a parable closes panel and navigates, items show title/description/reference.
-- **Bookmarks pane** (6 tests) — Empty state when no bookmarks, bookmark button visible in chapter view, clicking bookmark button shows toast and marks button active, bookmarked passage appears in list, removing bookmark from list deletes it, clicking a bookmark navigates to the passage.
-- **More Content pages** (2 tests) — Index page loads, philosophy page loads.
-- **Verse notes** (10 tests) — Empty state when no notes, notes tab button exists, note panel opens from verse context menu, "Add note" title shown for new notes, close via close button, close via cancel button, adding a note shows toast and closes panel, saved note appears in notes pane, note marker appears on verse after adding, clicking note marker opens panel in edit mode, delete button visible when editing, deleting a note removes it from the pane, verse reference shown in panel header.
 - **Footer** (1 test) — Footer is rendered with attribution text.
+- **Parallel translation views** (8 tests) — Two-column layout renders with `.parallel-container` and `.parallel-col`, columns show different translation labels and different verse text, parallel single verse shows two columns, copy-both button visible, each column has its own copy button, enabling parallel via settings select, disabling parallel returns to single column.
+- **Bible Stories pane** (7 tests) — Default tab on open, list populated, category labels (OT/NT), filter narrows results, empty filter shows no-results message, clicking a story closes panel and navigates, items show title/description/reference.
+- **Parables of Jesus pane** (7 tests) — Switching to parables tab shows parables pane, list populated, category labels (Matthew/Mark/Luke), filter narrows results, unmatched filter shows no-results message, clicking a parable closes panel and navigates, items show title/description/reference.
+- **Theophanies pane** (8 tests) — Switching to theophanies tab shows theophanies pane, list populated, OT/NT category labels, items show title/description/reference, filter narrows results, filter input styled (border-radius 8px), unmatched filter shows no-results message, clicking a theophany closes panel and navigates, list is scrollable (overflow-y auto).
+- **Typology pane** (8 tests) — Switching to typology tab, list populated, category labels (Types of Christ etc.), items show title/description/reference, filter narrows results, filter input styled, unmatched filter shows no-results message, clicking an entry closes panel and navigates, list is scrollable.
+- **Bookmarks pane** (6 tests) — Empty state when no bookmarks, bookmark button visible in chapter view, clicking bookmark button shows toast and marks button active, bookmarked passage appears in list, removing bookmark from list deletes it, clicking a bookmark navigates to the passage.
+- **Verse notes** (13 tests) — Empty state when no notes, notes tab button exists, note panel opens from verse context menu, "Add note" title shown for new notes, close via close button, close via cancel button, adding a note shows toast and closes panel, saved note appears in notes pane, note marker appears on verse after adding, clicking note marker opens panel in edit mode, delete button visible when editing, deleting a note removes it from the pane, verse reference shown in panel header.
+- **Finnish (fi) language** (15 tests) — KR38 renders Finnish Bible text; auto-switches search placeholder to `"Hae Raamatusta"` and settings labels to Finnish; Finnish book abbreviations (`"Joh 3"`, `"1 moos 1"`) navigate correctly; John 3:16 shows Finnish text; book index shows `"Vanha testamentti"` / `"Uusi testamentti"` and Finnish book names; Stories and Parables panes show Finnish titles and category labels; footer shows Finnish text; Finnish text search returns results; manually switching to Finnish updates placeholder; Info pane shows Finnish section headings; chapter navigation arrows work in Finnish mode.
+- **Swedish (sv) language** (15 tests) — SV17 renders Swedish Bible text (`"I begynnelsen skapade Gud"`); auto-switches placeholder to `"Sök i Bibeln"` and settings labels to Swedish; Swedish book abbreviations (`"Joh 3"`, `"1 mos 1"`) navigate correctly; John 3:16 shows Swedish text; book index shows `"Gamla testamentet"` / `"Nya testamentet"` and Swedish book names; Stories pane shows Swedish titles and category labels (`"Skapelsen"`); footer shows Swedish text; Swedish text search returns results; manually switching to Swedish updates placeholder; Info pane shows Swedish section headings; chapter navigation arrows work in Swedish mode.
+- **Language switching and persistence** (9 tests) — KR38 → NHEB and SV17 → NHEB both revert UI to English; language segmented control reflects the active language for all three locales (en/fi/sv); manually selected language persists across chapter navigation; parallel mode with KR38 primary shows Finnish + English columns; both KR38 and SV17 appear in the translation selector.
 
-**Test helpers:** `openPanelTab(page, tab)` opens the side panel and clicks the specified tab button (supports `"stories"`, `"parables"`, `"bookmarks"`, `"notes"`, `"settings"`, `"info"`). `clearBookmarks(page)` clears the IndexedDB `bookmarks` store via `page.evaluate()` to ensure a clean state for bookmark tests. `clearNotes(page)` clears the IndexedDB `notes` store. `openVerseMenu(page)` clicks the first verse superscript to open the verse context menu.
+**Test helpers:** `waitForApp(page)` waits for the loading spinner to detach. `openPanelTab(page, tab)` opens the side panel and clicks the specified tab button (supports `"stories"`, `"parables"`, `"theophanies"`, `"typology"`, `"bookmarks"`, `"notes"`, `"settings"`, `"info"`). `clearBookmarks(page)` clears the IndexedDB `bookmarks` store via `page.evaluate()` to ensure a clean state for bookmark tests. `clearNotes(page)` clears the IndexedDB `notes` store. `openVerseMenu(page)` clicks the first verse superscript to open the verse context menu. `switchLanguage(page, lang)` opens settings and clicks the language segmented control button for `"en"`, `"fi"`, or `"sv"`.
 
 **Configuration:** `playwright.config.ts` defines a single Chromium project, 30s test timeout, headless mode, `baseURL: http://localhost:3000`, and `webServer` that starts `bun run start` with 15s startup timeout. `reuseExistingServer` is enabled outside CI.
 

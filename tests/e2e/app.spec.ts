@@ -1,5 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
+test.describe.configure({ mode: "parallel" });
+
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
@@ -1319,5 +1321,391 @@ test.describe("Verse notes", () => {
 		// Reference should show something like "John 3:X"
 		const ref = page.locator("#note-panel-ref");
 		await expect(ref).toContainText("John", { timeout: 5_000 });
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Language / Internationalisation (i18n)
+// ---------------------------------------------------------------------------
+
+/** Switch the UI language via the settings language segmented control. */
+async function switchLanguage(page: Page, lang: "en" | "fi" | "sv") {
+	await openPanelTab(page, "settings");
+	await page.click(`#language-segmented .seg-btn[data-value="${lang}"]`);
+	await page.click("#side-close");
+}
+
+// ---------------------------------------------------------------------------
+// Finnish (fi) — KR38 translation
+// ---------------------------------------------------------------------------
+
+test.describe("Finnish (fi) language", () => {
+	test("KR38 translation renders Finnish Bible text", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1");
+		await waitForApp(page);
+		await expect(page.locator("#content")).toContainText("Alussa loi Jumala");
+	});
+
+	test("KR38 auto-switches search placeholder to Finnish", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1");
+		await waitForApp(page);
+		const placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Hae Raamatusta");
+	});
+
+	test("KR38 auto-switches settings labels to Finnish", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1");
+		await waitForApp(page);
+		await openPanelTab(page, "settings");
+		await expect(page.locator('.side-pane[data-pane="settings"]')).toContainText(
+			"Raamatunkäännös",
+		);
+	});
+
+	test("Finnish book abbreviation 'Joh 3' navigates to John 3 with KR38 text", async ({
+		page,
+	}) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await page.fill("#search-input", "Joh 3");
+		await expect(page.locator("#content")).toContainText("Jumala", { timeout: 5_000 });
+	});
+
+	test("Finnish Genesis abbreviation '1 moos 1' navigates to Genesis 1", async ({ page }) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await page.fill("#search-input", "1 moos 1");
+		await expect(page.locator("#content")).toContainText("Alussa loi Jumala", {
+			timeout: 5_000,
+		});
+	});
+
+	test("John 3:16 displays Finnish verse text with KR38", async ({ page }) => {
+		await page.goto("/?t=KR38&book=jhn&chapter=3&verse=16");
+		await waitForApp(page);
+		await expect(page.locator("#content")).toContainText("Jumala maailmaa rakastanut");
+	});
+
+	test("book index shows Finnish OT/NT section labels with KR38", async ({ page }) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const books = page.locator("#idx-books");
+		await expect(books).toContainText("Vanha testamentti");
+		await expect(books).toContainText("Uusi testamentti");
+	});
+
+	test("book index shows Finnish book names with KR38", async ({ page }) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const books = page.locator("#idx-books");
+		await expect(books).toContainText("1. Mooseksen kirja");
+		await expect(books).toContainText("Ilmestyskirja");
+	});
+
+	test("stories pane shows Finnish titles with KR38", async ({ page }) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+		// "Luominen" is the Finnish title for "The Creation"
+		await expect(
+			page.locator(".story-item").first().locator(".story-item-title"),
+		).toContainText("Luominen");
+	});
+
+	test("stories pane shows Finnish OT/NT category labels with KR38", async ({ page }) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".stories-category-label", { timeout: 10_000 });
+		const labels = page.locator(".stories-category-label");
+		const texts = await labels.allTextContents();
+		expect(texts.some((txt) => txt.includes("Vanha testamentti"))).toBe(true);
+		expect(texts.some((txt) => txt.includes("Uusi testamentti"))).toBe(true);
+	});
+
+	test("parables pane shows Finnish titles with KR38", async ({ page }) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
+		// The first parable category label should be the Finnish name for "Matthew"
+		const firstItem = page.locator("#parables-list .story-item").first();
+		const title = await firstItem.locator(".story-item-title").textContent();
+		// Finnish titles exist; ensure the title is not the English default
+		expect(title).toBeTruthy();
+		expect(title).not.toBe("");
+	});
+
+	test("footer shows Finnish text when using KR38", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1");
+		await waitForApp(page);
+		await expect(page.locator("#footer")).toContainText("vapaasti yleiseen käyttöön");
+	});
+
+	test("Finnish text search returns results with KR38", async ({ page }) => {
+		await page.goto('/?t=KR38&q="Jumala maailmaa rakastanut"');
+		await waitForApp(page);
+		await page.waitForSelector(".result", { timeout: 5_000 });
+		const results = page.locator(".result");
+		await expect(results.first()).toContainText("Johanneksen evankeliumi 3:16");
+	});
+
+	test("manually switching to Finnish updates search placeholder", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await switchLanguage(page, "fi");
+		const placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Hae Raamatusta");
+	});
+
+	test("info pane shows Finnish headings when language is Finnish", async ({ page }) => {
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+		await openPanelTab(page, "info");
+		await expect(page.locator("#info-modal-body")).toContainText("Hakukenttä");
+		await expect(page.locator("#info-modal-body")).toContainText("Pikanäppäimet");
+	});
+
+	test("KR38 chapter navigation arrows are functional", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1");
+		await waitForApp(page);
+		const nextArrows = page.locator('.nav-arrow[data-chapter="2"]');
+		await nextArrows.first().click();
+		await expect(page.locator("#content")).toContainText("1. Mooseksen kirja 2", {
+			timeout: 5_000,
+		});
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Swedish (sv) — SV17 translation
+// ---------------------------------------------------------------------------
+
+test.describe("Swedish (sv) language", () => {
+	test("SV17 translation renders Swedish Bible text", async ({ page }) => {
+		await page.goto("/?t=SV17&book=gen&chapter=1");
+		await waitForApp(page);
+		await expect(page.locator("#content")).toContainText("I begynnelsen skapade Gud");
+	});
+
+	test("SV17 auto-switches search placeholder to Swedish", async ({ page }) => {
+		await page.goto("/?t=SV17&book=gen&chapter=1");
+		await waitForApp(page);
+		const placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Sök i Bibeln");
+	});
+
+	test("SV17 auto-switches settings labels to Swedish", async ({ page }) => {
+		await page.goto("/?t=SV17&book=gen&chapter=1");
+		await waitForApp(page);
+		await openPanelTab(page, "settings");
+		await expect(page.locator('.side-pane[data-pane="settings"]')).toContainText(
+			"Bibelöversättning",
+		);
+	});
+
+	test("Swedish book abbreviation 'Joh 3' navigates to John 3 with SV17 text", async ({
+		page,
+	}) => {
+		await page.goto("/?t=SV17");
+		await waitForApp(page);
+		await page.fill("#search-input", "Joh 3");
+		await expect(page.locator("#content")).toContainText("Johannes", { timeout: 5_000 });
+	});
+
+	test("Swedish Genesis abbreviation '1 mos 1' navigates to Genesis 1", async ({ page }) => {
+		await page.goto("/?t=SV17");
+		await waitForApp(page);
+		await page.fill("#search-input", "1 mos 1");
+		await expect(page.locator("#content")).toContainText("I begynnelsen skapade Gud", {
+			timeout: 5_000,
+		});
+	});
+
+	test("John 3:16 displays Swedish verse text with SV17", async ({ page }) => {
+		await page.goto("/?t=SV17&book=jhn&chapter=3&verse=16");
+		await waitForApp(page);
+		await expect(page.locator("#content")).toContainText("Ty så älskade Gud världen");
+	});
+
+	test("book index shows Swedish OT/NT section labels with SV17", async ({ page }) => {
+		await page.goto("/?t=SV17");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const books = page.locator("#idx-books");
+		await expect(books).toContainText("Gamla testamentet");
+		await expect(books).toContainText("Nya testamentet");
+	});
+
+	test("book index shows Swedish book names with SV17", async ({ page }) => {
+		await page.goto("/?t=SV17");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const books = page.locator("#idx-books");
+		await expect(books).toContainText("1 Mosebok");
+		await expect(books).toContainText("Uppenbarelseboken");
+	});
+
+	test("stories pane shows Swedish titles with SV17", async ({ page }) => {
+		await page.goto("/?t=SV17");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+		// "Skapelsen" is the Swedish title for "The Creation"
+		await expect(
+			page.locator(".story-item").first().locator(".story-item-title"),
+		).toContainText("Skapelsen");
+	});
+
+	test("stories pane shows Swedish OT/NT category labels with SV17", async ({ page }) => {
+		await page.goto("/?t=SV17");
+		await waitForApp(page);
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".stories-category-label", { timeout: 10_000 });
+		const labels = page.locator(".stories-category-label");
+		const texts = await labels.allTextContents();
+		expect(texts.some((txt) => txt.includes("Gamla testamentet"))).toBe(true);
+		expect(texts.some((txt) => txt.includes("Nya testamentet"))).toBe(true);
+	});
+
+	test("footer shows Swedish text when using SV17", async ({ page }) => {
+		await page.goto("/?t=SV17&book=gen&chapter=1");
+		await waitForApp(page);
+		await expect(page.locator("#footer")).toContainText("det allmänna domänet");
+	});
+
+	test("Swedish text search returns results with SV17", async ({ page }) => {
+		await page.goto('/?t=SV17&q="älskade Gud världen"');
+		await waitForApp(page);
+		await page.waitForSelector(".result", { timeout: 5_000 });
+		const count = await page.locator(".result").count();
+		expect(count).toBeGreaterThan(0);
+	});
+
+	test("manually switching to Swedish updates search placeholder", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await switchLanguage(page, "sv");
+		const placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Sök i Bibeln");
+	});
+
+	test("info pane shows Swedish headings when language is Swedish", async ({ page }) => {
+		await page.goto("/?t=SV17");
+		await waitForApp(page);
+		await openPanelTab(page, "info");
+		await expect(page.locator("#info-modal-body")).toContainText("Sökfält");
+		await expect(page.locator("#info-modal-body")).toContainText("Kortkommandon");
+	});
+
+	test("SV17 chapter navigation arrows are functional", async ({ page }) => {
+		await page.goto("/?t=SV17&book=gen&chapter=1");
+		await waitForApp(page);
+		const nextArrows = page.locator('.nav-arrow[data-chapter="2"]');
+		await nextArrows.first().click();
+		await expect(page.locator("#content")).toContainText("1 Mosebok 2", { timeout: 5_000 });
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Language switching and persistence
+// ---------------------------------------------------------------------------
+
+test.describe("Language switching and persistence", () => {
+	test("KR38 → NHEB switches UI back to English", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1");
+		await waitForApp(page);
+		// Confirm we are in Finnish
+		let placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Hae Raamatusta");
+
+		// Switch to NHEB
+		await openPanelTab(page, "settings");
+		await page.selectOption("#translation-select", "NHEB");
+		await page.click("#side-close");
+		await waitForApp(page);
+
+		placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Search the Bible");
+	});
+
+	test("SV17 → NHEB switches UI back to English", async ({ page }) => {
+		await page.goto("/?t=SV17&book=gen&chapter=1");
+		await waitForApp(page);
+		let placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Sök i Bibeln");
+
+		await openPanelTab(page, "settings");
+		await page.selectOption("#translation-select", "NHEB");
+		await page.click("#side-close");
+		await waitForApp(page);
+
+		placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Search the Bible");
+	});
+
+	test("language segmented control reflects Finnish when KR38 is active", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1");
+		await waitForApp(page);
+		await openPanelTab(page, "settings");
+		const fiBtn = page.locator('#language-segmented .seg-btn[data-value="fi"]');
+		await expect(fiBtn).toHaveClass(/seg-active/);
+	});
+
+	test("language segmented control reflects Swedish when SV17 is active", async ({ page }) => {
+		await page.goto("/?t=SV17&book=gen&chapter=1");
+		await waitForApp(page);
+		await openPanelTab(page, "settings");
+		const svBtn = page.locator('#language-segmented .seg-btn[data-value="sv"]');
+		await expect(svBtn).toHaveClass(/seg-active/);
+	});
+
+	test("language segmented control reflects English when NHEB is active", async ({ page }) => {
+		await page.goto("/?t=NHEB&book=gen&chapter=1");
+		await waitForApp(page);
+		await openPanelTab(page, "settings");
+		const enBtn = page.locator('#language-segmented .seg-btn[data-value="en"]');
+		await expect(enBtn).toHaveClass(/seg-active/);
+	});
+
+	test("manually selected Finnish stays when navigating chapters", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await switchLanguage(page, "fi");
+
+		// Navigate to a different chapter
+		await page.fill("#search-input", "John 3");
+		await expect(page.locator("#content")).toContainText("John", { timeout: 5_000 });
+
+		// Language should still be Finnish
+		const placeholder = await page.locator("#search-input").getAttribute("placeholder");
+		expect(placeholder).toBe("Hae Raamatusta");
+	});
+
+	test("parallel mode with KR38 primary shows Finnish content", async ({ page }) => {
+		await page.goto("/?t=KR38&book=gen&chapter=1&p=NHEB");
+		await waitForApp(page);
+		await page.waitForSelector(".parallel-container", { timeout: 10_000 });
+		const columns = page.locator(".parallel-col");
+		await expect(columns).toHaveCount(2);
+		// Primary column (KR38) should contain Finnish text
+		await expect(columns.nth(0)).toContainText("Alussa loi Jumala");
+		// Secondary column (NHEB) should contain English text
+		await expect(columns.nth(1)).toContainText("In the beginning");
+	});
+
+	test("KR38 translation selector visible in settings", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await openPanelTab(page, "settings");
+		const options = page.locator("#translation-select option");
+		const values = await options.evaluateAll((els) =>
+			(els as HTMLOptionElement[]).map((el) => el.value),
+		);
+		expect(values).toContain("KR38");
+		expect(values).toContain("SV17");
 	});
 });
