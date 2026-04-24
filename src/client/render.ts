@@ -14,7 +14,9 @@ import { escapeRegex } from "./search.ts";
 import { displayName, displayNameFor } from "./bookNames.ts";
 import { t } from "./i18n.ts";
 
-const $ = (id: string) => document.getElementById(id)!;
+function getElement(id: string): HTMLElement {
+	return document.getElementById(id) as HTMLElement;
+}
 
 /** Convert a 1-based counter to an alphabetic label: 1→a, 2→b, …, 26→z, 27→aa, … */
 function noteLabel(n: number): string {
@@ -152,30 +154,28 @@ function getChapterDescription(book: string, chapter: number): string {
 /** Render a description paragraph (book or chapter) as HTML, or empty string if none. */
 function descriptionHtml(text: string): string {
 	if (!text) return "";
-	return `<p class="description">${esc(text)}</p>`;
+	return `<p class="description">${escapeHtml(text)}</p>`;
 }
 
 function shareButtonHtml(): string {
-	return ` <span class="share-wrap"><button class="share-btn" title="${esc(t().shareWithout)}" aria-label="${esc(t().shareWithout)}">${ICON_LINK}</button><span class="share-dropdown"><button class="share-opt" data-share="with">${esc(t().shareWith)} (${esc(translationCode)})</button><button class="share-opt" data-share="without">${esc(t().shareWithout)}</button><button class="share-opt" data-share="qr">${esc(t().qrCode)}</button></span></span>`;
+	return ` <span class="share-wrap"><button class="share-btn" title="${escapeHtml(t().shareWithout)}" aria-label="${escapeHtml(t().shareWithout)}">${ICON_LINK}</button><span class="share-dropdown"><button class="share-opt" data-share="with">${escapeHtml(t().shareWith)} (${escapeHtml(translationCode)})</button><button class="share-opt" data-share="without">${escapeHtml(t().shareWithout)}</button><button class="share-opt" data-share="qr">${escapeHtml(t().qrCode)}</button></span></span>`;
 }
 
 function bookmarkButtonHtml(ref?: string): string {
-	const refAttr = ref ? ` data-bookmark-ref="${esc(ref)}"` : "";
-	return `<button class="bookmark-btn" title="${esc(t().bookmarkThis)}" aria-label="${esc(t().bookmarkThis)}"${refAttr}>${ICON_BOOKMARK}</button>`;
+	const refAttr = ref ? ` data-bookmark-ref="${escapeHtml(ref)}"` : "";
+	return `<button class="bookmark-btn" title="${escapeHtml(t().bookmarkThis)}" aria-label="${escapeHtml(t().bookmarkThis)}"${refAttr}>${ICON_BOOKMARK}</button>`;
 }
 
 function getHighlightClass(book: string, chapter: number, verse: number): string {
 	const color = highlightMap.get(`${book}:${chapter}:${verse}`);
 	return color ? ` hl-${color}` : "";
 }
-const hlClass = getHighlightClass;
 
 function escapeHtml(s: string): string {
 	const d = document.createElement("div");
 	d.textContent = s;
 	return d.innerHTML.replace(/"/g, "&quot;");
 }
-const esc = escapeHtml;
 
 function formatVerseText(text: string): string {
 	let open = true;
@@ -187,9 +187,6 @@ function formatVerseText(text: string): string {
 			return q;
 		});
 }
-const fmt = formatVerseText;
-
-const escRegex = escapeRegex;
 
 function renderStyledVerses(
 	book: string,
@@ -216,7 +213,7 @@ function renderStyledVerses(
 		if (sh) {
 			for (const entry of sh) {
 				if (entry.v === n) {
-					parts.push(`<h3 class="subheading">${esc(entry.t)}</h3>`);
+					parts.push(`<h3 class="subheading">${escapeHtml(entry.t)}</h3>`);
 				}
 			}
 		}
@@ -245,14 +242,14 @@ function renderStyledVerses(
 			// Secondary column gets its own aside (for mobile inline toggle) but tagged
 			// data-secondary="1" so syncSidenotes never moves it to the desktop rail.
 			const aside = secondary
-				? `<aside class="verse-sidenote" data-note-id="${esc(noteId)}" data-secondary="1"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`
-				: `<aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`;
+				? `<aside class="verse-sidenote" data-note-id="${escapeHtml(noteId)}" data-secondary="1"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${escapeHtml(noteText)}</span></aside>`
+				: `<aside class="verse-sidenote" data-note-id="${escapeHtml(noteId)}"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${escapeHtml(noteText)}</span></aside>`;
 			parts.push(
-				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}⁠<sup class="verse-note-marker" data-note-id="${esc(noteId)}" data-secondary="${secondary ? "1" : ""}" role="button" tabindex="0" aria-label="Note ${num}">${num}</sup></span>${aside} `,
+				`<span class="verse${poetryClass}${getHighlightClass(book, chapter, n)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${formatVerseText(text)}⁠<sup class="verse-note-marker" data-note-id="${escapeHtml(noteId)}" data-secondary="${secondary ? "1" : ""}" role="button" tabindex="0" aria-label="Note ${num}">${num}</sup></span>${aside} `,
 			);
 		} else {
 			parts.push(
-				`<span class="verse${poetryClass}${hlClass(book, chapter, n)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${fmt(text)}</span> `,
+				`<span class="verse${poetryClass}${getHighlightClass(book, chapter, n)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${formatVerseText(text)}</span> `,
 			);
 		}
 	}
@@ -265,7 +262,7 @@ function renderStyledVerses(
 function interlinearToggleHtml(): string {
 	if (translationCode !== "KJV") return "";
 	const active = interlinearEnabled ? " active" : "";
-	return ` <button class="il-toggle-btn${active}" title="${esc(t().interlinearTooltip)}">${esc(t().interlinear)}</button>`;
+	return ` <button class="il-toggle-btn${active}" title="${escapeHtml(t().interlinearTooltip)}">${escapeHtml(t().interlinear)}</button>`;
 }
 
 function isHebrew(strongs: string): boolean {
@@ -276,13 +273,13 @@ function renderInterlinearWord(w: InterlinearWord): string {
 	const hebrew = isHebrew(w.strongs);
 	const dir = hebrew ? ' dir="rtl"' : "";
 	const originalClass = hebrew ? "il-original il-hebrew" : "il-original il-greek";
-	const morphHtml = w.morph ? `<span class="il-morph">${esc(w.morph)}</span>` : "";
+	const morphHtml = w.morph ? `<span class="il-morph">${escapeHtml(w.morph)}</span>` : "";
 	return (
-		`<span class="il-word" data-strongs="${esc(w.strongs)}">` +
-		`<span class="il-english">${esc(w.english)}</span>` +
-		`<span class="${originalClass}"${dir}>${esc(w.original)}</span>` +
-		`<span class="il-translit">${esc(w.translit)}</span>` +
-		`<span class="il-strongs">${esc(w.strongs.toUpperCase())}</span>` +
+		`<span class="il-word" data-strongs="${escapeHtml(w.strongs)}">` +
+		`<span class="il-english">${escapeHtml(w.english)}</span>` +
+		`<span class="${originalClass}"${dir}>${escapeHtml(w.original)}</span>` +
+		`<span class="il-translit">${escapeHtml(w.translit)}</span>` +
+		`<span class="il-strongs">${escapeHtml(w.strongs.toUpperCase())}</span>` +
 		morphHtml +
 		`</span>`
 	);
@@ -294,7 +291,7 @@ function renderInterlinearVerse(
 	verse: number,
 	words: InterlinearWord[],
 ): string {
-	let html = `<div class="il-verse" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}">`;
+	let html = `<div class="il-verse" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${verse}">`;
 	html += `<span class="il-verse-num"><sup>${verse}</sup></span>`;
 	html += `<div class="il-row">`;
 	for (const w of words) {
@@ -316,7 +313,7 @@ function renderInterlinearChapterVerses(
 		if (sh) {
 			for (const entry of sh) {
 				if (entry.v === n) {
-					parts.push(`<h3 class="subheading">${esc(entry.t)}</h3>`);
+					parts.push(`<h3 class="subheading">${escapeHtml(entry.t)}</h3>`);
 				}
 			}
 		}
@@ -332,28 +329,28 @@ function renderInterlinearChapterVerses(
 export function renderStrongsPanel(entry: StrongsEntry, strongsId: string): string {
 	const s = t();
 	let html = `<div class="strongs-panel-header">`;
-	html += `<strong>${esc(strongsId.toUpperCase())}</strong>`;
-	html += `<button class="strongs-close" title="${esc(s.closePanel)}">&times;</button>`;
+	html += `<strong>${escapeHtml(strongsId.toUpperCase())}</strong>`;
+	html += `<button class="strongs-close" title="${escapeHtml(s.closePanel)}">&times;</button>`;
 	html += `</div>`;
 	html += `<div class="strongs-panel-body">`;
-	html += `<p class="strongs-def">${esc(entry.d)}</p>`;
+	html += `<p class="strongs-def">${escapeHtml(entry.d)}</p>`;
 	if (entry.p)
-		html += `<p class="strongs-field"><strong>${esc(s.pronunciation)}:</strong> ${esc(entry.p)}</p>`;
+		html += `<p class="strongs-field"><strong>${escapeHtml(s.pronunciation)}:</strong> ${escapeHtml(entry.p)}</p>`;
 	if (entry.s)
-		html += `<p class="strongs-field"><strong>${esc(s.partOfSpeech)}:</strong> ${esc(entry.s)}</p>`;
+		html += `<p class="strongs-field"><strong>${escapeHtml(s.partOfSpeech)}:</strong> ${escapeHtml(entry.s)}</p>`;
 	if (entry.r) {
 		// entry.r format: "derivation info|English: word1, word2"
 		const rParts = entry.r.split("|");
 		const derivation = rParts[0]?.trim();
 		const english = rParts[1]?.trim();
 		if (derivation)
-			html += `<p class="strongs-field"><strong>${esc(s.crossReferences)}:</strong> ${esc(derivation)}</p>`;
+			html += `<p class="strongs-field"><strong>${escapeHtml(s.crossReferences)}:</strong> ${escapeHtml(derivation)}</p>`;
 		if (english) {
 			const engMatch = english.match(/^English:\s*(.*)$/);
 			if (engMatch) {
-				html += `<p class="strongs-field"><strong>English:</strong> ${esc(engMatch[1])}</p>`;
+				html += `<p class="strongs-field"><strong>English:</strong> ${escapeHtml(engMatch[1])}</p>`;
 			} else {
-				html += `<p class="strongs-field">${esc(english)}</p>`;
+				html += `<p class="strongs-field">${escapeHtml(english)}</p>`;
 			}
 		}
 	}
@@ -562,10 +559,10 @@ function navArrowsHtml(
 	showTranslation = true,
 ): string {
 	const prevBtn = prev
-		? `<a class="nav-arrow nav-prev" title="${esc(prev.label)}" data-book="${esc(prev.book)}"${prev.chapter ? ` data-chapter="${prev.chapter}"` : ""}${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&lsaquo;</a>`
+		? `<a class="nav-arrow nav-prev" title="${escapeHtml(prev.label)}" data-book="${escapeHtml(prev.book)}"${prev.chapter ? ` data-chapter="${prev.chapter}"` : ""}${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&lsaquo;</a>`
 		: `<span class="nav-arrow nav-prev nav-disabled">&lsaquo;</span>`;
 	const nextBtn = next
-		? `<a class="nav-arrow nav-next" title="${esc(next.label)}" data-book="${esc(next.book)}"${next.chapter ? ` data-chapter="${next.chapter}"` : ""}${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&rsaquo;</a>`
+		? `<a class="nav-arrow nav-next" title="${escapeHtml(next.label)}" data-book="${escapeHtml(next.book)}"${next.chapter ? ` data-chapter="${next.chapter}"` : ""}${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&rsaquo;</a>`
 		: `<span class="nav-arrow nav-next nav-disabled"></span>`;
 	const mid = showTranslation ? `<span class="nav-translation">&DoubleRightArrow;</span>` : "";
 	return `<nav class="chapter-nav">${prevBtn}${mid}${nextBtn}</nav>`;
@@ -574,7 +571,7 @@ function navArrowsHtml(
 export function renderChapter(data: BibleData, book: string, chapter: number) {
 	const ch = data[book]?.[String(chapter)];
 	if (!ch) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 
@@ -584,7 +581,7 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
 		.sort((a, b) => a - b);
 	let html = navArrowsHtml(prev, next);
 	html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-	html += `<h2 class="section-title">${esc(displayName(book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>`;
+	html += `<h2 class="section-title">${escapeHtml(displayName(book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>`;
 	if (chapter === 1) html += descriptionHtml(getBookDescription(book));
 	html += descriptionHtml(getChapterDescription(book, chapter));
 
@@ -600,14 +597,14 @@ export function renderChapter(data: BibleData, book: string, chapter: number) {
 		html += `</div>`;
 	}
 	html += navArrowsHtml(prev, next, false);
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
 export function renderBook(data: BibleData, book: string) {
 	const bd = data[book];
 	if (!bd) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 
@@ -617,7 +614,7 @@ export function renderBook(data: BibleData, book: string) {
 	const { prev, next } = getBookNav(data, book);
 	let html = navArrowsHtml(prev, next);
 	html += `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-	html += `<h1 class="book-title">${esc(displayName(book))}${interlinearToggleHtml()}</h1>`;
+	html += `<h1 class="book-title">${escapeHtml(displayName(book))}${interlinearToggleHtml()}</h1>`;
 	html += descriptionHtml(getBookDescription(book));
 	const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
 	for (const c of chs) {
@@ -626,7 +623,7 @@ export function renderBook(data: BibleData, book: string) {
 			.map(Number)
 			.sort((a, b) => a - b);
 		const ilChapter = ilBook?.[String(c)];
-		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
+		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${escapeHtml(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
 		html += descriptionHtml(getChapterDescription(book, c));
 		if (ilChapter) {
 			html += `<div class="verses il-verses">`;
@@ -638,14 +635,14 @@ export function renderBook(data: BibleData, book: string) {
 		html += `</div></div>`;
 	}
 	html += navArrowsHtml(prev, next, false);
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
 export function renderVerse(data: BibleData, book: string, chapter: number, verse: number) {
 	const text = data[book]?.[String(chapter)]?.[String(verse)];
 	if (!text) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 
@@ -660,18 +657,18 @@ export function renderVerse(data: BibleData, book: string, chapter: number, vers
 		const noteId = `${book}:${chapter}:${verse}`;
 		const noteText = noteMap.get(noteId);
 		const noteMarker = noteText
-			? `⁠<sup class="verse-note-marker" data-note-id="${esc(noteId)}" role="button" tabindex="0" aria-label="Note a">a</sup></span>`
+			? `⁠<sup class="verse-note-marker" data-note-id="${escapeHtml(noteId)}" role="button" tabindex="0" aria-label="Note a">a</sup></span>`
 			: `</span>`;
 		const noteSidenote = noteText
-			? `<aside class="verse-sidenote" data-note-id="${esc(noteId)}"><span class="verse-sidenote-num">a</span><span class="verse-sidenote-text">${esc(noteText)}</span></aside>`
+			? `<aside class="verse-sidenote" data-note-id="${escapeHtml(noteId)}"><span class="verse-sidenote-num">a</span><span class="verse-sidenote-text">${escapeHtml(noteText)}</span></aside>`
 			: "";
-		verseHtml = `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text)}${noteMarker}${noteSidenote}</div>`;
+		verseHtml = `<div class="verses single-verse"><span class="verse${getHighlightClass(book, chapter, verse)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${formatVerseText(text)}${noteMarker}${noteSidenote}</div>`;
 	}
 
-	$("content").innerHTML = `
-    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${esc(displayName(book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>
+	getElement("content").innerHTML = `
+    ${navArrowsHtml(prev, next)}    <div class="print-translation-label"><span class="nav-translation"></span></div>    <h2 class="section-title">${escapeHtml(displayName(book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>
     ${verseHtml}
-    <div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
+    <div class="read-full-chapter"><a class="full-chapter-link" data-book="${escapeHtml(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
 	window.scrollTo(0, 0);
 }
 
@@ -685,7 +682,7 @@ export function renderChapterRange(
 ) {
 	const bd = data[book];
 	if (!bd) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 
@@ -697,11 +694,11 @@ export function renderChapterRange(
 	// For cross-chapter verse ranges (e.g. Gen 18:16-19:29), emit a titled section heading
 	if (verseStart !== undefined && verseEnd !== undefined) {
 		const rangeLabel = `${displayName(book)} ${chStart}:${verseStart}\u2013${chEnd}:${verseEnd}`;
-		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}</h2>`;
+		html += `<h2 class="section-title">${escapeHtml(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}</h2>`;
 	} else {
 		// Plain chapter range (e.g. Genesis 1-2): emit a section heading with copy/share
 		const rangeLabel = `${displayName(book)} ${chStart}\u2013${chEnd}`;
-		html += `<h2 class="section-title">${esc(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}</h2>`;
+		html += `<h2 class="section-title">${escapeHtml(rangeLabel)} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}</h2>`;
 	}
 	const ilToggle = interlinearToggleHtml();
 	if (ilToggle) html += `<div style="text-align:center;margin: 10px 0;">${ilToggle}</div>`;
@@ -714,7 +711,7 @@ export function renderChapterRange(
 		// Apply verse bounds for cross-chapter verse ranges (e.g. Gen 18:16-19:29)
 		if (verseStart !== undefined && c === chStart) nums = nums.filter((n) => n >= verseStart);
 		if (verseEnd !== undefined && c === chEnd) nums = nums.filter((n) => n <= verseEnd);
-		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${esc(displayName(book))} ${c}</h2>`;
+		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${escapeHtml(book)}" data-chapter="${c}">${escapeHtml(displayName(book))} ${c}</h2>`;
 		if (c === chStart) html += descriptionHtml(getBookDescription(book));
 		html += descriptionHtml(getChapterDescription(book, c));
 		const ilChapter = ilBook?.[String(c)];
@@ -728,7 +725,7 @@ export function renderChapterRange(
 		html += `</div></div>`;
 	}
 	html += navArrowsHtml(prev, next, false);
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
@@ -740,7 +737,7 @@ export function renderVerseSegments(
 ) {
 	const ch = data[book]?.[String(chapter)];
 	if (!ch) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 
@@ -754,7 +751,7 @@ export function renderVerseSegments(
 	html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
 	const segNums: number[] = [];
 	for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
-	html += `<h2 class="section-title">${esc(title)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>`;
+	html += `<h2 class="section-title">${escapeHtml(title)} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-segments="${escapeHtml(segLabel)}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>`;
 
 	const ilBook = interlinearEnabled ? interlinearBooks.get(book) : undefined;
 	const ilChapter = ilBook?.[String(chapter)];
@@ -766,19 +763,19 @@ export function renderVerseSegments(
 		html += renderStyledVerses(book, chapter, segNums, ch);
 	}
 	html += `</div>`;
-	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
-	$("content").innerHTML = html;
+	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${escapeHtml(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 function navRefCopyButtonHtml(nav: NavRef): string {
 	const { book, chapterStart, chapterEnd, verseSegments, verseStart, verseEnd } = nav;
 	const ch = chapterStart ?? 1;
-	let attrs = `data-copy-book="${esc(book)}" data-copy-chapter="${ch}"`;
+	let attrs = `data-copy-book="${escapeHtml(book)}" data-copy-chapter="${ch}"`;
 	if (verseSegments) {
 		const segLabel = verseSegments
 			.map((s) => (s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`))
 			.join(",");
-		attrs += ` data-copy-segments="${esc(segLabel)}"`;
+		attrs += ` data-copy-segments="${escapeHtml(segLabel)}"`;
 	} else if (verseStart !== undefined && verseEnd !== undefined) {
 		attrs += ` data-copy-chapter-end="${chapterEnd}" data-copy-verse-start="${verseStart}" data-copy-verse-end="${verseEnd}"`;
 	} else if (chapterEnd !== undefined && chapterStart !== chapterEnd) {
@@ -835,7 +832,7 @@ function navRefVersesHtml(data: BibleData, nav: NavRef): string {
 				if (verseEnd !== undefined && c === chapterEnd)
 					nums = nums.filter((n) => n <= verseEnd);
 				if (chapterStart !== chapterEnd) {
-					html += `<h3 class="multi-nav-subheading">${esc(displayName(book))} ${c}</h3>`;
+					html += `<h3 class="multi-nav-subheading">${escapeHtml(displayName(book))} ${c}</h3>`;
 				}
 				html += `<div class="verses">`;
 				html += renderStyledVerses(book, c, nums, ch);
@@ -862,14 +859,14 @@ function renderNavRefGroup(data: BibleData, group: NavRef[]): string {
 	for (let j = 0; j < group.length; j++) {
 		const ref = group[j];
 		if (j === 0) {
-			html += `<h2 class="section-title">${esc(navRefLabel(ref))} ${navRefCopyButtonHtml(ref)}${shareButtonHtml()}${bookmarkButtonHtml(navRefLabel(ref))}</h2>`;
+			html += `<h2 class="section-title">${escapeHtml(navRefLabel(ref))} ${navRefCopyButtonHtml(ref)}${shareButtonHtml()}${bookmarkButtonHtml(navRefLabel(ref))}</h2>`;
 		} else {
-			html += `<h3 class="multi-nav-subheading">${esc(navRefLabel(ref))}</h3>`;
+			html += `<h3 class="multi-nav-subheading">${escapeHtml(navRefLabel(ref))}</h3>`;
 		}
 		html += navRefVersesHtml(data, ref);
 	}
 	const ch = group[0].chapterStart ?? 1;
-	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(group[0].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
+	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${escapeHtml(group[0].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
 	return html;
 }
 
@@ -881,7 +878,7 @@ export function renderMultiNav(data: BibleData, groups: NavRef[][]) {
 		html += renderNavRefGroup(data, groups[i]);
 		html += `</section>`;
 	}
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
@@ -895,20 +892,21 @@ export function renderMixedMultiNav(data: BibleData, items: MixedNavItem[]) {
 		first = false;
 		html += `<section class="multi-nav-section">`;
 		if (item.refs === null) {
-			html += `<p class="empty">${esc(t().invalidRef(item.term))}</p>`;
+			html += `<p class="empty">${escapeHtml(t().invalidRef(item.term))}</p>`;
 		} else {
 			html += renderNavRefGroup(data, item.refs);
 		}
 		html += `</section>`;
 	}
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 const RESULTS_PAGE_SIZE = 50;
 
 export function renderResults(results: VerseResult[], query: string) {
 	if (!results.length) {
-		$("content").innerHTML = `<p class="empty">${t().noResults(esc(query))}</p>`;
+		getElement("content").innerHTML =
+			`<p class="empty">${t().noResults(escapeHtml(query))}</p>`;
 		return;
 	}
 
@@ -928,16 +926,16 @@ export function renderResults(results: VerseResult[], query: string) {
 
 	// Build a single combined regex to avoid corrupting <mark> tags across passes
 	const hlRegex = highlights.length
-		? new RegExp(`(${highlights.map((h) => escRegex(esc(h))).join("|")})`, "gi")
+		? new RegExp(`(${highlights.map((h) => escapeRegex(escapeHtml(h))).join("|")})`, "gi")
 		: null;
 
 	let shown = 0;
 
 	function renderResultItem(r: VerseResult): string {
-		let highlighted = fmt(r.text);
+		let highlighted = formatVerseText(r.text);
 		if (hlRegex) highlighted = highlighted.replace(hlRegex, "<mark>$1</mark>");
-		return `<div class="result" data-book="${esc(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
-      <div class="result-ref">${esc(displayName(r.book))} ${r.chapter}:${r.verse}</div>
+		return `<div class="result" data-book="${escapeHtml(r.book)}" data-chapter="${r.chapter}" data-verse="${r.verse}">
+      <div class="result-ref">${escapeHtml(displayName(r.book))} ${r.chapter}:${r.verse}</div>
       <div class="result-text">${highlighted}</div>
     </div>`;
 	}
@@ -986,7 +984,7 @@ export function renderResults(results: VerseResult[], query: string) {
 		);
 	}
 
-	$("content").innerHTML = parts.join("");
+	getElement("content").innerHTML = parts.join("");
 
 	// Wire up the "Show more" button if it was rendered
 	const btn = document.getElementById("show-more-btn");
@@ -1003,9 +1001,9 @@ export function renderIndex(
 		onVerse: (book: string, chapter: number, verse: number) => void;
 	},
 ) {
-	const booksCol = $("idx-books");
-	const chapsCol = $("idx-chapters");
-	const versesCol = $("idx-verses");
+	const booksCol = getElement("idx-books");
+	const chapsCol = getElement("idx-chapters");
+	const versesCol = getElement("idx-verses");
 
 	booksCol.innerHTML = "";
 	chapsCol.innerHTML = "";
@@ -1068,7 +1066,7 @@ export function renderIndex(
 					? "\u2026"
 					: "";
 			const displayPreview = chDesc ? chDesc.substring(0, 60) : preview;
-			chEl.innerHTML = `<strong>${t().chapter} ${c}</strong><small>${esc(displayPreview)}${ellipsis}</small>`;
+			chEl.innerHTML = `<strong>${t().chapter} ${c}</strong><small>${escapeHtml(displayPreview)}${ellipsis}</small>`;
 			if (chDesc) chEl.title = chDesc;
 
 			chEl.addEventListener("mouseenter", () => {
@@ -1300,7 +1298,7 @@ export function renderParallelChapter(
 	const ch1 = primary[book]?.[String(chapter)];
 	const ch2 = secondary[book]?.[String(chapter)];
 	if (!ch1) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 
@@ -1310,12 +1308,12 @@ export function renderParallelChapter(
 		.sort((a, b) => a - b);
 
 	let html = navArrowsHtml(prev, next);
-	html += `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="both">${ICON_COPY}</button>${shareButtonHtml()}</div>`;
+	html += `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-source="both">${ICON_COPY}</button>${shareButtonHtml()}</div>`;
 	html += `<div class="parallel-container">`;
 
 	// Primary column
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(primaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(displayNameFor(primaryLabel, book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
 	if (chapter === 1) html += descriptionHtml(getBookDescription(book));
 	html += descriptionHtml(getChapterDescription(book, chapter));
 	html += `<div class="verses">`;
@@ -1323,8 +1321,8 @@ export function renderParallelChapter(
 	html += `</div></div>`;
 
 	// Secondary column
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(secondaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(displayNameFor(secondaryLabel, book))} ${chapter} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
 	if (chapter === 1) html += descriptionHtml(bookDescFrom(secondaryDescriptions, book));
 	html += descriptionHtml(chapterDescFrom(secondaryDescriptions, book, chapter));
 	html += `<div class="verses">`;
@@ -1337,7 +1335,7 @@ export function renderParallelChapter(
 
 	html += `</div>`;
 	html += navArrowsHtml(prev, next);
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
@@ -1350,7 +1348,7 @@ export function renderParallelBook(
 ) {
 	const bd1 = primary[book];
 	if (!bd1) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 	const bd2 = secondary[book];
@@ -1364,15 +1362,15 @@ export function renderParallelBook(
 	html += `<div class="parallel-container">`;
 
 	// Primary column
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h1 class="book-title">${esc(displayNameFor(primaryLabel, book))}</h1>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(primaryLabel)}</div>`;
+	html += `<h1 class="book-title">${escapeHtml(displayNameFor(primaryLabel, book))}</h1>`;
 	html += descriptionHtml(bookDescFrom(descriptions, book));
 	for (const c of chs) {
 		const verses = bd1[String(c)];
 		const nums = Object.keys(verses)
 			.map(Number)
 			.sort((a, b) => a - b);
-		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
+		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${escapeHtml(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
 		html += descriptionHtml(chapterDescFrom(descriptions, book, c));
 		html += `<div class="verses">`;
 		html += renderStyledVerses(book, c, nums, verses);
@@ -1381,8 +1379,8 @@ export function renderParallelBook(
 	html += `</div>`;
 
 	// Secondary column
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h1 class="book-title">${esc(displayNameFor(secondaryLabel, book))}</h1>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(secondaryLabel)}</div>`;
+	html += `<h1 class="book-title">${escapeHtml(displayNameFor(secondaryLabel, book))}</h1>`;
 	html += descriptionHtml(bookDescFrom(secondaryDescriptions, book));
 	if (bd2) {
 		for (const c of chs) {
@@ -1394,7 +1392,7 @@ export function renderParallelBook(
 			const nums = Object.keys(verses)
 				.map(Number)
 				.sort((a, b) => a - b);
-			html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${esc(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
+			html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${escapeHtml(book)}" data-chapter="${c}">${t().chapter} ${c}</h2>`;
 			html += descriptionHtml(chapterDescFrom(secondaryDescriptions, book, c));
 			html += `<div class="verses">`;
 			html += renderStyledVerses(book, c, nums, verses, true);
@@ -1407,7 +1405,7 @@ export function renderParallelBook(
 
 	html += `</div>`;
 	html += navArrowsHtml(prev, next, false);
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
@@ -1423,7 +1421,7 @@ export function renderParallelVerseSegments(
 	const ch1 = primary[book]?.[String(chapter)];
 	const ch2 = secondary[book]?.[String(chapter)];
 	if (!ch1) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 
@@ -1431,12 +1429,12 @@ export function renderParallelVerseSegments(
 		.map((s) => (s.start === s.end ? `${s.start}` : `${s.start}-${s.end}`))
 		.join(",");
 
-	let html = `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="both">${ICON_COPY}</button>${shareButtonHtml()}</div>`;
+	let html = `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-segments="${escapeHtml(segLabel)}" data-copy-source="both">${ICON_COPY}</button>${shareButtonHtml()}</div>`;
 	html += `<div class="parallel-container">`;
 
 	// Primary column
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(primaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(displayNameFor(primaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-segments="${escapeHtml(segLabel)}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
 	const segNums: number[] = [];
 	for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
 	html += `<div class="verses">`;
@@ -1444,8 +1442,8 @@ export function renderParallelVerseSegments(
 	html += `</div></div>`;
 
 	// Secondary column
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-segments="${esc(segLabel)}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(secondaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(displayNameFor(secondaryLabel, book))} ${chapter}:${segLabel} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-segments="${escapeHtml(segLabel)}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
 	html += `<div class="verses">`;
 	if (ch2) {
 		html += renderStyledVerses(book, chapter, segNums, ch2, true);
@@ -1455,8 +1453,8 @@ export function renderParallelVerseSegments(
 	html += `</div></div>`;
 
 	html += `</div>`;
-	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
-	$("content").innerHTML = html;
+	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${escapeHtml(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
@@ -1471,24 +1469,24 @@ export function renderParallelVerse(
 ) {
 	const text1 = primary[book]?.[String(chapter)]?.[String(verse)];
 	if (!text1) {
-		$("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
 		return;
 	}
 	const text2 = secondary[book]?.[String(chapter)]?.[String(verse)];
 
 	const { prev, next } = getVerseNav(primary, book, chapter, verse);
 	let html = navArrowsHtml(prev, next);
-	html += `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="both">${ICON_COPY}</button>${shareButtonHtml()}</div>`;
+	html += `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="both">${ICON_COPY}</button>${shareButtonHtml()}</div>`;
 	html += `<div class="parallel-container">`;
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(primaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
-	html += `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${fmt(text1)}</span></div></div>`;
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(displayNameFor(secondaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
-	html += `<div class="verses single-verse"><span class="verse${hlClass(book, chapter, verse)}" data-book="${esc(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? fmt(text2) : t().notFound}</span></div></div>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(primaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(displayNameFor(primaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
+	html += `<div class="verses single-verse"><span class="verse${getHighlightClass(book, chapter, verse)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${verse}"><sup>${verse}</sup>${formatVerseText(text1)}</span></div></div>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(secondaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(displayNameFor(secondaryLabel, book))} ${chapter}:${verse} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-verse="${verse}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
+	html += `<div class="verses single-verse"><span class="verse${getHighlightClass(book, chapter, verse)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${verse}" data-secondary="1"><sup>${verse}</sup>${text2 ? formatVerseText(text2) : t().notFound}</span></div></div>`;
 	html += `</div>`;
-	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
-	$("content").innerHTML = html;
+	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${escapeHtml(book)}" data-chapter="${chapter}">${t().readFullChapter} &rarr;</a></div>`;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
@@ -1553,12 +1551,12 @@ function parallelNavRefHtml(
 					.map(Number)
 					.sort((a, b) => a - b);
 				if (chapterStart !== chapterEnd) {
-					primaryHtml += `<h3 class="multi-nav-subheading">${esc(displayNameFor(primaryLabel, book))} ${c}</h3>`;
-					secondaryHtml += `<h3 class="multi-nav-subheading">${esc(displayNameFor(secondaryLabel, book))} ${c}</h3>`;
+					primaryHtml += `<h3 class="multi-nav-subheading">${escapeHtml(displayNameFor(primaryLabel, book))} ${c}</h3>`;
+					secondaryHtml += `<h3 class="multi-nav-subheading">${escapeHtml(displayNameFor(secondaryLabel, book))} ${c}</h3>`;
 				}
 				primaryHtml += `<div class="verses">`;
 				for (const n of nums) {
-					primaryHtml += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
+					primaryHtml += `<span class="verse${getHighlightClass(book, c, n)}" data-book="${escapeHtml(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${formatVerseText(ch1[String(n)])}</span> `;
 				}
 				primaryHtml += `</div>`;
 
@@ -1567,7 +1565,7 @@ function parallelNavRefHtml(
 					for (const n of nums) {
 						const text = ch2[String(n)];
 						if (text)
-							secondaryHtml += `<span class="verse${hlClass(book, c, n)}" data-book="${esc(book)}" data-chapter="${c}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
+							secondaryHtml += `<span class="verse${getHighlightClass(book, c, n)}" data-book="${escapeHtml(book)}" data-chapter="${c}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${formatVerseText(text)}</span> `;
 					}
 				} else {
 					secondaryHtml += `<p class="empty">${t().notFound}</p>`;
@@ -1585,7 +1583,7 @@ function parallelNavRefHtml(
 			.sort((a, b) => a - b);
 		primaryHtml += `<div class="verses">`;
 		for (const n of nums) {
-			primaryHtml += `<span class="verse${hlClass(book, 1, n)}" data-book="${esc(book)}" data-chapter="1" data-verse="${n}"><sup>${n}</sup>${fmt(ch1[String(n)])}</span> `;
+			primaryHtml += `<span class="verse${getHighlightClass(book, 1, n)}" data-book="${escapeHtml(book)}" data-chapter="1" data-verse="${n}"><sup>${n}</sup>${formatVerseText(ch1[String(n)])}</span> `;
 		}
 		primaryHtml += `</div>`;
 
@@ -1594,7 +1592,7 @@ function parallelNavRefHtml(
 			for (const n of nums) {
 				const text = ch2[String(n)];
 				if (text)
-					secondaryHtml += `<span class="verse${hlClass(book, 1, n)}" data-book="${esc(book)}" data-chapter="1" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${fmt(text)}</span> `;
+					secondaryHtml += `<span class="verse${getHighlightClass(book, 1, n)}" data-book="${escapeHtml(book)}" data-chapter="1" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${formatVerseText(text)}</span> `;
 			}
 		} else {
 			secondaryHtml += `<p class="empty">${t().notFound}</p>`;
@@ -1603,12 +1601,12 @@ function parallelNavRefHtml(
 	}
 
 	let html = `<div class="parallel-container">`;
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(primaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(pTitle)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(primaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(pTitle)} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="primary">${ICON_COPY}</button></h2>`;
 	html += primaryHtml;
 	html += `</div>`;
-	html += `<div class="parallel-col"><div class="parallel-translation-label">${esc(secondaryLabel)}</div>`;
-	html += `<h2 class="section-title">${esc(sTitle)} <button class="copy-btn" title="Copy text" data-copy-book="${esc(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(secondaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(sTitle)} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapterStart ?? 1}" data-copy-source="secondary">${ICON_COPY}</button></h2>`;
 	html += secondaryHtml;
 	html += `</div></div>`;
 
@@ -1626,13 +1624,13 @@ function renderParallelNavRefGroup(
 	for (let j = 0; j < group.length; j++) {
 		const ref = group[j];
 		if (j > 0) {
-			html += `<h3 class="multi-nav-subheading">${esc(navRefLabel(ref))}</h3>`;
+			html += `<h3 class="multi-nav-subheading">${escapeHtml(navRefLabel(ref))}</h3>`;
 		}
 		html += parallelNavRefHtml(primary, secondary, ref, primaryLabel, secondaryLabel);
 	}
 	const ch = group[0].chapterStart ?? 1;
 	html += `<div class="parallel-copy-both">${shareButtonHtml()}${bookmarkButtonHtml(navRefLabel(group[0]))}</div>`;
-	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${esc(group[0].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
+	html += `<div class="read-full-chapter"><a class="full-chapter-link" data-book="${escapeHtml(group[0].book)}" data-chapter="${ch}">${t().readFullChapter} &rarr;</a></div>`;
 	return html;
 }
 
@@ -1656,7 +1654,7 @@ export function renderParallelMultiNav(
 		);
 		html += `</section>`;
 	}
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
 
@@ -1674,7 +1672,7 @@ export function renderParallelMixedMultiNav(
 		first = false;
 		html += `<section class="multi-nav-section">`;
 		if (item.refs === null) {
-			html += `<p class="empty">${esc(t().invalidRef(item.term))}</p>`;
+			html += `<p class="empty">${escapeHtml(t().invalidRef(item.term))}</p>`;
 		} else {
 			html += renderParallelNavRefGroup(
 				primary,
@@ -1686,6 +1684,6 @@ export function renderParallelMixedMultiNav(
 		}
 		html += `</section>`;
 	}
-	$("content").innerHTML = html;
+	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }

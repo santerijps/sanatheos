@@ -50,11 +50,11 @@ export interface SubheadingEntry {
 	t: string;
 }
 
-export type SubheadingsData = {
+export interface SubheadingsData {
 	[book: string]: {
 		[chapter: string]: SubheadingEntry[];
 	};
-};
+}
 
 // --- Interlinear types ---
 
@@ -68,13 +68,13 @@ export interface InterlinearWord {
 	morph?: string;
 }
 
-export type InterlinearChapter = {
+export interface InterlinearChapter {
 	[verse: string]: InterlinearWord[];
-};
+}
 
-export type InterlinearBook = {
+export interface InterlinearBook {
 	[chapter: string]: InterlinearChapter;
-};
+}
 
 export interface StrongsEntry {
 	d: string;
