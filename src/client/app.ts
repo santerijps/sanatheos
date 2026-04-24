@@ -221,7 +221,9 @@ function applyTheme(theme: string) {
 function activateSegmented(container: HTMLElement | null, value: string) {
 	if (!container) return;
 	for (const btn of container.querySelectorAll<HTMLElement>(".seg-btn")) {
-		btn.classList.toggle("seg-active", btn.dataset.value === value);
+		const active = btn.dataset.value === value;
+		btn.classList.toggle("seg-active", active);
+		btn.setAttribute("aria-checked", String(active));
 	}
 }
 
@@ -296,6 +298,7 @@ async function init() {
 	const savedLang =
 		TRANSLATION_LANG[currentTranslation] || localStorage.getItem("bible-language") || "en";
 	setLanguage(savedLang);
+	document.documentElement.lang = savedLang;
 	localStorage.setItem("bible-language", savedLang);
 
 	const languageSegmented = document.getElementById("language-segmented");
@@ -428,6 +431,7 @@ async function init() {
 			const newLang = TRANSLATION_LANG[code];
 			if (newLang && newLang !== getLanguage()) {
 				setLanguage(newLang);
+				document.documentElement.lang = newLang;
 				localStorage.setItem("bible-language", newLang);
 				activateSegmented(languageSegmented, newLang);
 				updateStaticText();
@@ -486,6 +490,7 @@ async function init() {
 			const lang = btn.dataset.value!;
 			activateSegmented(languageSegmented, lang);
 			setLanguage(lang);
+			document.documentElement.lang = lang;
 			localStorage.setItem("bible-language", lang);
 			updateStaticText();
 			indexRendered = false;
@@ -784,6 +789,7 @@ async function init() {
 
 	function openIndex() {
 		overlay.classList.add("open");
+		indexBtn.setAttribute("aria-expanded", "true");
 		lockScroll();
 		if (!indexRendered) {
 			const idx = renderIndex(data, {
@@ -833,6 +839,7 @@ async function init() {
 
 	function closeIndex() {
 		overlay.classList.remove("open");
+		indexBtn.setAttribute("aria-expanded", "false");
 		unlockScroll();
 	}
 
@@ -852,7 +859,9 @@ async function init() {
 
 	function activateSideTab(tab: string) {
 		sideTabBtns.forEach((btn) => {
-			btn.classList.toggle("active", btn.dataset.tab === tab);
+			const active = btn.dataset.tab === tab;
+			btn.classList.toggle("active", active);
+			btn.setAttribute("aria-selected", String(active));
 		});
 		sidePanes.forEach((pane) => {
 			pane.classList.toggle("active", pane.dataset.pane === tab);
@@ -864,6 +873,7 @@ async function init() {
 	async function openSidePanel(tab?: string) {
 		activateSideTab(tab || lastActiveTab);
 		sideOverlay.classList.add("open");
+		panelBtn.setAttribute("aria-expanded", "true");
 		lockScroll();
 		// If opening stories tab, load data and reset filter
 		if ((tab || lastActiveTab) === "stories") {
@@ -922,6 +932,7 @@ async function init() {
 
 	function closeSidePanel() {
 		sideOverlay.classList.remove("open");
+		panelBtn.setAttribute("aria-expanded", "false");
 		unlockScroll();
 	}
 
@@ -2151,39 +2162,39 @@ async function init() {
 		const currentColor = highlightMap.get(hlKey);
 
 		const colors: HighlightColor[] = ["yellow", "green", "blue", "pink", "orange"];
-		// Localized color names for tooltip labels
+		// Localized color names for aria-labels and tooltips
+		const lang = getLanguage();
 		const colorTitles: Record<HighlightColor, string> = {
-			yellow: getLanguage() === "fi" ? "Keltainen" : "Yellow",
-			green: getLanguage() === "fi" ? "Vihreä" : "Green",
-			blue: getLanguage() === "fi" ? "Sininen" : "Blue",
-			pink: getLanguage() === "fi" ? "Pinkki" : "Pink",
-			orange: getLanguage() === "fi" ? "Oranssi" : "Orange",
+			yellow: lang === "fi" ? "Keltainen" : lang === "sv" ? "Gul" : "Yellow",
+			green: lang === "fi" ? "Vihreä" : lang === "sv" ? "Grön" : "Green",
+			blue: lang === "fi" ? "Sininen" : lang === "sv" ? "Blå" : "Blue",
+			pink: lang === "fi" ? "Pinkki" : lang === "sv" ? "Rosa" : "Pink",
+			orange: lang === "fi" ? "Oranssi" : lang === "sv" ? "Orange" : "Orange",
 		};
 		let html = "";
 
 		// Copy verse
-		html += `<button class="verse-menu-item" data-action="copy">${ICON_COPY} ${t().copyVerse}</button>`;
+		html += `<button class="verse-menu-item" data-action="copy" role="menuitem">${ICON_COPY} ${t().copyVerse}</button>`;
 
 		// Bookmark verse
 		const bmId = `${book}:${chapter}:${verse}`;
 		const isVerseBookmarked = await hasBookmark(bmId);
-		html += `<button class="verse-menu-item" data-action="bookmark">${ICON_BOOKMARK} ${isVerseBookmarked ? escapeHtml(t().removeBookmark) : escapeHtml(t().bookmarkThis)}</button>`;
+		html += `<button class="verse-menu-item" data-action="bookmark" role="menuitem">${ICON_BOOKMARK} ${isVerseBookmarked ? escapeHtml(t().removeBookmark) : escapeHtml(t().bookmarkThis)}</button>`;
 
 		// Note verse
 		const noteId = `${book}:${chapter}:${verse}`;
 		const hasNote = getRenderNoteMap().has(noteId);
-		html += `<button class="verse-menu-item" data-action="note">${ICON_NOTE} ${hasNote ? escapeHtml(t().editNote) : escapeHtml(t().addNote)}</button>`;
+		html += `<button class="verse-menu-item" data-action="note" role="menuitem">${ICON_NOTE} ${hasNote ? escapeHtml(t().editNote) : escapeHtml(t().addNote)}</button>`;
 
 		// Highlight colors
-		html += `<div class="verse-menu-colors">`;
+		html += `<div class="verse-menu-colors" role="group" aria-label="Highlight color">`;
 		for (const c of colors) {
-			html += `<span class="color-dot${currentColor === c ? " active" : ""}" data-color="${c}" data-action="highlight" title="${colorTitles[c]}"></span>`;
+			html += `<button class="color-dot${currentColor === c ? " active" : ""}" type="button" role="menuitem" data-color="${c}" data-action="highlight" aria-label="${colorTitles[c]}" aria-pressed="${currentColor === c}" style="background: var(--hl-${c});"></button>`;
 		}
 		if (currentColor) {
-			html += `<span class="color-dot" data-action="remove-highlight" style="background: var(--border);" title="${t().removeHighlight}">&#10005;</span>`;
+			html += `<button class="color-dot" type="button" role="menuitem" data-action="remove-highlight" style="background: var(--border);" aria-label="${t().removeHighlight}">&#10005;</button>`;
 		}
 		html += `</div>`;
-
 		verseMenu.innerHTML = html;
 		verseMenu.classList.add("open");
 
@@ -2200,9 +2211,11 @@ async function init() {
 
 		// Handle clicks in menu
 		verseMenu.onclick = async (ev) => {
-			const target = ev.target as HTMLElement;
+			const target = (ev.target as HTMLElement).closest(
+				"[data-action]",
+			) as HTMLElement | null;
+			if (!target) return;
 			const action = target.dataset.action;
-			if (!action) return;
 
 			if (action === "copy") {
 				const isSecondary = verseEl.dataset.secondary === "1";
@@ -2779,6 +2792,10 @@ function updateStaticText() {
 	if (themeLabel) themeLabel.textContent = s.themeLabel;
 	const parallelLabel = document.getElementById("settings-parallel-label");
 	if (parallelLabel) parallelLabel.textContent = s.parallelLabel;
+	const parallelSelectEl = document.getElementById("parallel-select") as HTMLSelectElement | null;
+	if (parallelSelectEl && parallelSelectEl.options.length > 0) {
+		parallelSelectEl.options[0].textContent = s.parallelNone;
+	}
 	const fontSizeLabel = document.getElementById("settings-fontsize-label");
 	if (fontSizeLabel) fontSizeLabel.textContent = s.fontSizeLabel;
 	const fontLabel = document.getElementById("settings-font-label");
@@ -2845,7 +2862,7 @@ function updateStaticText() {
 	}
 
 	// HTML lang attribute
-	document.documentElement.lang = getLanguage() === "fi" ? "fi" : "en";
+	document.documentElement.lang = getLanguage();
 }
 
 function updateFooter() {
