@@ -1,17 +1,6 @@
 const CACHE_NAME = "sanatheos-v4";
 const SHELL_ASSETS = [
     "./",
-    "./more/index.html",
-    "./more/christology.html",
-    "./more/soteriology.html",
-    "./more/ecclesiology.html",
-    "./more/mariology.html",
-    "./more/pneumatology.html",
-    "./more/essence-energies.html",
-    "./more/theological-terms.html",
-    "./more/angelology.html",
-    "./more/typology.html",
-    "./more/philosophy.html",
     "./style.css",
     "./bundle.js",
     "./manifest.json",
