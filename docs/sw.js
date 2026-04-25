@@ -1,4 +1,4 @@
-const CACHE_NAME = "sanatheos-v3";
+const CACHE_NAME = "sanatheos-v4";
 const SHELL_ASSETS = [
     "./",
     "./more/index.html",

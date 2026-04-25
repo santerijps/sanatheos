@@ -44,7 +44,20 @@ function open(): Promise<IDBDatabase> {
 			};
 			resolve(dbInstance);
 		};
-		req.onerror = () => reject(req.error);
+		req.onerror = () => {
+			const error = req.error;
+			// A VersionError means a stale cached bundle is requesting a lower DB
+			// version than what already exists. Unregister all service workers so
+			// the next load fetches the current bundle from the network.
+			if (error?.name === "VersionError") {
+				navigator.serviceWorker
+					?.getRegistrations()
+					.then((regs) => Promise.all(regs.map((r) => r.unregister())))
+					.finally(() => location.reload());
+				return;
+			}
+			reject(error);
+		};
 	});
 }
 
