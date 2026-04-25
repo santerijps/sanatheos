@@ -1249,6 +1249,57 @@ describe("i18n — loadTranslationFailed", () => {
 		setLanguage("fi");
 		expect(t().loadTranslationFailed("XYZ")).toContain("XYZ");
 	});
+
+	test("SV includes code", () => {
+		setLanguage("sv");
+		expect(t().loadTranslationFailed("XYZ")).toContain("XYZ");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// i18n — SV function-type strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — function-type strings (SV)", () => {
+	beforeEach(() => setLanguage("sv"));
+
+	test("SV noResults returns formatted string containing the query", () => {
+		expect(t().noResults("sök")).toContain("sök");
+	});
+
+	test("SV resultCount singular", () => {
+		expect(t().resultCount(1)).toBe("1 resultat");
+	});
+
+	test("SV resultCount plural", () => {
+		expect(t().resultCount(0)).toBe("0 resultat");
+		expect(t().resultCount(5)).toBe("5 resultat");
+	});
+
+	test("SV loadingTranslation includes code", () => {
+		expect(t().loadingTranslation("KJV")).toContain("KJV");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// i18n — invalidRef
+// ---------------------------------------------------------------------------
+
+describe("i18n — invalidRef", () => {
+	test("EN includes the term", () => {
+		setLanguage("en");
+		expect(t().invalidRef("Bogus 3:16")).toContain("Bogus 3:16");
+	});
+
+	test("FI includes the term", () => {
+		setLanguage("fi");
+		expect(t().invalidRef("Bogus 3:16")).toContain("Bogus 3:16");
+	});
+
+	test("SV includes the term", () => {
+		setLanguage("sv");
+		expect(t().invalidRef("Bogus 3:16")).toContain("Bogus 3:16");
+	});
 });
 
 // ---------------------------------------------------------------------------
@@ -1281,7 +1332,33 @@ describe("i18n — copyBoth and showMore", () => {
 // bookNames — displayName and displayNameFor
 // ---------------------------------------------------------------------------
 
-import { setTranslation, displayName, displayNameFor } from "../src/client/bookNames.ts";
+import { setTranslation, displayName, displayNameFor, getBookKeys } from "../src/client/bookNames.ts";
+
+describe("bookNames — getBookKeys", () => {
+	test("returns all 66+ canonical book keys", () => {
+		const keys = getBookKeys();
+		expect(keys.length).toBeGreaterThan(65);
+		expect(keys).toContain("Genesis");
+		expect(keys).toContain("Revelation");
+	});
+
+	test("contains canonical keys for common books", () => {
+		const keys = getBookKeys();
+		expect(keys).toContain("Exodus");
+		expect(keys).toContain("Psalm");
+		expect(keys).toContain("Matthew");
+		expect(keys).toContain("John");
+		expect(keys).toContain("Romans");
+	});
+
+	test("result is not affected by setTranslation", () => {
+		setTranslation("KR38");
+		const keys = getBookKeys();
+		expect(keys).toContain("Genesis");
+		expect(keys).toContain("Revelation");
+		setTranslation("NHEB");
+	});
+});
 
 describe("bookNames — displayName", () => {
 	test("returns English name for NHEB", () => {

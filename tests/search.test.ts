@@ -5,6 +5,8 @@ import {
 	initSearch,
 	search,
 	tryParseNav,
+	tryParseNavGroups,
+	parseNavTerms,
 	parseQueryBooks,
 	setSearchInterlinearData,
 	_matchBook,
@@ -2152,5 +2154,170 @@ describe("tryParseNav — cross-chapter range with trailing verse segments", () 
 		expect(nav).not.toBeNull();
 		expect(nav).toHaveLength(3);
 		expect(nav![2].book).toBe("John");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// parseNavTerms
+// ---------------------------------------------------------------------------
+
+describe("parseNavTerms", () => {
+	beforeEach(() => {
+		setTranslation("NHEB");
+	});
+
+	test("single valid reference returns refs array", () => {
+		const result = parseNavTerms("Genesis 1");
+		expect(result).toHaveLength(1);
+		expect(result[0].refs).not.toBeNull();
+		expect(result[0].refs![0].book).toBe("Genesis");
+		expect(result[0].refs![0].chapterStart).toBe(1);
+		expect(result[0].term).toBe("Genesis 1");
+	});
+
+	test("single valid verse reference", () => {
+		const result = parseNavTerms("John 3:16");
+		expect(result).toHaveLength(1);
+		expect(result[0].refs).not.toBeNull();
+		expect(result[0].refs![0].book).toBe("John");
+		expect(result[0].refs![0].chapterStart).toBe(3);
+		expect(result[0].refs![0].verseSegments).toEqual([{ start: 16, end: 16 }]);
+	});
+
+	test("multi-term query returns one result per term", () => {
+		const result = parseNavTerms("Genesis 1; John 3:16");
+		expect(result).toHaveLength(2);
+		expect(result[0].refs![0].book).toBe("Genesis");
+		expect(result[1].refs![0].book).toBe("John");
+	});
+
+	test("quoted text term returns refs: null", () => {
+		const result = parseNavTerms('"in the beginning"');
+		expect(result).toHaveLength(1);
+		expect(result[0].refs).toBeNull();
+		expect(result[0].term).toBe('"in the beginning"');
+	});
+
+	test("mixed valid ref and quoted term", () => {
+		const result = parseNavTerms('Genesis 1; "grace"');
+		expect(result).toHaveLength(2);
+		expect(result[0].refs).not.toBeNull();
+		expect(result[0].refs![0].book).toBe("Genesis");
+		expect(result[1].refs).toBeNull();
+	});
+
+	test("invalid book returns refs: null", () => {
+		const result = parseNavTerms("Bogus 3:16");
+		expect(result).toHaveLength(1);
+		expect(result[0].refs).toBeNull();
+		expect(result[0].term).toBe("Bogus 3:16");
+	});
+
+	test("empty query returns empty array", () => {
+		expect(parseNavTerms("")).toEqual([]);
+	});
+
+	test("whitespace-only query returns empty array", () => {
+		expect(parseNavTerms("   ")).toEqual([]);
+	});
+
+	test("cross-chapter trailing expansion returns two refs in one entry", () => {
+		const result = parseNavTerms("Genesis 18:16-19:5,20-29");
+		expect(result).toHaveLength(1);
+		expect(result[0].refs).not.toBeNull();
+		expect(result[0].refs).toHaveLength(2);
+		expect(result[0].refs![0].book).toBe("Genesis");
+		expect(result[0].refs![0].chapterStart).toBe(18);
+		expect(result[0].refs![1].chapterStart).toBe(19);
+	});
+
+	test("cross-chapter ref with invalid sub-ref returns refs: null", () => {
+		// A trailing that parses to an invalid ref — the whole term returns null
+		const result = parseNavTerms("Bogus 18:16-19:5,20-29");
+		expect(result).toHaveLength(1);
+		expect(result[0].refs).toBeNull();
+	});
+
+	test("term and original term preserved for invalid ref", () => {
+		const result = parseNavTerms("Genesis 1; Bogus");
+		expect(result).toHaveLength(2);
+		expect(result[0].term).toBe("Genesis 1");
+		expect(result[1].term).toBe("Bogus");
+		expect(result[1].refs).toBeNull();
+	});
+
+	test("chapter range produces correct NavRef", () => {
+		const result = parseNavTerms("Genesis 1-3");
+		expect(result).toHaveLength(1);
+		expect(result[0].refs).not.toBeNull();
+		expect(result[0].refs![0].chapterStart).toBe(1);
+		expect(result[0].refs![0].chapterEnd).toBe(3);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// tryParseNavGroups
+// ---------------------------------------------------------------------------
+
+describe("tryParseNavGroups", () => {
+	beforeEach(() => {
+		setTranslation("NHEB");
+	});
+
+	test("single reference returns single group with one ref", () => {
+		const groups = tryParseNavGroups("Genesis 1");
+		expect(groups).not.toBeNull();
+		expect(groups).toHaveLength(1);
+		expect(groups![0]).toHaveLength(1);
+		expect(groups![0][0].book).toBe("Genesis");
+	});
+
+	test("multi-term returns one group per term", () => {
+		const groups = tryParseNavGroups("Genesis 1; John 3:16");
+		expect(groups).not.toBeNull();
+		expect(groups).toHaveLength(2);
+		expect(groups![0][0].book).toBe("Genesis");
+		expect(groups![1][0].book).toBe("John");
+	});
+
+	test("quoted text term causes null return", () => {
+		expect(tryParseNavGroups('"grace"')).toBeNull();
+		expect(tryParseNavGroups('Genesis 1; "grace"')).toBeNull();
+	});
+
+	test("invalid book causes null return", () => {
+		expect(tryParseNavGroups("Bogus 3:16")).toBeNull();
+	});
+
+	test("empty query returns null", () => {
+		expect(tryParseNavGroups("")).toBeNull();
+	});
+
+	test("cross-chapter trailing expansion places two refs in one group", () => {
+		const groups = tryParseNavGroups("Genesis 18:16-19:5,20-29");
+		expect(groups).not.toBeNull();
+		expect(groups).toHaveLength(1);
+		expect(groups![0]).toHaveLength(2);
+		expect(groups![0][0].chapterStart).toBe(18);
+		expect(groups![0][1].chapterStart).toBe(19);
+	});
+
+	test("cross-chapter expansion with other term returns two groups", () => {
+		const groups = tryParseNavGroups("Genesis 18:16-19:5,20-29; John 1:1");
+		expect(groups).not.toBeNull();
+		expect(groups).toHaveLength(2);
+		expect(groups![0]).toHaveLength(2);
+		expect(groups![1]).toHaveLength(1);
+		expect(groups![1][0].book).toBe("John");
+	});
+
+	test("tryParseNavGroups and tryParseNav are consistent (flat)", () => {
+		const groups = tryParseNavGroups("Genesis 1; John 3:16");
+		const flat = tryParseNav("Genesis 1; John 3:16");
+		expect(flat).toEqual(groups!.flat());
+	});
+
+	test("invalid sub-ref inside cross-chapter expansion returns null", () => {
+		expect(tryParseNavGroups("Bogus 18:16-19:5,20-29")).toBeNull();
 	});
 });
