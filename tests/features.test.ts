@@ -1332,7 +1332,12 @@ describe("i18n — copyBoth and showMore", () => {
 // bookNames — displayName and displayNameFor
 // ---------------------------------------------------------------------------
 
-import { setTranslation, displayName, displayNameFor, getBookKeys } from "../src/client/bookNames.ts";
+import {
+	setTranslation,
+	displayName,
+	displayNameFor,
+	getBookKeys,
+} from "../src/client/bookNames.ts";
 
 describe("bookNames — getBookKeys", () => {
 	test("returns all 66+ canonical book keys", () => {
