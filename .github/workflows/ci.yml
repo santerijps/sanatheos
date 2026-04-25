@@ -18,14 +18,14 @@ jobs:
 
       - run: bun install --frozen-lockfile
 
-      - name: Typecheck
-        run: bun run typecheck
+      - name: Format
+        run: bun run fmt
 
       - name: Lint
         run: bun run lint
 
-      - name: Format check
-        run: bun run fmt:check
+      - name: Validate
+        run: bun run validate
 
       - name: Unit tests
         run: bun test

@@ -1,12 +1,12 @@
 pre-commit:
   parallel: true
   commands:
+    fmt:
+      run: bun run fmt:fix
     lint:
-      run: bunx oxlint src/ tests/ scripts/
-    fmt-check:
-      run: bunx oxfmt --check src/ tests/ scripts/
-    typecheck:
-      run: bunx tsc --noEmit
+      run: bun run lint:fix
+    validate:
+      run: bun run validate
     test:
       run: bun test
 
