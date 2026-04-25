@@ -516,7 +516,7 @@ describe("PWA — manifest.json", () => {
 });
 
 describe("PWA — service worker", () => {
-	const sw = readFileSync(join(PUBLIC, "sw.js"), "utf-8");
+	const sw = readFileSync(join(PUBLIC, "service-worker.js"), "utf-8");
 
 	test("defines a cache name", () => {
 		expect(sw).toMatch(/const CACHE_NAME\s*=/);
@@ -556,7 +556,7 @@ describe("PWA — index.html integration", () => {
 
 	test("registers service worker", () => {
 		expect(html).toContain("serviceWorker.register");
-		expect(html).toContain("sw.js");
+		expect(html).toContain("service-worker.js");
 	});
 });
 
@@ -567,8 +567,8 @@ describe("PWA — build script copies PWA files", () => {
 		expect(buildScript).toContain("manifest.json");
 	});
 
-	test("copies sw.js", () => {
-		expect(buildScript).toContain("sw.js");
+	test("copies service-worker.js", () => {
+		expect(buildScript).toContain("service-worker.js");
 	});
 
 	test("copies PWA icon PNGs via icons directory", () => {
