@@ -744,7 +744,7 @@ async function init() {
 		});
 	};
 	if ("requestIdleCallback" in window) {
-		window.requestIdleCallback(preloadSidePanelData);
+		window.requestIdleCallback(preloadSidePanelData, { timeout: 3000 });
 	} else {
 		setTimeout(preloadSidePanelData, 0);
 	}

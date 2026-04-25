@@ -32,7 +32,7 @@ const staticFiles = [
 	"style.css",
 	"robots.txt",
 	"manifest.json",
-	"sw.js",
+	"service-worker.js",
 ];
 
 const staticDirs = ["icon", "data", "font"];
