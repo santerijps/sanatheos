@@ -7,8 +7,12 @@ pre-commit:
       run: bunx oxfmt --check src/ tests/ scripts/
     typecheck:
       run: bunx tsc --noEmit
+    test:
+      run: bun test
 
 pre-push:
   commands:
     test:
       run: bun test
+    test-e2e:
+      run: bun test:e2e
