@@ -147,7 +147,7 @@ sanatheos/
     ├── features.test.ts      # Feature tests (i18n, highlights, descriptions, interlinear, PWA)
     ├── bible-loader.test.ts  # Bible loader tests (BOOK_ORDER, loadBible, discoverTranslations)
     └── e2e/                  # End-to-end tests (Playwright)
-        └── app.spec.ts       # Full app e2e tests (130+ tests across 22 describe blocks):
+        └── app.spec.ts       # Full app e2e tests (150+ tests across 23 describe blocks):
                               #   Page load, Search, Chapter navigation, Book index panel,
                               #   Side panel, Settings pane, Info pane, Keyboard shortcuts,
                               #   URL state, Translation switching, Toast notifications, Footer,
@@ -155,7 +155,8 @@ sanatheos/
                               #   Parables of Jesus pane, Theophanies pane, Typology pane,
                               #   Bookmarks pane, Verse notes,
                               #   Finnish (fi) language, Swedish (sv) language,
-                              #   Language switching and persistence
+                              #   Language switching and persistence,
+                              #   IndexedDB caching and preloading
 ```
 
 ## Bible Data Format
@@ -225,7 +226,7 @@ Book names use English keys (matching Bible data keys). Descriptions are display
 
 ## Stories Data Format
 
-The Bible stories list lives in `public/data/stories.json`. It is fetched lazily (only when the Stories pane is first opened) and cached in memory. Structure:
+The Bible stories list lives in `public/data/stories.json`. It is fetched on demand and cached in memory (and in IndexedDB). It is also preloaded in the background after the main page renders. Structure:
 
 ```json
 [
@@ -252,7 +253,7 @@ Language selection follows the active UI language. The build script copies the e
 
 ## Parables Data Format
 
-The parables list lives in `public/data/parables.json`. It is fetched lazily (only when the Parables pane is first opened) and cached in memory. Structure:
+The parables list lives in `public/data/parables.json`. It is fetched on demand and cached in memory (and in IndexedDB). It is also preloaded in the background after the main page renders. Structure:
 
 ```json
 [
@@ -459,10 +460,12 @@ The `init()` function runs on page load and orchestrates everything:
 
 Key functions:
 - `activateSideTab(tab)` — toggles `.active` on both tab buttons and panes, saves to `localStorage` key `"side-panel-tab"`
-- `openSidePanel(tab?)` — adds `.open` to `#side-overlay`, calls `activateSideTab`, loads stories/parables/bookmarks data for their respective tabs
+- `openSidePanel(tab?)` — adds `.open` to `#side-overlay`, calls `activateSideTab`, loads stories/parables/theophanies/typology/bookmarks data for their respective tabs (already in memory if background preload completed)
 - `closeSidePanel()` — removes `.open` from `#side-overlay`
 
-**Stories data flow** — `loadStoriesData()` fetches `./data/stories.json` once and caches the result in a module-scoped variable. `renderStoriesList(stories, filter)` builds HTML from the filtered list, grouping entries by `category` with `.stories-category-label` headers and `.story-item` buttons. Clicking a story calls `closeSidePanel()`, sets the search input value to the story's `ref`, and dispatches an `input` event to trigger navigation.
+**Background preloading** — After the initial page content is rendered and the footer is revealed, `loadStoriesData()`, `loadParablesData()`, `loadTheophaniesData()`, and `loadTypologyData()` are called in parallel inside a `requestIdleCallback` callback (falling back to `setTimeout(fn, 0)`). This populates both the module-scoped in-memory cache and IndexedDB before the user opens the side panel, so the first panel open is instant.
+
+**Stories data flow** — `loadStoriesData()` checks the module-scoped variable first, then falls back to IndexedDB (`loadStories()`), then fetches `./data/stories.json` from the network and saves to IndexedDB. `renderStoriesList(stories, filter)` builds HTML from the filtered list, grouping entries by `category` with `.stories-category-label` headers and `.story-item` buttons. Clicking a story calls `closeSidePanel()`, sets the search input value to the story's `ref`, and dispatches an `input` event to trigger navigation.
 
 **Parables data flow** — `loadParablesData()` fetches `./data/parables.json` once and caches in memory. `renderParablesList(parables, filter)` builds HTML identically to stories (same CSS classes: `.stories-category-label`, `.story-item`, `.story-item-title`, `.story-item-desc`, `.story-item-ref`, `.stories-empty`). Category labels are gospel book names (`"Matthew"`, `"Mark"`, `"Luke"`) localized via `displayName()`. Clicking a parable navigates identically to stories.
 
@@ -618,8 +621,8 @@ All functions write to `$("content").innerHTML`. Functions:
 
 ### db.ts — IndexedDB Layer
 
-Database: `bible-app`, version 4. Four object stores:
-- `data` — Bible translation data keyed by translation code (e.g., `"NHEB"`), plus interlinear data keyed by `"interlinear-{Book}"` and Strong's dictionary keyed by `"strongs"`.
+Database: `sanatheos-db`, version 4. Four object stores:
+- `data` — Bible translation data keyed by translation code (e.g., `"NHEB"`), plus interlinear data keyed by `"interlinear-{Book}"`, Strong's dictionary keyed by `"strongs"`, and side panel data keyed by `"stories"`, `"parables"`, `"theophanies"`, `"typology"`.
 - `highlights` — Highlight records with compound key `book:chapter:verse`.
 - `bookmarks` — Bookmark records with `keyPath: "id"`. Each record: `{ id: string, book?: string, chapter?: number, verse?: number, query?: string, addedAt: number }`. `id` is a structured key (`book:chapter:verse`, `book:chapter`, `book`, or `q:query`). Records are returned sorted by `addedAt` descending.
 - `notes` — Verse note records with `keyPath: "id"`. Each record is a `VerseNote`: `{ id: "book:chapter:verse", book, chapter, verse, text, updatedAt }`. Records are returned sorted by `updatedAt` descending.

@@ -732,6 +732,23 @@ async function init() {
 	// Reveal footer now that content has been rendered
 	document.getElementById("footer")?.classList.add("visible");
 
+	// Preload side panel data in the background after the main page has rendered
+	const preloadSidePanelData = () => {
+		Promise.all([
+			loadStoriesData(),
+			loadParablesData(),
+			loadTheophaniesData(),
+			loadTypologyData(),
+		]).catch((error) => {
+			console.error(error);
+		});
+	};
+	if ("requestIdleCallback" in window) {
+		window.requestIdleCallback(preloadSidePanelData);
+	} else {
+		setTimeout(preloadSidePanelData, 0);
+	}
+
 	// --- Search with debounce ---
 	let timer: number;
 	searchInput.addEventListener("input", () => {

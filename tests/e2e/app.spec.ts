@@ -196,8 +196,13 @@ async function openPanelTab(
 		| "settings"
 		| "info",
 ) {
-	await page.click("#panel-btn");
-	await expect(page.locator("#side-overlay")).toHaveClass(/open/);
+	// Only click the panel button if the panel is not already open; when the
+	// panel is open the full-screen overlay intercepts clicks on #panel-btn.
+	const isOpen = (await page.locator("#side-overlay.open").count()) > 0;
+	if (!isOpen) {
+		await page.click("#panel-btn");
+		await expect(page.locator("#side-overlay")).toHaveClass(/open/);
+	}
 	// Always click the tab button explicitly so we don't rely on localStorage state
 	await page.click(`.side-tab-btn[data-tab="${tab}"]`);
 	await expect(page.locator(`.side-pane[data-pane="${tab}"]`)).toHaveClass(/active/);
@@ -207,7 +212,7 @@ async function openPanelTab(
 async function clearBookmarks(page: Page) {
 	await page.evaluate(async () => {
 		const db = await new Promise<IDBDatabase>((resolve, reject) => {
-			const req = indexedDB.open("bible-app");
+			const req = indexedDB.open("sanatheos-db");
 			req.onsuccess = () => resolve(req.result);
 			req.onerror = () => reject(req.error);
 		});
@@ -1067,7 +1072,7 @@ test.describe("Bookmarks pane", () => {
 async function clearNotes(page: Page) {
 	await page.evaluate(async () => {
 		const db = await new Promise<IDBDatabase>((resolve, reject) => {
-			const req = indexedDB.open("bible-app");
+			const req = indexedDB.open("sanatheos-db");
 			req.onsuccess = () => resolve(req.result);
 			req.onerror = () => reject(req.error);
 		});
@@ -1707,5 +1712,344 @@ test.describe("Language switching and persistence", () => {
 		);
 		expect(values).toContain("KR38");
 		expect(values).toContain("SV17");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// IndexedDB (IDB) — caching, persistence, and background preloading
+// ---------------------------------------------------------------------------
+
+/**
+ * Poll the IDB `data` store until `key` is present.
+ * Uses page.waitForFunction so Playwright retries automatically.
+ */
+async function waitForIdbDataKey(page: Page, key: string, timeout = 15_000): Promise<void> {
+	await page.waitForFunction(
+		(k: string) =>
+			new Promise<boolean>((resolve) => {
+				const req = indexedDB.open("sanatheos-db");
+				req.onsuccess = () => {
+					const db = req.result;
+					if (!db.objectStoreNames.contains("data")) {
+						db.close();
+						resolve(false);
+						return;
+					}
+					const tx = db.transaction("data", "readonly");
+					const getReq = tx.objectStore("data").getKey(k);
+					getReq.onsuccess = () => {
+						db.close();
+						resolve(getReq.result !== undefined);
+					};
+					getReq.onerror = () => {
+						db.close();
+						resolve(false);
+					};
+				};
+				req.onerror = () => resolve(false);
+			}),
+		key,
+		{ timeout },
+	);
+}
+
+/** Read a value from the IDB `data` store. */
+async function getIdbDataValue(page: Page, key: string): Promise<unknown> {
+	return page.evaluate((k: string) => {
+		return new Promise((resolve, reject) => {
+			const req = indexedDB.open("sanatheos-db");
+			req.onsuccess = () => {
+				const db = req.result;
+				const tx = db.transaction("data", "readonly");
+				const getReq = tx.objectStore("data").get(k);
+				getReq.onsuccess = () => {
+					db.close();
+					resolve(getReq.result ?? null);
+				};
+				getReq.onerror = () => {
+					db.close();
+					reject(getReq.error);
+				};
+			};
+			req.onerror = () => reject(req.error);
+		});
+	}, key);
+}
+
+test.describe("IndexedDB caching and preloading", () => {
+	test("IDB database is named 'sanatheos-db'", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		const exists = await page.evaluate(async () => {
+			const dbs = await indexedDB.databases();
+			return dbs.some((d) => d.name === "sanatheos-db");
+		});
+		expect(exists).toBe(true);
+	});
+
+	test("default translation (NHEB) is cached in IDB after initial load", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await waitForIdbDataKey(page, "NHEB");
+		const value = await getIdbDataValue(page, "NHEB");
+		expect(value).not.toBeNull();
+		expect(typeof value).toBe("object");
+	});
+
+	test("KJV translation is cached in IDB after switching to it", async ({ page }) => {
+		await page.goto("/?t=KJV&book=gen&chapter=1");
+		await waitForApp(page);
+		await waitForIdbDataKey(page, "KJV");
+		const value = await getIdbDataValue(page, "KJV");
+		expect(value).not.toBeNull();
+	});
+
+	test("translation data is served from IDB cache when network is blocked", async ({
+		page,
+		context,
+	}) => {
+		// First load — populates IDB cache
+		await page.goto("/");
+		await waitForApp(page);
+		await waitForIdbDataKey(page, "NHEB");
+
+		// Block the bible JSON endpoint
+		await context.route("**/text/bible-NHEB.json", (route) => route.abort());
+
+		// Reload — should still render from IDB without a network request
+		await page.reload();
+		await waitForApp(page);
+		await expect(page.locator("#content")).toContainText("In the beginning");
+	});
+
+	test("stories data is preloaded into IDB in the background after page load", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		// Background preload fires via requestIdleCallback — wait for it to land in IDB
+		await waitForIdbDataKey(page, "stories");
+		const value = await getIdbDataValue(page, "stories");
+		expect(Array.isArray(value)).toBe(true);
+		expect((value as unknown[]).length).toBeGreaterThan(0);
+	});
+
+	test("parables data is preloaded into IDB in the background after page load", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await waitForIdbDataKey(page, "parables");
+		const value = await getIdbDataValue(page, "parables");
+		expect(Array.isArray(value)).toBe(true);
+		expect((value as unknown[]).length).toBeGreaterThan(0);
+	});
+
+	test("theophanies data is preloaded into IDB in the background after page load", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await waitForIdbDataKey(page, "theophanies");
+		const value = await getIdbDataValue(page, "theophanies");
+		expect(Array.isArray(value)).toBe(true);
+		expect((value as unknown[]).length).toBeGreaterThan(0);
+	});
+
+	test("typology data is preloaded into IDB in the background after page load", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await waitForIdbDataKey(page, "typology");
+		const value = await getIdbDataValue(page, "typology");
+		expect(Array.isArray(value)).toBe(true);
+		expect((value as unknown[]).length).toBeGreaterThan(0);
+	});
+
+	test("side panel data loads without network on second visit (served from IDB)", async ({
+		page,
+		context,
+	}) => {
+		// First visit — background preload fills IDB
+		await page.goto("/");
+		await waitForApp(page);
+		await waitForIdbDataKey(page, "stories");
+		await waitForIdbDataKey(page, "parables");
+
+		// Block data file endpoints
+		await context.route("**/data/stories.json", (route) => route.abort());
+		await context.route("**/data/parables.json", (route) => route.abort());
+
+		// Reload — side panel data should come from IDB, not network
+		await page.reload();
+		await waitForApp(page);
+
+		await openPanelTab(page, "stories");
+		await page.waitForSelector(".story-item", { timeout: 10_000 });
+		expect(await page.locator(".story-item").count()).toBeGreaterThan(0);
+
+		await openPanelTab(page, "parables");
+		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
+		expect(await page.locator("#parables-list .story-item").count()).toBeGreaterThan(0);
+	});
+
+	test("highlight color is persisted in IDB across page reload", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+
+		// Open verse menu and apply a yellow highlight
+		await page.waitForSelector(".verse sup", { timeout: 10_000 });
+		await page.locator(".verse sup").first().click();
+		await expect(page.locator("#verse-menu")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator(".color-dot[data-color='yellow']").click();
+		await page.waitForSelector(".hl-yellow", { timeout: 5_000 });
+
+		// Reload and verify the highlight is still applied
+		await page.reload();
+		await waitForApp(page);
+		await expect(page.locator(".hl-yellow").first()).toBeVisible({ timeout: 5_000 });
+	});
+
+	test("highlight is stored in IDB highlights store", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+
+		await page.waitForSelector(".verse sup", { timeout: 10_000 });
+		await page.locator(".verse sup").first().click();
+		await expect(page.locator("#verse-menu")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator(".color-dot[data-color='green']").click();
+		await page.waitForSelector(".hl-green", { timeout: 5_000 });
+
+		// Verify the highlight record exists in IDB
+		const hasRecord = await page.evaluate(async () => {
+			return new Promise<boolean>((resolve) => {
+				const req = indexedDB.open("sanatheos-db");
+				req.onsuccess = () => {
+					const db = req.result;
+					const tx = db.transaction("highlights", "readonly");
+					const countReq = tx.objectStore("highlights").count();
+					countReq.onsuccess = () => {
+						db.close();
+						resolve((countReq.result as number) > 0);
+					};
+					countReq.onerror = () => {
+						db.close();
+						resolve(false);
+					};
+				};
+				req.onerror = () => resolve(false);
+			});
+		});
+		expect(hasRecord).toBe(true);
+	});
+
+	test("notes are persisted in IDB across page reload", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		// Add a note
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-textarea").fill("IDB persistence test note");
+		await page.locator("#note-panel-save").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// Reload and verify the note is still there
+		await page.reload();
+		await waitForApp(page);
+		await openPanelTab(page, "notes");
+		const items = page.locator(".note-item");
+		await expect(items).toHaveCount(1, { timeout: 5_000 });
+		await expect(items.first()).toContainText("IDB persistence test note");
+	});
+
+	test("note is stored in IDB notes store with correct fields", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await clearNotes(page);
+
+		// Add a note
+		await openVerseMenu(page);
+		await page.locator('.verse-menu-item[data-action="note"]').click();
+		await expect(page.locator("#note-panel-overlay")).toHaveClass(/open/, { timeout: 5_000 });
+		await page.locator("#note-panel-textarea").fill("IDB field check");
+		await page.locator("#note-panel-save").click();
+		await expect(page.locator("#note-panel-overlay")).not.toHaveClass(/open/, {
+			timeout: 5_000,
+		});
+
+		// Read the note directly from IDB
+		const note = await page.evaluate(async () => {
+			return new Promise<Record<string, unknown> | null>((resolve) => {
+				const req = indexedDB.open("sanatheos-db");
+				req.onsuccess = () => {
+					const db = req.result;
+					const tx = db.transaction("notes", "readonly");
+					const getAllReq = tx.objectStore("notes").getAll();
+					getAllReq.onsuccess = () => {
+						db.close();
+						const results = getAllReq.result as Array<Record<string, unknown>>;
+						resolve(results[0] ?? null);
+					};
+					getAllReq.onerror = () => {
+						db.close();
+						resolve(null);
+					};
+				};
+				req.onerror = () => resolve(null);
+			});
+		});
+
+		expect(note).not.toBeNull();
+		expect(note!.text).toBe("IDB field check");
+		expect(note!.book).toBe("John");
+		expect(typeof note!.chapter).toBe("number");
+		expect(typeof note!.verse).toBe("number");
+		expect(typeof note!.updatedAt).toBe("number");
+	});
+
+	test("IDB data store contains sidebar keys after preload", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+
+		// Wait for all four preload keys
+		await Promise.all([
+			waitForIdbDataKey(page, "stories"),
+			waitForIdbDataKey(page, "parables"),
+			waitForIdbDataKey(page, "theophanies"),
+			waitForIdbDataKey(page, "typology"),
+		]);
+
+		// Read all keys from the data store
+		const keys = await page.evaluate(async () => {
+			return new Promise<string[]>((resolve, reject) => {
+				const req = indexedDB.open("sanatheos-db");
+				req.onsuccess = () => {
+					const db = req.result;
+					const tx = db.transaction("data", "readonly");
+					const keysReq = tx.objectStore("data").getAllKeys();
+					keysReq.onsuccess = () => {
+						db.close();
+						resolve((keysReq.result as IDBValidKey[]).map(String));
+					};
+					keysReq.onerror = () => {
+						db.close();
+						reject(keysReq.error);
+					};
+				};
+				req.onerror = () => reject(req.error);
+			});
+		});
+
+		expect(keys).toContain("NHEB");
+		expect(keys).toContain("stories");
+		expect(keys).toContain("parables");
+		expect(keys).toContain("theophanies");
+		expect(keys).toContain("typology");
 	});
 });

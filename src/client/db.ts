@@ -12,7 +12,7 @@ import type {
 	VerseNote,
 } from "./types.ts";
 
-const DB_NAME = "bible-app";
+const DB_NAME = "sanatheos-db";
 const DB_VERSION = 4;
 const DATA_STORE = "data";
 const HIGHLIGHTS_STORE = "highlights";
