@@ -1236,77 +1236,6 @@ mark {
   display: none;
 }
 
-/* ≥768px: flex layout, rail on the right.
-   No ghost spacer — justify-content: center centres the {main + rail} group,
-   so main sits slightly left-of-centre with the rail to its right. */
-@media (min-width: 768px) {
-  #page-layout {
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 24px;
-    margin-top: 24px;
-    padding: 0 16px;
-  }
-
-  #page-layout main {
-    margin: 0;
-    flex-grow: 1;
-    padding-left: 64px;
-    padding-right: 64px;
-  }
-
-  #sidenotes-rail {
-    display: block;
-    flex: 0 0 200px;
-    position: relative;
-  }
-
-  #sidenotes-rail:empty {
-    flex: 0 0 0;
-    width: 0;
-    overflow: hidden;
-  }
-
-  #sidenotes-rail .verse-sidenote {
-    display: block;
-    position: absolute;
-    width: 100%;
-    font-size: 12px;
-    line-height: 1.5;
-  }
-
-  .verses {
-    position: relative;
-    overflow: visible;
-  }
-
-  #search-wrap {
-    max-width: 100%;
-  }
-}
-
-/* ≥1300px: inject a ghost spacer on the left that mirrors the rail so main
-   is truly centred under the search bar. The spacer collapses automatically
-   when the rail is empty, keeping the layout balanced in both states.
-   Also widens the index panel columns. */
-@media (min-width: 1300px) {
-  #page-layout::before {
-    content: '';
-    flex: 0 0 200px;
-  }
-
-  #page-layout:has(#sidenotes-rail:empty)::before {
-    flex: 0 0 0;
-  }
-
-  .idx-col { width: 320px; }
-
-  #search-wrap {
-    max-width: 90ch;
-  }
-}
-
 /* Note editor left panel — mirrors right sidebar */
 #note-panel-overlay {
   position: fixed;
@@ -1926,36 +1855,6 @@ mark {
   letter-spacing: 0.3px;
 }
 
-/* === Responsive (≤800px) === */
-@media (max-width: 800px) {
-  header { padding: 8px 12px; }
-  main { padding: 32px 16px 32px; margin-top: 0; border-radius: 0; }
-  #index-panel { flex-direction: column; height: 90vh; width: 90vw; max-width: 90vw; }
-  .idx-col { width: 100%; flex: 1; height: 0; max-height: none; min-height: 140px; border-right: none; border-bottom: 1px solid var(--border); padding-top: 0; }
-  .idx-col:last-child { border-bottom: none; }
-  .idx-col::before {
-    content: attr(data-label);
-    display: block;
-    font: 700 10px var(--sans);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    color: var(--subtle);
-    padding: 8px 12px;
-    position: sticky;
-    top: 0;
-    background: inherit;
-    border-bottom: 1px solid var(--border);
-    margin: 0 -8px 4px;
-    z-index: 1;
-  }
-  .parallel-container { flex-direction: column; }
-  .parallel-col { border-right: none; border-bottom: 1px solid var(--border); padding: 16px; }
-  .nav-full { display: none; }
-  .nav-short { display: inline; }
-  .parallel-col .section-title { font-size: 14px; }
-  .section-title { font-size: 16px; }
-}
-
 /* === Verse Context Menu === */
 .verse-menu {
   position: fixed;
@@ -2464,17 +2363,130 @@ mark {
   color: var(--text);
 }
 
-/* --- Responsive interlinear --- */
-@media (max-width: 600px) {
+/* ≥768px: flex layout, rail on the right.
+   No ghost spacer — justify-content: center centres the {main + rail} group,
+   so main sits slightly left-of-centre with the rail to its right. */
+@media (min-width: 768px) {
+  #page-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 24px;
+    padding: 0 16px;
+  }
+
+  #page-layout main {
+    margin: 0;
+    flex-grow: 1;
+    padding-left: 64px;
+    padding-right: 64px;
+  }
+
+  #sidenotes-rail {
+    display: block;
+    flex: 0 0 200px;
+    position: relative;
+  }
+
+  #sidenotes-rail:empty {
+    flex: 0 0 0;
+    width: 0;
+    overflow: hidden;
+  }
+
+  #sidenotes-rail .verse-sidenote {
+    display: block;
+    position: absolute;
+    width: 100%;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+
+  .verses {
+    position: relative;
+    overflow: visible;
+  }
+
+  #search-wrap {
+    max-width: 100%;
+  }
+}
+
+/* ≥1300px: inject a ghost spacer on the left that mirrors the rail so main
+   is truly centred under the search bar. The spacer collapses automatically
+   when the rail is empty, keeping the layout balanced in both states.
+   Also widens the index panel columns. */
+@media (min-width: 1300px) {
+  #page-layout::before {
+    content: '';
+    flex: 0 0 200px;
+  }
+
+  #page-layout:has(#sidenotes-rail:empty)::before {
+    flex: 0 0 0;
+  }
+
+  .idx-col { width: 320px; }
+
+  #search-wrap {
+    max-width: 90ch;
+  }
+}
+
+/* === Responsive (≤800px) === */
+@media (max-width: 800px) {
+  header { padding: 8px 12px; }
+  main { padding: 32px 16px 32px; margin-top: 0; border-radius: 0; }
+  #index-panel { flex-direction: column; height: 90vh; width: 90vw; max-width: 90vw; }
+  .idx-col { width: 100%; flex: 1; height: 0; max-height: none; min-height: 140px; border-right: none; border-bottom: 1px solid var(--border); padding-top: 0; }
+  .idx-col:last-child { border-bottom: none; }
+  .idx-col::before {
+    content: attr(data-label);
+    display: block;
+    font: 700 10px var(--sans);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--subtle);
+    padding: 8px 12px;
+    position: sticky;
+    top: 0;
+    background: inherit;
+    border-bottom: 1px solid var(--border);
+    margin: 0 -8px 4px;
+    z-index: 1;
+  }
+  .parallel-container {
+    flex-direction: column;
+    background: none;
+    gap: 1px;
+  }
+  .parallel-col {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+  }
+  .parallel-col:first-child {
+    padding-inline: 0;
+    padding-block-end: 24px;
+  }
+  .parallel-col:last-child {
+    padding-inline: 0;
+    padding-block-start: 24px;
+  }
+  .parallel-col .section-title { font-size: 14px; }
+  .nav-full { display: none; }
+  .nav-short { display: inline; }
+  .section-title { font-size: 16px; }
+
+  /* --- Responsive interlinear --- */
   .il-word {
     min-width: 2.5em;
     padding: 2px 3px;
   }
-
   .il-row {
     gap: 3px;
   }
-
   #strongs-panel {
     width: 100vw;
   }
