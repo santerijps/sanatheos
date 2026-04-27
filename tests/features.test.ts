@@ -954,7 +954,7 @@ describe("CSS — responsive section-title", () => {
 
 	test("section-title has smaller font in mobile media query", () => {
 		// Find the @media (max-width: 800px) block — it ends at the next unindented }
-		const start = css.indexOf("@media (max-width: 800px)");
+		const start = css.indexOf("@media screen and (max-width: 768px)");
 		expect(start).not.toBe(-1);
 		// Extract everything from this media query to its closing brace
 		let depth = 0;

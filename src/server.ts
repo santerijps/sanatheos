@@ -158,3 +158,18 @@ Bun.serve({
 });
 
 console.log("→ http://localhost:3000");
+
+/* TODO: Simplify above to something like this
+Bun.serve({
+	routes: {
+		"/": () => new Response(Bun.file(join(PUBLIC, "index.html"))),
+		"/dictionary": () => new Response(Bun.file(join(PUBLIC, "dictionary.html"))),
+	},
+	fetch(req) {
+		const path = new URL(req.url).pathname;
+		const file = Bun.file(join(PUBLIC, ".", path));
+		return new Response(file);
+	},
+	development: true,
+});
+*/
