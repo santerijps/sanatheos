@@ -839,7 +839,9 @@ test.describe("Theophanies pane", () => {
 		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
 
 		await page.fill("#theophanies-filter", "xyznonexistent999");
-		await expect(page.locator("#theophanies-list .stories-empty")).toBeVisible({ timeout: 5_000 });
+		await expect(page.locator("#theophanies-list .stories-empty")).toBeVisible({
+			timeout: 5_000,
+		});
 		await expect(page.locator("#theophanies-list .story-item")).toHaveCount(0);
 	});
 
