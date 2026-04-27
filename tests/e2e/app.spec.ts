@@ -607,7 +607,11 @@ test.describe("Bible Stories pane", () => {
 
 		// Filter to a specific story
 		await page.fill("#stories-filter", "Noah");
-		await page.waitForTimeout(100);
+		await page.waitForFunction(
+			(n: number) => document.querySelectorAll(".story-item").length < n,
+			totalBefore,
+			{ timeout: 5_000 },
+		);
 		const totalAfter = await page.locator(".story-item").count();
 		expect(totalAfter).toBeLessThan(totalBefore);
 		// The Noah story should be visible
@@ -621,8 +625,7 @@ test.describe("Bible Stories pane", () => {
 		await page.waitForSelector(".story-item", { timeout: 10_000 });
 
 		await page.fill("#stories-filter", "xyznonexistent999");
-		await page.waitForTimeout(100);
-		await expect(page.locator(".stories-empty")).toBeVisible();
+		await expect(page.locator(".stories-empty")).toBeVisible({ timeout: 5_000 });
 		await expect(page.locator(".story-item")).toHaveCount(0);
 	});
 
@@ -702,7 +705,11 @@ test.describe("Parables of Jesus pane", () => {
 		const totalBefore = await page.locator("#parables-list .story-item").count();
 
 		await page.fill("#parables-filter", "Prodigal");
-		await page.waitForTimeout(100);
+		await page.waitForFunction(
+			(n: number) => document.querySelectorAll("#parables-list .story-item").length < n,
+			totalBefore,
+			{ timeout: 5_000 },
+		);
 		const totalAfter = await page.locator("#parables-list .story-item").count();
 		expect(totalAfter).toBeLessThan(totalBefore);
 		await expect(page.locator("#parables-list .story-item").first()).toContainText("Prodigal");
@@ -715,8 +722,7 @@ test.describe("Parables of Jesus pane", () => {
 		await page.waitForSelector("#parables-list .story-item", { timeout: 10_000 });
 
 		await page.fill("#parables-filter", "xyznonexistent999");
-		await page.waitForTimeout(100);
-		await expect(page.locator("#parables-list .stories-empty")).toBeVisible();
+		await expect(page.locator("#parables-list .stories-empty")).toBeVisible({ timeout: 5_000 });
 		await expect(page.locator("#parables-list .story-item")).toHaveCount(0);
 	});
 
@@ -805,7 +811,11 @@ test.describe("Theophanies pane", () => {
 		const totalBefore = await page.locator("#theophanies-list .story-item").count();
 
 		await page.fill("#theophanies-filter", "Moses");
-		await page.waitForTimeout(100);
+		await page.waitForFunction(
+			(n: number) => document.querySelectorAll("#theophanies-list .story-item").length < n,
+			totalBefore,
+			{ timeout: 5_000 },
+		);
 		const totalAfter = await page.locator("#theophanies-list .story-item").count();
 		expect(totalAfter).toBeLessThan(totalBefore);
 		expect(totalAfter).toBeGreaterThan(0);
@@ -829,8 +839,7 @@ test.describe("Theophanies pane", () => {
 		await page.waitForSelector("#theophanies-list .story-item", { timeout: 10_000 });
 
 		await page.fill("#theophanies-filter", "xyznonexistent999");
-		await page.waitForTimeout(100);
-		await expect(page.locator("#theophanies-list .stories-empty")).toBeVisible();
+		await expect(page.locator("#theophanies-list .stories-empty")).toBeVisible({ timeout: 5_000 });
 		await expect(page.locator("#theophanies-list .story-item")).toHaveCount(0);
 	});
 
@@ -915,7 +924,11 @@ test.describe("Typology pane", () => {
 		const totalBefore = await page.locator("#typology-list .story-item").count();
 
 		await page.fill("#typology-filter", "Moses");
-		await page.waitForTimeout(100);
+		await page.waitForFunction(
+			(n: number) => document.querySelectorAll("#typology-list .story-item").length < n,
+			totalBefore,
+			{ timeout: 5_000 },
+		);
 		const totalAfter = await page.locator("#typology-list .story-item").count();
 		expect(totalAfter).toBeLessThan(totalBefore);
 		expect(totalAfter).toBeGreaterThan(0);
@@ -938,8 +951,7 @@ test.describe("Typology pane", () => {
 		await page.waitForSelector("#typology-list .story-item", { timeout: 10_000 });
 
 		await page.fill("#typology-filter", "xyznonexistent999");
-		await page.waitForTimeout(100);
-		await expect(page.locator("#typology-list .stories-empty")).toBeVisible();
+		await expect(page.locator("#typology-list .stories-empty")).toBeVisible({ timeout: 5_000 });
 		await expect(page.locator("#typology-list .story-item")).toHaveCount(0);
 	});
 
@@ -1776,6 +1788,44 @@ async function getIdbDataValue(page: Page, key: string): Promise<unknown> {
 	}, key);
 }
 
+/**
+ * Poll the IDB `data` store until `key` is present and return its value.
+ * Combines the wait and read into a single atomic operation to eliminate the
+ * race window that exists between separate waitForIdbDataKey + getIdbDataValue
+ * calls (a versionchange or deleteDatabase triggered by the app could clear
+ * the store between the two evaluate() calls).
+ */
+async function waitForIdbDataValue(page: Page, key: string, timeout = 15_000): Promise<unknown> {
+	const handle = await page.waitForFunction(
+		(k: string) =>
+			new Promise<unknown>((resolve) => {
+				const req = indexedDB.open("sanatheos-db");
+				req.onsuccess = () => {
+					const db = req.result;
+					if (!db.objectStoreNames.contains("data")) {
+						db.close();
+						resolve(null);
+						return;
+					}
+					const tx = db.transaction("data", "readonly");
+					const getReq = tx.objectStore("data").get(k);
+					getReq.onsuccess = () => {
+						db.close();
+						resolve(getReq.result ?? null);
+					};
+					getReq.onerror = () => {
+						db.close();
+						resolve(null);
+					};
+				};
+				req.onerror = () => resolve(null);
+			}),
+		key,
+		{ timeout },
+	);
+	return handle.jsonValue();
+}
+
 test.describe("IndexedDB caching and preloading", () => {
 	test("IDB database is named 'sanatheos-db'", async ({ page }) => {
 		await page.goto("/");
@@ -1790,8 +1840,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	test("default translation (NHEB) is cached in IDB after initial load", async ({ page }) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await waitForIdbDataKey(page, "NHEB");
-		const value = await getIdbDataValue(page, "NHEB");
+		const value = await waitForIdbDataValue(page, "NHEB");
 		expect(value).not.toBeNull();
 		expect(typeof value).toBe("object");
 	});
@@ -1799,8 +1848,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	test("KJV translation is cached in IDB after switching to it", async ({ page }) => {
 		await page.goto("/?t=KJV&book=gen&chapter=1");
 		await waitForApp(page);
-		await waitForIdbDataKey(page, "KJV");
-		const value = await getIdbDataValue(page, "KJV");
+		const value = await waitForIdbDataValue(page, "KJV");
 		expect(value).not.toBeNull();
 	});
 
@@ -1828,8 +1876,7 @@ test.describe("IndexedDB caching and preloading", () => {
 		await page.goto("/");
 		await waitForApp(page);
 		// Background preload fires via requestIdleCallback — wait for it to land in IDB
-		await waitForIdbDataKey(page, "stories");
-		const value = await getIdbDataValue(page, "stories");
+		const value = await waitForIdbDataValue(page, "stories");
 		expect(Array.isArray(value)).toBe(true);
 		expect((value as unknown[]).length).toBeGreaterThan(0);
 	});
@@ -1839,8 +1886,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	}) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await waitForIdbDataKey(page, "parables");
-		const value = await getIdbDataValue(page, "parables");
+		const value = await waitForIdbDataValue(page, "parables");
 		expect(Array.isArray(value)).toBe(true);
 		expect((value as unknown[]).length).toBeGreaterThan(0);
 	});
@@ -1850,8 +1896,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	}) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await waitForIdbDataKey(page, "theophanies");
-		const value = await getIdbDataValue(page, "theophanies");
+		const value = await waitForIdbDataValue(page, "theophanies");
 		expect(Array.isArray(value)).toBe(true);
 		expect((value as unknown[]).length).toBeGreaterThan(0);
 	});
@@ -1861,8 +1906,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	}) => {
 		await page.goto("/");
 		await waitForApp(page);
-		await waitForIdbDataKey(page, "typology");
-		const value = await getIdbDataValue(page, "typology");
+		const value = await waitForIdbDataValue(page, "typology");
 		expect(Array.isArray(value)).toBe(true);
 		expect((value as unknown[]).length).toBeGreaterThan(0);
 	});
