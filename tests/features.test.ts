@@ -2064,6 +2064,37 @@ describe("CSS — mobile index bottom sheet", () => {
 		expect(css).toContain(".idx-read-chapter");
 		expect(css).toContain(".idx-read-book");
 	});
+
+	test("mobile header has drag handle pill via ::before pseudo-element", () => {
+		const mobileIdx = css.indexOf("max-width: 768px");
+		expect(mobileIdx).toBeGreaterThan(-1);
+		const mobileBlock = css.slice(mobileIdx, mobileIdx + 6000);
+		expect(mobileBlock).toContain("#idx-mobile-header::before");
+		expect(mobileBlock).toContain("border-radius: 2px");
+	});
+
+	test("#index-panel.dragging suppresses CSS animations", () => {
+		const mobileIdx = css.indexOf("max-width: 768px");
+		const mobileBlock = css.slice(mobileIdx, mobileIdx + 6000);
+		expect(mobileBlock).toContain("#index-panel.dragging");
+		expect(mobileBlock).toContain("animation: none");
+	});
+
+	test("#index-panel.dragging-done suppresses CSS animations (prevents open animation replay after snap-back)", () => {
+		const mobileIdx = css.indexOf("max-width: 768px");
+		const mobileBlock = css.slice(mobileIdx, mobileIdx + 6000);
+		expect(mobileBlock).toContain("#index-panel.dragging-done");
+	});
+
+	test("mobile header has touch-action: none for drag gesture", () => {
+		const mobileIdx = css.indexOf("max-width: 768px");
+		const mobileBlock = css.slice(mobileIdx, mobileIdx + 6000);
+		// The #idx-mobile-header rule inside the mobile block should include touch-action: none
+		const headerIdx = mobileBlock.indexOf("#idx-mobile-header {");
+		expect(headerIdx).toBeGreaterThan(-1);
+		const headerRule = mobileBlock.slice(headerIdx, headerIdx + 400);
+		expect(headerRule).toContain("touch-action: none");
+	});
 });
 
 // ---------------------------------------------------------------------------

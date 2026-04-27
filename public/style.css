@@ -2716,9 +2716,17 @@ mark {
     #index-panel {
         width: 100%;
         max-width: 100%;
-        height: 85vh;
         border-radius: 16px 16px 0 0;
         box-shadow: 0 -4px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Suppress CSS open/close animations while the user is manually dragging.
+       Transitions are NOT suppressed so inline snap-back/close transitions work.
+       .dragging-done persists after snap-back to prevent the open animation
+       from replaying when .dragging is removed. Cleared on next openIndex(). */
+    #index-panel.dragging,
+    #index-panel.dragging-done {
+        animation: none !important;
     }
 
     /* --- Mobile drill-down header --- */
@@ -2726,10 +2734,28 @@ mark {
         display: flex;
         align-items: center;
         gap: 8px;
-        padding: 10px 12px 8px;
+        padding: 18px 12px 8px;
         border-bottom: 1px solid var(--border);
         flex-shrink: 0;
         background: var(--surface);
+        touch-action: none; /* let JS handle vertical drags */
+        cursor: grab;
+        border-radius: 16px 16px 0 0;
+        position: relative; /* anchor the ::before pill */
+    }
+
+    /* Drag-handle pill */
+    #idx-mobile-header::before {
+        content: '';
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 36px;
+        height: 4px;
+        background: var(--border);
+        border-radius: 2px;
+        pointer-events: none;
     }
 
     #idx-back-btn {

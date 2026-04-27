@@ -2377,4 +2377,121 @@ test.describe("Book index panel — mobile bottom sheet + drill-down", () => {
 		await expect(panel).toHaveAttribute("data-step", "chapters", { timeout: 3_000 });
 		await expect(page.locator("#idx-breadcrumb")).toContainText("John");
 	});
+
+	test("drag handle pill is rendered via CSS ::before on mobile header", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await expect(page.locator("#index-overlay")).toHaveClass(/open/);
+		// The ::before pseudo-element should have non-zero width (the pill)
+		const pillWidth = await page.evaluate(() => {
+			const header = document.getElementById("idx-mobile-header")!;
+			const style = window.getComputedStyle(header, "::before");
+			return parseFloat(style.width);
+		});
+		expect(pillWidth).toBeGreaterThan(0);
+	});
+
+	test("dragging panel header down past threshold closes the overlay", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await expect(page.locator("#index-overlay")).toHaveClass(/open/);
+
+		// Perform a large downward drag (> 30% panel height) via dispatched touch events
+		const closed = await page.evaluate(async () => {
+			const header = document.getElementById("idx-mobile-header")!;
+			const panel = document.getElementById("index-panel")!;
+			const panelH = panel.offsetHeight;
+			const rect = header.getBoundingClientRect();
+			const cx = rect.left + rect.width / 2;
+			const cy = rect.top + rect.height / 2;
+			// Drag 35% of panel height downward — past the 30% close threshold
+			const endY = cy + panelH * 0.35;
+
+			const mkTouch = (x: number, y: number) =>
+				new Touch({ identifier: 1, target: header, clientX: x, clientY: y });
+
+			header.dispatchEvent(
+				new TouchEvent("touchstart", {
+					touches: [mkTouch(cx, cy)],
+					changedTouches: [mkTouch(cx, cy)],
+					bubbles: true,
+				}),
+			);
+			header.dispatchEvent(
+				new TouchEvent("touchmove", {
+					touches: [mkTouch(cx, endY)],
+					changedTouches: [mkTouch(cx, endY)],
+					bubbles: true,
+				}),
+			);
+			header.dispatchEvent(
+				new TouchEvent("touchend", {
+					touches: [],
+					changedTouches: [mkTouch(cx, endY)],
+					bubbles: true,
+				}),
+			);
+
+			// Wait for the transition to finish (max 600ms)
+			return new Promise<boolean>((resolve) => {
+				const overlay = document.getElementById("index-overlay")!;
+				panel.addEventListener(
+					"transitionend",
+					() => resolve(!overlay.classList.contains("open")),
+					{ once: true },
+				);
+				setTimeout(() => resolve(!overlay.classList.contains("open")), 600);
+			});
+		});
+
+		expect(closed).toBe(true);
+	});
+
+	test("dragging panel header down a little and releasing snaps back (stays open)", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await expect(page.locator("#index-overlay")).toHaveClass(/open/);
+
+		// Perform a small downward drag (well below 30% threshold)
+		await page.evaluate(() => {
+			const header = document.getElementById("idx-mobile-header")!;
+			const rect = header.getBoundingClientRect();
+			const cx = rect.left + rect.width / 2;
+			const cy = rect.top + rect.height / 2;
+			const endY = cy + 30; // only 30px — far below the ~200px threshold
+
+			const mkTouch = (x: number, y: number) =>
+				new Touch({ identifier: 1, target: header, clientX: x, clientY: y });
+
+			header.dispatchEvent(
+				new TouchEvent("touchstart", {
+					touches: [mkTouch(cx, cy)],
+					changedTouches: [mkTouch(cx, cy)],
+					bubbles: true,
+				}),
+			);
+			header.dispatchEvent(
+				new TouchEvent("touchmove", {
+					touches: [mkTouch(cx, endY)],
+					changedTouches: [mkTouch(cx, endY)],
+					bubbles: true,
+				}),
+			);
+			header.dispatchEvent(
+				new TouchEvent("touchend", {
+					touches: [],
+					changedTouches: [mkTouch(cx, endY)],
+					bubbles: true,
+				}),
+			);
+		});
+
+		await page.waitForTimeout(800);
+		await expect(page.locator("#index-overlay")).toHaveClass(/open/);
+	});
 });

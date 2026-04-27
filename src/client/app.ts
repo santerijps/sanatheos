@@ -848,6 +848,7 @@ async function init() {
 			}
 		}
 		overlay.classList.add("open");
+		document.getElementById("index-panel")?.classList.remove("dragging-done"); // clear post-drag suppression so slide-up plays
 		indexBtn.setAttribute("aria-expanded", "true");
 		lockScroll();
 		if (!indexRendered) {
@@ -930,6 +931,160 @@ async function init() {
 			unlockScroll();
 		}
 	}
+
+	// --- Mobile drag-to-close gesture for the index panel ---
+	// Attach to #idx-mobile-header so the drag handle at the top is the grab target.
+	// The panel translates downward in real time; releasing past the threshold
+	// triggers closeIndex(); releasing below it springs the panel back.
+	(function attachIndexDragToClose() {
+		const mobileHeader = document.getElementById("idx-mobile-header");
+		const panel = document.getElementById("index-panel")!;
+		if (!mobileHeader) return;
+
+		let startY = 0;
+		let lastY = 0;
+		let lastTime = 0;
+		let velocity = 0; // px/ms, positive = downward
+		let dragging = false;
+
+		mobileHeader.addEventListener(
+			"touchstart",
+			(e: TouchEvent) => {
+				if (!isMobileIndex() || !overlay.classList.contains("open")) return;
+				const touch = e.touches[0];
+				startY = touch.clientY;
+				lastY = touch.clientY;
+				lastTime = e.timeStamp;
+				velocity = 0;
+				dragging = false;
+			},
+			{ passive: true },
+		);
+
+		mobileHeader.addEventListener(
+			"touchmove",
+			(e: TouchEvent) => {
+				if (!isMobileIndex() || !overlay.classList.contains("open")) return;
+				const touch = e.touches[0];
+				const dy = touch.clientY - startY;
+				if (dy <= 0) {
+					// Upward drag — don't interfere
+					if (dragging) {
+						panel.classList.remove("dragging");
+						panel.style.transform = "";
+						overlay.style.background = "";
+						dragging = false;
+					}
+					return;
+				}
+				// Downward drag — track it
+				if (!dragging) {
+					dragging = true;
+					panel.classList.add("dragging");
+				}
+				// Velocity (exponential smoothing)
+				const dt = e.timeStamp - lastTime;
+				if (dt > 0) {
+					const rawV = (touch.clientY - lastY) / dt;
+					velocity = velocity * 0.6 + rawV * 0.4;
+				}
+				lastY = touch.clientY;
+				lastTime = e.timeStamp;
+
+				// Translate panel downward
+				panel.style.transform = `translateY(${dy}px)`;
+				// Fade backdrop proportionally (panel height ~85vh)
+				const panelH = panel.offsetHeight || window.innerHeight * 0.85;
+				const progress = Math.min(dy / panelH, 1);
+				const alpha = 0.4 * (1 - progress);
+				overlay.style.background = `rgba(0,0,0,${alpha.toFixed(3)})`;
+			},
+			{ passive: true },
+		);
+
+		function finishDrag(endClientY: number) {
+			if (!dragging) return;
+			dragging = false;
+
+			const dy = Math.max(0, endClientY - startY);
+			const panelH = panel.offsetHeight || window.innerHeight * 0.85;
+			const shouldClose = dy > panelH * 0.3 || velocity > 0.4;
+
+			if (shouldClose) {
+				// Slide from current dragged position to off-screen, then fully close.
+				// Keep .dragging so the CSS open animation cannot replay during transition.
+				panel.style.transition = "transform 0.25s ease-in";
+				overlay.style.transition = "background 0.25s ease-in";
+				panel.style.transform = "translateY(110%)";
+				overlay.style.background = "rgba(0,0,0,0)";
+				panel.addEventListener(
+					"transitionend",
+					() => {
+						panel.style.transition = "";
+						panel.style.transform = "";
+						overlay.style.transition = "";
+						overlay.style.background = "";
+						// Remove .dragging only after .open is gone so the open animation
+						// cannot replay.
+						overlay.classList.remove("open", "closing");
+						panel.classList.remove("dragging");
+						indexBtn.setAttribute("aria-expanded", "false");
+						unlockScroll();
+					},
+					{ once: true },
+				);
+			} else {
+				// Snap back to fully open.
+				// Keep .dragging so the CSS open animation cannot replay during transition.
+				panel.style.transition = "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+				panel.style.transform = "translateY(0)";
+				overlay.style.background = "";
+				panel.addEventListener(
+					"transitionend",
+					() => {
+						panel.style.transition = "";
+						panel.style.transform = "";
+						// Add .dragging-done BEFORE removing .dragging so animation: none !important
+						// stays active continuously — prevents the open animation from replaying.
+						panel.classList.add("dragging-done");
+						panel.classList.remove("dragging");
+					},
+					{ once: true },
+				);
+			}
+		}
+
+		mobileHeader.addEventListener(
+			"touchend",
+			(e: TouchEvent) => {
+				finishDrag(e.changedTouches[0]?.clientY ?? lastY);
+			},
+			{ passive: true },
+		);
+
+		// Cancel drag if touch is interrupted — snap back immediately
+		mobileHeader.addEventListener(
+			"touchcancel",
+			() => {
+				if (!dragging) return;
+				dragging = false;
+				panel.style.transition = "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
+				panel.style.transform = "translateY(0)";
+				overlay.style.background = "";
+				panel.addEventListener(
+					"transitionend",
+					() => {
+						panel.style.transition = "";
+						panel.style.transform = "";
+						panel.classList.add("dragging-done");
+						panel.classList.remove("dragging");
+					},
+					{ once: true },
+				);
+			},
+			{ passive: true },
+		);
+	})();
 
 	function toggleIndex() {
 		if (overlay.classList.contains("open")) closeIndex();
