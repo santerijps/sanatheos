@@ -46,31 +46,6 @@ for (const dir of staticDirs) {
 }
 console.log("Static files copied.");
 
-// Minify CSS
-const cssPath = join(OUT, "style.css");
-const cssResult = await Bun.build({
-	entrypoints: [cssPath],
-	minify: true,
-});
-if (cssResult.success && cssResult.outputs.length > 0) {
-	await Bun.write(cssPath, await cssResult.outputs[0].text());
-	console.log("CSS minified.");
-}
-
-// Minify HTML files
-for (const htmlFile of ["index.html", "dictionary.html"]) {
-	const htmlPath = join(OUT, htmlFile);
-	let html = await readFile(htmlPath, "utf-8");
-	html = html
-		.replace(/<!--[\s\S]*?-->/g, "") // remove comments
-		.replace(/\n\s*/g, "\n") // collapse leading whitespace per line
-		.replace(/\n+/g, "\n") // collapse blank lines
-		.replace(/>\s+</g, "><") // remove whitespace between tags
-		.trim();
-	await writeFile(htmlPath, html, "utf-8");
-}
-console.log("HTML minified.");
-
 // Discover and generate per-translation JSON files
 const translations = await discoverTranslations(TEXT_DIR);
 const outText = join(OUT, "text");
