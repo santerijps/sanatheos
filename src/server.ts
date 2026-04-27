@@ -105,7 +105,11 @@ Bun.serve({
 		// Interlinear data: /text/interlinear/{Book}.json
 		const ilMatch = path.match(/^\/text\/interlinear\/(.+)\.json$/i);
 		if (ilMatch) {
-			const bookName = decodeURIComponent(ilMatch[1]);
+			const bookName = ilMatch[1];
+			// Reject any traversal attempts (path already decoded at top of handler)
+			if (bookName.includes("/") || bookName.includes("\\") || bookName.includes("..")) {
+				return new Response("Forbidden", { status: 403 });
+			}
 			const ilFile = Bun.file(join(TEXT_DIR, "interlinear", `${bookName}.json`));
 			if (await ilFile.exists()) {
 				return new Response(ilFile, {

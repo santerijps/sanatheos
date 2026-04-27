@@ -2491,7 +2491,8 @@ test.describe("Book index panel — mobile bottom sheet + drill-down", () => {
 			);
 		});
 
-		await page.waitForTimeout(800);
+		// Wait for the snap-back transition (300ms) plus buffer, then verify panel is still open
+		await page.waitForTimeout(500);
 		await expect(page.locator("#index-overlay")).toHaveClass(/open/);
 	});
 });

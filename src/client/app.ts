@@ -496,6 +496,7 @@ async function init() {
 			indexRendered = false;
 			indexScrollTo = null;
 			if (overlay.classList.contains("open")) openIndex();
+			const state = readState();
 			searchInput.value = stateToInputText(state);
 			applyState(state);
 			updateFooter();
@@ -970,6 +971,9 @@ async function init() {
 				if (dy <= 0) {
 					// Upward drag — don't interfere
 					if (dragging) {
+						// Add .dragging-done BEFORE removing .dragging so animation: none !important
+						// stays active continuously — prevents the open animation from replaying.
+						panel.classList.add("dragging-done");
 						panel.classList.remove("dragging");
 						panel.style.transform = "";
 						overlay.style.background = "";
@@ -982,9 +986,11 @@ async function init() {
 					dragging = true;
 					panel.classList.add("dragging");
 				}
-				// Velocity (exponential smoothing)
+				// Velocity (exponential smoothing).
+				// Require dt >= 8ms (one frame @ 120 Hz) so that events dispatched in the
+				// same JS task (dt ≈ 0) don't produce spuriously infinite velocity.
 				const dt = e.timeStamp - lastTime;
-				if (dt > 0) {
+				if (dt >= 8) {
 					const rawV = (touch.clientY - lastY) / dt;
 					velocity = velocity * 0.6 + rawV * 0.4;
 				}
