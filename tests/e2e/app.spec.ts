@@ -1768,11 +1768,55 @@ async function waitForIdbDataKey(page: Page, key: string, timeout = 15_000): Pro
 }
 
 /**
+ * Poll the IDB `data` store until `key` holds a non-empty array.
+ * Resolves when the condition is met; throws TimeoutError otherwise.
+ *
+ * Unlike waitForIdbDataValue this never tries to deserialize the stored value
+ * back into Node.js — avoiding Playwright's CDP serialization issues with
+ * large objects.  The predicate runs entirely inside the browser context and
+ * returns only a boolean.
+ */
+async function waitForIdbArrayPreloaded(page: Page, key: string, timeout = 20_000): Promise<void> {
+	await page.waitForFunction(
+		(k: string) =>
+			new Promise<boolean>((resolve) => {
+				const req = indexedDB.open("sanatheos-db");
+				req.onsuccess = () => {
+					const db = req.result;
+					if (!db.objectStoreNames.contains("data")) {
+						db.close();
+						resolve(false);
+						return;
+					}
+					const tx = db.transaction("data", "readonly");
+					const getReq = tx.objectStore("data").get(k);
+					getReq.onsuccess = () => {
+						db.close();
+						const v = getReq.result;
+						resolve(Array.isArray(v) && v.length > 0);
+					};
+					getReq.onerror = () => {
+						db.close();
+						resolve(false);
+					};
+				};
+				req.onerror = () => resolve(false);
+			}),
+		key,
+		{ timeout },
+	);
+}
+
+/**
  * Poll the IDB `data` store until `key` is present and return its value.
  * Combines the wait and read into a single atomic operation to eliminate the
  * race window that exists between separate waitForIdbDataKey + getIdbDataValue
  * calls (a versionchange or deleteDatabase triggered by the app could clear
  * the store between the two evaluate() calls).
+ *
+ * NOTE: only suitable for primitive/string values.  For large arrays stored
+ * in the side-panel keys use waitForIdbArrayPreloaded instead, because
+ * Playwright's CDP serialization can fail for large objects.
  */
 async function waitForIdbDataValue(page: Page, key: string, timeout = 15_000): Promise<unknown> {
 	const handle = await page.waitForFunction(
@@ -1854,10 +1898,10 @@ test.describe("IndexedDB caching and preloading", () => {
 	}) => {
 		await page.goto("/");
 		await waitForApp(page);
-		// Background preload fires via requestIdleCallback — wait for it to land in IDB
-		const value = await waitForIdbDataValue(page, "stories");
-		expect(Array.isArray(value)).toBe(true);
-		expect((value as unknown[]).length).toBeGreaterThan(0);
+		// Background preload fires via requestIdleCallback — wait for it to land in IDB.
+		// Uses waitForIdbArrayPreloaded (not waitForIdbDataValue) to avoid
+		// Playwright CDP serialization issues with large objects.
+		await waitForIdbArrayPreloaded(page, "stories");
 	});
 
 	test("parables data is preloaded into IDB in the background after page load", async ({
@@ -1865,9 +1909,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	}) => {
 		await page.goto("/");
 		await waitForApp(page);
-		const value = await waitForIdbDataValue(page, "parables");
-		expect(Array.isArray(value)).toBe(true);
-		expect((value as unknown[]).length).toBeGreaterThan(0);
+		await waitForIdbArrayPreloaded(page, "parables");
 	});
 
 	test("theophanies data is preloaded into IDB in the background after page load", async ({
@@ -1875,9 +1917,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	}) => {
 		await page.goto("/");
 		await waitForApp(page);
-		const value = await waitForIdbDataValue(page, "theophanies");
-		expect(Array.isArray(value)).toBe(true);
-		expect((value as unknown[]).length).toBeGreaterThan(0);
+		await waitForIdbArrayPreloaded(page, "theophanies");
 	});
 
 	test("typology data is preloaded into IDB in the background after page load", async ({
@@ -1885,9 +1925,7 @@ test.describe("IndexedDB caching and preloading", () => {
 	}) => {
 		await page.goto("/");
 		await waitForApp(page);
-		const value = await waitForIdbDataValue(page, "typology");
-		expect(Array.isArray(value)).toBe(true);
-		expect((value as unknown[]).length).toBeGreaterThan(0);
+		await waitForIdbArrayPreloaded(page, "typology");
 	});
 
 	test("side panel data loads without network on second visit (served from IDB)", async ({
