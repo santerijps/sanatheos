@@ -1,5 +1,5 @@
 import { join, resolve } from "node:path";
-import { cp, mkdir, rm, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, rm } from "node:fs/promises";
 
 import { loadBible, discoverTranslations } from "../src/shared/bible-loader.ts";
 

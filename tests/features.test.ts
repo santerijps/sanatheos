@@ -1946,3 +1946,151 @@ describe("CSS — note panel styles", () => {
 		expect(match).not.toBeNull();
 	});
 });
+
+// ---------------------------------------------------------------------------
+// i18n — mobile index strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — mobile index strings (EN)", () => {
+	beforeEach(() => setLanguage("en"));
+
+	test("readFullChapter is 'Read the full chapter'", () => {
+		expect(t().readFullChapter).toBe("Read the full chapter");
+	});
+
+	test("readFullBook is 'Read the full book'", () => {
+		expect(t().readFullBook).toBe("Read the full book");
+	});
+
+	test("idxBrowseLabel is 'Browse'", () => {
+		expect(t().idxBrowseLabel).toBe("Browse");
+	});
+});
+
+describe("i18n — mobile index strings (FI)", () => {
+	beforeEach(() => setLanguage("fi"));
+
+	test("readFullChapter is Finnish", () => {
+		expect(t().readFullChapter).toBe("Lue koko luku");
+	});
+
+	test("readFullBook is Finnish", () => {
+		expect(t().readFullBook).toBe("Lue koko kirja");
+	});
+
+	test("idxBrowseLabel is Finnish", () => {
+		expect(t().idxBrowseLabel).toBe("Selaa");
+	});
+});
+
+describe("i18n — mobile index strings (SV)", () => {
+	beforeEach(() => setLanguage("sv"));
+
+	test("readFullChapter is Swedish", () => {
+		expect(t().readFullChapter).toBe("L\u00e4s hela kapitlet");
+	});
+
+	test("readFullBook is Swedish", () => {
+		expect(t().readFullBook).toBe("L\u00e4s hela boken");
+	});
+
+	test("idxBrowseLabel is Swedish", () => {
+		expect(t().idxBrowseLabel).toBe("Bl\u00e4ddra");
+	});
+});
+
+describe("i18n — mobile index strings non-empty across all languages", () => {
+	const mobileIndexKeys = ["readFullChapter", "readFullBook", "idxBrowseLabel"] as const;
+
+	for (const lang of ["en", "fi", "sv"] as const) {
+		test(`${lang.toUpperCase()}: all mobile index strings are non-empty`, () => {
+			setLanguage(lang);
+			const s = t();
+			for (const key of mobileIndexKeys) {
+				expect(typeof s[key]).toBe("string");
+				expect((s[key] as string).length).toBeGreaterThan(0);
+			}
+		});
+	}
+});
+
+// ---------------------------------------------------------------------------
+// CSS — mobile index / bottom sheet rules
+// ---------------------------------------------------------------------------
+
+describe("CSS — mobile index bottom sheet", () => {
+	const css = readFileSync(join(ROOT, "public", "style.css"), "utf-8");
+
+	test("has #idx-mobile-header rule", () => {
+		expect(css).toContain("#idx-mobile-header");
+	});
+
+	test("has #idx-back-btn rule", () => {
+		expect(css).toContain("#idx-back-btn");
+	});
+
+	test("#idx-mobile-header is hidden on desktop (display: none)", () => {
+		const match = css.match(/#idx-mobile-header\s*\{[^}]*display:\s*none/);
+		expect(match).not.toBeNull();
+	});
+
+	test("mobile media query uses align-items: flex-end for bottom sheet", () => {
+		const mobileIdx = css.indexOf("max-width: 768px");
+		expect(mobileIdx).toBeGreaterThan(-1);
+		const mobileBlock = css.slice(mobileIdx, mobileIdx + 4000);
+		expect(mobileBlock).toContain("flex-end");
+	});
+
+	test("mobile panel has border-radius for bottom sheet shape", () => {
+		const mobileIdx = css.indexOf("max-width: 768px");
+		const mobileBlock = css.slice(mobileIdx, mobileIdx + 4000);
+		expect(mobileBlock).toContain("16px 16px 0 0");
+	});
+
+	test("#idx-cols-wrap has transition for drill-down animation", () => {
+		const mobileIdx = css.indexOf("max-width: 768px");
+		const mobileBlock = css.slice(mobileIdx, mobileIdx + 4000);
+		expect(mobileBlock).toContain("#idx-cols-wrap");
+		expect(mobileBlock).toContain("transition");
+	});
+
+	test("data-step selectors exist for drill-down", () => {
+		expect(css).toContain('data-step="books"');
+		expect(css).toContain('data-step="chapters"');
+		expect(css).toContain('data-step="verses"');
+	});
+
+	test(".idx-read-chapter and .idx-read-book share accent colour style", () => {
+		expect(css).toContain(".idx-read-chapter");
+		expect(css).toContain(".idx-read-book");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// HTML — mobile index elements present
+// ---------------------------------------------------------------------------
+
+describe("HTML — mobile index elements", () => {
+	const html = readFileSync(join(PUBLIC, "index.html"), "utf-8");
+
+	test("has #idx-mobile-header element", () => {
+		expect(html).toContain('id="idx-mobile-header"');
+	});
+
+	test("has #idx-back-btn element", () => {
+		expect(html).toContain('id="idx-back-btn"');
+	});
+
+	test("has #idx-breadcrumb element", () => {
+		expect(html).toContain('id="idx-breadcrumb"');
+	});
+
+	test("has #idx-cols-wrap wrapping the three columns", () => {
+		expect(html).toContain('id="idx-cols-wrap"');
+		const colsIdx = html.indexOf('id="idx-cols-wrap"');
+		const colsBlock = html.slice(colsIdx, colsIdx + 300);
+		expect(colsBlock).toContain('id="idx-books"');
+		expect(colsBlock).toContain('id="idx-chapters"');
+		expect(colsBlock).toContain('id="idx-verses"');
+	});
+});

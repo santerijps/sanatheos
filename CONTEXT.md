@@ -423,7 +423,7 @@ The `init()` function runs on page load and orchestrates everything:
 6. **Renders initial content** based on URL state.
 8. **Wires up all event listeners:**
    - Search input with 150ms debounce and auto-closing double quotes.
-   - Index panel open/close with scroll locking.
+   - Index panel open/close with scroll locking. On mobile, `closeIndex()` and `navigate()` add a `.closing` class to `#index-overlay` and listen for `animationend` on `#index-panel` before removing `.open`, providing a slide-down close animation. On desktop, `.open` is removed immediately.
    - Unified side panel (`#side-overlay`) open/close/tab-switching with scroll locking.
    - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I).
    - Content click handlers (nav arrows, search results, chapter links, headings, copy buttons).
@@ -458,6 +458,8 @@ Key functions:
 **Bookmarks data flow** — `renderBookmarksList()` reads all records from IndexedDB via `getBookmarks()` and renders `.bookmark-item` divs, each containing a `.bookmark-item-nav` button (clicking navigates to the passage) and a `.bookmark-item-remove` button (×). The bookmark button (`.bookmark-btn`) appears in chapter, verse, chapter-range, and verse-segment heading rows (rendered by `render.ts`). Clicking it calls `addBookmark()` or `removeBookmark()` in `db.ts` and syncs the button's `.bookmark-active` class via `syncBookmarkBtn()`. Verse-level bookmarks can also be added via the verse context menu.
 
 **`localizeRef(ref)`** — Splits semicolon-separated multi-refs (e.g., `"Genesis 25:19-34; Genesis 27"`) on `"; "`, localizes each segment by replacing the English book key with the current translation's display name, then rejoins.
+
+**Mobile index drill-down state** — Three module-scoped variables track the mobile panel position: `mobileStep: "books" | "chapters" | "verses"`, `mobileActiveBook: string`, `mobileActiveChapter: number`. `isMobileIndex()` returns `window.innerWidth <= 768`. `setMobileStep(step, book?, chapter?)` updates all three variables, sets `data-step` on `#index-panel`, updates `#idx-breadcrumb` (empty/book-display-name/"book › Chapter N"), and shows/hides `#idx-back-btn` via `aria-hidden`. The back button click handler steps back: verses→chapters, chapters→books. `openIndex()` calls `setMobileStep()` based on the current `readState()` (book+chapter → verses, book only → chapters, none → books) before opening the overlay.
 
 **Key design choice:** The app never routes to different pages. All navigation updates `#content` innerHTML and pushes URL state. The URL uses query parameters (`?t=NHEB&book=gen&chapter=3&verse=16`) not hash fragments.
 
@@ -538,7 +540,7 @@ All functions write to `$("content").innerHTML`. Functions:
 | `renderNavRefGroup` | Renders a single group of `NavRef[]` — first ref gets `<h2>`, subsequent get `<h3>` |
 | `renderParallelNavRefGroup` | Two-column parallel version of `renderNavRefGroup` |
 | `renderResults` | Search results with pagination (50 per page), highlighting |
-| `renderIndex` | Three-column book index panel with keyboard navigation |
+| `renderIndex` | Three-column book index panel with keyboard navigation. Accepts callbacks: `onBook`, `onReadBook`, `onChapter`, `onReadChapter`, `onVerse`. Prepends `.idx-read-book` as first item in chapters column and `.idx-read-chapter` as first item in verses column. |
 | `renderParallelChapter` | Two-column side-by-side chapter view |
 | `renderParallelBook` | Two-column side-by-side full book view |
 | `renderParallelVerse` | Two-column single verse view |
@@ -629,6 +631,7 @@ Three language tables: English (`EN`), Finnish (`FI`), and Swedish (`SV`), all i
 - Feature strings (copied, copy verse, copy both, highlight, remove highlight, show more)
 - Bookmark strings (bookmarksTitle, bookmarkThis, removeBookmark, bookmarksEmpty, bookmarkAdded, bookmarkRemoved)
 - Note strings (notesTitle, addNote, editNote, noteSaved, noteDeleted, notesEmpty, notePlaceholder, noteDeleteConfirm, noteSave, noteRemove, cancel, invalidRef)
+- Mobile index strings (readFullChapter: "Read the full chapter" / "Lue koko luku" / "Läs hela kapitlet", readFullBook: "Read the full book" / "Lue koko kirja" / "Läs hela boken", idxBrowseLabel: "Browse" / "Selaa" / "Bläddra")
 - Parables strings (parablesTitle, parablesFilterPlaceholder, parablesEmpty)
 - Theophanies strings (theophaniesTitle, theophaniesFilterPlaceholder, theophaniesEmpty)
 - Typology strings (typologyTitle, typologyFilterPlaceholder, typologyEmpty, typologyCatPersons, typologyCatEvents, typologyCatTheotokos, typologyCatChurch, typologyCatCross, typologyCatAdditional)
@@ -739,10 +742,14 @@ The page is a single HTML file with this DOM structure:
     #sidenotes-rail    — Hidden on mobile; shown as 200px right column on ≥768px, 240px on ≥1300px
 
   #index-overlay       — Full-screen overlay for book index
-    #index-panel
-      #idx-books       — Books column
-      #idx-chapters    — Chapters column
-      #idx-verses      — Verses column
+    #index-panel       — data-step="books|chapters|verses" (mobile drill-down)
+      #idx-mobile-header — Hidden on desktop; flex row on mobile (≤768px)
+        #idx-back-btn    — Back button (aria-hidden="true" on the books step, hiding via display:none)
+        #idx-breadcrumb  — Breadcrumb text: "Browse" / book name / "book › Chapter N"
+      #idx-cols-wrap   — Columns wrapper; 300% wide on mobile with translateX drill-down
+        #idx-books       — Books column (.idx-col)
+        #idx-chapters    — Chapters column (.idx-col)
+        #idx-verses      — Verses column (.idx-col)
 
   #side-overlay        — Full-screen side panel overlay (unified)
     #side-panel
@@ -845,6 +852,17 @@ The page is a single HTML file with this DOM structure:
 - `.result` — Clickable search result card with reference and highlighted text.
 - `.show-more-btn` — Pagination button for search results.
 - `#index-overlay` / `#index-panel` — Three-column flex layout. `.idx-item` for each entry.
+- `#idx-mobile-header` — `display: none` on desktop; `display: flex` with back button + breadcrumb on mobile (≤768px).
+- `#idx-back-btn` — Hidden via `display: none` when `aria-hidden="true"` (books step).
+- `#idx-cols-wrap` — Desktop: `display: flex; flex-direction: row; flex: 1; min-height: 0; overflow: hidden`. Mobile: `width: 300%; transition: transform 0.28s`. Controlled by `data-step` attribute on `#index-panel` via three CSS selectors: `[data-step="books"]` → `translateX(0)`, `[data-step="chapters"]` → `translateX(-33.333%)`, `[data-step="verses"]` → `translateX(-66.667%)`.
+- `.idx-col` — Desktop: 33% width columns side by side. Mobile: `width: 33.333%; flex-shrink: 0; height: 100%`.
+- `.idx-read-chapter` / `.idx-read-book` — Accent colour, border-bottom, font-weight 600; first item in the verse/chapter column respectively.
+- Mobile bottom sheet (≤768px): `#index-overlay` uses `align-items: flex-end`; `#index-panel` has `height: 85vh; border-radius: 16px 16px 0 0; width: 100%`.
+- `@keyframes indexPanelSlideUp` — slide from `translateY(100%)` → `translateY(0)` on open.
+- `@keyframes indexPanelSlideDown` — slide from `translateY(0)` → `translateY(110%)` on close.
+- `@keyframes indexOverlayFadeOut` — fades backdrop from `rgba(0,0,0,0.4)` → `rgba(0,0,0,0)` on close.
+- `#index-overlay.open.closing` — plays `indexOverlayFadeOut`; `pointer-events: none` so taps fall through immediately.
+- `#index-overlay.open.closing #index-panel` — plays `indexPanelSlideDown`, overriding the open animation.
 - `.idx-section-label` — "Old Testament" / "New Testament" dividers in book list.
 - `.verse-menu` — Absolutely positioned context menu with color dots.
 - `.color-dot` — Circular highlight color selector buttons.
@@ -869,7 +887,7 @@ The page is a single HTML file with this DOM structure:
 - **Filtered list pane CSS pattern** — Each side panel pane that contains a filter input and scrollable list requires explicit ID-based CSS rules in the `/* --- Stories & Parables panes --- */` block of `style.css`. When adding a new pane named `foo`, add `#foo-header`, `#foo-title`, `#foo-search-wrap`, `#foo-filter`, `#foo-filter:focus`, `#foo-filter::placeholder`, `#foo-list`, and all `#foo-list::-webkit-scrollbar*` selectors to each of the eight corresponding CSS rule groups alongside the existing stories/parables/theophanies selectors. Omitting any selector group causes the filter input to render unstyled or the list to be non-scrollable.
 - `@media print` — Hides header, overlays, nav arrows, buttons, bookmark buttons, sidenote rail and inline sidenotes. Shows `.print-translation-label`.
 - `@media (max-width: 800px)` — Responsive: narrower padding, smaller fonts, column index layout, abbreviated nav labels, smaller section titles.
-- **Keyframe animations:** `contentFadeIn` (applied to `#content` on render) and `fadeInResult` (applied to search result cards) both animate opacity only (`from { opacity: 0 }` → `to { opacity: 1 }`). No `translateY` transform is used — this prevents Cumulative Layout Shift (CLS).
+- **Keyframe animations:** `contentFadeIn` (applied to `#content` on render) and `fadeInResult` (applied to search result cards) both animate opacity only (`from { opacity: 0 }` → `to { opacity: 1 }`). No `translateY` transform is used — this prevents Cumulative Layout Shift (CLS). `indexPanelIn` (desktop panel open: fade + scale), `indexPanelSlideUp` (mobile panel open: slide from bottom), `indexPanelSlideDown` (mobile panel close: slide to bottom), `indexOverlayFadeOut` (mobile backdrop close: fade out), `indexOverlayFadeIn` (mobile backdrop open: fade in).
 
 ## Features in Detail
 
@@ -906,12 +924,30 @@ The search input in the sticky header accepts multiple query formats. Input is d
 
 ### 2. Book Index Panel
 
-Three-column browser opened via the magnifier icon (inside the search input) or Ctrl+I:
-- **Column 1 (Books):** All books with "Old Testament", "Deuterocanonical", and "New Testament" section labels. Hovering or keyboard-navigating to a book reveals its chapters.
-- **Column 2 (Chapters):** Chapter numbers with verse 1 text preview. Hovering shows verse list. Clicking navigates to that chapter.
+Three-column browser opened via the grid icon button or Ctrl+I:
+- **Column 1 (Books):** All books with "Old Testament", "Deuterocanonical", and "New Testament" section labels. Hovering or keyboard-navigating to a book reveals its chapters. The first item in the chapters column is "Read the full book" (`.idx-read-book`), which navigates to the book overview.
+- **Column 2 (Chapters):** Chapter numbers with verse 1 text preview (or chapter description when available). Hovering shows the verse list. The first item in the verse column is "Read the full chapter" (`.idx-read-chapter`), which navigates to that chapter. Clicking a chapter on desktop navigates to it; on mobile it advances to the verses step.
 - **Column 3 (Verses):** Verse numbers with truncated text preview (50 chars). Clicking navigates to that verse.
 
 Keyboard navigation: Arrow up/down within columns, Arrow left/right or Tab between columns, Enter to select. The panel has scroll locking (body overflow hidden + scrollbar compensation padding).
+
+**Mobile bottom sheet (≤768px):** On narrow viewports, `#index-overlay` aligns `#index-panel` to the bottom edge (bottom sheet pattern) with a `16px 16px 0 0` border-radius and 85vh height. Opening animates with `indexPanelSlideUp` (slide from bottom). Closing animates with `indexPanelSlideDown` + `indexOverlayFadeOut` via a `.closing` class (see *Close animation* below).
+
+**Mobile drill-down:** Instead of showing all three columns at once, the panel shows one column at a time. `#idx-cols-wrap` is 300% wide; a `translateX` transition driven by `data-step` on `#index-panel` slides between columns:
+- `data-step="books"` → `translateX(0)` (books visible)
+- `data-step="chapters"` → `translateX(-33.333%)` (chapters visible)
+- `data-step="verses"` → `translateX(-66.667%)` (verses visible)
+
+`#idx-mobile-header` (hidden on desktop) shows a back button and a breadcrumb. The breadcrumb reads "Browse" on the books step, the translation-aware book name on the chapters step, and "Book › Chapter N" on the verses step. The back button is hidden (`display:none` via `aria-hidden="true"`) on the books step.
+
+`openIndex()` reads the current `readState()` and restores the appropriate starting step: books → books step, book only → chapters step, book + chapter → verses step.
+
+**`renderIndex` callbacks:**
+- `onBook(book)` — tap/click on a book: mobile → advance to chapters step; desktop → navigate to book
+- `onReadBook(book)` — click "Read the full book": always navigates to the book
+- `onChapter(book, chapter)` — tap/click on a chapter number: mobile → advance to verses step; desktop → navigate to chapter
+- `onReadChapter(book, chapter)` — click "Read the full chapter": always navigates to that chapter
+- `onVerse(book, chapter, verse)` — click on a verse: always navigates to that verse
 
 ### 3. Parallel Translation
 
@@ -1153,18 +1189,21 @@ Unit tests across 4 files using `bun test` (scoped to `tests/` via `bunfig.toml`
 
 **state.test.ts:** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping (including empty strings, uniqueness, code length), `toUrl` generation (including parallel param, special characters, verse omission).
 
-**features.test.ts:** Feature string verification for EN/FI/SV (themes, parallel, copy, highlights, interlinear, share links, dictionary, deuterocanonical). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN, FI, and SV: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI/SV key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness, interlinear styles). HTML structural elements (Strong's panel, toast, verse menu). Book names (displayName, displayNameFor, getBookKeys). Deuterocanonical book codes. Interlinear types validation. Strong's data validation.
+**features.test.ts:** Feature string verification for EN/FI/SV (themes, parallel, copy, highlights, interlinear, share links, dictionary, deuterocanonical). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN, FI, and SV: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI/SV key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness, interlinear styles). HTML structural elements (Strong's panel, toast, verse menu). Book names (displayName, displayNameFor, getBookKeys). Deuterocanonical book codes. Interlinear types validation. Strong's data validation. **Mobile index strings** (readFullChapter, readFullBook, idxBrowseLabel in EN/FI/SV exact values, non-empty across all three languages). **Mobile index CSS** (has `#idx-mobile-header`, `#idx-back-btn`, `display:none` on desktop, `flex-end` bottom sheet, `border-radius 16px`, `transition` on `#idx-cols-wrap`, `data-step` selectors, `.idx-read-chapter`/`.idx-read-book`). **Mobile index HTML** (`#idx-mobile-header`, `#idx-back-btn`, `#idx-breadcrumb`, `#idx-cols-wrap` containing all three column divs).
 
 **bible-loader.test.ts:** BOOK_ORDER completeness (84 books, OT/DC/NT ordering, no duplicates, deuterocanonical placement). `loadBible` (JSON parsing, canonical ordering, book name normalization, empty verse trimming). `discoverTranslations` (discovery, sorting, exclusion of non-translation files).
 
 ### End-to-End Tests (Playwright)
 
-E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. All suites run in parallel (`test.describe.configure({ mode: "parallel" })`). Tests cover 22 areas (130+ tests total):
+E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The `playwright.config.ts` configures a `webServer` that auto-starts `bun run start` before tests. Run via `bun run test:e2e`. All suites run in parallel (`test.describe.configure({ mode: "parallel" })`). Tests cover 25 areas (150+ tests total):
 
 - **Page load** (5 tests) — Default chapter (Genesis 1 / NHEB), specific chapter from URL, specific verse from URL, different translation from URL (KJV), title bar text.
 - **Search** (4 tests) — Text search returns results (quoted query), reference query navigates to chapter, search URL param loads results directly, empty search returns to default view.
 - **Chapter navigation** (3 tests) — Next arrow navigates to next chapter, prev arrow navigates to previous chapter, nav arrows cross book boundaries.
 - **Book index panel** (4 tests) — Opens and closes via button, opens with Ctrl+I, shows books with OT/NT sections, hovering a book reveals its chapters.
+- **Book index panel — read full chapter** (2 tests) — Desktop: verse column shows "Read the full chapter" as first item after hovering book+chapter; clicking it navigates and closes overlay.
+- **Book index panel — read full book** (2 tests) — Desktop: chapter column shows "Read the full book" as first item after hovering a book; clicking it navigates and closes overlay.
+- **Book index panel — mobile bottom sheet + drill-down** (14 tests, `test.use({ viewport: 375×812 })`) — Panel aligns to bottom (bottom sheet); opens at books step with hidden back button and breadcrumb "Browse"; tapping a book advances to chapters step with visible back button and breadcrumb; chapters step shows "Read the full book" as first item; tapping a chapter advances to verses step with updated breadcrumb; verses step shows "Read the full chapter" as first item; back button chapters→books restores "Browse"; back button verses→chapters restores book name; tapping a verse navigates and closes overlay; "Read the full chapter" navigates and closes overlay; "Read the full book" navigates and closes overlay; `openIndex()` with `?book=jhn&chapter=3` restores verses step with correct breadcrumb; `openIndex()` with `?book=jhn` restores chapters step.
 - **Side panel** (4 tests) — Opens/closes via panel-btn and side-close, closes on backdrop click, closes with Escape, switching tabs shows correct pane.
 - **Settings pane** (3 tests) — Translation selector is populated, theme switching updates `data-theme` attribute, font size switching updates `data-font-size` attribute.
 - **Info pane** (2 tests) — Opens info pane from panel, contains help sections.

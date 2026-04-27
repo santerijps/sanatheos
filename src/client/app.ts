@@ -804,16 +804,72 @@ async function init() {
 		document.body.style.paddingRight = "";
 	}
 
+	// --- Mobile drill-down state ---
+	let mobileStep: "books" | "chapters" | "verses" = "books";
+	let mobileActiveBook = "";
+
+	function isMobileIndex(): boolean {
+		return window.innerWidth <= 768;
+	}
+
+	function setMobileStep(step: "books" | "chapters" | "verses", book = "", chapter = 0) {
+		mobileStep = step;
+		mobileActiveBook = book;
+		const panel = document.getElementById("index-panel");
+		if (panel) panel.dataset.step = step;
+		const breadcrumb = document.getElementById("idx-breadcrumb");
+		if (breadcrumb) {
+			if (step === "books") breadcrumb.textContent = t().idxBrowseLabel;
+			else if (step === "chapters") breadcrumb.textContent = displayName(book);
+			else breadcrumb.textContent = `${displayName(book)} › ${t().chapter} ${chapter}`;
+		}
+		const backBtn = document.getElementById("idx-back-btn");
+		if (backBtn) {
+			if (step === "books") backBtn.setAttribute("aria-hidden", "true");
+			else backBtn.removeAttribute("aria-hidden");
+		}
+	}
+
+	// Wire up back button (always, regardless of indexRendered state)
+	document.getElementById("idx-back-btn")?.addEventListener("click", () => {
+		if (mobileStep === "chapters") setMobileStep("books");
+		else if (mobileStep === "verses") setMobileStep("chapters", mobileActiveBook);
+	});
+
 	function openIndex() {
+		if (isMobileIndex()) {
+			const cur = readState();
+			if (cur.book && cur.chapter !== undefined) {
+				setMobileStep("verses", cur.book, cur.chapter);
+			} else if (cur.book) {
+				setMobileStep("chapters", cur.book);
+			} else {
+				setMobileStep("books");
+			}
+		}
 		overlay.classList.add("open");
 		indexBtn.setAttribute("aria-expanded", "true");
 		lockScroll();
 		if (!indexRendered) {
 			const idx = renderIndex(data, {
 				onBook(book) {
+					if (isMobileIndex()) {
+						setMobileStep("chapters", book);
+					} else {
+						navigate({ book });
+					}
+				},
+				onReadBook(book) {
 					navigate({ book });
 				},
 				onChapter(book, chapter) {
+					if (isMobileIndex()) {
+						setMobileStep("verses", book, chapter);
+					} else {
+						navigate({ book, chapter });
+					}
+				},
+				onReadChapter(book, chapter) {
 					navigate({ book, chapter });
 				},
 				onVerse(book, chapter, verse) {
@@ -828,6 +884,7 @@ async function init() {
 		const book = current.book || "Genesis";
 		requestAnimationFrame(() => {
 			if (indexScrollTo) indexScrollTo(book, current.chapter, current.verse);
+			if (isMobileIndex()) return; // on mobile, focus stays on the back button / first item
 			// Focus the most specific column matching what's being read
 			let target: HTMLElement | null = null;
 			if (current.verse !== undefined) {
@@ -855,9 +912,23 @@ async function init() {
 	}
 
 	function closeIndex() {
-		overlay.classList.remove("open");
-		indexBtn.setAttribute("aria-expanded", "false");
-		unlockScroll();
+		if (isMobileIndex() && overlay.classList.contains("open")) {
+			overlay.classList.add("closing");
+			const panel = document.getElementById("index-panel")!;
+			panel.addEventListener(
+				"animationend",
+				() => {
+					overlay.classList.remove("open", "closing");
+					indexBtn.setAttribute("aria-expanded", "false");
+					unlockScroll();
+				},
+				{ once: true },
+			);
+		} else {
+			overlay.classList.remove("open");
+			indexBtn.setAttribute("aria-expanded", "false");
+			unlockScroll();
+		}
 	}
 
 	function toggleIndex() {
@@ -2441,9 +2512,24 @@ async function init() {
 function navigate(s: AppState) {
 	const searchInput = document.getElementById("search-input") as HTMLInputElement;
 	searchInput.value = stateToInputText(s);
-	document.getElementById("index-overlay")!.classList.remove("open");
-	document.body.classList.remove("panel-open");
-	document.body.style.paddingRight = "";
+	const indexOverlay = document.getElementById("index-overlay")!;
+	if (window.innerWidth <= 768 && indexOverlay.classList.contains("open")) {
+		indexOverlay.classList.add("closing");
+		const panel = document.getElementById("index-panel")!;
+		panel.addEventListener(
+			"animationend",
+			() => {
+				indexOverlay.classList.remove("open", "closing");
+				document.body.classList.remove("panel-open");
+				document.body.style.paddingRight = "";
+			},
+			{ once: true },
+		);
+	} else {
+		indexOverlay.classList.remove("open");
+		document.body.classList.remove("panel-open");
+		document.body.style.paddingRight = "";
+	}
 	applyState(s);
 	pushState(withTranslationParams(s));
 }

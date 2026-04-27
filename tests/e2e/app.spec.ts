@@ -1767,29 +1767,6 @@ async function waitForIdbDataKey(page: Page, key: string, timeout = 15_000): Pro
 	);
 }
 
-/** Read a value from the IDB `data` store. */
-async function getIdbDataValue(page: Page, key: string): Promise<unknown> {
-	return page.evaluate((k: string) => {
-		return new Promise((resolve, reject) => {
-			const req = indexedDB.open("sanatheos-db");
-			req.onsuccess = () => {
-				const db = req.result;
-				const tx = db.transaction("data", "readonly");
-				const getReq = tx.objectStore("data").get(k);
-				getReq.onsuccess = () => {
-					db.close();
-					resolve(getReq.result ?? null);
-				};
-				getReq.onerror = () => {
-					db.close();
-					reject(getReq.error);
-				};
-			};
-			req.onerror = () => reject(req.error);
-		});
-	}, key);
-}
-
 /**
  * Poll the IDB `data` store until `key` is present and return its value.
  * Combines the wait and read into a single atomic operation to eliminate the
@@ -2097,5 +2074,269 @@ test.describe("IndexedDB caching and preloading", () => {
 		expect(keys).toContain("parables");
 		expect(keys).toContain("theophanies");
 		expect(keys).toContain("typology");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Book index panel — desktop: read full chapter / read full book
+// ---------------------------------------------------------------------------
+
+test.describe("Book index panel — read full chapter", () => {
+	test('verse column shows "Read the full chapter" as first item', async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		// Hover John so chapters load, then hover chapter 1 so verses load
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().hover();
+		const firstChap = page.locator("#idx-chapters .idx-item").first();
+		await firstChap.hover();
+		const firstVerse = page.locator("#idx-verses .idx-item").first();
+		await expect(firstVerse).toContainText("Read the full chapter", { timeout: 5_000 });
+	});
+
+	test('clicking "Read the full chapter" navigates to that chapter', async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		// Hover John to get its chapters
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().hover();
+		// Hover chapter 3
+		const chap3 = page.locator("#idx-chapters .idx-item", { hasText: "Chapter 3" });
+		await chap3.hover();
+		// Click "Read the full chapter"
+		const readChap = page.locator("#idx-verses .idx-read-chapter");
+		await readChap.click();
+		await expect(page.locator("#content")).toContainText("John 3", { timeout: 5_000 });
+		await expect(page.locator("#index-overlay")).not.toHaveClass(/open/);
+	});
+});
+
+test.describe("Book index panel — read full book", () => {
+	test('chapter column shows "Read the full book" as first item after hovering a book', async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().hover();
+		const firstChap = page.locator("#idx-chapters .idx-item").first();
+		await expect(firstChap).toContainText("Read the full book", { timeout: 5_000 });
+	});
+
+	test('clicking "Read the full book" navigates to that book', async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().hover();
+		const readBook = page.locator("#idx-chapters .idx-read-book");
+		await readBook.click();
+		await expect(page.locator("#content")).toContainText("John", { timeout: 5_000 });
+		await expect(page.locator("#index-overlay")).not.toHaveClass(/open/);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Book index panel — mobile bottom-sheet + drill-down
+// ---------------------------------------------------------------------------
+
+test.describe("Book index panel — mobile bottom sheet + drill-down", () => {
+	// Use a 375×812 mobile viewport for all tests in this suite
+	test.use({ viewport: { width: 375, height: 812 } });
+
+	test("opens as bottom sheet (panel aligns to bottom)", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const overlay = page.locator("#index-overlay");
+		await expect(overlay).toHaveClass(/open/);
+		// Panel should be at or near the bottom of the viewport
+		const panel = page.locator("#index-panel");
+		const box = await panel.boundingBox();
+		expect(box).not.toBeNull();
+		// Bottom of panel should be at or below 90% of viewport height
+		expect(box!.y + box!.height).toBeGreaterThan(812 * 0.7);
+	});
+
+	test("starts on books step — back button is hidden", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const panel = page.locator("#index-panel");
+		await expect(panel).toHaveAttribute("data-step", "books");
+		const backBtn = page.locator("#idx-back-btn");
+		// hidden via display:none when aria-hidden=true
+		await expect(backBtn).toHaveAttribute("aria-hidden", "true");
+	});
+
+	test("breadcrumb shows 'Browse' on books step", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await expect(page.locator("#idx-breadcrumb")).toHaveText("Browse");
+	});
+
+	test("tapping a book advances to chapters step", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		const panel = page.locator("#index-panel");
+		await expect(panel).toHaveAttribute("data-step", "chapters", { timeout: 3_000 });
+		await expect(page.locator("#idx-breadcrumb")).toContainText("John");
+		const backBtn = page.locator("#idx-back-btn");
+		await expect(backBtn).not.toHaveAttribute("aria-hidden");
+	});
+
+	test("chapters step shows 'Read the full book' as first item", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		const firstItem = page.locator("#idx-chapters .idx-item").first();
+		await expect(firstItem).toContainText("Read the full book", { timeout: 3_000 });
+	});
+
+	test("tapping a chapter advances to verses step", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		// Click the first real chapter (skip 'Read full book')
+		await page.locator("#idx-chapters .idx-chapter").first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "verses", {
+			timeout: 3_000,
+		});
+		await expect(page.locator("#idx-breadcrumb")).toContainText("Chapter");
+	});
+
+	test("verses step shows 'Read the full chapter' as first item", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		await page.locator("#idx-chapters .idx-chapter").first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "verses", {
+			timeout: 3_000,
+		});
+		const firstVerse = page.locator("#idx-verses .idx-item").first();
+		await expect(firstVerse).toContainText("Read the full chapter", { timeout: 3_000 });
+	});
+
+	test("back button from chapters step returns to books step", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		await page.click("#idx-back-btn");
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "books", {
+			timeout: 3_000,
+		});
+		await expect(page.locator("#idx-breadcrumb")).toHaveText("Browse");
+	});
+
+	test("back button from verses step returns to chapters step", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		await page.locator("#idx-chapters .idx-chapter").first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "verses", {
+			timeout: 3_000,
+		});
+		await page.click("#idx-back-btn");
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		await expect(page.locator("#idx-breadcrumb")).toContainText("John");
+	});
+
+	test("tapping a verse navigates and closes the overlay", async ({ page }) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		await page.locator("#idx-chapters .idx-chapter").first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "verses", {
+			timeout: 3_000,
+		});
+		// Click the first verse item (skip 'Read the full chapter')
+		await page.locator("#idx-verses .idx-verse").first().click();
+		await expect(page.locator("#index-overlay")).not.toHaveClass(/open/, { timeout: 5_000 });
+		await expect(page.locator("#content")).toContainText("John", { timeout: 5_000 });
+	});
+
+	test("tapping 'Read the full chapter' on mobile navigates and closes overlay", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		await page.locator("#idx-chapters .idx-chapter").first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "verses", {
+			timeout: 3_000,
+		});
+		await page.locator("#idx-verses .idx-read-chapter").click();
+		await expect(page.locator("#index-overlay")).not.toHaveClass(/open/, { timeout: 5_000 });
+		await expect(page.locator("#content")).toContainText("John", { timeout: 5_000 });
+	});
+
+	test("tapping 'Read the full book' on mobile navigates and closes overlay", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		await page.locator("#idx-books .idx-item", { hasText: "John" }).first().click();
+		await expect(page.locator("#index-panel")).toHaveAttribute("data-step", "chapters", {
+			timeout: 3_000,
+		});
+		await page.locator("#idx-chapters .idx-read-book").click();
+		await expect(page.locator("#index-overlay")).not.toHaveClass(/open/, { timeout: 5_000 });
+		await expect(page.locator("#content")).toContainText("John", { timeout: 5_000 });
+	});
+
+	test("opening index when reading a chapter restores chapters step", async ({ page }) => {
+		await page.goto("/?book=jhn&chapter=3");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const panel = page.locator("#index-panel");
+		// Currently reading a chapter → should open at verses step
+		await expect(panel).toHaveAttribute("data-step", "verses", { timeout: 3_000 });
+		await expect(page.locator("#idx-breadcrumb")).toContainText("John");
+		await expect(page.locator("#idx-breadcrumb")).toContainText("Chapter 3");
+	});
+
+	test("opening index when reading a book (no chapter) restores chapters step", async ({
+		page,
+	}) => {
+		await page.goto("/?book=jhn");
+		await waitForApp(page);
+		await page.click("#index-btn");
+		const panel = page.locator("#index-panel");
+		// Reading book only → chapters step
+		await expect(panel).toHaveAttribute("data-step", "chapters", { timeout: 3_000 });
+		await expect(page.locator("#idx-breadcrumb")).toContainText("John");
 	});
 });

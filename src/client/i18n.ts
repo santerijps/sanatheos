@@ -8,6 +8,7 @@ interface Strings {
 	// Content
 	notFound: string;
 	readFullChapter: string;
+	readFullBook: string;
 	loadingBible: string;
 	loadingTranslation: (code: string) => string;
 	loadFailed: string;
@@ -57,6 +58,7 @@ interface Strings {
 	idxBooksLabel: string;
 	idxChaptersLabel: string;
 	idxVersesLabel: string;
+	idxBrowseLabel: string;
 
 	// Footer
 	footerLine1: string;
@@ -160,6 +162,7 @@ const EN: Strings = {
 
 	notFound: "Not found.",
 	readFullChapter: "Read the full chapter",
+	readFullBook: "Read the full book",
 	loadingBible: "Loading Bible\u2026",
 	loadingTranslation: (code) => `Loading ${code}\u2026`,
 	loadFailed: "Failed to load Bible data. Please refresh the page.",
@@ -237,6 +240,7 @@ const EN: Strings = {
 	idxBooksLabel: "Books",
 	idxChaptersLabel: "Chapters",
 	idxVersesLabel: "Verses",
+	idxBrowseLabel: "Browse",
 
 	footerLine1: "All available Bible translations are in the public domain.",
 	footerDescriptions:
@@ -327,6 +331,7 @@ const FI: Strings = {
 
 	notFound: "Ei löytynyt.",
 	readFullChapter: "Lue koko luku",
+	readFullBook: "Lue koko kirja",
 	loadingBible: "Ladataan Raamattua\u2026",
 	loadingTranslation: (code) => `Ladataan ${code}\u2026`,
 	loadFailed: "Raamatun lataaminen epäonnistui. Päivitä sivu.",
@@ -404,6 +409,7 @@ const FI: Strings = {
 	idxBooksLabel: "Kirjat",
 	idxChaptersLabel: "Luvut",
 	idxVersesLabel: "Jakeet",
+	idxBrowseLabel: "Selaa",
 
 	footerLine1:
 		"Kaikki tällä sivulla käytetyt raamatunkäännökset ovat vapaasti yleiseen käyttöön soveltuvia.",
@@ -495,6 +501,7 @@ const SV: Strings = {
 
 	notFound: "Hittades inte.",
 	readFullChapter: "Läs hela kapitlet",
+	readFullBook: "Läs hela boken",
 	loadingBible: "Laddar Bibeln\u2026",
 	loadingTranslation: (code) => `Laddar ${code}\u2026`,
 	loadFailed: "Misslyckades med att ladda Bibeldata. Uppdatera sidan.",
@@ -572,6 +579,7 @@ const SV: Strings = {
 	idxBooksLabel: "Böcker",
 	idxChaptersLabel: "Kapitel",
 	idxVersesLabel: "Verser",
+	idxBrowseLabel: "Bläddra",
 
 	footerLine1: "Alla tillgängliga Bibelöversättningar är i det allmänna domänet.",
 	footerDescriptions:

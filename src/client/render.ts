@@ -997,7 +997,9 @@ export function renderIndex(
 	data: BibleData,
 	callbacks: {
 		onBook: (book: string) => void;
+		onReadBook: (book: string) => void;
 		onChapter: (book: string, chapter: number) => void;
+		onReadChapter: (book: string, chapter: number) => void;
 		onVerse: (book: string, chapter: number, verse: number) => void;
 	},
 ) {
@@ -1017,6 +1019,18 @@ export function renderIndex(
 
 	function showVerses(book: string, chapter: number) {
 		versesCol.innerHTML = "";
+
+		// "Read full chapter" entry
+		const readEl = document.createElement("div");
+		readEl.className = "idx-item idx-read-chapter";
+		readEl.tabIndex = -1;
+		readEl.textContent = t().readFullChapter;
+		readEl.addEventListener("click", (e) => {
+			e.stopPropagation();
+			callbacks.onReadChapter(book, chapter);
+		});
+		versesCol.appendChild(readEl);
+
 		const vs = Object.keys(data[book][String(chapter)])
 			.map(Number)
 			.sort((a, b) => a - b);
@@ -1046,6 +1060,17 @@ export function renderIndex(
 
 		chapsCol.innerHTML = "";
 		versesCol.innerHTML = "";
+
+		// "Read full book" entry at top of chapters column
+		const readBookEl = document.createElement("div");
+		readBookEl.className = "idx-item idx-read-book";
+		readBookEl.tabIndex = -1;
+		readBookEl.textContent = t().readFullBook;
+		readBookEl.addEventListener("click", (e) => {
+			e.stopPropagation();
+			callbacks.onReadBook(book);
+		});
+		chapsCol.appendChild(readBookEl);
 
 		const chs = Object.keys(data[book])
 			.map(Number)
@@ -1077,6 +1102,11 @@ export function renderIndex(
 
 			chEl.addEventListener("click", (e) => {
 				e.stopPropagation();
+				chapsCol
+					.querySelectorAll(".idx-item")
+					.forEach((el) => el.classList.remove("active"));
+				chEl.classList.add("active");
+				showVerses(book, c);
 				callbacks.onChapter(book, c);
 			});
 			chapsCol.appendChild(chEl);
@@ -1141,7 +1171,10 @@ export function renderIndex(
 		el.tabIndex = -1;
 
 		el.addEventListener("mouseenter", () => showChapters(book));
-		el.addEventListener("click", () => callbacks.onBook(book));
+		el.addEventListener("click", () => {
+			showChapters(book);
+			callbacks.onBook(book);
+		});
 		booksCol.appendChild(el);
 	}
 
