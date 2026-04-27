@@ -154,7 +154,7 @@ async function fetchTranslation(code: string): Promise<BibleData> {
 }
 
 async function fetchTranslations(): Promise<string[]> {
-	return ["CPDV","KJV","KR38","NHEB","SV17"];
+	return ["CPDV", "KJV", "KR38", "NHEB", "SV17"];
 }
 
 async function fetchDescriptions(code: string): Promise<DescriptionData> {
