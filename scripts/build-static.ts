@@ -67,10 +67,6 @@ for (const t of translations) {
 	console.log(`bible-${t}.json written (${(json.length / 1024 / 1024).toFixed(1)} MB).`);
 }
 
-// Write translations manifest
-await Bun.write(join(outText, "translations.json"), JSON.stringify(translations));
-console.log(`translations.json written (${translations.join(", ")})`);
-
 // Create .nojekyll to prevent GitHub Pages from ignoring underscore files
 await Bun.write(join(OUT, ".nojekyll"), "");
 

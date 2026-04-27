@@ -154,13 +154,7 @@ async function fetchTranslation(code: string): Promise<BibleData> {
 }
 
 async function fetchTranslations(): Promise<string[]> {
-	try {
-		const res = await fetch("./text/translations.json");
-		if (!res.ok) return [DEFAULT_TRANSLATION];
-		return await res.json();
-	} catch {
-		return [DEFAULT_TRANSLATION];
-	}
+	return ["CPDV","KJV","KR38","NHEB","SV17"];
 }
 
 async function fetchDescriptions(code: string): Promise<DescriptionData> {
