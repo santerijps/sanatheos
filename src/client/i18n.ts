@@ -66,6 +66,7 @@ interface Strings {
 	footerStyleguide: string;
 	footerDictionary: string;
 	footerFavicon: string;
+	footerGitHub: string;
 
 	// New features
 	copied: string;
@@ -251,6 +252,7 @@ const EN: Strings = {
 		'Browse the <a href="./dictionary.html">Strong\u2019s Concordance Dictionary</a> for Hebrew and Greek word definitions.',
 	footerFavicon:
 		'Application icon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; by Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+	footerGitHub: "Source code:",
 
 	copied: "Copied!",
 	copyVerse: "Copy",
@@ -421,6 +423,7 @@ const FI: Strings = {
 		'Selaa <a href="./dictionary.html">Strongin konkordanssisanakirjaa</a> heprean ja kreikan sananmääritelmille.',
 	footerFavicon:
 		'Sivustokuvake: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo;, Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+	footerGitHub: "Lähdekoodi:",
 
 	copied: "Kopioitu!",
 	copyVerse: "Kopioi",
@@ -590,6 +593,7 @@ const SV: Strings = {
 		'Bläddra i <a href="./dictionary.html">Strongs konkordansordbok</a> för definitioner på hebreiska och grekiska ord.',
 	footerFavicon:
 		'Applikationsikon: &ldquo;<a href="https://commons.wikimedia.org/wiki/File:Jesus-Christ-from-Hagia-Sophia.jpg" target="_blank" rel="noopener noreferrer">Jesus Christ from Hagia Sophia</a>&rdquo; av Edal Anton Lefterov, <a href="https://creativecommons.org/licenses/by-sa/3.0?ref=openverse" target="_blank" rel="noopener noreferrer">CC BY-SA 3.0</a>',
+	footerGitHub: "Källkod:",
 
 	copied: "Kopierat!",
 	copyVerse: "Kopiera",
