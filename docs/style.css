@@ -72,7 +72,7 @@ body.preload * {
 [data-theme="dark"] {
     --bg: #1c1814;
     --surface: #26221d;
-    --text: #e0d8cc;
+    --text: #f1efeb;
     --verse-num: #a09080;
     --subtle: #8a8078;
     --danger: #e07070;
@@ -83,7 +83,7 @@ body.preload * {
     --accent-focus: rgba(201, 150, 58, 0.25);
     --muted: #9a9080;
     --mark-bg: #6b540a;
-    --hl-yellow: rgba(253, 230, 138, 0.35);
+    --hl-yellow: rgb(255 204 0 / 35%);
     --hl-green: rgba(134, 239, 172, 0.35);
     --hl-blue: rgba(147, 197, 253, 0.35);
     --hl-pink: rgba(249, 168, 212, 0.35);
