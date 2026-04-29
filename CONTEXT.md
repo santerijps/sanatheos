@@ -492,6 +492,8 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 - A book reference (with optional chapter, chapter range, verse, verse segments)
 - A quoted text filter (`"grace"`)
 - A combined reference + text filter (`Romans "faith"`)
+- A regex filter (`/for \w+ so loved/`) — searches verses matching the regular expression
+- A combined reference + regex filter (`John /so loved/`) — regex scoped to a reference
 - A Strong's number (`G2316` or `H430`) — searches interlinear data for matching words
 
 **Query normalization (`normalizeQuery`):** Applied before splitting on semicolons in `search()`, `tryParseNav()`, and `parseQueryBooks()`:
@@ -514,6 +516,13 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 - Plain substring (fast `.includes()` path) when no anchors.
 - `^word` — word-start boundary (`\b` prefix). `word$` — word-end boundary. `^word$` — exact word.
 - Special regex characters are escaped.
+
+**Regex matching (`extractRegexFilter`):**
+- Syntax: `/pattern/` or `/pattern/flags` (e.g., `/for \w+ so loved/`, `/grace/i`).
+- Detected by matching a forward-slash delimited pattern at the end of a term, with an optional reference prefix before it.
+- Defaults to case-insensitive (`i` flag) when no flags are specified, consistent with text search.
+- Invalid regex syntax is silently ignored (returns no results).
+- Regex terms are treated like quoted text terms: `tryParseNavGroups` and `parseNavTerms` return `null`/`refs: null` for them, preventing navigation parsing.
 
 **Results:** Returns `VerseResult[]` with deduplication via a `Set<string>` of `book:chapter:verse` keys. No limit on result count — all matches are returned.
 

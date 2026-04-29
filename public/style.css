@@ -413,6 +413,22 @@ main {
     font-size: 30px;
 }
 
+[data-font-size="small"] .result-text {
+    font-size: 14px;
+}
+
+[data-font-size="large"] .result-text {
+    font-size: 20px;
+}
+
+[data-font-size="xl"] .result-text {
+    font-size: 23px;
+}
+
+[data-font-size="xxl"] .result-text {
+    font-size: 26px;
+}
+
 .verse sup {
     cursor: pointer;
     font-size: 0.65em;

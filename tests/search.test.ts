@@ -16,6 +16,7 @@ import {
 	_levenshtein,
 	_normalizeQuery,
 	escapeRegex,
+	_extractRegexFilter,
 } from "../src/client/search.ts";
 import { setTranslation, getAliases, getSortedAliases } from "../src/client/bookNames.ts";
 
@@ -1257,6 +1258,188 @@ describe("matchBook — 3-letter short codes", () => {
 	test("phm resolves to Philemon", () => {
 		setTranslation("NHEB");
 		expect(_matchBook("phm")).toEqual({ book: "Philemon", rest: "" });
+	});
+});
+
+// --- extractRegexFilter ---
+describe("extractRegexFilter", () => {
+	test("simple pattern returns regex and empty refPart", () => {
+		const result = _extractRegexFilter("/loved/");
+		expect(result).not.toBeNull();
+		expect(result!.refPart).toBe("");
+		expect(result!.regex.source).toBe("loved");
+		expect(result!.regex.flags).toContain("i");
+	});
+
+	test("defaults to case-insensitive when no flags given", () => {
+		const result = _extractRegexFilter("/pattern/");
+		expect(result!.regex.flags).toContain("i");
+	});
+
+	test("explicit flags override the default", () => {
+		const result = _extractRegexFilter("/pattern/gi");
+		expect(result!.regex.flags).toContain("g");
+		expect(result!.regex.flags).toContain("i");
+	});
+
+	test("reference prefix is captured", () => {
+		const result = _extractRegexFilter("John /so loved/");
+		expect(result).not.toBeNull();
+		expect(result!.refPart).toBe("John");
+		expect(result!.regex.source).toBe("so loved");
+	});
+
+	test("reference with chapter prefix is captured", () => {
+		const result = _extractRegexFilter("Genesis 1 /beginning/");
+		expect(result).not.toBeNull();
+		expect(result!.refPart).toBe("Genesis 1");
+		expect(result!.regex.source).toBe("beginning");
+	});
+
+	test("invalid regex syntax returns null", () => {
+		expect(_extractRegexFilter("/[invalid/")).toBeNull();
+	});
+
+	test("no slashes returns null", () => {
+		expect(_extractRegexFilter("Genesis 1:1")).toBeNull();
+	});
+
+	test("only one slash returns null", () => {
+		expect(_extractRegexFilter("/pattern")).toBeNull();
+	});
+
+	test("empty pattern returns null", () => {
+		expect(_extractRegexFilter("//")).toBeNull();
+	});
+
+	test("metacharacters are preserved as-is", () => {
+		const result = _extractRegexFilter("/\\w+ so loved/");
+		expect(result).not.toBeNull();
+		expect(result!.regex.source).toBe("\\w+ so loved");
+	});
+});
+
+// --- search (regex queries) ---
+describe("search — regex queries", () => {
+	test("basic regex matches verse", () => {
+		// John 3:16: "For God so loved the world..."
+		const results = search(fixture, "/for \\w+ so loved/");
+		expect(results).toHaveLength(1);
+		expect(results[0].book).toBe("John");
+		expect(results[0].chapter).toBe(3);
+		expect(results[0].verse).toBe(16);
+	});
+
+	test("case-insensitive by default", () => {
+		const lower = search(fixture, "/for god so loved/");
+		const upper = search(fixture, "/FOR GOD SO LOVED/");
+		expect(lower).toHaveLength(1);
+		expect(upper).toHaveLength(1);
+		expect(lower[0].verse).toBe(16);
+	});
+
+	test("character class matches", () => {
+		// Verses containing "God" or "god"
+		const results = search(fixture, "/[Gg]od/");
+		expect(results.length).toBeGreaterThan(0);
+		for (const r of results) {
+			expect(r.text).toMatch(/[Gg]od/);
+		}
+	});
+
+	test("word boundary metacharacter", () => {
+		const results = search(fixture, "/\\bGod\\b/");
+		expect(results.length).toBeGreaterThan(0);
+		for (const r of results) {
+			expect(r.text).toMatch(/\bGod\b/i);
+		}
+	});
+
+	test("alternation matches multiple patterns", () => {
+		// Matches verses containing "serpent" or "cunning"
+		const results = search(fixture, "/serpent|cunning/");
+		expect(results.length).toBeGreaterThanOrEqual(2);
+		for (const r of results) {
+			expect(r.text).toMatch(/serpent|cunning/i);
+		}
+	});
+
+	test("no matches returns empty array", () => {
+		const results = search(fixture, "/xyzabc\\d{10}/");
+		expect(results).toHaveLength(0);
+	});
+
+	test("invalid regex is silently ignored — returns empty", () => {
+		const results = search(fixture, "/[invalid/");
+		expect(results).toHaveLength(0);
+	});
+
+	test("deduplicates across multi-term regex", () => {
+		const results = search(fixture, "/for god so loved/;/so loved the world/");
+		// Both match John 3:16 — should appear only once
+		const john316 = results.filter(
+			(r) => r.book === "John" && r.chapter === 3 && r.verse === 16,
+		);
+		expect(john316).toHaveLength(1);
+	});
+
+	test("regex scoped to a book", () => {
+		// Only John verses matching /so loved/
+		const results = search(fixture, "John /so loved/");
+		expect(results).toHaveLength(1);
+		expect(results[0].book).toBe("John");
+		expect(results[0].verse).toBe(16);
+	});
+
+	test("regex scoped to a chapter", () => {
+		// Genesis chapter 1 verses with "God"
+		const results = search(fixture, "Genesis 1 /God/");
+		expect(results.length).toBeGreaterThan(0);
+		for (const r of results) {
+			expect(r.book).toBe("Genesis");
+			expect(r.chapter).toBe(1);
+			expect(r.text).toMatch(/God/i);
+		}
+	});
+
+	test("regex scoped to a verse reference filters correctly", () => {
+		// Genesis 3:1 only — check against regex that does and doesn't match
+		const hit = search(fixture, "Genesis 3:1 /cunning/");
+		expect(hit).toHaveLength(1);
+		const miss = search(fixture, "Genesis 3:1 /loved/");
+		expect(miss).toHaveLength(0);
+	});
+
+	test("regex mixed with reference term in multi-term query", () => {
+		// /serpent/ across all books, plus exact reference John 3:16
+		const results = search(fixture, "/serpent/;John 3:16");
+		const serpents = results.filter((r) => r.text.toLowerCase().includes("serpent"));
+		const john316 = results.filter(
+			(r) => r.book === "John" && r.chapter === 3 && r.verse === 16,
+		);
+		expect(serpents.length).toBeGreaterThanOrEqual(1);
+		expect(john316).toHaveLength(1);
+	});
+
+	test("regex with quantifier \\w+", () => {
+		// "God \w+ the" should match e.g. "God created the", "God called the"
+		const results = search(fixture, "/God \\w+ the/");
+		expect(results.length).toBeGreaterThan(0);
+		for (const r of results) {
+			expect(r.text).toMatch(/God \w+ the/i);
+		}
+	});
+
+	test("tryParseNav returns null for standalone regex term", () => {
+		expect(tryParseNav("/for \\w+ so loved/")).toBeNull();
+	});
+
+	test("tryParseNav returns null for scoped regex term", () => {
+		expect(tryParseNav("John /so loved/")).toBeNull();
+	});
+
+	test("tryParseNav returns null for multi-term containing regex", () => {
+		expect(tryParseNav("Genesis 1:1; /serpent/")).toBeNull();
 	});
 });
 

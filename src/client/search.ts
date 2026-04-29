@@ -273,7 +273,7 @@ export function parseNavTerms(query: string): NavTermResult[] {
 		.filter(Boolean);
 
 	return terms.map((term) => {
-		if (term.match(/"(.*?)"/)) return { refs: null, term };
+		if (term.match(/"(.*?)"/) || extractRegexFilter(term) !== null) return { refs: null, term };
 
 		const expanded = expandCrossChapterTrailing(term);
 		if (expanded !== null) {
@@ -325,7 +325,7 @@ export function tryParseNavGroups(query: string): NavRef[][] | null {
 
 	const groups: NavRef[][] = [];
 	for (const term of terms) {
-		if (term.match(/"(.*?)"/)) return null;
+		if (term.match(/"(.*?)"/) || extractRegexFilter(term) !== null) return null;
 
 		const expanded = expandCrossChapterTrailing(term);
 		if (expanded !== null) {
@@ -374,6 +374,24 @@ function escapeRegex(s: string): string {
 	return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/**
+ * Detect /pattern/ or /pattern/flags regex search syntax.
+ * Returns the compiled RegExp and the optional reference prefix, or null if not matched.
+ * Defaults to case-insensitive when no flags are specified.
+ */
+function extractRegexFilter(term: string): { regex: RegExp; refPart: string } | null {
+	// Match optional reference prefix, then /pattern/ with optional trailing flags
+	const m = term.match(/^(.*?)\s*\/(.+)\/([gimsuy]*)$/);
+	if (!m) return null;
+	const flags = m[3] || "i"; // default case-insensitive, consistent with text search
+	try {
+		const regex = new RegExp(m[2], flags);
+		return { regex, refPart: m[1].trim() };
+	} catch {
+		return null; // Invalid regex syntax — silently ignore
+	}
+}
+
 function buildTextMatcher(filter: string): (text: string) => boolean {
 	const hasStart = filter.startsWith("^");
 	const hasEnd = filter.endsWith("$") && filter.length > (hasStart ? 1 : 0);
@@ -400,11 +418,26 @@ export function search(data: BibleData, query: string): VerseResult[] {
 	const seen = new Set<string>();
 
 	for (const term of terms) {
-		// Extract an optional quoted text filter from the term
-		const quotedMatch = term.match(/"(.*?)"/);
-		const rawFilter = quotedMatch && quotedMatch[1].length > 0 ? quotedMatch[1] : null;
-		const textMatch = rawFilter ? buildTextMatcher(rawFilter) : null;
-		const refPart = quotedMatch ? term.replace(/"(.*?)"/, "").trim() : term;
+		// Check for regex search syntax: /pattern/ or /pattern/flags
+		const regexFilter = extractRegexFilter(term);
+		let textMatch: ((text: string) => boolean) | null = null;
+		let refPart: string;
+
+		if (regexFilter) {
+			const { regex } = regexFilter;
+			// Reset lastIndex before each call to handle stateful (g/y) regexes correctly
+			textMatch = (text) => {
+				regex.lastIndex = 0;
+				return regex.test(text);
+			};
+			refPart = regexFilter.refPart;
+		} else {
+			// Extract an optional quoted text filter from the term
+			const quotedMatch = term.match(/"(.*?)"/);
+			const rawFilter = quotedMatch && quotedMatch[1].length > 0 ? quotedMatch[1] : null;
+			textMatch = rawFilter ? buildTextMatcher(rawFilter) : null;
+			refPart = quotedMatch ? term.replace(/"(.*?)"/, "").trim() : term;
+		}
 
 		// Strong's number search (e.g., G2316, H430)
 		const strongsMatch = refPart.match(/^([GHgh]\d+)$/);
@@ -543,4 +576,6 @@ export {
 	levenshtein as _levenshtein,
 	normalizeQuery as _normalizeQuery,
 	escapeRegex,
+	extractRegexFilter,
+	extractRegexFilter as _extractRegexFilter,
 };

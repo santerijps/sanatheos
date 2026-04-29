@@ -10,7 +10,7 @@ import type {
 	StrongsEntry,
 } from "./types.ts";
 import type { NavRef } from "./search.ts";
-import { escapeRegex } from "./search.ts";
+import { escapeRegex, extractRegexFilter } from "./search.ts";
 import { displayName, displayNameFor } from "./bookNames.ts";
 import { t } from "./i18n.ts";
 
@@ -915,7 +915,15 @@ export function renderResults(results: VerseResult[], query: string) {
 		.map((t) => t.trim())
 		.filter(Boolean);
 	const highlights: string[] = [];
+	const regexParts: string[] = [];
+
 	for (const t of terms) {
+		// Regex search: /pattern/ or /pattern/flags
+		const rxFilter = extractRegexFilter(t);
+		if (rxFilter) {
+			regexParts.push(rxFilter.regex.source);
+			continue;
+		}
 		const m = t.match(/"(.+?)"/);
 		if (!m) continue;
 		let raw = m[1];
@@ -924,10 +932,13 @@ export function renderResults(results: VerseResult[], query: string) {
 		if (raw.length >= 2) highlights.push(raw);
 	}
 
-	// Build a single combined regex to avoid corrupting <mark> tags across passes
-	const hlRegex = highlights.length
-		? new RegExp(`(${highlights.map((h) => escapeRegex(escapeHtml(h))).join("|")})`, "gi")
-		: null;
+	// Build a single combined regex to avoid corrupting <mark> tags across passes.
+	// Merge escaped quoted-text terms and raw regex patterns into one alternation.
+	const allParts: string[] = [
+		...highlights.map((h) => escapeRegex(escapeHtml(h))),
+		...regexParts,
+	];
+	const hlRegex = allParts.length ? new RegExp(`(${allParts.join("|")})`, "gi") : null;
 
 	let shown = 0;
 
