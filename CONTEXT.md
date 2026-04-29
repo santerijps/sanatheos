@@ -28,16 +28,24 @@ sanatheos/
 │   ├── shared/
 │   │   └── bible-loader.ts   # Shared Bible data loading (BOOK_ORDER, loadBible, discoverTranslations)
 │   └── client/
-│       ├── app.ts            # Main entry point — wires everything together
+│       ├── app.ts            # Main entry point — thin orchestrator, wires feature modules
 │       ├── types.ts          # Shared TypeScript interfaces
 │       ├── search.ts         # Search engine — parsing, matching, fuzzy
 │       ├── render.ts         # All DOM rendering functions
 │       ├── state.ts          # URL state management (read/push/replace)
 │       ├── db.ts             # IndexedDB layer (Bible cache + highlights + export/import)
-│       ├── i18n.ts           # Internationalization — EN and FI string tables
+│       ├── i18n.ts           # Internationalization — EN, FI, and SV string tables
 │       ├── bookNames.ts      # Translation-aware book names and aliases
 │       ├── bookCodes.ts      # Short 3-char codes for URL-friendly book refs
-│       └── qr.ts             # QR code wrapper around the `qrcode` npm package
+│       ├── utils.ts          # Shared UI utilities (lockScroll, unlockScroll, escapeHtml)
+│       ├── qr.ts             # QR code wrapper around the `qrcode` npm package
+│       ├── services/
+│       │   └── api.ts        # Fetch functions + TRANSLATION_NAMES / TRANSLATION_LANG constants
+│       └── features/
+│           ├── notes.ts      # Note editor dialog + sidenote DOM management
+│           ├── highlights.ts # Verse context menu (right-click / long-press) + highlight ops
+│           ├── index-panel.ts# Book index panel + mobile drill-down + drag-to-close gesture
+│           └── sidebar.ts    # Unified side panel — all tabs (stories/parables/bookmarks/etc.)
 │
 ├── public/                   # Static assets served in dev mode
 │   ├── index.html            # Single HTML page — all UI skeleton
@@ -413,28 +421,38 @@ interface VerseNote {
 
 ### app.ts — Main Entry Point
 
-The `init()` function runs on page load and orchestrates everything:
+A thin orchestrator (~1,680 lines). The `init()` function runs on page load:
 
 1. **Reads initial state** from URL query parameters via `readState()`.
 2. **Loads Bible data** — checks IndexedDB cache first, then fetches `bible-CODE.json` from the server. Stores in IndexedDB for offline use.
-3. **Loads metadata in parallel** — fetches `data/styleguide.json`, `data/descriptions-LANG.json`, and `data/subheadings-LANG.json` concurrently via `Promise.all()` and passes them to their respective setters in render.ts. For parallel translations, also loads secondary subheadings via `setSecondarySubheadings()`.
+3. **Loads metadata in parallel** — fetches `data/styleguide.json`, `data/descriptions-LANG.json`, and `data/subheadings-LANG.json` concurrently via `Promise.all()` and passes them to their respective setters in render.ts.
 4. **Initializes the search engine** with the loaded data.
 5. **Populates settings selectors** — translation, parallel, language, theme, font size — from `localStorage` and URL state.
 6. **Renders initial content** based on URL state.
-8. **Wires up all event listeners:**
+7. **Initialises feature modules** (after `updateStaticText()`):
+   - `initNotes(deps)` → `NotesModule` (note dialog + sidenotes)
+   - `initHighlights(deps)` → `{ closeVerseMenu }` (verse context menu + highlights)
+   - `initIndexPanel(deps)` → `IndexPanelModule` (book index panel + drag gesture)
+   - `initSidebar(deps)` → `SidebarModule` (all side panel tabs)
+8. **Wires up all remaining event listeners:**
    - Search input with 150ms debounce and auto-closing double quotes.
-   - Index panel open/close with scroll locking. On mobile, `closeIndex()` and `navigate()` add a `.closing` class to `#index-overlay` and listen for `animationend` on `#index-panel` before removing `.open`, providing a slide-down close animation. On desktop, `.open` is removed immediately.
-   - Unified side panel (`#side-overlay`) open/close/tab-switching with scroll locking.
-   - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I).
+   - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I) — delegates to feature module methods.
    - Content click handlers (nav arrows, search results, chapter links, headings, copy buttons).
-   - Verse context menu (left-click on verse numbers, long-press on touch).
    - Swipe navigation on touch devices.
    - Browser back/forward (`popstate`).
    - Translation switching with automatic query book name translation.
    - Parallel translation loading and toggling.
-   - Theme, font size, and font family changes.
+   - Theme, font size, and font family segmented control handlers.
    - Data export/import handlers.
    - QR code overlay open/close.
+
+**Feature module pattern** — Each feature module exports an `initXxx(deps)` function that:
+- Queries its own DOM elements internally (no elements passed in).
+- Receives shared state via accessor closures in `deps` (e.g., `getData: () => BibleData`).
+- Wires its own event listeners.
+- Returns callbacks needed by other modules (e.g., `openNoteDialog`, `syncSidenotes`).
+
+This prevents `init()` from accumulating hundreds of lines of DOM queries and event handlers. Cross-module communication uses only the `deps` parameter — feature modules never import from `app.ts`.
 
 **Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
 - `#side-tab-rail` — 52px icon column with eight `.side-tab-btn[data-tab]` buttons (stories, parables, theophanies, typology, bookmarks, notes, settings, info) and `#side-close`
@@ -445,7 +463,7 @@ Key functions:
 - `openSidePanel(tab?)` — adds `.open` to `#side-overlay`, calls `activateSideTab`, loads stories/parables/theophanies/typology/bookmarks data for their respective tabs (already in memory if background preload completed)
 - `closeSidePanel()` — removes `.open` from `#side-overlay`
 
-**Background preloading** — After the initial page content is rendered and the footer is revealed, `loadStoriesData()`, `loadParablesData()`, `loadTheophaniesData()`, and `loadTypologyData()` are called in parallel inside a `requestIdleCallback` callback (falling back to `setTimeout(fn, 0)`). This populates both the module-scoped in-memory cache and IndexedDB before the user opens the side panel, so the first panel open is instant.
+**Background preloading** — After the initial page content is rendered and the footer is revealed, `sidebar.preloadData()` is called inside a `requestIdleCallback` callback (falling back to `setTimeout(fn, 0)`). This populates both the module-scoped in-memory cache and IndexedDB before the user opens the side panel, so the first panel open is instant.
 
 **Stories data flow** — `loadStoriesData()` checks the module-scoped variable first, then falls back to IndexedDB (`loadStories()`), then fetches `./data/stories.json` from the network and saves to IndexedDB. `renderStoriesList(stories, filter)` builds HTML from the filtered list, grouping entries by `category` with `.stories-category-label` headers and `.story-item` buttons. Clicking a story calls `closeSidePanel()`, sets the search input value to the story's `ref`, and dispatches an `input` event to trigger navigation.
 
@@ -481,8 +499,94 @@ If `tryParseNavGroups` fails and the query contains no quoted text, `parseNavTer
 
 **QR code overlay:** `showQrOverlay(url)` opens `#qr-overlay` (a fixed overlay with a `<canvas>`) and lazily imports `./qr.ts` to call `drawQR()`. The overlay is closed by clicking its close button or the backdrop. Pressing Escape also closes it. The overlay is triggered from share buttons when the `navigator.share` API is unavailable.
 
-**Translation metadata** is hardcoded in `TRANSLATION_NAMES` and `TRANSLATION_LANG` constants:
+**Translation metadata** — `TRANSLATION_NAMES` and `TRANSLATION_LANG` are exported from `services/api.ts`:
 - `NHEB` → English (default), `KJV` → English, `CPDV` → English, `KR38` → Finnish (Suomi), `SV17` → Swedish (Svenska)
+- Imported by `app.ts`, `features/highlights.ts`, and any other module that needs them.
+
+### utils.ts — Shared UI Utilities
+
+Three pure DOM helpers used by multiple feature modules:
+
+- `lockScroll()` — Compensates for scrollbar width (`window.innerWidth - clientWidth`) then adds `.panel-open` to `<body>`, preventing scroll jump when body overflow is hidden.
+- `unlockScroll()` — Removes `.panel-open` and restores `paddingRight`.
+- `escapeHtml(str)` — Escapes `&`, `<`, `>`, `"` to HTML entities. Used when inserting user-controlled strings into `innerHTML`.
+
+### services/api.ts — Data Fetching
+
+Centralises all network + IndexedDB fetch functions and the translation constant maps:
+
+**Constants:**
+- `TRANSLATION_NAMES: Record<string, { name: string; language: string }>` — human-readable name and language for each translation code.
+- `TRANSLATION_LANG: Record<string, string>` — maps translation code to 2-letter UI language code (`"en"`, `"fi"`, `"sv"`).
+
+**Functions:**
+- `fetchInterlinear(book)` — checks render.ts in-memory store → IndexedDB → network fetch of `/text/interlinear/{book}.json`.
+- `fetchStrongs()` — checks render.ts in-memory store → IndexedDB → network fetch of `/text/strongs.json`.
+- `fetchTranslation(code)` — checks IndexedDB → network fetch of `/text/bible-{code}.json`.
+- `fetchTranslations()` — returns the static list `["CPDV", "KJV", "KR38", "NHEB", "SV17"]`.
+- `fetchDescriptions(code)` — fetches `/data/descriptions-{lang}.json` using `TRANSLATION_LANG[code]`; returns `[]` on failure.
+
+### features/notes.ts — Note Editor + Sidenotes
+
+Exports `initNotes(deps: NotesDeps): NotesModule`.
+
+**`NotesDeps`:** `{ getData: () => BibleData; showToast: (msg: string) => void }`
+
+**`NotesModule`:**
+- `openNoteDialog(book, chapter, verse)` — Opens `#note-panel-overlay`, populates title/ref/verse-preview/textarea, wires Save/Delete/Cancel handlers.
+- `closeNoteDialog()` — Closes the overlay.
+- `syncSidenotes()` — Repositions all `<aside class="verse-sidenote">` elements into `#sidenotes-rail` on desktop (≥768px), or leaves them inline on mobile. Runs after every render and on window resize.
+- `updateSidenoteDom(noteId, text)` — Updates or removes the sidenote DOM element for a specific note id; called when sidebar's notes list deletes a note.
+
+Also removes `visibility:hidden` FOUC protection from `#note-panel-overlay` on init and attaches the resize debounce listener for `syncSidenotes`. Wires `.verse-note-marker` click handler, sidenote-number click handler (reopens editor), and sidenote hover-highlight handlers.
+
+### features/highlights.ts — Verse Context Menu
+
+Exports `initHighlights(deps: HighlightsDeps): { closeVerseMenu: () => void }`.
+
+**`HighlightsDeps`:** `{ getData, getParallelData, getCurrentTranslation, getParallelTranslation, getHighlightMap, updateHighlightEntry, showToast, openNoteDialog, syncBookmarkBtn }`
+
+Attaches `click`, `contextmenu`, `touchstart`, `touchend`, and `touchmove` listeners to `#content`.
+- Left-click / long-press (500ms) on a verse `<sup>` opens a floating `#verse-menu` with: five color dot buttons, active-color ring, remove-highlight button, copy-verse button, bookmark button, and add/edit-note button.
+- Color dot click → calls `deps.updateHighlightEntry()` and re-renders the verse span class.
+- Copy → writes translation label + reference + text to clipboard, shows toast.
+- Bookmark → calls `addBookmark`/`removeBookmark` from `db.ts`, calls `deps.syncBookmarkBtn()`.
+- Note → delegates to `deps.openNoteDialog()`.
+
+`closeVerseMenu()` is returned and used by the keyboard shortcut handler in `app.ts`.
+
+### features/index-panel.ts — Book Index Panel
+
+Exports `initIndexPanel(deps: IndexPanelDeps): IndexPanelModule`.
+
+**`IndexPanelDeps`:** `{ getData: () => BibleData; navigate: (s: AppState) => void }`
+
+**`IndexPanelModule`:** `{ openIndex, closeIndex, toggleIndex, invalidateIndex }`
+
+- `openIndex()` — Calls `setMobileStep()` to restore correct drill-down step from current URL state, opens `#index-overlay`, calls `renderIndex()` on first open or after invalidation.
+- `closeIndex()` — On mobile: adds `.closing` to overlay, listens for `animationend` on `#index-panel` before removing `.open`. On desktop: removes `.open` immediately.
+- `toggleIndex()` — Calls `closeIndex()` or `openIndex()` based on current state.
+- `invalidateIndex()` — Sets `indexRendered = false` and `indexScrollTo = null`; called when translation or language changes so the index re-renders with updated book names on the next open.
+
+Also owns the mobile drill-down state (`mobileStep`, `mobileActiveBook`), the back-button handler, and the drag-to-close gesture (same implementation as before, now encapsulated in the module).
+
+### features/sidebar.ts — Unified Side Panel
+
+Exports `initSidebar(deps: SidebarDeps): SidebarModule`.
+
+**`SidebarDeps`:** `{ showToast, syncBookmarkBtn, setSearchInput, openNoteDialog, updateSidenoteDom, triggerSyncSidenotes }`
+
+**`SidebarModule`:** `{ openSidePanel, closeSidePanel, renderBookmarksList, renderNotesList, preloadData }`
+
+- `openSidePanel(tab?)` — Activates the specified (or last-active) tab, opens `#side-overlay`, loads data for the active tab.
+- `closeSidePanel()` — Removes `.open` from `#side-overlay`.
+- `renderBookmarksList()` — Reads all bookmarks from IndexedDB and renders `.bookmark-item` entries.
+- `renderNotesList()` — Reads all notes from IndexedDB, sorts by book order then chapter/verse, renders `.note-item` entries.
+- `preloadData()` — Calls `loadStoriesData()`, `loadParablesData()`, `loadTheophaniesData()`, and `loadTypologyData()` in parallel to populate in-memory + IndexedDB caches before the user opens the panel.
+
+Owns all side panel DOM queries, `activateSideTab()`, tab-switching event listeners, filter inputs for all four content panes, list click handlers, and the `bookmarkNavText()` helper.
+
+Also removes `visibility:hidden` FOUC protection from `#side-overlay` on init.
 
 ### search.ts — Search Engine
 
@@ -1264,7 +1368,7 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 
 1. Add a JSON file `public/text/NEWCODE.json` in the array-based source format (with `books` array containing `name`, `chapters`, and `verses` arrays).
 2. Add book display names and aliases in `bookNames.ts` under a new `const NEWCODE: Record<string, BookEntry>` and add it to the `TRANSLATIONS` object.
-3. Add translation metadata to `TRANSLATION_NAMES` and `TRANSLATION_LANG` in `app.ts`.
+3. Add translation metadata to `TRANSLATION_NAMES` and `TRANSLATION_LANG` in `src/client/services/api.ts`.
 4. The build script auto-discovers translations from the `public/text/` directory.
 5. Run `bun run build:static` to regenerate `docs/`.
 

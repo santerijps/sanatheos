@@ -1,42 +1,9 @@
-import type {
-	BibleData,
-	AppState,
-	HighlightColor,
-	DescriptionData,
-	InterlinearBook,
-	StrongsDict,
-	Bookmark,
-	StoryEntry,
-	ParableEntry,
-	TheophaniesEntry,
-	TypologyEntry,
-	VerseNote,
-} from "./types.ts";
+import type { BibleData, AppState, HighlightColor, Bookmark } from "./types.ts";
 import {
-	loadBible,
-	saveBible,
 	getHighlightMap,
-	setHighlight,
-	removeHighlight,
-	loadInterlinearBook,
-	saveInterlinearBook,
-	loadStrongsDict,
-	saveStrongsDict,
-	getBookmarks,
 	addBookmark,
 	removeBookmark,
 	hasBookmark,
-	loadStories,
-	saveStories,
-	loadParables,
-	saveParables,
-	loadTheophanies,
-	saveTheophanies,
-	loadTypology,
-	saveTypology,
-	getNotes,
-	saveNote,
-	deleteNote,
 	getNoteMap,
 	exportUserData,
 	importUserData,
@@ -60,7 +27,6 @@ import {
 	renderVerseSegments,
 	renderMultiNav,
 	renderResults,
-	renderIndex,
 	navRefLabel,
 	setHighlightMap,
 	setDescriptions,
@@ -78,20 +44,29 @@ import {
 	setTranslationCode,
 	setInterlinearEnabled,
 	getInterlinearEnabled,
-	setInterlinearBook,
-	getInterlinearBook,
 	getInterlinearBooks,
-	setStrongsDict,
 	getStrongsDict,
 	renderStrongsPanel,
 	setNoteMap,
-	getNoteMap as getRenderNoteMap,
-	ICON_COPY,
-	ICON_BOOKMARK,
-	ICON_NOTE,
 } from "./render.ts";
-import { setTranslation, displayName, displayNameFor, getBookKeys } from "./bookNames.ts";
+import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
 import { setLanguage, getLanguage, t } from "./i18n.ts";
+import {
+	TRANSLATION_NAMES,
+	TRANSLATION_LANG,
+	fetchTranslation,
+	fetchTranslations,
+	fetchDescriptions,
+	fetchInterlinear,
+	fetchStrongs,
+} from "./services/api.ts";
+import { initNotes } from "./features/notes.ts";
+import type { NotesModule } from "./features/notes.ts";
+import { initHighlights } from "./features/highlights.ts";
+import { initIndexPanel } from "./features/index-panel.ts";
+import type { IndexPanelModule } from "./features/index-panel.ts";
+import { initSidebar } from "./features/sidebar.ts";
+import type { SidebarModule } from "./features/sidebar.ts";
 
 const GITHUB_SVG_BLACK = `
 <svg width="32" height="32" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: -10px;">
@@ -193,63 +168,6 @@ function withTranslationParams(s: AppState): AppState {
 	};
 }
 
-async function fetchInterlinear(book: string): Promise<InterlinearBook> {
-	const existing = getInterlinearBook(book);
-	if (existing) return existing;
-	const cached = await loadInterlinearBook(book);
-	if (cached) {
-		setInterlinearBook(book, cached);
-		return cached;
-	}
-	const res = await fetch(`./text/interlinear/${encodeURIComponent(book)}.json`);
-	if (!res.ok) throw new Error(`HTTP ${res.status}`);
-	const d: InterlinearBook = await res.json();
-	setInterlinearBook(book, d);
-	await saveInterlinearBook(book, d);
-	return d;
-}
-
-async function fetchStrongs(): Promise<StrongsDict> {
-	const existing = getStrongsDict();
-	if (existing && Object.keys(existing).length > 0) return existing;
-	const cached = await loadStrongsDict();
-	if (cached) {
-		setStrongsDict(cached);
-		return cached;
-	}
-	const res = await fetch("./text/strongs.json");
-	if (!res.ok) throw new Error(`HTTP ${res.status}`);
-	const d: StrongsDict = await res.json();
-	setStrongsDict(d);
-	await saveStrongsDict(d);
-	return d;
-}
-
-async function fetchTranslation(code: string): Promise<BibleData> {
-	const cached = await loadBible(code);
-	if (cached) return cached;
-	const res = await fetch(`./text/bible-${encodeURIComponent(code)}.json`);
-	if (!res.ok) throw new Error(`HTTP ${res.status}`);
-	const d: BibleData = await res.json();
-	await saveBible(code, d);
-	return d;
-}
-
-async function fetchTranslations(): Promise<string[]> {
-	return ["CPDV", "KJV", "KR38", "NHEB", "SV17"];
-}
-
-async function fetchDescriptions(code: string): Promise<DescriptionData> {
-	const lang = TRANSLATION_LANG[code] || "en";
-	try {
-		const res = await fetch(`./data/descriptions-${encodeURIComponent(lang)}.json`);
-		if (!res.ok) return [];
-		return await res.json();
-	} catch {
-		return [];
-	}
-}
-
 // --- Toast notifications ---
 let toastTimer: number;
 function showToast(msg: string) {
@@ -322,45 +240,12 @@ async function ensureInterlinear(book: string): Promise<void> {
 
 async function init() {
 	const content = document.getElementById("content")!;
-	const sidenoteRail = document.getElementById("sidenotes-rail")!;
 	const searchInput = document.getElementById("search-input") as HTMLInputElement;
-	const indexBtn = document.getElementById("index-btn")!;
 	const overlay = document.getElementById("index-overlay")!;
 	const verseMenu = document.getElementById("verse-menu")!;
-	// Unified side panel
-	const panelBtn = document.getElementById("panel-btn")!;
+	// For keyboard shortcut handler — checking panel states
 	const sideOverlay = document.getElementById("side-overlay")!;
-	const sideClose = document.getElementById("side-close")!;
-	const sideTabBtns = Array.from(document.querySelectorAll<HTMLElement>(".side-tab-btn"));
-	const sidePanes = Array.from(document.querySelectorAll<HTMLElement>(".side-pane"));
-	const storiesFilter = document.getElementById("stories-filter") as HTMLInputElement;
-	const storiesList = document.getElementById("stories-list")!;
-	const storiesTitleEl = document.getElementById("stories-title")!;
-	const parablesFilter = document.getElementById("parables-filter") as HTMLInputElement;
-	const parablesList = document.getElementById("parables-list")!;
-	const parablesTitleEl = document.getElementById("parables-title")!;
-	const theophaniesFilter = document.getElementById("theophanies-filter") as HTMLInputElement;
-	const theophaniesList = document.getElementById("theophanies-list")!;
-	const theophaniesTitleEl = document.getElementById("theophanies-title")!;
-	const typologyFilter = document.getElementById("typology-filter") as HTMLInputElement;
-	const typologyList = document.getElementById("typology-list")!;
-	const typologyTitleEl = document.getElementById("typology-title")!;
-	const bookmarksList = document.getElementById("bookmarks-list")!;
-	const bookmarksTitleEl = document.getElementById("bookmarks-title")!;
-	const notesList = document.getElementById("notes-list")!;
-	const notesTitleEl = document.getElementById("notes-title")!;
-	// Note editor left panel elements
 	const noteDialogOverlay = document.getElementById("note-panel-overlay")!;
-	const noteDialogTitle = document.getElementById("note-panel-title")!;
-	const noteDialogRef = document.getElementById("note-panel-ref")!;
-	const noteDialogTextarea = document.getElementById(
-		"note-panel-textarea",
-	) as HTMLTextAreaElement;
-	const noteDialogSave = document.getElementById("note-panel-save")!;
-	const noteDialogCancel = document.getElementById("note-panel-cancel")!;
-	const noteDialogDelete = document.getElementById("note-panel-delete")!;
-	const notePanelClose = document.getElementById("note-panel-close")!;
-	const notePanelVerse = document.getElementById("note-panel-verse")!;
 
 	// Determine initial translation from URL or localStorage
 	const initialState = readState();
@@ -514,9 +399,8 @@ async function init() {
 				updateStaticText();
 			}
 
-			indexRendered = false;
-			indexScrollTo = null;
-			if (overlay.classList.contains("open")) openIndex();
+			indexPanel.invalidateIndex();
+			if (overlay.classList.contains("open")) indexPanel.openIndex();
 
 			// Turn off interlinear mode when switching away from KJV
 			if (getInterlinearEnabled()) {
@@ -570,9 +454,8 @@ async function init() {
 			document.documentElement.lang = lang;
 			localStorage.setItem("bible-language", lang);
 			updateStaticText();
-			indexRendered = false;
-			indexScrollTo = null;
-			if (overlay.classList.contains("open")) openIndex();
+			indexPanel.invalidateIndex();
+			if (overlay.classList.contains("open")) indexPanel.openIndex();
 			const state = readState();
 			searchInput.value = stateToInputText(state);
 			applyState(state);
@@ -733,6 +616,42 @@ async function init() {
 
 	updateStaticText();
 
+	// --- Feature module initialization ---
+	const notes: NotesModule = initNotes({ getData: () => data, showToast });
+	syncSidenotes = notes.syncSidenotes;
+
+	const highlights = initHighlights({
+		getData: () => data,
+		getParallelData: () => parallelData,
+		getCurrentTranslation: () => currentTranslation,
+		getParallelTranslation: () => parallelTranslation,
+		getHighlightMap: () => highlightMap,
+		updateHighlightEntry: (key, color) => {
+			if (color) highlightMap.set(key, color);
+			else highlightMap.delete(key);
+		},
+		showToast,
+		openNoteDialog: notes.openNoteDialog,
+		syncBookmarkBtn,
+	});
+
+	const indexPanel: IndexPanelModule = initIndexPanel({
+		getData: () => data,
+		navigate,
+	});
+
+	const sidebar: SidebarModule = initSidebar({
+		showToast,
+		syncBookmarkBtn,
+		setSearchInput: (val) => {
+			searchInput.value = val;
+			searchInput.dispatchEvent(new Event("input"));
+		},
+		openNoteDialog: notes.openNoteDialog,
+		updateSidenoteDom: notes.updateSidenoteDom,
+		triggerSyncSidenotes: () => requestAnimationFrame(syncSidenotes),
+	});
+
 	// --- Interlinear toggle ---
 	const strongsPanel = document.getElementById("strongs-panel")!;
 	strongsPanel.style.removeProperty("visibility");
@@ -811,20 +730,10 @@ async function init() {
 	document.getElementById("footer")?.classList.add("visible");
 
 	// Preload side panel data in the background after the main page has rendered
-	const preloadSidePanelData = () => {
-		Promise.all([
-			loadStoriesData(),
-			loadParablesData(),
-			loadTheophaniesData(),
-			loadTypologyData(),
-		]).catch((error) => {
-			console.error(error);
-		});
-	};
 	if ("requestIdleCallback" in window) {
-		window.requestIdleCallback(preloadSidePanelData, { timeout: 3000 });
+		window.requestIdleCallback(() => sidebar.preloadData(), { timeout: 3000 });
 	} else {
-		setTimeout(preloadSidePanelData, 0);
+		setTimeout(() => sidebar.preloadData(), 0);
 	}
 
 	// --- Search with debounce ---
@@ -867,1281 +776,6 @@ async function init() {
 		}
 	});
 
-	// --- Index panel ---
-	let indexRendered = false;
-	let indexScrollTo: ((book?: string, chapter?: number, verse?: number) => void) | null = null;
-
-	function lockScroll() {
-		const scrollbarW = window.innerWidth - document.documentElement.clientWidth;
-		document.body.style.paddingRight = scrollbarW + "px";
-		document.body.classList.add("panel-open");
-	}
-
-	function unlockScroll() {
-		document.body.classList.remove("panel-open");
-		document.body.style.paddingRight = "";
-	}
-
-	// --- Mobile drill-down state ---
-	let mobileStep: "books" | "chapters" | "verses" = "books";
-	let mobileActiveBook = "";
-
-	function isMobileIndex(): boolean {
-		return window.innerWidth <= 768;
-	}
-
-	function setMobileStep(step: "books" | "chapters" | "verses", book = "", chapter = 0) {
-		mobileStep = step;
-		mobileActiveBook = book;
-		const panel = document.getElementById("index-panel");
-		if (panel) panel.dataset.step = step;
-		const breadcrumb = document.getElementById("idx-breadcrumb");
-		if (breadcrumb) {
-			if (step === "books") breadcrumb.textContent = t().idxBrowseLabel;
-			else if (step === "chapters") breadcrumb.textContent = displayName(book);
-			else breadcrumb.textContent = `${displayName(book)} › ${t().chapter} ${chapter}`;
-		}
-		const backBtn = document.getElementById("idx-back-btn");
-		if (backBtn) {
-			if (step === "books") backBtn.setAttribute("aria-hidden", "true");
-			else backBtn.removeAttribute("aria-hidden");
-		}
-	}
-
-	// Wire up back button (always, regardless of indexRendered state)
-	document.getElementById("idx-back-btn")?.addEventListener("click", () => {
-		if (mobileStep === "chapters") setMobileStep("books");
-		else if (mobileStep === "verses") setMobileStep("chapters", mobileActiveBook);
-	});
-
-	function openIndex() {
-		if (isMobileIndex()) {
-			const cur = readState();
-			if (cur.book && cur.chapter !== undefined) {
-				setMobileStep("verses", cur.book, cur.chapter);
-			} else if (cur.book) {
-				setMobileStep("chapters", cur.book);
-			} else {
-				setMobileStep("books");
-			}
-		}
-		overlay.classList.add("open");
-		document.getElementById("index-panel")?.classList.remove("dragging-done"); // clear post-drag suppression so slide-up plays
-		indexBtn.setAttribute("aria-expanded", "true");
-		lockScroll();
-		if (!indexRendered) {
-			const idx = renderIndex(data, {
-				onBook(book) {
-					if (isMobileIndex()) {
-						setMobileStep("chapters", book);
-					} else {
-						navigate({ book });
-					}
-				},
-				onReadBook(book) {
-					navigate({ book });
-				},
-				onChapter(book, chapter) {
-					if (isMobileIndex()) {
-						setMobileStep("verses", book, chapter);
-					} else {
-						navigate({ book, chapter });
-					}
-				},
-				onReadChapter(book, chapter) {
-					navigate({ book, chapter });
-				},
-				onVerse(book, chapter, verse) {
-					navigate({ book, chapter, verse });
-				},
-			});
-			indexScrollTo = idx.scrollTo;
-			indexRendered = true;
-		}
-		// Scroll to the currently viewed book/chapter/verse
-		const current = readState();
-		const book = current.book || "Genesis";
-		requestAnimationFrame(() => {
-			if (indexScrollTo) indexScrollTo(book, current.chapter, current.verse);
-			if (isMobileIndex()) return; // on mobile, focus stays on the back button / first item
-			// Focus the most specific column matching what's being read
-			let target: HTMLElement | null = null;
-			if (current.verse !== undefined) {
-				target =
-					(document.querySelector("#idx-verses .idx-item:focus") as HTMLElement) ??
-					(() => {
-						const items = document.querySelectorAll("#idx-verses .idx-item");
-						for (const el of items)
-							if (el.textContent?.startsWith(`${current.verse}. `)) return el;
-						return null;
-					})() ??
-					(document.querySelector("#idx-verses .idx-item") as HTMLElement);
-			} else if (current.chapter !== undefined) {
-				target =
-					(document.querySelector(`#idx-chapters .idx-item.active`) as HTMLElement) ??
-					(document.querySelector("#idx-chapters .idx-item") as HTMLElement);
-			}
-			if (!target) {
-				target =
-					(document.querySelector("#idx-books .idx-item.active") as HTMLElement) ??
-					(document.querySelector("#idx-books .idx-item") as HTMLElement);
-			}
-			target?.focus();
-		});
-	}
-
-	function closeIndex() {
-		if (isMobileIndex() && overlay.classList.contains("open")) {
-			overlay.classList.add("closing");
-			const panel = document.getElementById("index-panel")!;
-			panel.addEventListener(
-				"animationend",
-				() => {
-					overlay.classList.remove("open", "closing");
-					indexBtn.setAttribute("aria-expanded", "false");
-					unlockScroll();
-				},
-				{ once: true },
-			);
-		} else {
-			overlay.classList.remove("open");
-			indexBtn.setAttribute("aria-expanded", "false");
-			unlockScroll();
-		}
-	}
-
-	// --- Mobile drag-to-close gesture for the index panel ---
-	// Attach to #idx-mobile-header so the drag handle at the top is the grab target.
-	// The panel translates downward in real time; releasing past the threshold
-	// triggers closeIndex(); releasing below it springs the panel back.
-	(function attachIndexDragToClose() {
-		const mobileHeader = document.getElementById("idx-mobile-header");
-		const panel = document.getElementById("index-panel")!;
-		if (!mobileHeader) return;
-
-		let startY = 0;
-		let lastY = 0;
-		let lastTime = 0;
-		let velocity = 0; // px/ms, positive = downward
-		let dragging = false;
-
-		mobileHeader.addEventListener(
-			"touchstart",
-			(e: TouchEvent) => {
-				if (!isMobileIndex() || !overlay.classList.contains("open")) return;
-				const touch = e.touches[0];
-				startY = touch.clientY;
-				lastY = touch.clientY;
-				lastTime = e.timeStamp;
-				velocity = 0;
-				dragging = false;
-			},
-			{ passive: true },
-		);
-
-		mobileHeader.addEventListener(
-			"touchmove",
-			(e: TouchEvent) => {
-				if (!isMobileIndex() || !overlay.classList.contains("open")) return;
-				const touch = e.touches[0];
-				const dy = touch.clientY - startY;
-				if (dy <= 0) {
-					// Upward drag — don't interfere
-					if (dragging) {
-						// Add .dragging-done BEFORE removing .dragging so animation: none !important
-						// stays active continuously — prevents the open animation from replaying.
-						panel.classList.add("dragging-done");
-						panel.classList.remove("dragging");
-						panel.style.transform = "";
-						overlay.style.background = "";
-						dragging = false;
-					}
-					return;
-				}
-				// Downward drag — track it
-				if (!dragging) {
-					dragging = true;
-					panel.classList.add("dragging");
-				}
-				// Velocity (exponential smoothing).
-				// Require dt >= 8ms (one frame @ 120 Hz) so that events dispatched in the
-				// same JS task (dt ≈ 0) don't produce spuriously infinite velocity.
-				const dt = e.timeStamp - lastTime;
-				if (dt >= 8) {
-					const rawV = (touch.clientY - lastY) / dt;
-					velocity = velocity * 0.6 + rawV * 0.4;
-				}
-				lastY = touch.clientY;
-				lastTime = e.timeStamp;
-
-				// Translate panel downward
-				panel.style.transform = `translateY(${dy}px)`;
-				// Fade backdrop proportionally (panel height ~85vh)
-				const panelH = panel.offsetHeight || window.innerHeight * 0.85;
-				const progress = Math.min(dy / panelH, 1);
-				const alpha = 0.4 * (1 - progress);
-				overlay.style.background = `rgba(0,0,0,${alpha.toFixed(3)})`;
-			},
-			{ passive: true },
-		);
-
-		function finishDrag(endClientY: number) {
-			if (!dragging) return;
-			dragging = false;
-
-			const dy = Math.max(0, endClientY - startY);
-			const panelH = panel.offsetHeight || window.innerHeight * 0.85;
-			const shouldClose = dy > panelH * 0.3 || velocity > 0.4;
-
-			if (shouldClose) {
-				// Slide from current dragged position to off-screen, then fully close.
-				// Keep .dragging so the CSS open animation cannot replay during transition.
-				panel.style.transition = "transform 0.25s ease-in";
-				overlay.style.transition = "background 0.25s ease-in";
-				panel.style.transform = "translateY(110%)";
-				overlay.style.background = "rgba(0,0,0,0)";
-				panel.addEventListener(
-					"transitionend",
-					() => {
-						panel.style.transition = "";
-						panel.style.transform = "";
-						overlay.style.transition = "";
-						overlay.style.background = "";
-						// Remove .dragging only after .open is gone so the open animation
-						// cannot replay.
-						overlay.classList.remove("open", "closing");
-						panel.classList.remove("dragging");
-						indexBtn.setAttribute("aria-expanded", "false");
-						unlockScroll();
-					},
-					{ once: true },
-				);
-			} else {
-				// Snap back to fully open.
-				// Keep .dragging so the CSS open animation cannot replay during transition.
-				panel.style.transition = "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-				panel.style.transform = "translateY(0)";
-				overlay.style.background = "";
-				panel.addEventListener(
-					"transitionend",
-					() => {
-						panel.style.transition = "";
-						panel.style.transform = "";
-						// Add .dragging-done BEFORE removing .dragging so animation: none !important
-						// stays active continuously — prevents the open animation from replaying.
-						panel.classList.add("dragging-done");
-						panel.classList.remove("dragging");
-					},
-					{ once: true },
-				);
-			}
-		}
-
-		mobileHeader.addEventListener(
-			"touchend",
-			(e: TouchEvent) => {
-				finishDrag(e.changedTouches[0]?.clientY ?? lastY);
-			},
-			{ passive: true },
-		);
-
-		// Cancel drag if touch is interrupted — snap back immediately
-		mobileHeader.addEventListener(
-			"touchcancel",
-			() => {
-				if (!dragging) return;
-				dragging = false;
-				panel.style.transition = "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)";
-				panel.style.transform = "translateY(0)";
-				overlay.style.background = "";
-				panel.addEventListener(
-					"transitionend",
-					() => {
-						panel.style.transition = "";
-						panel.style.transform = "";
-						panel.classList.add("dragging-done");
-						panel.classList.remove("dragging");
-					},
-					{ once: true },
-				);
-			},
-			{ passive: true },
-		);
-	})();
-
-	function toggleIndex() {
-		if (overlay.classList.contains("open")) closeIndex();
-		else openIndex();
-	}
-
-	indexBtn.addEventListener("click", toggleIndex);
-
-	overlay.addEventListener("click", (e) => {
-		if (e.target === overlay) closeIndex();
-	});
-
-	// --- Unified side panel ---
-	let lastActiveTab = localStorage.getItem("side-panel-tab") || "stories";
-
-	function activateSideTab(tab: string) {
-		sideTabBtns.forEach((btn) => {
-			const active = btn.dataset.tab === tab;
-			btn.classList.toggle("active", active);
-			btn.setAttribute("aria-selected", String(active));
-		});
-		sidePanes.forEach((pane) => {
-			pane.classList.toggle("active", pane.dataset.pane === tab);
-		});
-		lastActiveTab = tab;
-		localStorage.setItem("side-panel-tab", tab);
-	}
-
-	async function openSidePanel(tab?: string) {
-		activateSideTab(tab || lastActiveTab);
-		sideOverlay.classList.add("open");
-		panelBtn.setAttribute("aria-expanded", "true");
-		lockScroll();
-		// If opening stories tab, load data and reset filter
-		if ((tab || lastActiveTab) === "stories") {
-			storiesTitleEl.textContent = t().storiesTitle;
-			storiesFilter.placeholder = t().storiesFilterPlaceholder;
-			storiesFilter.value = "";
-			const stories = await loadStoriesData();
-			renderStoriesList(stories, "");
-			// Only auto-focus the filter on non-touch (desktop) devices
-			if (!window.matchMedia("(hover: none)").matches) {
-				storiesFilter.focus();
-			}
-		}
-		// If opening parables tab, load data and reset filter
-		if ((tab || lastActiveTab) === "parables") {
-			parablesTitleEl.textContent = t().parablesTitle;
-			parablesFilter.placeholder = t().parablesFilterPlaceholder;
-			parablesFilter.value = "";
-			const parables = await loadParablesData();
-			renderParablesList(parables, "");
-			if (!window.matchMedia("(hover: none)").matches) {
-				parablesFilter.focus();
-			}
-		}
-		// If opening theophanies tab, load data and reset filter
-		if ((tab || lastActiveTab) === "theophanies") {
-			theophaniesTitleEl.textContent = t().theophaniesTitle;
-			theophaniesFilter.placeholder = t().theophaniesFilterPlaceholder;
-			theophaniesFilter.value = "";
-			const theophanies = await loadTheophaniesData();
-			renderTheophaniesList(theophanies, "");
-			if (!window.matchMedia("(hover: none)").matches) {
-				theophaniesFilter.focus();
-			}
-		}
-		// If opening typology tab, load data and reset filter
-		if ((tab || lastActiveTab) === "typology") {
-			typologyTitleEl.textContent = t().typologyTitle;
-			typologyFilter.placeholder = t().typologyFilterPlaceholder;
-			typologyFilter.value = "";
-			const typology = await loadTypologyData();
-			renderTypologyList(typology, "");
-			if (!window.matchMedia("(hover: none)").matches) {
-				typologyFilter.focus();
-			}
-		}
-		if ((tab || lastActiveTab) === "bookmarks") {
-			bookmarksTitleEl.textContent = t().bookmarksTitle;
-			await renderBookmarksList();
-		}
-		if ((tab || lastActiveTab) === "notes") {
-			notesTitleEl.textContent = t().notesTitle;
-			await renderNotesList();
-		}
-	}
-
-	function closeSidePanel() {
-		sideOverlay.classList.remove("open");
-		panelBtn.setAttribute("aria-expanded", "false");
-		unlockScroll();
-	}
-
-	panelBtn.addEventListener("click", () => openSidePanel());
-	sideClose.addEventListener("click", closeSidePanel);
-	sideOverlay.addEventListener("click", (e) => {
-		if (e.target === sideOverlay) closeSidePanel();
-	});
-
-	sideTabBtns.forEach((btn) => {
-		btn.addEventListener("click", () => {
-			const tab = btn.dataset.tab!;
-			activateSideTab(tab);
-			// Load stories when switching to stories tab
-			if (tab === "stories") {
-				storiesTitleEl.textContent = t().storiesTitle;
-				storiesFilter.placeholder = t().storiesFilterPlaceholder;
-				loadStoriesData().then((stories) =>
-					renderStoriesList(stories, storiesFilter.value),
-				);
-			}
-			// Load parables when switching to parables tab
-			if (tab === "parables") {
-				parablesTitleEl.textContent = t().parablesTitle;
-				parablesFilter.placeholder = t().parablesFilterPlaceholder;
-				loadParablesData().then((parables) =>
-					renderParablesList(parables, parablesFilter.value),
-				);
-			}
-			// Load theophanies when switching to theophanies tab
-			if (tab === "theophanies") {
-				theophaniesTitleEl.textContent = t().theophaniesTitle;
-				theophaniesFilter.placeholder = t().theophaniesFilterPlaceholder;
-				loadTheophaniesData().then((theophanies) =>
-					renderTheophaniesList(theophanies, theophaniesFilter.value),
-				);
-			}
-			// Load typology when switching to typology tab
-			if (tab === "typology") {
-				typologyTitleEl.textContent = t().typologyTitle;
-				typologyFilter.placeholder = t().typologyFilterPlaceholder;
-				loadTypologyData().then((typology) =>
-					renderTypologyList(typology, typologyFilter.value),
-				);
-			}
-			// Load bookmarks when switching to bookmarks tab
-			if (tab === "bookmarks") {
-				bookmarksTitleEl.textContent = t().bookmarksTitle;
-				renderBookmarksList();
-			}
-			// Load notes when switching to notes tab
-			if (tab === "notes") {
-				notesTitleEl.textContent = t().notesTitle;
-				renderNotesList();
-			}
-		});
-	});
-
-	// --- Stories panel ---
-
-	let storiesData: StoryEntry[] | null = null;
-
-	async function loadStoriesData(): Promise<StoryEntry[]> {
-		if (storiesData) return storiesData;
-		const cached = await loadStories();
-		if (cached) {
-			storiesData = cached;
-			return storiesData;
-		}
-		const res = await fetch("./data/stories.json");
-		storiesData = (await res.json()) as StoryEntry[];
-		await saveStories(storiesData);
-		return storiesData;
-	}
-
-	function localizeRef(ref: string): string {
-		// Sort canonical keys longest-first to avoid partial matches (e.g. "1 Samuel" before "Samuel")
-		const keys = getBookKeys().sort((a, b) => b.length - a.length);
-		function localizeSingle(part: string): string {
-			for (const key of keys) {
-				if (part === key || part.startsWith(key + " ")) {
-					return displayName(key) + part.slice(key.length);
-				}
-			}
-			return part;
-		}
-		// Handle semicolon-separated multi-refs (e.g. "Genesis 25:19-34; Genesis 27")
-		return ref.split("; ").map(localizeSingle).join("; ");
-	}
-
-	function renderStoriesList(stories: StoryEntry[], filter: string) {
-		const s = t();
-		const lang = getLanguage();
-		const getTitle = (st: StoryEntry) =>
-			lang === "fi" && st.title_fi
-				? st.title_fi
-				: lang === "sv" && st.title_sv
-					? st.title_sv
-					: st.title;
-		const getDesc = (st: StoryEntry) =>
-			lang === "fi" && st.description_fi
-				? st.description_fi
-				: lang === "sv" && st.description_sv
-					? st.description_sv
-					: st.description;
-		const getCatLabel = (cat: string) => {
-			if (cat === "Old Testament") return s.oldTestament;
-			if (cat === "New Testament") return s.newTestament;
-			if (cat === "Deuterocanonical") return s.deuterocanonical;
-			return cat;
-		};
-
-		const q = filter.trim().toLowerCase();
-		const filtered = q
-			? stories.filter(
-					(st) =>
-						getTitle(st).toLowerCase().includes(q) ||
-						getDesc(st).toLowerCase().includes(q) ||
-						getCatLabel(st.category).toLowerCase().includes(q),
-				)
-			: stories;
-
-		if (filtered.length === 0) {
-			storiesList.innerHTML = `<p class="stories-empty">${s.storiesEmpty}</p>`;
-			return;
-		}
-
-		const categories: string[] = [];
-		const byCategory: Record<string, StoryEntry[]> = {};
-		for (const st of filtered) {
-			if (!byCategory[st.category]) {
-				byCategory[st.category] = [];
-				categories.push(st.category);
-			}
-			byCategory[st.category].push(st);
-		}
-
-		let html = "";
-		for (const cat of categories) {
-			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
-			for (const st of byCategory[cat]) {
-				html += `<button class="story-item" type="button" data-ref="${escapeHtml(st.ref)}">
-					<span class="story-item-title">${escapeHtml(getTitle(st))}</span>
-					<span class="story-item-desc">${escapeHtml(getDesc(st))}</span>
-					<span class="story-item-ref">${escapeHtml(localizeRef(st.ref))}</span>
-				</button>`;
-			}
-		}
-		storiesList.innerHTML = html;
-	}
-
-	function escapeHtml(str: string): string {
-		return str
-			.replace(/&/g, "&amp;")
-			.replace(/</g, "&lt;")
-			.replace(/>/g, "&gt;")
-			.replace(/"/g, "&quot;");
-	}
-
-	storiesFilter.addEventListener("input", async () => {
-		const stories = await loadStoriesData();
-		renderStoriesList(stories, storiesFilter.value);
-	});
-
-	storiesList.addEventListener("click", (e) => {
-		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
-		if (!item) return;
-		const ref = item.dataset.ref;
-		if (!ref) return;
-		closeSidePanel();
-		searchInput.value = ref;
-		searchInput.dispatchEvent(new Event("input"));
-	});
-
-	// --- Parables panel ---
-
-	let parablesData: ParableEntry[] | null = null;
-
-	async function loadParablesData(): Promise<ParableEntry[]> {
-		if (parablesData) return parablesData;
-		const cached = await loadParables();
-		if (cached) {
-			parablesData = cached;
-			return parablesData;
-		}
-		const res = await fetch("./data/parables.json");
-		parablesData = (await res.json()) as ParableEntry[];
-		await saveParables(parablesData);
-		return parablesData;
-	}
-
-	function renderParablesList(parables: ParableEntry[], filter: string) {
-		const s = t();
-		const lang = getLanguage();
-		const getTitle = (p: ParableEntry) =>
-			lang === "fi" && p.title_fi
-				? p.title_fi
-				: lang === "sv" && p.title_sv
-					? p.title_sv
-					: p.title;
-		const getDesc = (p: ParableEntry) =>
-			lang === "fi" && p.description_fi
-				? p.description_fi
-				: lang === "sv" && p.description_sv
-					? p.description_sv
-					: p.description;
-		// Category label is the gospel book name — localize via displayName
-		const getCatLabel = (cat: string) => displayName(cat);
-
-		const q = filter.trim().toLowerCase();
-		const filtered = q
-			? parables.filter(
-					(p) =>
-						getTitle(p).toLowerCase().includes(q) ||
-						getDesc(p).toLowerCase().includes(q) ||
-						getCatLabel(p.category).toLowerCase().includes(q),
-				)
-			: parables;
-
-		if (filtered.length === 0) {
-			parablesList.innerHTML = `<p class="stories-empty">${s.parablesEmpty}</p>`;
-			return;
-		}
-
-		const categories: string[] = [];
-		const byCategory: Record<string, ParableEntry[]> = {};
-		for (const p of filtered) {
-			if (!byCategory[p.category]) {
-				byCategory[p.category] = [];
-				categories.push(p.category);
-			}
-			byCategory[p.category].push(p);
-		}
-
-		let html = "";
-		for (const cat of categories) {
-			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
-			for (const p of byCategory[cat]) {
-				html += `<button class="story-item" type="button" data-ref="${escapeHtml(p.ref)}">
-					<span class="story-item-title">${escapeHtml(getTitle(p))}</span>
-					<span class="story-item-desc">${escapeHtml(getDesc(p))}</span>
-					<span class="story-item-ref">${escapeHtml(localizeRef(p.ref))}</span>
-				</button>`;
-			}
-		}
-		parablesList.innerHTML = html;
-	}
-
-	parablesFilter.addEventListener("input", async () => {
-		const parables = await loadParablesData();
-		renderParablesList(parables, parablesFilter.value);
-	});
-
-	parablesList.addEventListener("click", (e) => {
-		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
-		if (!item) return;
-		const ref = item.dataset.ref;
-		if (!ref) return;
-		closeSidePanel();
-		searchInput.value = ref;
-		searchInput.dispatchEvent(new Event("input"));
-	});
-
-	// --- Theophanies panel ---
-
-	let theophaniesData: TheophaniesEntry[] | null = null;
-
-	async function loadTheophaniesData(): Promise<TheophaniesEntry[]> {
-		if (theophaniesData) return theophaniesData;
-		const cached = await loadTheophanies();
-		if (cached) {
-			theophaniesData = cached;
-			return theophaniesData;
-		}
-		const res = await fetch("./data/theophanies.json");
-		theophaniesData = (await res.json()) as TheophaniesEntry[];
-		await saveTheophanies(theophaniesData);
-		return theophaniesData;
-	}
-
-	function renderTheophaniesList(theophanies: TheophaniesEntry[], filter: string) {
-		const s = t();
-		const lang = getLanguage();
-		const getTitle = (th: TheophaniesEntry) =>
-			lang === "fi" && th.title_fi
-				? th.title_fi
-				: lang === "sv" && th.title_sv
-					? th.title_sv
-					: th.title;
-		const getDesc = (th: TheophaniesEntry) =>
-			lang === "fi" && th.description_fi
-				? th.description_fi
-				: lang === "sv" && th.description_sv
-					? th.description_sv
-					: th.description;
-		const getCatLabel = (cat: string) => {
-			if (cat === "Old Testament") return s.oldTestament;
-			if (cat === "New Testament") return s.newTestament;
-			if (cat === "Deuterocanonical") return s.deuterocanonical;
-			return cat;
-		};
-
-		const q = filter.trim().toLowerCase();
-		const filtered = q
-			? theophanies.filter(
-					(th) =>
-						getTitle(th).toLowerCase().includes(q) ||
-						getDesc(th).toLowerCase().includes(q) ||
-						getCatLabel(th.category).toLowerCase().includes(q),
-				)
-			: theophanies;
-
-		if (filtered.length === 0) {
-			theophaniesList.innerHTML = `<p class="stories-empty">${s.theophaniesEmpty}</p>`;
-			return;
-		}
-
-		const categories: string[] = [];
-		const byCategory: Record<string, TheophaniesEntry[]> = {};
-		for (const th of filtered) {
-			if (!byCategory[th.category]) {
-				byCategory[th.category] = [];
-				categories.push(th.category);
-			}
-			byCategory[th.category].push(th);
-		}
-
-		let html = "";
-		for (const cat of categories) {
-			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
-			for (const th of byCategory[cat]) {
-				html += `<button class="story-item" type="button" data-ref="${escapeHtml(th.ref)}">
-					<span class="story-item-title">${escapeHtml(getTitle(th))}</span>
-					<span class="story-item-desc">${escapeHtml(getDesc(th))}</span>
-					<span class="story-item-ref">${escapeHtml(localizeRef(th.ref))}</span>
-				</button>`;
-			}
-		}
-		theophaniesList.innerHTML = html;
-	}
-
-	theophaniesFilter.addEventListener("input", async () => {
-		const theophanies = await loadTheophaniesData();
-		renderTheophaniesList(theophanies, theophaniesFilter.value);
-	});
-
-	theophaniesList.addEventListener("click", (e) => {
-		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
-		if (!item) return;
-		const ref = item.dataset.ref;
-		if (!ref) return;
-		closeSidePanel();
-		searchInput.value = ref;
-		searchInput.dispatchEvent(new Event("input"));
-	});
-
-	// --- Typology panel ---
-
-	let typologyData: TypologyEntry[] | null = null;
-
-	async function loadTypologyData(): Promise<TypologyEntry[]> {
-		if (typologyData) return typologyData;
-		const cached = await loadTypology();
-		if (cached) {
-			typologyData = cached;
-			return typologyData;
-		}
-		const res = await fetch("./data/typology.json");
-		typologyData = (await res.json()) as TypologyEntry[];
-		await saveTypology(typologyData);
-		return typologyData;
-	}
-
-	function renderTypologyList(typology: TypologyEntry[], filter: string) {
-		const s = t();
-		const lang = getLanguage();
-		const getTitle = (ty: TypologyEntry) =>
-			lang === "fi" && ty.title_fi
-				? ty.title_fi
-				: lang === "sv" && ty.title_sv
-					? ty.title_sv
-					: ty.title;
-		const getDesc = (ty: TypologyEntry) =>
-			lang === "fi" && ty.description_fi
-				? ty.description_fi
-				: lang === "sv" && ty.description_sv
-					? ty.description_sv
-					: ty.description;
-		const getCatLabel = (cat: string) => {
-			const map: Record<string, string> = {
-				"Types of Christ (Persons)": s.typologyCatPersons,
-				"Types of Christ (Events)": s.typologyCatEvents,
-				"Types of the Theotokos": s.typologyCatTheotokos,
-				"Types of the Church & Sacraments": s.typologyCatChurch,
-				"Types of the Cross": s.typologyCatCross,
-				"Additional Types": s.typologyCatAdditional,
-			};
-			return map[cat] ?? cat;
-		};
-
-		const q = filter.trim().toLowerCase();
-		const filtered = q
-			? typology.filter(
-					(ty) =>
-						getTitle(ty).toLowerCase().includes(q) ||
-						getDesc(ty).toLowerCase().includes(q) ||
-						getCatLabel(ty.category).toLowerCase().includes(q),
-				)
-			: typology;
-
-		if (filtered.length === 0) {
-			typologyList.innerHTML = `<p class="stories-empty">${s.typologyEmpty}</p>`;
-			return;
-		}
-
-		const categories: string[] = [];
-		const byCategory: Record<string, TypologyEntry[]> = {};
-		for (const ty of filtered) {
-			if (!byCategory[ty.category]) {
-				byCategory[ty.category] = [];
-				categories.push(ty.category);
-			}
-			byCategory[ty.category].push(ty);
-		}
-
-		let html = "";
-		for (const cat of categories) {
-			html += `<div class="stories-category-label">${escapeHtml(getCatLabel(cat))}</div>`;
-			for (const ty of byCategory[cat]) {
-				html += `<button class="story-item" type="button" data-ref="${escapeHtml(ty.ref)}">
-					<span class="story-item-title">${escapeHtml(getTitle(ty))}</span>
-					<span class="story-item-desc">${escapeHtml(getDesc(ty))}</span>
-					<span class="story-item-ref">${escapeHtml(localizeRef(ty.ref))}</span>
-				</button>`;
-			}
-		}
-		typologyList.innerHTML = html;
-	}
-
-	typologyFilter.addEventListener("input", async () => {
-		const typology = await loadTypologyData();
-		renderTypologyList(typology, typologyFilter.value);
-	});
-
-	typologyList.addEventListener("click", (e) => {
-		const item = (e.target as HTMLElement).closest(".story-item") as HTMLElement | null;
-		if (!item) return;
-		const ref = item.dataset.ref;
-		if (!ref) return;
-		closeSidePanel();
-		searchInput.value = ref;
-		searchInput.dispatchEvent(new Event("input"));
-	});
-
-	// --- Bookmarks panel ---
-
-	async function renderBookmarksList() {
-		const s = t();
-		const items = await getBookmarks();
-		if (items.length === 0) {
-			bookmarksList.innerHTML = `<p class="bookmarks-empty">${escapeHtml(s.bookmarksEmpty)}</p>`;
-			return;
-		}
-		let html = "";
-		for (const bm of items) {
-			const label = bookmarkNavText(bm);
-			html += `<div class="bookmark-item">
-				<button class="bookmark-item-nav" type="button" data-query="${escapeHtml(label)}">${escapeHtml(label)}</button>
-				<button class="bookmark-item-remove" type="button" data-id="${escapeHtml(bm.id)}" title="${escapeHtml(s.removeBookmark)}" aria-label="${escapeHtml(s.removeBookmark)}">&times;</button>
-			</div>`;
-		}
-		bookmarksList.innerHTML = html;
-	}
-
-	bookmarksList.addEventListener("click", async (e) => {
-		const navBtn = (e.target as HTMLElement).closest(
-			".bookmark-item-nav",
-		) as HTMLElement | null;
-		if (navBtn) {
-			const query = navBtn.dataset.query;
-			if (!query) return;
-			closeSidePanel();
-			searchInput.value = query;
-			searchInput.dispatchEvent(new Event("input"));
-			return;
-		}
-		const removeBtn = (e.target as HTMLElement).closest(
-			".bookmark-item-remove",
-		) as HTMLElement | null;
-		if (removeBtn) {
-			const id = removeBtn.dataset.id;
-			if (!id) return;
-			await removeBookmark(id);
-			await renderBookmarksList();
-			await syncBookmarkBtn();
-			showToast(t().bookmarkRemoved);
-			return;
-		}
-	});
-
-	// --- Notes panel ---
-
-	function sortedBookIndex(book: string): number {
-		const keys = getBookKeys();
-		const idx = keys.indexOf(book);
-		return idx === -1 ? 9999 : idx;
-	}
-
-	async function renderNotesList() {
-		const s = t();
-		const notes = await getNotes();
-		notes.sort((a, b) => {
-			const bi = sortedBookIndex(a.book) - sortedBookIndex(b.book);
-			if (bi !== 0) return bi;
-			if (a.chapter !== b.chapter) return a.chapter - b.chapter;
-			return a.verse - b.verse;
-		});
-		if (notes.length === 0) {
-			notesList.innerHTML = `<p class="notes-empty">${escapeHtml(s.notesEmpty)}</p>`;
-			return;
-		}
-		let html = "";
-		for (const note of notes) {
-			const refLabel = `${displayName(note.book)} ${note.chapter}:${note.verse}`;
-			html += `<div class="note-item">
-				<button class="note-item-body" type="button" data-query="${escapeHtml(refLabel)}" title="${escapeHtml(note.text)}">
-					<span class="note-item-ref">${escapeHtml(refLabel)}</span>
-					<span class="note-item-text">${escapeHtml(note.text)}</span>
-				</button>
-				<button class="note-item-remove" type="button" data-id="${escapeHtml(note.id)}" title="${escapeHtml(s.noteDeleteConfirm)}" aria-label="${escapeHtml(s.noteDeleteConfirm)}">&times;</button>
-			</div>`;
-		}
-		notesList.innerHTML = html;
-	}
-
-	notesList.addEventListener("click", async (e) => {
-		const navBtn = (e.target as HTMLElement).closest(".note-item-body") as HTMLElement | null;
-		if (navBtn) {
-			const query = navBtn.dataset.query;
-			if (!query) return;
-			closeSidePanel();
-			searchInput.value = query;
-			searchInput.dispatchEvent(new Event("input"));
-			return;
-		}
-		const removeBtn = (e.target as HTMLElement).closest(
-			".note-item-remove",
-		) as HTMLElement | null;
-		if (removeBtn) {
-			const id = removeBtn.dataset.id;
-			if (!id) return;
-			await deleteNote(id);
-			const newMap = await getNoteMap();
-			setNoteMap(newMap);
-			updateSidenoteDom(id, null);
-			requestAnimationFrame(syncSidenotes);
-			await renderNotesList();
-			return;
-		}
-	});
-
-	// --- Note editor dialog ---
-
-	let noteDialogCurrentId = "";
-
-	function openNoteDialog(book: string, chapter: number, verse: number) {
-		const id = `${book}:${chapter}:${verse}`;
-		const existingText = getRenderNoteMap().get(id) ?? "";
-		const refLabel = `${displayName(book)} ${chapter}:${verse}`;
-		noteDialogCurrentId = id;
-		noteDialogTitle.textContent = existingText ? t().editNote : t().addNote;
-		noteDialogRef.textContent = refLabel;
-		// Show the verse text in the panel header
-		const verseText = data?.[book]?.[String(chapter)]?.[String(verse)] ?? "";
-		notePanelVerse.textContent = verseText ?? "";
-		notePanelVerse.style.display = verseText ? "" : "none";
-		noteDialogTextarea.value = existingText;
-		noteDialogTextarea.placeholder = t().notePlaceholder;
-		noteDialogSave.textContent = t().noteSave;
-		noteDialogDelete.textContent = t().noteRemove;
-		noteDialogDelete.style.display = existingText ? "inline-flex" : "none";
-		noteDialogCancel.textContent = t().cancel;
-		noteDialogOverlay.classList.add("open");
-		// Focus textarea after transition completes
-		setTimeout(() => noteDialogTextarea.focus(), 300);
-	}
-
-	function closeNoteDialog() {
-		noteDialogOverlay.classList.remove("open");
-		noteDialogCurrentId = "";
-	}
-
-	noteDialogCancel.addEventListener("click", closeNoteDialog);
-	notePanelClose.addEventListener("click", closeNoteDialog);
-
-	noteDialogOverlay.addEventListener("click", (e) => {
-		if (e.target === noteDialogOverlay) closeNoteDialog();
-	});
-
-	// QR overlay close
-	const qrCloseBtn = document.getElementById("qr-close-btn");
-	if (qrCloseBtn) qrCloseBtn.addEventListener("click", closeQrOverlay);
-	const qrOverlay = document.getElementById("qr-overlay");
-	if (qrOverlay)
-		qrOverlay.addEventListener("click", (e) => {
-			if (e.target === qrOverlay) closeQrOverlay();
-		});
-
-	noteDialogSave.addEventListener("click", async () => {
-		const text = noteDialogTextarea.value.trim();
-		if (!text || !noteDialogCurrentId) {
-			closeNoteDialog();
-			return;
-		}
-		const [bookPart, chapterStr, verseStr] = noteDialogCurrentId.split(":");
-		// Handle book names that contain colons (none do, but defensive parse)
-		const note: VerseNote = {
-			id: noteDialogCurrentId,
-			book: bookPart,
-			chapter: +chapterStr,
-			verse: +verseStr,
-			text,
-			updatedAt: Date.now(),
-		};
-		await saveNote(note);
-		const newMap = await getNoteMap();
-		setNoteMap(newMap);
-		// Update the sidenote in the DOM if the verse is currently displayed
-		updateSidenoteDom(noteDialogCurrentId, text);
-		requestAnimationFrame(() => requestAnimationFrame(syncSidenotes));
-		closeNoteDialog();
-		showToast(t().noteSaved);
-	});
-
-	noteDialogDelete.addEventListener("click", async () => {
-		if (!noteDialogCurrentId) return;
-		await deleteNote(noteDialogCurrentId);
-		const newMap = await getNoteMap();
-		setNoteMap(newMap);
-		// Remove the sidenote from DOM if visible
-		updateSidenoteDom(noteDialogCurrentId, null);
-		requestAnimationFrame(() => requestAnimationFrame(syncSidenotes));
-		closeNoteDialog();
-		showToast(t().noteDeleted);
-	});
-
-	/** Update or remove a sidenote element in the currently rendered content without full re-render. */
-	function updateSidenoteDom(noteId: string, text: string | null) {
-		const aside = (content.querySelector(
-			`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
-		) ??
-			sidenoteRail.querySelector(
-				`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
-			)) as HTMLElement | null;
-		// All markers with this noteId — may be >1 in parallel mode (one per column)
-		const markers = Array.from(
-			content.querySelectorAll<HTMLElement>(
-				`.verse-note-marker[data-note-id="${CSS.escape(noteId)}"]`,
-			),
-		);
-
-		if (text === null) {
-			// Delete: remove aside and all markers (may be >1 in parallel mode), then renumber
-			aside?.remove();
-			markers.forEach((m) => m.remove());
-			// Renumber remaining markers, grouping by noteId so all markers for the
-			// same note share the same number (parallel mode has one marker per column).
-			const seenIds = new Map<string, number>();
-			let counter = 0;
-			content.querySelectorAll<HTMLElement>(".verse-note-marker").forEach((m) => {
-				const id = m.dataset.noteId;
-				if (!id) return;
-				if (!seenIds.has(id)) seenIds.set(id, ++counter);
-				const num = seenIds.get(id)!;
-				m.textContent = `[${num}]`;
-				m.setAttribute("aria-label", `Note ${num}`);
-			});
-			for (const [id, num] of seenIds) {
-				const numEl =
-					content.querySelector(
-						`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
-					) ??
-					sidenoteRail.querySelector(
-						`.verse-sidenote[data-note-id="${CSS.escape(id)}"] .verse-sidenote-num`,
-					);
-				if (numEl) numEl.textContent = String(num);
-			}
-		} else if (aside) {
-			// Update existing sidenote text (also update secondary aside if present)
-			const textEl = aside.querySelector(".verse-sidenote-text");
-			if (textEl) textEl.textContent = text;
-			const secondaryAside = content.querySelector(
-				`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"][data-secondary]`,
-			) as HTMLElement | null;
-			const secTextEl = secondaryAside?.querySelector(".verse-sidenote-text");
-			if (secTextEl) secTextEl.textContent = text;
-		} else {
-			// New note: inject marker into every matching verse span (parallel has one per column),
-			// and insert a primary aside after the first verse element and a secondary aside
-			// (data-secondary="1") after each additional verse element (for mobile inline toggle).
-			const [book, chapterStr, verseStr] = noteId.split(":");
-			const verseEls = Array.from(
-				content.querySelectorAll<HTMLElement>(
-					`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
-				),
-			);
-			if (verseEls.length > 0) {
-				// Count unique notes already in DOM — each note has one marker per column
-				const existingIds = new Set(
-					Array.from(content.querySelectorAll<HTMLElement>(".verse-note-marker")).map(
-						(m) => m.dataset.noteId,
-					),
-				);
-				const num = existingIds.size + 1;
-				const label = `[${num}]`;
-
-				for (const verseEl of verseEls) {
-					const sup = document.createElement("sup");
-					sup.className = "verse-note-marker";
-					sup.dataset.noteId = noteId;
-					sup.setAttribute("role", "button");
-					sup.setAttribute("tabindex", "0");
-					sup.setAttribute("aria-label", `Note ${num}`);
-					sup.textContent = label;
-					verseEl.appendChild(sup);
-				}
-
-				function makeAside(secondary: boolean): HTMLElement {
-					const el = document.createElement("aside");
-					el.className = "verse-sidenote";
-					el.dataset.noteId = noteId;
-					if (secondary) el.dataset.secondary = "1";
-					const numSpan = document.createElement("span");
-					numSpan.className = "verse-sidenote-num";
-					numSpan.textContent = String(num);
-					const textSpan = document.createElement("span");
-					textSpan.className = "verse-sidenote-text";
-					textSpan.textContent = text;
-					el.appendChild(numSpan);
-					el.appendChild(textSpan);
-					return el;
-				}
-
-				// Primary aside after first verse element (moved to rail on desktop)
-				verseEls[0].insertAdjacentElement("afterend", makeAside(false));
-				// Secondary aside after each additional verse element (mobile inline toggle only)
-				for (let i = 1; i < verseEls.length; i++) {
-					verseEls[i].insertAdjacentElement("afterend", makeAside(true));
-				}
-			}
-		}
-	}
-
-	/**
-	 * On desktop (≥1024px): move all `.verse-sidenote` asides from `content` to
-	 * `#sidenotes-rail` and position each one opposite its verse element.
-	 * On mobile: restore any previously moved asides back into `content`.
-	 */
-	syncSidenotes = function () {
-		// Step 1: restore asides from rail back to their verse in content.
-		// If the verse is no longer in the current view, discard the aside —
-		// it will be re-created by the renderer when that chapter is visited again.
-		for (const aside of Array.from(
-			sidenoteRail.querySelectorAll<HTMLElement>(".verse-sidenote"),
-		)) {
-			const noteId = aside.dataset.noteId;
-			if (!noteId) {
-				aside.remove();
-				continue;
-			}
-			aside.style.top = "";
-			const [book, chapterStr, verseStr] = noteId.split(":");
-			const verseEl = content.querySelector(
-				`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
-			) as HTMLElement | null;
-			if (verseEl) {
-				// Remove any freshly-rendered aside already in content to prevent duplication
-				content
-					.querySelector(`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`)
-					?.remove();
-				verseEl.insertAdjacentElement("afterend", aside);
-			} else aside.remove(); // verse not in current view — discard
-		}
-
-		if (window.innerWidth < 768) return; // tablet/mobile: keep in content
-
-		// Step 2: collect from content, compute positions, then move to rail.
-		// Skip secondary asides (parallel column) — they are only for mobile inline toggling.
-		const asides = Array.from(
-			content.querySelectorAll<HTMLElement>(".verse-sidenote:not([data-secondary])"),
-		);
-		// Discard any secondary asides still in content — not needed on desktop
-		content
-			.querySelectorAll<HTMLElement>(".verse-sidenote[data-secondary]")
-			.forEach((el) => el.remove());
-		if (!asides.length) return;
-
-		const railRect = sidenoteRail.getBoundingClientRect();
-		const entries = asides.map((aside) => {
-			const noteId = aside.dataset.noteId!;
-			const [book, chapterStr, verseStr] = noteId.split(":");
-			const verseEl = content.querySelector(
-				`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
-			) as HTMLElement | null;
-			const top = verseEl ? verseEl.getBoundingClientRect().top - railRect.top : 0;
-			return { aside, top };
-		});
-
-		// Sort by desired position, then cascade downward to prevent overlap
-		entries.sort((a, b) => a.top - b.top);
-		let minTop = 0;
-		for (const { aside, top } of entries) {
-			const actualTop = Math.max(top, minTop);
-			aside.style.top = `${actualTop}px`;
-			sidenoteRail.appendChild(aside);
-			minTop = actualTop + aside.offsetHeight + 8; // 8px gap between stacked notes
-		}
-	};
-
-	// Handle .verse-note-marker clicks: toggle sidenote on mobile, do nothing on desktop.
-	// Must use stopImmediatePropagation so the verse-menu sup handler never fires.
-	content.addEventListener("click", (e) => {
-		const marker = (e.target as HTMLElement).closest(
-			".verse-note-marker",
-		) as HTMLElement | null;
-		if (!marker) return;
-		e.stopImmediatePropagation();
-		// On wide screens sidenotes are always visible — nothing to toggle
-		if (window.innerWidth >= 768) return;
-		const noteId = marker.dataset.noteId;
-		if (!noteId) return;
-		// Find the aside in the same parallel column as the tapped marker (or anywhere in content)
-		const col = marker.closest(".parallel-col") as HTMLElement | null;
-		const scope = col ?? content;
-		const aside = scope.querySelector(
-			`.verse-sidenote[data-note-id="${CSS.escape(noteId)}"]`,
-		) as HTMLElement | null;
-		if (aside) aside.classList.toggle("note-open");
-	});
-
-	// Clicking the sidenote number opens the note editor panel (both in content and rail).
-	function handleSidenoteNumClick(e: MouseEvent) {
-		const num = (e.target as HTMLElement).closest(".verse-sidenote-num") as HTMLElement | null;
-		if (!num) return;
-		e.stopImmediatePropagation();
-		const aside = num.closest(".verse-sidenote") as HTMLElement | null;
-		const noteId = aside?.dataset.noteId;
-		if (!noteId) return;
-		const [book, chapterStr, verseStr] = noteId.split(":");
-		openNoteDialog(book, Number(chapterStr), Number(verseStr));
-	}
-	content.addEventListener("click", handleSidenoteNumClick);
-	sidenoteRail.addEventListener("click", handleSidenoteNumClick);
-
-	// Hovering a sidenote highlights the referenced verse with an animated underline.
-	function setVerseHighlight(noteId: string, on: boolean) {
-		const [book, chapterStr, verseStr] = noteId.split(":");
-		const targets = content.querySelectorAll(
-			`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapterStr}"][data-verse="${verseStr}"]`,
-		);
-		targets.forEach((el) => (el as HTMLElement).classList.toggle("note-hover", on));
-	}
-	function handleSidenoteMouseEnter(e: MouseEvent) {
-		// Only fire when entering the aside itself (not moving between children)
-		const related = e.relatedTarget as HTMLElement | null;
-		const aside = (e.target as HTMLElement).closest(".verse-sidenote") as HTMLElement | null;
-		if (!aside) return;
-		if (related && aside.contains(related)) return;
-		setVerseHighlight(aside.dataset.noteId!, true);
-	}
-	function handleSidenoteMouseLeave(e: MouseEvent) {
-		// Only fire when leaving the aside entirely
-		const related = e.relatedTarget as HTMLElement | null;
-		const aside = (e.target as HTMLElement).closest(".verse-sidenote") as HTMLElement | null;
-		if (!aside) return;
-		if (related && aside.contains(related)) return;
-		setVerseHighlight(aside.dataset.noteId!, false);
-	}
-	sidenoteRail.addEventListener("mouseover", handleSidenoteMouseEnter);
-	sidenoteRail.addEventListener("mouseout", handleSidenoteMouseLeave);
-	content.addEventListener("mouseover", handleSidenoteMouseEnter);
-	content.addEventListener("mouseout", handleSidenoteMouseLeave);
-
 	// Close panels with Escape, Ctrl+K to focus search, Ctrl+I to toggle index
 	document.addEventListener("keydown", (e) => {
 		if (e.key === "Escape") {
@@ -2150,7 +784,7 @@ async function init() {
 				return;
 			}
 			if (noteDialogOverlay.classList.contains("open")) {
-				closeNoteDialog();
+				notes.closeNoteDialog();
 				return;
 			}
 			if (document.querySelectorAll(".share-wrap.share-open").length > 0) {
@@ -2164,34 +798,34 @@ async function init() {
 				return;
 			}
 			if (verseMenu.classList.contains("open")) {
-				closeVerseMenu();
+				highlights.closeVerseMenu();
 				return;
 			}
 			if (sideOverlay.classList.contains("open")) {
-				closeSidePanel();
+				sidebar.closeSidePanel();
 				return;
 			}
 			if (overlay.classList.contains("open")) {
-				closeIndex();
+				indexPanel.closeIndex();
 				return;
 			}
 		}
 		if ((e.ctrlKey || e.metaKey) && e.key === "k") {
 			e.preventDefault();
-			if (overlay.classList.contains("open")) closeIndex();
+			if (overlay.classList.contains("open")) indexPanel.closeIndex();
 			searchInput.focus();
 			searchInput.select();
 		}
 		if ((e.ctrlKey || e.metaKey) && e.key === "i") {
 			e.preventDefault();
-			toggleIndex();
+			indexPanel.toggleIndex();
 		}
 		if ((e.ctrlKey || e.metaKey) && e.key === "b") {
 			e.preventDefault();
 			if (sideOverlay.classList.contains("open")) {
-				closeSidePanel();
+				sidebar.closeSidePanel();
 			} else {
-				openSidePanel();
+				sidebar.openSidePanel();
 			}
 		}
 	});
@@ -2472,179 +1106,6 @@ async function init() {
 		}
 	});
 
-	// --- Verse context menu (right-click / long-press on verse sup) ---
-	let longPressTimer: number;
-
-	function closeVerseMenu() {
-		verseMenu.classList.remove("open");
-		verseMenu.innerHTML = "";
-	}
-
-	async function openVerseMenu(verseEl: HTMLElement, x: number, y: number) {
-		const book = verseEl.dataset.book!;
-		const chapter = +verseEl.dataset.chapter!;
-		const verse = +verseEl.dataset.verse!;
-		const hlKey = `${book}:${chapter}:${verse}`;
-		const currentColor = highlightMap.get(hlKey);
-
-		const colors: HighlightColor[] = ["yellow", "green", "blue", "pink", "orange"];
-		// Localized color names for aria-labels and tooltips
-		const lang = getLanguage();
-		const colorTitles: Record<HighlightColor, string> = {
-			yellow: lang === "fi" ? "Keltainen" : lang === "sv" ? "Gul" : "Yellow",
-			green: lang === "fi" ? "Vihreä" : lang === "sv" ? "Grön" : "Green",
-			blue: lang === "fi" ? "Sininen" : lang === "sv" ? "Blå" : "Blue",
-			pink: lang === "fi" ? "Pinkki" : lang === "sv" ? "Rosa" : "Pink",
-			orange: lang === "fi" ? "Oranssi" : lang === "sv" ? "Orange" : "Orange",
-		};
-		let html = "";
-
-		// Copy verse
-		html += `<button class="verse-menu-item" data-action="copy" role="menuitem">${ICON_COPY} ${t().copyVerse}</button>`;
-
-		// Bookmark verse
-		const bmId = `${book}:${chapter}:${verse}`;
-		const isVerseBookmarked = await hasBookmark(bmId);
-		html += `<button class="verse-menu-item" data-action="bookmark" role="menuitem">${ICON_BOOKMARK} ${isVerseBookmarked ? escapeHtml(t().removeBookmark) : escapeHtml(t().bookmarkThis)}</button>`;
-
-		// Note verse
-		const noteId = `${book}:${chapter}:${verse}`;
-		const hasNote = getRenderNoteMap().has(noteId);
-		html += `<button class="verse-menu-item" data-action="note" role="menuitem">${ICON_NOTE} ${hasNote ? escapeHtml(t().editNote) : escapeHtml(t().addNote)}</button>`;
-
-		// Highlight colors
-		html += `<div class="verse-menu-colors" role="group" aria-label="Highlight color">`;
-		for (const c of colors) {
-			html += `<button class="color-dot${currentColor === c ? " active" : ""}" type="button" role="menuitem" data-color="${c}" data-action="highlight" aria-label="${colorTitles[c]}" aria-pressed="${currentColor === c}" style="background: var(--hl-${c});"></button>`;
-		}
-		if (currentColor) {
-			html += `<button class="color-dot" type="button" role="menuitem" data-action="remove-highlight" style="background: var(--border);" aria-label="${t().removeHighlight}">&#10005;</button>`;
-		}
-		html += `</div>`;
-		verseMenu.innerHTML = html;
-		verseMenu.classList.add("open");
-
-		// Position menu, keeping it on screen
-		const rect = verseMenu.getBoundingClientRect();
-		const menuW = rect.width || 180;
-		const menuH = rect.height || 120;
-		let left = Math.min(x, window.innerWidth - menuW - 8);
-		let top = Math.min(y, window.innerHeight - menuH - 8);
-		left = Math.max(8, left);
-		top = Math.max(8, top);
-		verseMenu.style.left = left + "px";
-		verseMenu.style.top = top + "px";
-
-		// Handle clicks in menu
-		verseMenu.onclick = async (ev) => {
-			const target = (ev.target as HTMLElement).closest(
-				"[data-action]",
-			) as HTMLElement | null;
-			if (!target) return;
-			const action = target.dataset.action;
-
-			if (action === "copy") {
-				const isSecondary = verseEl.dataset.secondary === "1";
-				const sourceData = isSecondary && parallelData ? parallelData : data;
-				const sourceCode = isSecondary ? parallelTranslation : currentTranslation;
-				const sourceInfo = TRANSLATION_NAMES[sourceCode];
-				const sourceLabel = sourceInfo ? `${sourceCode} — ${sourceInfo.name}` : sourceCode;
-				const text = sourceData[book]?.[String(chapter)]?.[String(verse)];
-				if (text) {
-					const full = `${sourceLabel}\n${displayName(book)} ${chapter}:${verse}\n${verse} ${text}`;
-					navigator.clipboard.writeText(full).then(() => showToast(t().copied));
-				}
-			} else if (action === "bookmark") {
-				const bmId = `${book}:${chapter}:${verse}`;
-				const alreadyBookmarked = await hasBookmark(bmId);
-				if (alreadyBookmarked) {
-					await removeBookmark(bmId);
-					showToast(t().bookmarkRemoved);
-				} else {
-					const bm: Bookmark = { id: bmId, book, chapter, verse, addedAt: Date.now() };
-					await addBookmark(bm);
-					showToast(t().bookmarkAdded);
-				}
-				await syncBookmarkBtn();
-			} else if (action === "note") {
-				closeVerseMenu();
-				openNoteDialog(book, chapter, verse);
-				return;
-			} else if (action === "highlight") {
-				const color = target.dataset.color as HighlightColor;
-				if (color === currentColor) {
-					await removeHighlight(book, chapter, verse);
-					highlightMap.delete(hlKey);
-					content
-						.querySelectorAll(
-							`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
-						)
-						.forEach((el) => {
-							(el as HTMLElement).className = "verse";
-						});
-				} else {
-					await setHighlight({ book, chapter, verse, color });
-					highlightMap.set(hlKey, color);
-					content
-						.querySelectorAll(
-							`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
-						)
-						.forEach((el) => {
-							(el as HTMLElement).className = `verse hl-${color}`;
-						});
-				}
-			} else if (action === "remove-highlight") {
-				await removeHighlight(book, chapter, verse);
-				highlightMap.delete(hlKey);
-				content
-					.querySelectorAll(
-						`.verse[data-book="${CSS.escape(book)}"][data-chapter="${chapter}"][data-verse="${verse}"]`,
-					)
-					.forEach((el) => {
-						(el as HTMLElement).className = "verse";
-					});
-			}
-			closeVerseMenu();
-		};
-	}
-
-	// Left-click on verse sup number
-	content.addEventListener("click", (e) => {
-		const sup = (e.target as HTMLElement).closest("sup");
-		if (!sup) return;
-		const verseEl = sup.closest(".verse") as HTMLElement;
-		if (!verseEl || !verseEl.dataset.book) return;
-		e.stopPropagation();
-		openVerseMenu(verseEl, e.clientX, e.clientY);
-	});
-
-	// Long-press for touch devices
-	content.addEventListener(
-		"touchstart",
-		(e) => {
-			const sup = (e.target as HTMLElement).closest("sup");
-			if (!sup) return;
-			// Note markers are handled separately — don't open verse menu
-			if (sup.classList.contains("verse-note-marker")) return;
-			const verseEl = sup.closest(".verse") as HTMLElement;
-			if (!verseEl || !verseEl.dataset.book) return;
-			const touch = e.touches[0];
-			longPressTimer = window.setTimeout(() => {
-				e.preventDefault();
-				openVerseMenu(verseEl, touch.clientX, touch.clientY);
-			}, 500);
-		},
-		{ passive: false },
-	);
-
-	content.addEventListener("touchend", () => clearTimeout(longPressTimer));
-	content.addEventListener("touchmove", () => clearTimeout(longPressTimer));
-
-	// Close verse menu on outside click
-	document.addEventListener("click", (e) => {
-		if (!verseMenu.contains(e.target as Node)) closeVerseMenu();
-	});
-
 	// --- Swipe navigation ---
 	let touchStartX = 0;
 	let touchStartY = 0;
@@ -2703,9 +1164,8 @@ async function init() {
 					updateStaticText();
 				}
 
-				indexRendered = false;
-				indexScrollTo = null;
-				if (overlay.classList.contains("open")) openIndex();
+				indexPanel.invalidateIndex();
+				if (overlay.classList.contains("open")) indexPanel.openIndex();
 				if (translationSelect) translationSelect.value = s.translation;
 				updateFooter();
 			} catch {
@@ -2900,15 +1360,6 @@ function currentBookmarkId(): string {
 	return "";
 }
 
-function bookmarkNavText(bm: Bookmark): string {
-	if (bm.book && bm.chapter !== undefined && bm.verse !== undefined)
-		return `${displayName(bm.book)} ${bm.chapter}:${bm.verse}`;
-	if (bm.book && bm.chapter !== undefined) return `${displayName(bm.book)} ${bm.chapter}`;
-	if (bm.book) return displayName(bm.book);
-	if (bm.query) return bm.query;
-	return bm.id;
-}
-
 async function syncBookmarkBtn() {
 	const btns = document.querySelectorAll<HTMLElement>("#content .bookmark-btn");
 	for (const btn of btns) {
@@ -3062,22 +1513,6 @@ async function applyState(s: AppState) {
 	// Double-rAF ensures the browser has fully laid out the new content before measuring
 	requestAnimationFrame(() => requestAnimationFrame(syncSidenotes));
 }
-
-const TRANSLATION_NAMES: Record<string, { name: string; language: string }> = {
-	NHEB: { name: "New Heart English Bible", language: "English" },
-	KJV: { name: "King James Version", language: "English" },
-	CPDV: { name: "Catholic Public Domain Version", language: "English" },
-	KR38: { name: "Raamattu 1933/1938", language: "Suomi" },
-	SV17: { name: "Svenska Bibeln 1917", language: "Svenska" },
-};
-
-const TRANSLATION_LANG: Record<string, string> = {
-	NHEB: "en",
-	KJV: "en",
-	CPDV: "en",
-	KR38: "fi",
-	SV17: "sv",
-};
 
 function updateStaticText() {
 	const s = t();
