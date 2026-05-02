@@ -13,6 +13,7 @@ import type { NavRef } from "./search.ts";
 import { escapeRegex, extractRegexFilter } from "./search.ts";
 import { displayName, displayNameFor } from "./bookNames.ts";
 import { t } from "./i18n.ts";
+import { escapeHtml } from "./utils.ts";
 
 function getElement(id: string): HTMLElement {
 	return document.getElementById(id) as HTMLElement;
@@ -169,12 +170,6 @@ function bookmarkButtonHtml(ref?: string): string {
 function getHighlightClass(book: string, chapter: number, verse: number): string {
 	const color = highlightMap.get(`${book}:${chapter}:${verse}`);
 	return color ? ` hl-${color}` : "";
-}
-
-function escapeHtml(s: string): string {
-	const d = document.createElement("div");
-	d.textContent = s;
-	return d.innerHTML.replace(/"/g, "&quot;");
 }
 
 function formatVerseText(text: string): string {
@@ -1379,6 +1374,81 @@ export function renderParallelChapter(
 
 	html += `</div>`;
 	html += navArrowsHtml(prev, next);
+	getElement("content").innerHTML = html;
+	window.scrollTo(0, 0);
+}
+
+export function renderParallelChapterRange(
+	primary: BibleData,
+	secondary: BibleData,
+	book: string,
+	chStart: number,
+	chEnd: number,
+	primaryLabel: string,
+	secondaryLabel: string,
+	verseStart?: number,
+	verseEnd?: number,
+) {
+	const bd1 = primary[book];
+	if (!bd1) {
+		getElement("content").innerHTML = `<p class="empty">${t().notFound}</p>`;
+		return;
+	}
+	const bd2 = secondary[book];
+	const { prev } = getChapterNav(primary, book, chStart);
+	const { next } = getChapterNav(primary, book, chEnd);
+
+	const rangeLabel =
+		verseStart !== undefined && verseEnd !== undefined
+			? `${displayName(book)} ${chStart}:${verseStart}\u2013${chEnd}:${verseEnd}`
+			: `${displayName(book)} ${chStart}\u2013${chEnd}`;
+
+	let html = navArrowsHtml(prev, next);
+	html += `<div class="parallel-copy-both"><button class="copy-btn" title="Copy both" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chStart}" data-copy-chapter-end="${chEnd}" data-copy-source="both">${ICON_COPY}</button>${shareButtonHtml()}</div>`;
+	html += `<div class="parallel-container">`;
+
+	// Primary column
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(primaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(rangeLabel)}</h2>`;
+	for (let c = chStart; c <= chEnd; c++) {
+		const verses = bd1[String(c)];
+		if (!verses) continue;
+		let nums = Object.keys(verses)
+			.map(Number)
+			.sort((a, b) => a - b);
+		if (verseStart !== undefined && c === chStart) nums = nums.filter((n) => n >= verseStart);
+		if (verseEnd !== undefined && c === chEnd) nums = nums.filter((n) => n <= verseEnd);
+		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${escapeHtml(book)}" data-chapter="${c}">${escapeHtml(displayName(book))} ${c}</h2>`;
+		if (c === chStart) html += descriptionHtml(getBookDescription(book));
+		html += descriptionHtml(getChapterDescription(book, c));
+		html += `<div class="verses">`;
+		html += renderStyledVerses(book, c, nums, verses);
+		html += `</div></div>`;
+	}
+	html += `</div>`;
+
+	// Secondary column
+	html += `<div class="parallel-col"><div class="parallel-translation-label">${escapeHtml(secondaryLabel)}</div>`;
+	html += `<h2 class="section-title">${escapeHtml(rangeLabel)}</h2>`;
+	for (let c = chStart; c <= chEnd; c++) {
+		const verses = bd2?.[String(c)];
+		if (!verses) {
+			html += `<div class="chapter-block"><h2 class="chapter-heading">${escapeHtml(displayName(book))} ${c}</h2><p class="empty">${t().notFound}</p></div>`;
+			continue;
+		}
+		let nums = Object.keys(verses)
+			.map(Number)
+			.sort((a, b) => a - b);
+		if (verseStart !== undefined && c === chStart) nums = nums.filter((n) => n >= verseStart);
+		if (verseEnd !== undefined && c === chEnd) nums = nums.filter((n) => n <= verseEnd);
+		html += `<div class="chapter-block"><h2 class="chapter-heading" data-book="${escapeHtml(book)}" data-chapter="${c}">${escapeHtml(displayName(book))} ${c}</h2>`;
+		html += `<div class="verses">`;
+		html += renderStyledVerses(book, c, nums, verses, true);
+		html += `</div></div>`;
+	}
+	html += `</div>`;
+
+	html += navArrowsHtml(prev, next, false);
 	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }

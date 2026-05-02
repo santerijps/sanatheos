@@ -122,6 +122,7 @@ interface Strings {
 	bookmarksEmpty: string;
 	bookmarkAdded: string;
 	bookmarkRemoved: string;
+	bookmarksFilterPlaceholder: string;
 
 	// Notes
 	notesTitle: string;
@@ -136,6 +137,12 @@ interface Strings {
 	noteRemove: string;
 	cancel: string;
 	invalidRef: (term: string) => string;
+	notesFilterPlaceholder: string;
+
+	// Highlights
+	highlightsTitle: string;
+	highlightsEmpty: string;
+	highlightsFilterPlaceholder: string;
 
 	// Font setting
 	fontLabel: string;
@@ -213,6 +220,7 @@ const EN: Strings = {
 		"<kbd>Ctrl+B</kbd> &mdash; Toggle side panel",
 		"<kbd>Ctrl+I</kbd> &mdash; Toggle book index panel",
 		"<kbd>Escape</kbd> &mdash; Close any open panel",
+		"<kbd>&larr;</kbd> <kbd>&rarr;</kbd> &mdash; Previous / next chapter",
 		"<kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Navigate items in the index panel",
 		"<kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>Tab</kbd> &mdash; Switch columns in the index panel",
 		"<kbd>Enter</kbd> &mdash; Select item in the index panel",
@@ -297,6 +305,7 @@ const EN: Strings = {
 	bookmarksEmpty: "No bookmarks yet.",
 	bookmarkAdded: "Bookmarked!",
 	bookmarkRemoved: "Bookmark removed",
+	bookmarksFilterPlaceholder: "Filter bookmarks\u2026",
 
 	notesTitle: "Notes",
 	addNote: "Add note",
@@ -309,7 +318,12 @@ const EN: Strings = {
 	noteSave: "Save",
 	noteRemove: "Remove",
 	cancel: "Cancel",
-	invalidRef: (term) => `Invalid reference: “${term}”`,
+	invalidRef: (term) => `Invalid reference: "${term}"`,
+	notesFilterPlaceholder: "Filter notes\u2026",
+
+	highlightsTitle: "Highlights",
+	highlightsEmpty: "No highlighted verses yet.",
+	highlightsFilterPlaceholder: "Filter highlights\u2026",
 	fontLabel: "Font",
 	fontDefault: "Default",
 	fontDyslexic: "OpenDyslexic",
@@ -383,6 +397,7 @@ const FI: Strings = {
 		"<kbd>Ctrl+B</kbd> &mdash; Avaa/sulje sivupaneeli",
 		"<kbd>Ctrl+I</kbd> &mdash; Avaa/sulje kirjaluettelo",
 		"<kbd>Escape</kbd> &mdash; Sulje avoin paneeli",
+		"<kbd>&larr;</kbd> <kbd>&rarr;</kbd> &mdash; Edellinen / seuraava luku",
 		"<kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Siirry luettelossa",
 		"<kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>Tab</kbd> &mdash; Vaihda saraketta",
 		"<kbd>Enter</kbd> &mdash; Valitse kohde",
@@ -468,6 +483,7 @@ const FI: Strings = {
 	bookmarksEmpty: "Ei kirjanmerkkejä.",
 	bookmarkAdded: "Kirjanmerkki lisätty!",
 	bookmarkRemoved: "Kirjanmerkki poistettu",
+	bookmarksFilterPlaceholder: "Suodata kirjanmerkkejä\u2026",
 
 	notesTitle: "Muistiinpanot",
 	addNote: "Lisää muistiinpano",
@@ -475,12 +491,17 @@ const FI: Strings = {
 	noteSaved: "Muistiinpano tallennettu",
 	noteDeleted: "Muistiinpano poistettu",
 	notesEmpty: "Ei muistiinpanoja.",
-	notePlaceholder: "Kirjoita muistiinpano t\u00e4st\u00e4 jakeesta\u2026",
+	notePlaceholder: "Kirjoita muistiinpano tästä jakeesta\u2026",
 	noteDeleteConfirm: "Poista muistiinpano",
 	noteSave: "Tallenna",
 	noteRemove: "Poista",
 	cancel: "Peruuta",
-	invalidRef: (term) => `Virheellinen viite: “${term}”`,
+	invalidRef: (term) => `Virheellinen viite: "${term}"`,
+	notesFilterPlaceholder: "Suodata muistiinpanoja\u2026",
+
+	highlightsTitle: "Korostukset",
+	highlightsEmpty: "Ei korostettuja jakeita.",
+	highlightsFilterPlaceholder: "Suodata korostuksia\u2026",
 	fontLabel: "Fontti",
 	fontDefault: "Oletus",
 	fontDyslexic: "OpenDyslexic",
@@ -554,6 +575,7 @@ const SV: Strings = {
 		"<kbd>Ctrl+B</kbd> &mdash; Visa/dölj sidopanelen",
 		"<kbd>Ctrl+I</kbd> &mdash; Visa/dölj bokindexpanelen",
 		"<kbd>Escape</kbd> &mdash; Stäng öppna paneler",
+		"<kbd>&larr;</kbd> <kbd>&rarr;</kbd> &mdash; Föregående / nästa kapitel",
 		"<kbd>&uarr;</kbd> <kbd>&darr;</kbd> &mdash; Navigera i indexet",
 		"<kbd>&larr;</kbd> <kbd>&rarr;</kbd> / <kbd>Tab</kbd> &mdash; Byt kolumn i indexet",
 		"<kbd>Enter</kbd> &mdash; Välj objekt i indexet",
@@ -639,6 +661,7 @@ const SV: Strings = {
 	bookmarksEmpty: "Inga bokmärken än.",
 	bookmarkAdded: "Bokmärkt!",
 	bookmarkRemoved: "Bokmärke borttaget",
+	bookmarksFilterPlaceholder: "Filtrera bokmärken\u2026",
 
 	notesTitle: "Anteckningar",
 	addNote: "Lägg till anteckning",
@@ -652,7 +675,11 @@ const SV: Strings = {
 	noteRemove: "Ta bort",
 	cancel: "Avbryt",
 	invalidRef: (term) => `Ogiltig referens: "${term}"`,
+	notesFilterPlaceholder: "Filtrera anteckningar\u2026",
 
+	highlightsTitle: "Markeringar",
+	highlightsEmpty: "Inga markerade verser än.",
+	highlightsFilterPlaceholder: "Filtrera markeringar\u2026",
 	fontLabel: "Teckensnitt",
 	fontDefault: "Standard",
 	fontDyslexic: "OpenDyslexic",

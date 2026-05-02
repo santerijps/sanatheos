@@ -31,8 +31,6 @@ for (const t of translations) {
 	bibleCache[t] = await loadBible(TEXT_DIR, t);
 	console.log(`${t} loaded (${(bibleCache[t].length / 1024 / 1024).toFixed(1)} MB)`);
 }
-const translationsJson = JSON.stringify(translations);
-
 // Pre-load descriptions by language
 const descriptionsCache: Record<string, string> = {};
 const langFiles = ["en", "fi"];
@@ -86,15 +84,6 @@ Bun.serve({
 			if (!json)
 				return new Response("[]", { headers: { "Content-Type": "application/json" } });
 			return new Response(json, {
-				headers: {
-					"Content-Type": "application/json",
-					"Cache-Control": "public, max-age=86400",
-				},
-			});
-		}
-
-		if (path === "/text/translations.json") {
-			return new Response(translationsJson, {
 				headers: {
 					"Content-Type": "application/json",
 					"Cache-Control": "public, max-age=86400",

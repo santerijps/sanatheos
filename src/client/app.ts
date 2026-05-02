@@ -35,6 +35,7 @@ import {
 	setSubheadings,
 	setSecondarySubheadings,
 	renderParallelChapter,
+	renderParallelChapterRange,
 	renderParallelBook,
 	renderParallelVerse,
 	renderParallelVerseSegments,
@@ -164,7 +165,7 @@ function withTranslationParams(s: AppState): AppState {
 		...s,
 		translation: currentTranslation,
 		parallel: parallelTranslation || undefined,
-		interlinear: getInterlinearEnabled() || undefined,
+		interlinear: (getInterlinearEnabled() && isKJV()) || undefined,
 	};
 }
 
@@ -620,6 +621,8 @@ async function init() {
 	const notes: NotesModule = initNotes({ getData: () => data, showToast });
 	syncSidenotes = notes.syncSidenotes;
 
+	let sidebarRef: SidebarModule | undefined;
+
 	const highlights = initHighlights({
 		getData: () => data,
 		getParallelData: () => parallelData,
@@ -629,6 +632,8 @@ async function init() {
 		updateHighlightEntry: (key, color) => {
 			if (color) highlightMap.set(key, color);
 			else highlightMap.delete(key);
+			// Refresh highlights pane whenever it's open
+			sidebarRef?.renderHighlightsList();
 		},
 		showToast,
 		openNoteDialog: notes.openNoteDialog,
@@ -651,6 +656,7 @@ async function init() {
 		updateSidenoteDom: notes.updateSidenoteDom,
 		triggerSyncSidenotes: () => requestAnimationFrame(syncSidenotes),
 	});
+	sidebarRef = sidebar;
 
 	// --- Interlinear toggle ---
 	const strongsPanel = document.getElementById("strongs-panel")!;
@@ -721,6 +727,36 @@ async function init() {
 
 	// Render initial state from URL
 	const state = readState();
+	if (!state.book && !state.chapter && !state.verse && !state.query) {
+		try {
+			const lastRead = localStorage.getItem("bible-last-read");
+			if (lastRead) {
+				const lr = JSON.parse(lastRead) as {
+					book?: string;
+					chapter?: number;
+					verse?: number;
+				};
+				if (lr.book && data[lr.book]) {
+					const restored: AppState = {
+						book: lr.book,
+						chapter: lr.chapter,
+						verse: lr.verse,
+					};
+					searchInput.value = stateToInputText(restored);
+					applyState(restored);
+					replaceState(withTranslationParams(stateForUrl(restored)));
+					updateFooter();
+					document.getElementById("footer")?.classList.add("visible");
+					if ("requestIdleCallback" in window) {
+						window.requestIdleCallback(() => sidebar.preloadData(), { timeout: 3000 });
+					} else {
+						setTimeout(() => sidebar.preloadData(), 0);
+					}
+					return;
+				}
+			}
+		} catch {}
+	}
 	searchInput.value = stateToInputText(state);
 	applyState(state);
 	replaceState(withTranslationParams(stateForUrl(state)));
@@ -826,6 +862,27 @@ async function init() {
 				sidebar.closeSidePanel();
 			} else {
 				sidebar.openSidePanel();
+			}
+		}
+		if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+			const tag = (document.activeElement as HTMLElement)?.tagName;
+			const inInput = tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+			const anyPanelOpen =
+				overlay.classList.contains("open") ||
+				sideOverlay.classList.contains("open") ||
+				noteDialogOverlay.classList.contains("open") ||
+				strongsPanel.classList.contains("open") ||
+				verseMenu.classList.contains("open");
+			if (!inInput && !anyPanelOpen) {
+				const arrow = (
+					e.key === "ArrowLeft"
+						? content.querySelector(".nav-arrow.nav-prev:not(.nav-disabled)")
+						: content.querySelector(".nav-arrow.nav-next:not(.nav-disabled)")
+				) as HTMLElement | null;
+				if (arrow) {
+					e.preventDefault();
+					arrow.click();
+				}
 			}
 		}
 	});
@@ -1203,6 +1260,12 @@ async function init() {
 		}
 
 		searchInput.value = stateToInputText(s);
+		// Restore interlinear state from URL
+		if (s.interlinear && isKJV()) {
+			setInterlinearEnabled(true);
+		} else {
+			setInterlinearEnabled(false);
+		}
 		applyState(s);
 	});
 }
@@ -1230,6 +1293,15 @@ function navigate(s: AppState) {
 	}
 	applyState(s);
 	pushState(withTranslationParams(s));
+	// Save last-read position for next startup
+	if (s.book) {
+		try {
+			localStorage.setItem(
+				"bible-last-read",
+				JSON.stringify({ book: s.book, chapter: s.chapter, verse: s.verse }),
+			);
+		} catch {}
+	}
 }
 
 function renderNavRef(nav: NavRef) {
@@ -1285,19 +1357,33 @@ function renderNavRef(nav: NavRef) {
 			}
 		} else {
 			// Chapter range (with optional verse bounds): Genesis 8-10 or Genesis 18:16-19:29
-			renderChapterRange(data, book, chapterStart, chapterEnd, nav.verseStart, nav.verseEnd);
+			if (useParallel) {
+				renderParallelChapterRange(
+					data,
+					parallelData!,
+					book,
+					chapterStart,
+					chapterEnd,
+					currentTranslation,
+					parallelTranslation,
+					nav.verseStart,
+					nav.verseEnd,
+				);
+			} else {
+				renderChapterRange(
+					data,
+					book,
+					chapterStart,
+					chapterEnd,
+					nav.verseStart,
+					nav.verseEnd,
+				);
+			}
 		}
 	} else {
-		// Whole book: Genesis → show chapter 1
+		// Whole book: Genesis
 		if (useParallel) {
-			renderParallelChapter(
-				data,
-				parallelData!,
-				book,
-				1,
-				currentTranslation,
-				parallelTranslation,
-			);
+			renderParallelBook(data, parallelData!, book, currentTranslation, parallelTranslation);
 		} else {
 			renderChapter(data, book, 1);
 		}

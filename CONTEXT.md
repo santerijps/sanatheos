@@ -106,7 +106,6 @@ sanatheos/
 │   │   ├── bible-CPDV.json   # CPDV translation
 │   │   ├── bible-KR38.json   # KR38 translation
 │   │   ├── bible-SV17.json   # SV17 translation
-│   │   ├── translations.json # Available translations list
 │   │   ├── strongs.json      # Strong's Concordance (copied)
 │   │   └── interlinear/      # Per-book interlinear data (copied)
 │   ├── font/                 # OpenDyslexic font files (copied from public/font/)
@@ -189,9 +188,7 @@ The `loadBible()` function in `bible-loader.ts` converts this array-based format
 
 Keys are: `{ [bookName: string]: { [chapter: string]: { [verse: string]: string } } }`.
 
-Book names are normalized via `SOURCE_NAME_MAP` (e.g., "I Samuel" → "1 Samuel", "Psalms" → "Psalm"). Empty verses are trimmed and empty books are skipped. Books are ordered according to `BOOK_ORDER` (OT → Deuterocanonical → NT). A `translations.json` manifest lists available translation codes as a JSON array.
-
-The build script generates per-translation `bible-CODE.json` files for the `docs/` output.
+Book names are normalized via `SOURCE_NAME_MAP` (e.g., "I Samuel" → "1 Samuel", "Psalms" → "Psalm"). Empty verses are trimmed and empty books are skipped. Books are ordered according to `BOOK_ORDER` (OT → Deuterocanonical → NT). The build script generates per-translation `bible-CODE.json` files for the `docs/` output.
 
 ## Description Data Format
 
@@ -436,7 +433,8 @@ A thin orchestrator (~1,680 lines). The `init()` function runs on page load:
    - `initSidebar(deps)` → `SidebarModule` (all side panel tabs)
 8. **Wires up all remaining event listeners:**
    - Search input with 150ms debounce and auto-closing double quotes.
-   - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I) — delegates to feature module methods.
+   - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I, ArrowLeft, ArrowRight) — delegates to feature module methods.
+   - ArrowLeft/ArrowRight shortcuts: when no text input is focused and no panel is open, these click the previous/next navigation arrow, enabling hands-free keyboard chapter-by-chapter navigation.
    - Content click handlers (nav arrows, search results, chapter links, headings, copy buttons).
    - Swipe navigation on touch devices.
    - Browser back/forward (`popstate`).
@@ -473,7 +471,13 @@ Key functions:
 
 **Typology data flow** — `loadTypologyData()` fetches `./data/typology.json` once and caches in memory, with IndexedDB backing via `loadTypology()`/`saveTypology()`. `renderTypologyList(typology, filter)` builds HTML using the same CSS classes as stories/parables/theophanies. Categories are: `"Types of Christ (Persons)"`, `"Types of Christ (Events)"`, `"Types of the Theotokos"`, `"Types of the Church & Sacraments"`, `"Types of the Cross"`, and `"Additional Types"` — each localized via the typology category i18n strings. Clicking a typology entry navigates identically to stories.
 
-**Bookmarks data flow** — `renderBookmarksList()` reads all records from IndexedDB via `getBookmarks()` and renders `.bookmark-item` divs, each containing a `.bookmark-item-nav` button (clicking navigates to the passage) and a `.bookmark-item-remove` button (×). The bookmark button (`.bookmark-btn`) appears in chapter, verse, chapter-range, and verse-segment heading rows (rendered by `render.ts`). Clicking it calls `addBookmark()` or `removeBookmark()` in `db.ts` and syncs the button's `.bookmark-active` class via `syncBookmarkBtn()`. Verse-level bookmarks can also be added via the verse context menu.
+**Bookmarks data flow** — `renderBookmarksList(filter?)` reads all records from IndexedDB via `getBookmarks()`, optionally filters by the bookmark reference text, and renders `.bookmark-item` divs, each containing a `.bookmark-item-nav` button (clicking navigates to the passage) and a `.bookmark-item-remove` button (×). A filter input (`#bookmarks-filter`) is shown below the header; typing in it re-renders the list. The bookmark button (`.bookmark-btn`) appears in chapter, verse, chapter-range, and verse-segment heading rows (rendered by `render.ts`). Clicking it calls `addBookmark()` or `removeBookmark()` in `db.ts` and syncs the button's `.bookmark-active` class via `syncBookmarkBtn()`. Verse-level bookmarks can also be added via the verse context menu.
+
+**Notes data flow** — `renderNotesList(filter?)` reads all records from IndexedDB via `getNotes()`, sorts by book order then chapter/verse, optionally filters by reference text or note body, and renders `.note-item` entries. A filter input (`#notes-filter`) is shown below the header; typing in it re-renders the list.
+
+**Highlights data flow** — `renderHighlightsList(filter?)` reads the full highlight map from IndexedDB via `getHighlightMap()`, converts it to a sorted list of `{ book, chapter, verse, color }` entries (sorted by `BOOK_ORDER` then chapter, then verse), optionally filters by reference text or color name, and renders `.highlight-item` buttons each with a `.hl-dot.hl-dot-{color}` color indicator and the reference text. Entries are grouped by book with `.highlights-category-label` dividers. Clicking an entry navigates to the verse. The pane is refreshed automatically whenever a highlight is toggled via `sidebarRef?.renderHighlightsList()` in `app.ts`. A filter input (`#highlights-filter`) is shown below the header.
+
+**Last-read tracking** — After every user-initiated navigation call, `navigate()` saves `{ book, chapter?, verse? }` to `localStorage` under the key `"bible-last-read"`. On startup, if the URL has no book/chapter/verse/query (i.e., the user navigated directly to the root), the saved last-read location is restored and the app navigates to it, so returning users land back at their last reading position.
 
 **`localizeRef(ref)`** — Splits semicolon-separated multi-refs (e.g., `"Genesis 25:19-34; Genesis 27"`) on `"; "`, localizes each segment by replacing the English book key with the current translation's display name, then rejoins.
 
@@ -523,7 +527,7 @@ Centralises all network + IndexedDB fetch functions and the translation constant
 - `fetchInterlinear(book)` — checks render.ts in-memory store → IndexedDB → network fetch of `/text/interlinear/{book}.json`.
 - `fetchStrongs()` — checks render.ts in-memory store → IndexedDB → network fetch of `/text/strongs.json`.
 - `fetchTranslation(code)` — checks IndexedDB → network fetch of `/text/bible-{code}.json`.
-- `fetchTranslations()` — returns the static list `["CPDV", "KJV", "KR38", "NHEB", "SV17"]`.
+- `fetchTranslations()` — returns the **static hardcoded list** `["CPDV", "KJV", "KR38", "NHEB", "SV17"]` — no network request, no `/text/translations.json` file needed.
 - `fetchDescriptions(code)` — fetches `/data/descriptions-{lang}.json` using `TRANSLATION_LANG[code]`; returns `[]` on failure.
 
 ### features/notes.ts — Note Editor + Sidenotes
@@ -576,12 +580,13 @@ Exports `initSidebar(deps: SidebarDeps): SidebarModule`.
 
 **`SidebarDeps`:** `{ showToast, syncBookmarkBtn, setSearchInput, openNoteDialog, updateSidenoteDom, triggerSyncSidenotes }`
 
-**`SidebarModule`:** `{ openSidePanel, closeSidePanel, renderBookmarksList, renderNotesList, preloadData }`
+**`SidebarModule`:** `{ openSidePanel, closeSidePanel, renderBookmarksList, renderNotesList, renderHighlightsList, preloadData }`
 
 - `openSidePanel(tab?)` — Activates the specified (or last-active) tab, opens `#side-overlay`, loads data for the active tab.
 - `closeSidePanel()` — Removes `.open` from `#side-overlay`.
-- `renderBookmarksList()` — Reads all bookmarks from IndexedDB and renders `.bookmark-item` entries.
-- `renderNotesList()` — Reads all notes from IndexedDB, sorts by book order then chapter/verse, renders `.note-item` entries.
+- `renderBookmarksList(filter?)` — Reads all bookmarks from IndexedDB and renders `.bookmark-item` entries; accepts optional filter string.
+- `renderNotesList(filter?)` — Reads all notes from IndexedDB, sorts by book order then chapter/verse, renders `.note-item` entries; accepts optional filter string.
+- `renderHighlightsList(filter?)` — Reads all highlights from IndexedDB via `getHighlightMap()`, groups by book, renders `.highlight-item` buttons with `.hl-dot` color indicators; accepts optional filter string. Clicking an item navigates to the verse.
 - `preloadData()` — Calls `loadStoriesData()`, `loadParablesData()`, `loadTheophaniesData()`, and `loadTypologyData()` in parallel to populate in-memory + IndexedDB caches before the user opens the panel.
 
 Owns all side panel DOM queries, `activateSideTab()`, tab-switching event listeners, filter inputs for all four content panes, list click handlers, and the `bookmarkNavText()` helper.
@@ -657,6 +662,7 @@ All functions write to `$("content").innerHTML`. Functions:
 | `renderResults` | Search results with pagination (50 per page), highlighting |
 | `renderIndex` | Three-column book index panel with keyboard navigation. Accepts callbacks: `onBook`, `onReadBook`, `onChapter`, `onReadChapter`, `onVerse`. Prepends `.idx-read-book` as first item in chapters column and `.idx-read-chapter` as first item in verses column. |
 | `renderParallelChapter` | Two-column side-by-side chapter view |
+| `renderParallelChapterRange` | Two-column side-by-side chapter range (e.g., Genesis 1-3 in parallel); fixes the previous bug where chapter ranges fell back to single-column |
 | `renderParallelBook` | Two-column side-by-side full book view |
 | `renderParallelVerse` | Two-column single verse view |
 | `renderParallelVerseSegments` | Two-column verse segments view |
@@ -744,8 +750,9 @@ Three language tables: English (`EN`), Finnish (`FI`), and Swedish (`SV`), all i
 - Index panel labels (Old Testament, New Testament)
 - Footer text, favicon attribution, dictionary link (`footerDictionary`), and styleguide attribution (`footerStyleguide`)
 - Feature strings (copied, copy verse, copy both, highlight, remove highlight, show more)
-- Bookmark strings (bookmarksTitle, bookmarkThis, removeBookmark, bookmarksEmpty, bookmarkAdded, bookmarkRemoved)
-- Note strings (notesTitle, addNote, editNote, noteSaved, noteDeleted, notesEmpty, notePlaceholder, noteDeleteConfirm, noteSave, noteRemove, cancel, invalidRef)
+- Bookmark strings (bookmarksTitle, bookmarkThis, removeBookmark, bookmarksEmpty, bookmarkAdded, bookmarkRemoved, bookmarksFilterPlaceholder)
+- Note strings (notesTitle, addNote, editNote, noteSaved, noteDeleted, notesEmpty, notePlaceholder, noteDeleteConfirm, noteSave, noteRemove, cancel, invalidRef, notesFilterPlaceholder)
+- Highlights strings (highlightsTitle, highlightsEmpty, highlightsFilterPlaceholder)
 - Mobile index strings (readFullChapter: "Read the full chapter" / "Lue koko luku" / "Läs hela kapitlet", readFullBook: "Read the full book" / "Lue koko kirja" / "Läs hela boken", idxBrowseLabel: "Browse" / "Selaa" / "Bläddra")
 - Parables strings (parablesTitle, parablesFilterPlaceholder, parablesEmpty)
 - Theophanies strings (theophaniesTitle, theophaniesFilterPlaceholder, theophaniesEmpty)
@@ -798,7 +805,6 @@ Bun HTTP server on port 3000. Uses `loadBible` and `discoverTranslations` from t
 3. Serves:
    - `/text/bible-CODE.json` — combined Bible data for a translation (from memory cache).
    - `/data/descriptions-LANG.json` — book and chapter descriptions by language (from file cache).
-   - `/text/translations.json` — array of available translation codes.
    - `/text/interlinear/{Book}.json` — per-book interlinear data (served from file).
    - `/text/strongs.json` — Strong's Concordance dictionary (served from file).
    - Static files from `public/` with MIME type mapping.
@@ -873,6 +879,7 @@ The page is a single HTML file with this DOM structure:
         .side-tab-btn[data-tab="parables"]    — Parables of Jesus tab
         .side-tab-btn[data-tab="theophanies"] — Theophanies tab
         .side-tab-btn[data-tab="typology"]    — Typology tab
+        .side-tab-btn[data-tab="highlights"]  — Highlights tab
         .side-tab-btn[data-tab="bookmarks"]   — Bookmarks tab
         .side-tab-btn[data-tab="notes"]       — Notes tab
         .side-tab-btn[data-tab="settings"]    — Settings tab
@@ -884,8 +891,9 @@ The page is a single HTML file with this DOM structure:
         .side-pane[data-pane="parables"]
         .side-pane[data-pane="theophanies"]
         .side-pane[data-pane="typology"]
-        .side-pane[data-pane="bookmarks"]
-        .side-pane[data-pane="notes"]
+        .side-pane[data-pane="highlights"]    — Highlights pane (header + #highlights-filter + #highlights-list)
+        .side-pane[data-pane="bookmarks"]     — Bookmarks pane (header + #bookmarks-filter + #bookmarks-list)
+        .side-pane[data-pane="notes"]         — Notes pane (header + #notes-filter + #notes-list)
         .side-pane[data-pane="settings"]     — Settings pane
           #settings-modal-body
             fieldset.settings-group          — Content group
@@ -1073,7 +1081,7 @@ Keyboard navigation: Arrow up/down within columns, Arrow left/right or Tab betwe
 
 When a secondary translation is selected in settings, content renders in a two-column CSS Grid layout. Each column shows the same passage in a different translation with its own translation label and copy button. A "Copy both" button above copies both translations with labels.
 
-Supported parallel views: chapter, single verse, verse segments, multi-reference. Chapter ranges and full book views do not have parallel mode — they render single-column.
+Supported parallel views: chapter, single verse, verse segments, chapter range, multi-reference. Full book view renders in two-column parallel. When `renderNavRef()` handles a whole-book reference in parallel mode, it now calls `renderParallelBook()` instead of falling back to a single-chapter `renderParallelChapter()` call.
 
 In parallel mode, each column displays subheadings in its own language. The secondary translation's subheadings are loaded separately via `setSecondarySubheadings()` and selected by `renderStyledVerses()` based on the `secondary` parameter.
 
@@ -1114,7 +1122,7 @@ Both actions show a toast notification ("Copied!" / "Kopioitu!").
 
 ### 7. Chapter Navigation
 
-Arrow links at top and bottom of chapter/verse views. `getChapterNav()` and `getVerseNav()` compute previous/next targets by walking the ordered book/chapter/verse structure, crossing book boundaries. Disabled arrows are greyed out spans (no link).
+**Arrow key navigation:** Pressing ArrowLeft (when no text input is focused and no panel is open) clicks the previous nav arrow (`.nav-arrow:first-of-type`). Pressing ArrowRight clicks the next nav arrow. This allows hands-free keyboard navigation through chapters and verses. Displayed in the keyboard shortcuts section of the Info pane. `getChapterNav()` and `getVerseNav()` compute previous/next targets by walking the ordered book/chapter/verse structure, crossing book boundaries. Disabled arrows are greyed out spans (no link).
 
 **Swipe navigation:** On touch devices, horizontal swipes (>80px, <500ms, more horizontal than vertical) trigger the corresponding nav arrow click.
 

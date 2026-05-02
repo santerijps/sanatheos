@@ -4,6 +4,7 @@ import type {
 	TheophaniesEntry,
 	TypologyEntry,
 	Bookmark,
+	HighlightColor,
 } from "../types.ts";
 import {
 	loadStories,
@@ -19,6 +20,7 @@ import {
 	getNotes,
 	deleteNote,
 	getNoteMap,
+	getHighlightMap,
 } from "../db.ts";
 import { setNoteMap } from "../render.ts";
 import { t, getLanguage } from "../i18n.ts";
@@ -43,6 +45,7 @@ export interface SidebarModule {
 	closeSidePanel: () => void;
 	renderBookmarksList: () => Promise<void>;
 	renderNotesList: () => Promise<void>;
+	renderHighlightsList: () => Promise<void>;
 	preloadData: () => void;
 }
 
@@ -99,9 +102,15 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 
 	const bookmarksList = document.getElementById("bookmarks-list")!;
 	const bookmarksTitleEl = document.getElementById("bookmarks-title")!;
+	const bookmarksFilter = document.getElementById("bookmarks-filter") as HTMLInputElement;
 
 	const notesList = document.getElementById("notes-list")!;
 	const notesTitleEl = document.getElementById("notes-title")!;
+	const notesFilter = document.getElementById("notes-filter") as HTMLInputElement;
+
+	const highlightsTitleEl = document.getElementById("highlights-title")!;
+	const highlightsFilter = document.getElementById("highlights-filter") as HTMLInputElement;
+	const highlightsList = document.getElementById("highlights-list")!;
 
 	let lastActiveTab = localStorage.getItem("side-panel-tab") || "stories";
 
@@ -164,13 +173,26 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 			renderTypologyList(typology, "");
 			if (!window.matchMedia("(hover: none)").matches) typologyFilter.focus();
 		}
+		if ((tab || lastActiveTab) === "highlights") {
+			highlightsTitleEl.textContent = t().highlightsTitle;
+			highlightsFilter.placeholder = t().highlightsFilterPlaceholder;
+			highlightsFilter.value = "";
+			await renderHighlightsList();
+			if (!window.matchMedia("(hover: none)").matches) highlightsFilter.focus();
+		}
 		if ((tab || lastActiveTab) === "bookmarks") {
 			bookmarksTitleEl.textContent = t().bookmarksTitle;
+			bookmarksFilter.placeholder = t().bookmarksFilterPlaceholder;
+			bookmarksFilter.value = "";
 			await renderBookmarksList();
+			if (!window.matchMedia("(hover: none)").matches) bookmarksFilter.focus();
 		}
 		if ((tab || lastActiveTab) === "notes") {
 			notesTitleEl.textContent = t().notesTitle;
+			notesFilter.placeholder = t().notesFilterPlaceholder;
+			notesFilter.value = "";
 			await renderNotesList();
+			if (!window.matchMedia("(hover: none)").matches) notesFilter.focus();
 		}
 	}
 
@@ -220,11 +242,19 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 			}
 			if (tab === "bookmarks") {
 				bookmarksTitleEl.textContent = t().bookmarksTitle;
+				bookmarksFilter.placeholder = t().bookmarksFilterPlaceholder;
 				renderBookmarksList();
 			}
 			if (tab === "notes") {
 				notesTitleEl.textContent = t().notesTitle;
+				notesFilter.placeholder = t().notesFilterPlaceholder;
 				renderNotesList();
+			}
+			if (tab === "highlights") {
+				highlightsTitleEl.textContent = t().highlightsTitle;
+				highlightsFilter.placeholder = t().highlightsFilterPlaceholder;
+				renderHighlightsList();
+				if (!window.matchMedia("(hover: none)").matches) highlightsFilter.focus();
 			}
 		});
 	});
@@ -591,15 +621,19 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 
 	// --- Bookmarks panel ---
 
-	async function renderBookmarksList() {
+	async function renderBookmarksList(filter = "") {
 		const s = t();
 		const items = await getBookmarks();
-		if (items.length === 0) {
+		const q = filter.trim().toLowerCase();
+		const filtered = q
+			? items.filter((bm) => bookmarkNavText(bm).toLowerCase().includes(q))
+			: items;
+		if (filtered.length === 0) {
 			bookmarksList.innerHTML = `<p class="bookmarks-empty">${escapeHtml(s.bookmarksEmpty)}</p>`;
 			return;
 		}
 		let html = "";
-		for (const bm of items) {
+		for (const bm of filtered) {
 			const label = bookmarkNavText(bm);
 			html += `<div class="bookmark-item">
 				<button class="bookmark-item-nav" type="button" data-query="${escapeHtml(label)}">${escapeHtml(label)}</button>
@@ -627,16 +661,20 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 			const id = removeBtn.dataset.id;
 			if (!id) return;
 			await removeBookmark(id);
-			await renderBookmarksList();
+			await renderBookmarksList(bookmarksFilter.value);
 			await deps.syncBookmarkBtn();
 			deps.showToast(t().bookmarkRemoved);
 			return;
 		}
 	});
 
+	bookmarksFilter.addEventListener("input", () => {
+		renderBookmarksList(bookmarksFilter.value);
+	});
+
 	// --- Notes list panel ---
 
-	async function renderNotesList() {
+	async function renderNotesList(filter = "") {
 		const s = t();
 		const notes = await getNotes();
 		notes.sort((a, b) => {
@@ -645,12 +683,19 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 			if (a.chapter !== b.chapter) return a.chapter - b.chapter;
 			return a.verse - b.verse;
 		});
-		if (notes.length === 0) {
+		const q = filter.trim().toLowerCase();
+		const filtered = q
+			? notes.filter((n) => {
+					const ref = `${displayName(n.book)} ${n.chapter}:${n.verse}`;
+					return ref.toLowerCase().includes(q) || n.text.toLowerCase().includes(q);
+				})
+			: notes;
+		if (filtered.length === 0) {
 			notesList.innerHTML = `<p class="notes-empty">${escapeHtml(s.notesEmpty)}</p>`;
 			return;
 		}
 		let html = "";
-		for (const note of notes) {
+		for (const note of filtered) {
 			const refLabel = `${displayName(note.book)} ${note.chapter}:${note.verse}`;
 			html += `<div class="note-item">
 				<button class="note-item-body" type="button" data-query="${escapeHtml(refLabel)}" title="${escapeHtml(note.text)}">
@@ -683,9 +728,83 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 			setNoteMap(newMap);
 			deps.updateSidenoteDom(id, null);
 			deps.triggerSyncSidenotes();
-			await renderNotesList();
+			await renderNotesList(notesFilter.value);
 			return;
 		}
+	});
+
+	notesFilter.addEventListener("input", () => {
+		renderNotesList(notesFilter.value);
+	});
+
+	// --- Highlights panel ---
+
+	async function renderHighlightsList(filter = "") {
+		const s = t();
+		const map = await getHighlightMap();
+		if (map.size === 0) {
+			highlightsList.innerHTML = `<p class="highlights-empty">${escapeHtml(s.highlightsEmpty)}</p>`;
+			return;
+		}
+		const q = filter.trim().toLowerCase();
+		type Entry = {
+			key: string;
+			book: string;
+			chapter: number;
+			verse: number;
+			color: HighlightColor;
+		};
+		const entries: Entry[] = [];
+		for (const [key, color] of map) {
+			const [book, chStr, vStr] = key.split(":");
+			const chapter = parseInt(chStr, 10);
+			const verse = parseInt(vStr, 10);
+			if (!book || isNaN(chapter) || isNaN(verse)) continue;
+			entries.push({ key, book, chapter, verse, color });
+		}
+		entries.sort((a, b) => {
+			const bi = sortedBookIndex(a.book) - sortedBookIndex(b.book);
+			if (bi !== 0) return bi;
+			if (a.chapter !== b.chapter) return a.chapter - b.chapter;
+			return a.verse - b.verse;
+		});
+		const filtered = q
+			? entries.filter((e) => {
+					const ref = `${displayName(e.book)} ${e.chapter}:${e.verse}`;
+					return ref.toLowerCase().includes(q) || e.color.toLowerCase().includes(q);
+				})
+			: entries;
+		if (filtered.length === 0) {
+			highlightsList.innerHTML = `<p class="highlights-empty">${escapeHtml(s.highlightsEmpty)}</p>`;
+			return;
+		}
+		let html = "";
+		let lastBook = "";
+		for (const e of filtered) {
+			const ref = `${displayName(e.book)} ${e.chapter}:${e.verse}`;
+			if (e.book !== lastBook) {
+				html += `<div class="highlights-category-label">${escapeHtml(displayName(e.book))}</div>`;
+				lastBook = e.book;
+			}
+			html += `<button class="highlight-item" type="button" data-query="${escapeHtml(ref)}">
+				<span class="hl-dot hl-dot-${escapeHtml(e.color)}"></span>
+				<span class="highlight-item-ref">${escapeHtml(ref)}</span>
+			</button>`;
+		}
+		highlightsList.innerHTML = html;
+	}
+
+	highlightsList.addEventListener("click", (e) => {
+		const btn = (e.target as HTMLElement).closest(".highlight-item") as HTMLElement | null;
+		if (!btn) return;
+		const query = btn.dataset.query;
+		if (!query) return;
+		closeSidePanel();
+		deps.setSearchInput(query);
+	});
+
+	highlightsFilter.addEventListener("input", () => {
+		renderHighlightsList(highlightsFilter.value);
 	});
 
 	// --- Add bookmark handler also triggers re-render of bookmarks list ---
@@ -702,5 +821,12 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 		});
 	}
 
-	return { openSidePanel, closeSidePanel, renderBookmarksList, renderNotesList, preloadData };
+	return {
+		openSidePanel,
+		closeSidePanel,
+		renderBookmarksList,
+		renderNotesList,
+		renderHighlightsList,
+		preloadData,
+	};
 }

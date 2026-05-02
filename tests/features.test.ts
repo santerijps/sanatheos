@@ -42,6 +42,19 @@ describe("i18n — new feature strings (EN)", () => {
 		expect(s.removeHighlight).toBe("Remove highlight");
 	});
 
+	test("highlights pane strings exist", () => {
+		const s = t();
+		expect(s.highlightsTitle).toBe("Highlights");
+		expect(s.highlightsEmpty).toBeTruthy();
+		expect(s.highlightsFilterPlaceholder).toBeTruthy();
+	});
+
+	test("bookmarks/notes filter placeholder strings exist", () => {
+		const s = t();
+		expect(s.bookmarksFilterPlaceholder).toBeTruthy();
+		expect(s.notesFilterPlaceholder).toBeTruthy();
+	});
+
 	test("footer descriptions string mentions CPDV", () => {
 		expect(t().footerDescriptions).toContain("Catholic Public Domain Version");
 	});
@@ -75,6 +88,19 @@ describe("i18n — new feature strings (FI)", () => {
 		expect(s.removeHighlight).toBe("Poista korostus");
 	});
 
+	test("highlights pane strings exist", () => {
+		const s = t();
+		expect(s.highlightsTitle).toBeTruthy();
+		expect(s.highlightsEmpty).toBeTruthy();
+		expect(s.highlightsFilterPlaceholder).toBeTruthy();
+	});
+
+	test("bookmarks/notes filter placeholder strings exist", () => {
+		const s = t();
+		expect(s.bookmarksFilterPlaceholder).toBeTruthy();
+		expect(s.notesFilterPlaceholder).toBeTruthy();
+	});
+
 	test("footer descriptions string mentions CPDV", () => {
 		expect(t().footerDescriptions).toContain("Catholic Public Domain Version");
 	});
@@ -106,6 +132,19 @@ describe("i18n — new feature strings (SV)", () => {
 		const s = t();
 		expect(s.highlight).toBe("Markera");
 		expect(s.removeHighlight).toBe("Ta bort markering");
+	});
+
+	test("highlights pane strings exist", () => {
+		const s = t();
+		expect(s.highlightsTitle).toBeTruthy();
+		expect(s.highlightsEmpty).toBeTruthy();
+		expect(s.highlightsFilterPlaceholder).toBeTruthy();
+	});
+
+	test("bookmarks/notes filter placeholder strings exist", () => {
+		const s = t();
+		expect(s.bookmarksFilterPlaceholder).toBeTruthy();
+		expect(s.notesFilterPlaceholder).toBeTruthy();
 	});
 
 	test("footer descriptions string mentions Catholic Public Domain Version", () => {
@@ -904,6 +943,28 @@ describe("i18n — EN and FI key parity", () => {
 		setLanguage("fi");
 		const shortcuts = t().infoShortcuts.join(" ");
 		expect(shortcuts).toContain("Ctrl+B");
+	});
+
+	test("infoShortcuts contains ArrowLeft/ArrowRight entry in EN", () => {
+		setLanguage("en");
+		const shortcuts = t().infoShortcuts.join(" ");
+		expect(shortcuts).toContain("&larr;");
+		expect(shortcuts).toContain("&rarr;");
+		expect(shortcuts.toLowerCase()).toContain("chapter");
+	});
+
+	test("infoShortcuts contains ArrowLeft/ArrowRight entry in FI", () => {
+		setLanguage("fi");
+		const shortcuts = t().infoShortcuts.join(" ");
+		expect(shortcuts).toContain("&larr;");
+		expect(shortcuts).toContain("&rarr;");
+	});
+
+	test("infoShortcuts contains ArrowLeft/ArrowRight entry in SV", () => {
+		setLanguage("sv");
+		const shortcuts = t().infoShortcuts.join(" ");
+		expect(shortcuts).toContain("&larr;");
+		expect(shortcuts).toContain("&rarr;");
 	});
 
 	test("both languages have same number of infoFeaturesItems", () => {
