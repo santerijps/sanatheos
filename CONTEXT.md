@@ -219,10 +219,8 @@ The Bible stories list lives in `public/data/stories.json`. It is fetched on dem
 [
   {
     "id": "creation",
-    "title": "The Creation",
-    "title_fi": "Luominen",
-    "description": "God creates the heavens, earth, light... in six days.",
-    "description_fi": "Jumala luo taivaan, maan, valon...",
+    "title": { "en": "The Creation", "fi": "Luominen", "sv": "Skapelsen" },
+    "description": { "en": "God creates the heavens, earth, light... in six days.", "fi": "Jumala luo taivaan, maan, valon...", "sv": "Gud skapar himmel, jord, ljus... på sex dagar." },
     "ref": "Genesis 1-2",
     "category": "Old Testament"
   }
@@ -231,12 +229,12 @@ The Bible stories list lives in `public/data/stories.json`. It is fetched on dem
 
 Fields:
 - `id` — unique slug identifier
-- `title` / `title_fi` / `title_sv` — story title in English, Finnish, and Swedish
-- `description` / `description_fi` / `description_sv` — one-sentence summary in all three languages
+- `title` — `Record<string, string>` map of language code → title (e.g., `{ "en": "...", "fi": "...", "sv": "..." }`)
+- `description` — `Record<string, string>` map of language code → one-sentence summary
 - `ref` — Bible reference string passed directly to the search input on click (e.g., `Genesis 1-2`, `Matthew 5-7`)
 - `category` — one of `"Old Testament"`, `"New Testament"`, `"Deuterocanonical"`
 
-Language selection follows the active UI language. The build script copies the entire `data/` directory (including `stories.json`) to `docs/data/`.
+Language selection is done by `localize(entry.title)` in `sidebar.ts`, which picks the active language from the map (falling back to `"en"`). The build script copies the entire `data/` directory (including `stories.json`) to `docs/data/`.
 
 ## Parables Data Format
 
@@ -246,10 +244,8 @@ The parables list lives in `public/data/parables.json`. It is fetched on demand 
 [
   {
     "id": "sower",
-    "title": "The Parable of the Sower",
-    "title_fi": "Kylväjä",
-    "description": "A sower scatters seed on four types of ground...",
-    "description_fi": "Kylväjä kylvää siemenen neljänlaiseen maahan...",
+    "title": { "en": "The Parable of the Sower", "fi": "Kylväjä", "sv": "Såraren" },
+    "description": { "en": "A sower scatters seed on four types of ground...", "fi": "Kylväjä kylvää siemenen neljänlaiseen maahan...", "sv": "En sådare sprider säd på fyra sorters mark..." },
     "ref": "Matthew 13:1-23",
     "category": "Matthew"
   }
@@ -258,8 +254,8 @@ The parables list lives in `public/data/parables.json`. It is fetched on demand 
 
 Fields:
 - `id` — unique slug identifier
-- `title` / `title_fi` / `title_sv` — parable title in English, Finnish, and Swedish
-- `description` / `description_fi` / `description_sv` — one-sentence summary in all three languages
+- `title` — `Record<string, string>` map of language code → title
+- `description` — `Record<string, string>` map of language code → one-sentence summary
 - `ref` — Bible reference string passed directly to the search input on click
 - `category` — one of `"Matthew"`, `"Mark"`, `"Luke"` (gospel book names, localized via `displayName()` at render time)
 
@@ -381,26 +377,24 @@ interface Bookmark {
 }
 
 interface StoryEntry {
-  id: string; title: string; title_fi?: string; title_sv?: string;
-  description: string; description_fi?: string; description_sv?: string;
-  ref: string; category: string;
+  id: string;
+  title: Record<string, string>;       // { en: "...", fi: "...", sv: "..." }
+  description: Record<string, string>; // { en: "...", fi: "...", sv: "..." }
+  ref: string;
+  category: string;
 }
 
+// ParableEntry, TheophaniesEntry, TypologyEntry — identical structure to StoryEntry
 interface ParableEntry {
-  id: string; title: string; title_fi?: string; title_sv?: string;
-  description: string; description_fi?: string; description_sv?: string;
+  id: string; title: Record<string, string>; description: Record<string, string>;
   ref: string; category: string;
 }
-
 interface TheophaniesEntry {
-  id: string; title: string; title_fi?: string; title_sv?: string;
-  description: string; description_fi?: string; description_sv?: string;
+  id: string; title: Record<string, string>; description: Record<string, string>;
   ref: string; category: string;
 }
-
 interface TypologyEntry {
-  id: string; title: string; title_fi?: string; title_sv?: string;
-  description: string; description_fi?: string; description_sv?: string;
+  id: string; title: Record<string, string>; description: Record<string, string>;
   ref: string; category: string;
 }
 
@@ -764,7 +758,11 @@ Three language tables: English (`EN`), Finnish (`FI`), and Swedish (`SV`), all i
 - QR code strings (qrCode, qrClose)
 - Deuterocanonical section label
 
-`setLanguage(lang)` / `getLanguage()` / `t()` (returns current strings). Language codes: `"en"`, `"fi"`, `"sv"`. Exported as `const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI, sv: SV }`.
+`setLanguage(lang)` / `getLanguage()` / `t()` (returns current strings). Language codes: `"en"`, `"fi"`, `"sv"`.
+
+**`SUPPORTED_LANGUAGES`** — exported `readonly` array of `{ code: string; nativeName: string }` objects (`[{ code: "en", nativeName: "English" }, ...]`). This is the canonical list used by `app.ts` to dynamically generate the language selector buttons in the settings pane. To add a language, add an entry here.
+
+**`localize(strings: Record<string, string>): string`** — exported helper that picks the current-language value from any multilingual record map (e.g., `entry.title`), falling back to `"en"` if the language is missing. Used by `sidebar.ts` to render story/parable/theophany/typology titles and descriptions without per-language `if/else` chains.
 
 The info modal content is rebuilt dynamically from i18n strings whenever the language changes (in `updateStaticText()`), so the static HTML in `index.html` is only the initial English fallback.
 
@@ -902,7 +900,7 @@ The page is a single HTML file with this DOM structure:
             fieldset.settings-group          — Appearance group
               #theme-segmented               — System / Light / Dark
               #fontsize-segmented            — S / M / L / XL / XXL
-              #language-segmented            — English / Suomi / Svenska
+              #language-segmented            — Language buttons, dynamically populated from SUPPORTED_LANGUAGES in i18n.ts
               #font-segmented                — Default / OpenDyslexic
             fieldset.settings-group          — Data group
               #export-data-btn
@@ -1371,6 +1369,19 @@ E2e tests in `tests/e2e/app.spec.ts` using `@playwright/test` with Chromium. The
 10. **oxlint & oxfmt:** Rust-based linter (`oxlint`) and formatter (`oxfmt`) with zero config. Run via `bun run lint` and `bun run fmt`. All source files pass with 0 warnings and 0 errors.
 11. **Lefthook git hooks:** Pre-commit hook runs lint, format check, and typecheck in parallel. Pre-push hook runs unit tests. Hooks are auto-installed on `bun install` via the `postinstall` script.
 12. **GitHub Actions CI:** Runs typecheck, lint, format check, unit tests, and e2e tests on push to `main` and on pull requests. Uses `oven-sh/setup-bun` for Bun installation.
+
+## Adding a New Language
+
+Adding a new UI language requires changes in one file (`i18n.ts`) plus additions to the four content JSON files. No other code changes are needed.
+
+1. Add a new `Strings` object `const XX: Strings = { ... }` to `src/client/i18n.ts` with translations for every key in the `Strings` interface (copy EN as a starting point).
+2. Add the new object to the `LANGUAGES` record: `xx: XX`.
+3. Add `{ code: "xx", nativeName: "NativeName" }` to the `SUPPORTED_LANGUAGES` array. The language button will appear automatically in the settings pane.
+4. Add `"xx": "translated text"` entries to every entry in the four content JSON files: `public/data/stories.json`, `parables.json`, `theophanies.json`, `typology.json` (and mirror to `docs/data/`).
+5. Add `subheadings-xx.json` and `descriptions-xx.json` to `public/data/` if there is a Bible translation in that language. Map the translation code to `"xx"` in `TRANSLATION_LANG` in `src/client/services/api.ts`.
+6. Add book display names and aliases to `bookNames.ts` if there is a corresponding Bible translation.
+
+The `Record<string, string>` type on `title` and `description` in `StoryEntry` / `ParableEntry` / `TheophaniesEntry` / `TypologyEntry` means no TypeScript changes are needed for the data files — just add the new language key.
 
 ## Adding a New Translation
 

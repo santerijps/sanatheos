@@ -96,48 +96,32 @@ export interface Bookmark {
 
 export interface StoryEntry {
 	id: string;
-	title: string;
-	title_fi?: string;
-	title_sv?: string;
-	description: string;
-	description_fi?: string;
-	description_sv?: string;
+	title: Record<string, string>;
+	description: Record<string, string>;
 	ref: string;
 	category: string;
 }
 
 export interface ParableEntry {
 	id: string;
-	title: string;
-	title_fi?: string;
-	title_sv?: string;
-	description: string;
-	description_fi?: string;
-	description_sv?: string;
+	title: Record<string, string>;
+	description: Record<string, string>;
 	ref: string;
 	category: string;
 }
 
 export interface TheophaniesEntry {
 	id: string;
-	title: string;
-	title_fi?: string;
-	title_sv?: string;
-	description: string;
-	description_fi?: string;
-	description_sv?: string;
+	title: Record<string, string>;
+	description: Record<string, string>;
 	ref: string;
 	category: string;
 }
 
 export interface TypologyEntry {
 	id: string;
-	title: string;
-	title_fi?: string;
-	title_sv?: string;
-	description: string;
-	description_fi?: string;
-	description_sv?: string;
+	title: Record<string, string>;
+	description: Record<string, string>;
 	ref: string;
 	category: string;
 }

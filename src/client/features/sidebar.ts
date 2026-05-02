@@ -23,7 +23,7 @@ import {
 	getHighlightMap,
 } from "../db.ts";
 import { setNoteMap } from "../render.ts";
-import { t, getLanguage } from "../i18n.ts";
+import { t, localize } from "../i18n.ts";
 import { displayName, getBookKeys } from "../bookNames.ts";
 import { lockScroll, unlockScroll, escapeHtml } from "../utils.ts";
 
@@ -276,19 +276,8 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 
 	function renderStoriesList(stories: StoryEntry[], filter: string) {
 		const s = t();
-		const lang = getLanguage();
-		const getTitle = (st: StoryEntry) =>
-			lang === "fi" && st.title_fi
-				? st.title_fi
-				: lang === "sv" && st.title_sv
-					? st.title_sv
-					: st.title;
-		const getDesc = (st: StoryEntry) =>
-			lang === "fi" && st.description_fi
-				? st.description_fi
-				: lang === "sv" && st.description_sv
-					? st.description_sv
-					: st.description;
+		const getTitle = (st: StoryEntry) => localize(st.title);
+		const getDesc = (st: StoryEntry) => localize(st.description);
 		const getCatLabel = (cat: string) => {
 			if (cat === "Old Testament") return s.oldTestament;
 			if (cat === "New Testament") return s.newTestament;
@@ -366,19 +355,8 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 
 	function renderParablesList(parables: ParableEntry[], filter: string) {
 		const s = t();
-		const lang = getLanguage();
-		const getTitle = (p: ParableEntry) =>
-			lang === "fi" && p.title_fi
-				? p.title_fi
-				: lang === "sv" && p.title_sv
-					? p.title_sv
-					: p.title;
-		const getDesc = (p: ParableEntry) =>
-			lang === "fi" && p.description_fi
-				? p.description_fi
-				: lang === "sv" && p.description_sv
-					? p.description_sv
-					: p.description;
+		const getTitle = (p: ParableEntry) => localize(p.title);
+		const getDesc = (p: ParableEntry) => localize(p.description);
 		const getCatLabel = (cat: string) => displayName(cat);
 
 		const q = filter.trim().toLowerCase();
@@ -451,19 +429,8 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 
 	function renderTheophaniesList(theophanies: TheophaniesEntry[], filter: string) {
 		const s = t();
-		const lang = getLanguage();
-		const getTitle = (th: TheophaniesEntry) =>
-			lang === "fi" && th.title_fi
-				? th.title_fi
-				: lang === "sv" && th.title_sv
-					? th.title_sv
-					: th.title;
-		const getDesc = (th: TheophaniesEntry) =>
-			lang === "fi" && th.description_fi
-				? th.description_fi
-				: lang === "sv" && th.description_sv
-					? th.description_sv
-					: th.description;
+		const getTitle = (th: TheophaniesEntry) => localize(th.title);
+		const getDesc = (th: TheophaniesEntry) => localize(th.description);
 		const getCatLabel = (cat: string) => {
 			if (cat === "Old Testament") return s.oldTestament;
 			if (cat === "New Testament") return s.newTestament;
@@ -541,19 +508,8 @@ export function initSidebar(deps: SidebarDeps): SidebarModule {
 
 	function renderTypologyList(typology: TypologyEntry[], filter: string) {
 		const s = t();
-		const lang = getLanguage();
-		const getTitle = (ty: TypologyEntry) =>
-			lang === "fi" && ty.title_fi
-				? ty.title_fi
-				: lang === "sv" && ty.title_sv
-					? ty.title_sv
-					: ty.title;
-		const getDesc = (ty: TypologyEntry) =>
-			lang === "fi" && ty.description_fi
-				? ty.description_fi
-				: lang === "sv" && ty.description_sv
-					? ty.description_sv
-					: ty.description;
+		const getTitle = (ty: TypologyEntry) => localize(ty.title);
+		const getDesc = (ty: TypologyEntry) => localize(ty.description);
 		const getCatLabel = (cat: string) => {
 			const map: Record<string, string> = {
 				"Types of Christ (Persons)": s.typologyCatPersons,

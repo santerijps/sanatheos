@@ -695,6 +695,17 @@ const SV: Strings = {
 	qrClose: "Stäng",
 };
 
+/**
+ * All supported UI languages.
+ * To add a new language: add a Strings object above, add it to LANGUAGES below,
+ * and add an entry here with its BCP-47 code and native name.
+ */
+export const SUPPORTED_LANGUAGES: readonly { code: string; nativeName: string }[] = [
+	{ code: "en", nativeName: "English" },
+	{ code: "fi", nativeName: "Suomi" },
+	{ code: "sv", nativeName: "Svenska" },
+];
+
 const LANGUAGES: Record<string, Strings> = { en: EN, fi: FI, sv: SV };
 
 let current: Strings = EN;
@@ -711,4 +722,13 @@ export function getLanguage(): string {
 
 export function t(): Strings {
 	return current;
+}
+
+/**
+ * Pick the correct string for the current UI language from a multilingual record.
+ * Falls back to English, then to whatever is first in the object.
+ * Usage: localize(entry.title) — works with any { en: "...", fi: "...", ... } map.
+ */
+export function localize(strings: Record<string, string>): string {
+	return strings[currentLang] ?? strings["en"] ?? Object.values(strings)[0] ?? "";
 }

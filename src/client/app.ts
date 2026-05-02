@@ -51,7 +51,7 @@ import {
 	setNoteMap,
 } from "./render.ts";
 import { setTranslation, displayName, displayNameFor } from "./bookNames.ts";
-import { setLanguage, getLanguage, t } from "./i18n.ts";
+import { setLanguage, getLanguage, t, SUPPORTED_LANGUAGES } from "./i18n.ts";
 import {
 	TRANSLATION_NAMES,
 	TRANSLATION_LANG,
@@ -265,6 +265,12 @@ async function init() {
 	localStorage.setItem("bible-language", savedLang);
 
 	const languageSegmented = document.getElementById("language-segmented");
+	if (languageSegmented) {
+		languageSegmented.innerHTML = SUPPORTED_LANGUAGES.map(
+			(l) =>
+				`<button type="button" class="seg-btn" data-value="${l.code}">${l.nativeName}</button>`,
+		).join("");
+	}
 	activateSegmented(languageSegmented, savedLang);
 
 	// Apply theme
