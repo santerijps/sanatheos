@@ -1,18 +1,18 @@
 pre-commit:
-  parallel: true
-  commands:
-    fmt:
-      run: bun run fmt:fix
-    lint:
-      run: bun run lint:fix
-    validate:
-      run: bun run validate
-    test:
-      run: bun test
+    parallel: true
+    commands:
+        fmt:
+            run: bun run fmt:fix
+        lint:
+            run: bun run lint:fix
+        validate:
+            run: bun run validate
+        test:
+            run: bun test
 
 pre-push:
-  commands:
-    test:
-      run: bun test
-    test-e2e:
-      run: bun test:e2e
+    commands:
+        test:
+            run: bun test
+        test-e2e:
+            run: bun test:e2e

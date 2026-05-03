@@ -4,7 +4,7 @@ Everything needed to understand and rebuild this project from scratch.
 
 ## Overview
 
-Sanatheos is a fast, offline-capable Bible reader and search application built with TypeScript and Bun. The name combines *sana* (Finnish: "word") and *theos* (Greek: "God"). It runs as a single-page application with no framework dependencies — just vanilla TypeScript compiled to a single browser bundle. It can be served from a Bun HTTP server during development or deployed as a static site (GitHub Pages).
+Sanatheos is a fast, offline-capable Bible reader and search application built with TypeScript and Bun. The name combines _sana_ (Finnish: "word") and _theos_ (Greek: "God"). It runs as a single-page application with no framework dependencies — just vanilla TypeScript compiled to a single browser bundle. It can be served from a Bun HTTP server during development or deployed as a static site (GitHub Pages).
 
 ## Folder Structure
 
@@ -154,21 +154,24 @@ Each translation is stored as a single JSON file in `public/text/` (e.g., `NHEB.
 
 ```json
 {
-  "translation": "NHEB",
-  "books": [
-    {
-      "name": "Genesis",
-      "chapters": [
-        {
-          "chapter": 1,
-          "verses": [
-            { "verse": 1, "text": "In the beginning, God created the heavens and the earth." },
-            { "verse": 2, "text": "The earth was formless and empty. ..." }
-          ]
-        }
-      ]
-    }
-  ]
+	"translation": "NHEB",
+	"books": [
+		{
+			"name": "Genesis",
+			"chapters": [
+				{
+					"chapter": 1,
+					"verses": [
+						{
+							"verse": 1,
+							"text": "In the beginning, God created the heavens and the earth."
+						},
+						{ "verse": 2, "text": "The earth was formless and empty. ..." }
+					]
+				}
+			]
+		}
+	]
 }
 ```
 
@@ -196,14 +199,17 @@ Description files live in `public/data/` named by language: `descriptions-en.jso
 
 ```json
 [
-  {
-    "name": "Genesis",
-    "description": "This book is so called from its treating of the generation...",
-    "chapters": [
-      { "number": 1, "description": "God creates Heaven and Earth, and all things therein, in six days." },
-      { "number": 2, "description": "God rests on the seventh day and blesses it..." }
-    ]
-  }
+	{
+		"name": "Genesis",
+		"description": "This book is so called from its treating of the generation...",
+		"chapters": [
+			{
+				"number": 1,
+				"description": "God creates Heaven and Earth, and all things therein, in six days."
+			},
+			{ "number": 2, "description": "God rests on the seventh day and blesses it..." }
+		]
+	}
 ]
 ```
 
@@ -217,17 +223,22 @@ The Bible stories list lives in `public/data/stories.json`. It is fetched on dem
 
 ```json
 [
-  {
-    "id": "creation",
-    "title": { "en": "The Creation", "fi": "Luominen", "sv": "Skapelsen" },
-    "description": { "en": "God creates the heavens, earth, light... in six days.", "fi": "Jumala luo taivaan, maan, valon...", "sv": "Gud skapar himmel, jord, ljus... på sex dagar." },
-    "ref": "Genesis 1-2",
-    "category": "Old Testament"
-  }
+	{
+		"id": "creation",
+		"title": { "en": "The Creation", "fi": "Luominen", "sv": "Skapelsen" },
+		"description": {
+			"en": "God creates the heavens, earth, light... in six days.",
+			"fi": "Jumala luo taivaan, maan, valon...",
+			"sv": "Gud skapar himmel, jord, ljus... på sex dagar."
+		},
+		"ref": "Genesis 1-2",
+		"category": "Old Testament"
+	}
 ]
 ```
 
 Fields:
+
 - `id` — unique slug identifier
 - `title` — `Record<string, string>` map of language code → title (e.g., `{ "en": "...", "fi": "...", "sv": "..." }`)
 - `description` — `Record<string, string>` map of language code → one-sentence summary
@@ -242,17 +253,22 @@ The parables list lives in `public/data/parables.json`. It is fetched on demand 
 
 ```json
 [
-  {
-    "id": "sower",
-    "title": { "en": "The Parable of the Sower", "fi": "Kylväjä", "sv": "Såraren" },
-    "description": { "en": "A sower scatters seed on four types of ground...", "fi": "Kylväjä kylvää siemenen neljänlaiseen maahan...", "sv": "En sådare sprider säd på fyra sorters mark..." },
-    "ref": "Matthew 13:1-23",
-    "category": "Matthew"
-  }
+	{
+		"id": "sower",
+		"title": { "en": "The Parable of the Sower", "fi": "Kylväjä", "sv": "Såraren" },
+		"description": {
+			"en": "A sower scatters seed on four types of ground...",
+			"fi": "Kylväjä kylvää siemenen neljänlaiseen maahan...",
+			"sv": "En sådare sprider säd på fyra sorters mark..."
+		},
+		"ref": "Matthew 13:1-23",
+		"category": "Matthew"
+	}
 ]
 ```
 
 Fields:
+
 - `id` — unique slug identifier
 - `title` — `Record<string, string>` map of language code → title
 - `description` — `Record<string, string>` map of language code → one-sentence summary
@@ -267,20 +283,20 @@ The `styleguide.json` file (in `public/` and `docs/`) contains paragraph and poe
 
 ```json
 {
-  "Genesis": {
-    "1": {
-      "paragraphs": [1, 3, 6, 9],
-      "poetry": {},
-      "stanzaBreaks": []
-    }
-  },
-  "Psalms": {
-    "1": {
-      "paragraphs": [],
-      "poetry": { "1": 1, "2": 2, "3": 1 },
-      "stanzaBreaks": [5]
-    }
-  }
+	"Genesis": {
+		"1": {
+			"paragraphs": [1, 3, 6, 9],
+			"poetry": {},
+			"stanzaBreaks": []
+		}
+	},
+	"Psalms": {
+		"1": {
+			"paragraphs": [],
+			"poetry": { "1": 1, "2": 2, "3": 1 },
+			"stanzaBreaks": [5]
+		}
+	}
 }
 ```
 
@@ -296,10 +312,13 @@ Subheading files live in `public/data/` named by language: `subheadings-en.json`
 
 ```json
 {
-  "Genesis": {
-    "1": [{ "v": 1, "t": "The Creation" }, { "v": 6, "t": "The Second Day" }],
-    "2": [{ "v": 1, "t": "The Seventh Day" }]
-  }
+	"Genesis": {
+		"1": [
+			{ "v": 1, "t": "The Creation" },
+			{ "v": 6, "t": "The Second Day" }
+		],
+		"2": [{ "v": 1, "t": "The Seventh Day" }]
+	}
 }
 ```
 
@@ -315,96 +334,124 @@ Subheadings are rendered by `renderStyledVerses()` as `<h3 class="subheading">` 
 
 ```typescript
 interface BibleData {
-  [book: string]: { [chapter: string]: { [verse: string]: string } }
+	[book: string]: { [chapter: string]: { [verse: string]: string } };
 }
 
 interface VerseResult {
-  book: string; chapter: number; verse: number; text: string;
+	book: string;
+	chapter: number;
+	verse: number;
+	text: string;
 }
 
 interface AppState {
-  book?: string; chapter?: number; verse?: number;
-  query?: string; translation?: string; parallel?: string;
-  interlinear?: boolean;
+	book?: string;
+	chapter?: number;
+	verse?: number;
+	query?: string;
+	translation?: string;
+	parallel?: string;
+	interlinear?: boolean;
 }
 
 type HighlightColor = "yellow" | "green" | "blue" | "pink" | "orange";
 
 interface Highlight {
-  book: string; chapter: number; verse: number; color: HighlightColor;
+	book: string;
+	chapter: number;
+	verse: number;
+	color: HighlightColor;
 }
 
 interface ChapterDescription {
-  number: number; description: string;
+	number: number;
+	description: string;
 }
 
 interface BookDescription {
-  name: string; description: string; chapters: ChapterDescription[];
+	name: string;
+	description: string;
+	chapters: ChapterDescription[];
 }
 
 type DescriptionData = BookDescription[];
 
 interface SubheadingEntry {
-  v: number; t: string;
+	v: number;
+	t: string;
 }
 
 type SubheadingsData = Record<string, Record<string, SubheadingEntry[]>>;
 
 interface InterlinearWord {
-  w: string; english: string; original: string; translit: string;
-  strongs: string; lemma?: string; morph?: string;
+	w: string;
+	english: string;
+	original: string;
+	translit: string;
+	strongs: string;
+	lemma?: string;
+	morph?: string;
 }
 
 type InterlinearChapter = Record<string, InterlinearWord[]>;
 type InterlinearBook = Record<string, InterlinearChapter>;
 
 interface StrongsEntry {
-  d: string;  // definition
-  p: string;  // pronunciation
-  s: string;  // part of speech
-  r: string;  // cross-references
+	d: string; // definition
+	p: string; // pronunciation
+	s: string; // part of speech
+	r: string; // cross-references
 }
 
 type StrongsDict = Record<string, StrongsEntry>;
 
 interface Bookmark {
-  id: string;       // structured key: "book:chapter:verse", "book:chapter", "book", or "q:query"
-  book?: string;
-  chapter?: number;
-  verse?: number;
-  query?: string;
-  addedAt: number;  // Unix timestamp ms
+	id: string; // structured key: "book:chapter:verse", "book:chapter", "book", or "q:query"
+	book?: string;
+	chapter?: number;
+	verse?: number;
+	query?: string;
+	addedAt: number; // Unix timestamp ms
 }
 
 interface StoryEntry {
-  id: string;
-  title: Record<string, string>;       // { en: "...", fi: "...", sv: "..." }
-  description: Record<string, string>; // { en: "...", fi: "...", sv: "..." }
-  ref: string;
-  category: string;
+	id: string;
+	title: Record<string, string>; // { en: "...", fi: "...", sv: "..." }
+	description: Record<string, string>; // { en: "...", fi: "...", sv: "..." }
+	ref: string;
+	category: string;
 }
 
 // ParableEntry, TheophaniesEntry, TypologyEntry — identical structure to StoryEntry
 interface ParableEntry {
-  id: string; title: Record<string, string>; description: Record<string, string>;
-  ref: string; category: string;
+	id: string;
+	title: Record<string, string>;
+	description: Record<string, string>;
+	ref: string;
+	category: string;
 }
 interface TheophaniesEntry {
-  id: string; title: Record<string, string>; description: Record<string, string>;
-  ref: string; category: string;
+	id: string;
+	title: Record<string, string>;
+	description: Record<string, string>;
+	ref: string;
+	category: string;
 }
 interface TypologyEntry {
-  id: string; title: Record<string, string>; description: Record<string, string>;
-  ref: string; category: string;
+	id: string;
+	title: Record<string, string>;
+	description: Record<string, string>;
+	ref: string;
+	category: string;
 }
 
 interface VerseNote {
-  id: string;       // "book:chapter:verse" composite key
-  book: string;
-  chapter: number;
-  verse: number;
-  text: string;
-  updatedAt: number; // Unix timestamp ms
+	id: string; // "book:chapter:verse" composite key
+	book: string;
+	chapter: number;
+	verse: number;
+	text: string;
+	updatedAt: number; // Unix timestamp ms
 }
 ```
 
@@ -421,24 +468,25 @@ A thin orchestrator (~1,680 lines). The `init()` function runs on page load:
 5. **Populates settings selectors** — translation, parallel, language, theme, font size — from `localStorage` and URL state.
 6. **Renders initial content** based on URL state.
 7. **Initialises feature modules** (after `updateStaticText()`):
-   - `initNotes(deps)` → `NotesModule` (note dialog + sidenotes)
-   - `initHighlights(deps)` → `{ closeVerseMenu }` (verse context menu + highlights)
-   - `initIndexPanel(deps)` → `IndexPanelModule` (book index panel + drag gesture)
-   - `initSidebar(deps)` → `SidebarModule` (all side panel tabs)
+    - `initNotes(deps)` → `NotesModule` (note dialog + sidenotes)
+    - `initHighlights(deps)` → `{ closeVerseMenu }` (verse context menu + highlights)
+    - `initIndexPanel(deps)` → `IndexPanelModule` (book index panel + drag gesture)
+    - `initSidebar(deps)` → `SidebarModule` (all side panel tabs)
 8. **Wires up all remaining event listeners:**
-   - Search input with 150ms debounce and auto-closing double quotes.
-   - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I, ArrowLeft, ArrowRight) — delegates to feature module methods.
-   - ArrowLeft/ArrowRight shortcuts: when no text input is focused and no panel is open, these click the previous/next navigation arrow, enabling hands-free keyboard chapter-by-chapter navigation.
-   - Content click handlers (nav arrows, search results, chapter links, headings, copy buttons).
-   - Swipe navigation on touch devices.
-   - Browser back/forward (`popstate`).
-   - Translation switching with automatic query book name translation.
-   - Parallel translation loading and toggling.
-   - Theme, font size, and font family segmented control handlers.
-   - Data export/import handlers.
-   - QR code overlay open/close.
+    - Search input with 150ms debounce and auto-closing double quotes.
+    - Keyboard shortcuts (Escape, Ctrl+K, Ctrl+B, Ctrl+I, ArrowLeft, ArrowRight) — delegates to feature module methods.
+    - ArrowLeft/ArrowRight shortcuts: when no text input is focused and no panel is open, these click the previous/next navigation arrow, enabling hands-free keyboard chapter-by-chapter navigation.
+    - Content click handlers (nav arrows, search results, chapter links, headings, copy buttons).
+    - Swipe navigation on touch devices.
+    - Browser back/forward (`popstate`).
+    - Translation switching with automatic query book name translation.
+    - Parallel translation loading and toggling.
+    - Theme, font size, and font family segmented control handlers.
+    - Data export/import handlers.
+    - QR code overlay open/close.
 
 **Feature module pattern** — Each feature module exports an `initXxx(deps)` function that:
+
 - Queries its own DOM elements internally (no elements passed in).
 - Receives shared state via accessor closures in `deps` (e.g., `getData: () => BibleData`).
 - Wires its own event listeners.
@@ -447,10 +495,12 @@ A thin orchestrator (~1,680 lines). The `init()` function runs on page load:
 This prevents `init()` from accumulating hundreds of lines of DOM queries and event handlers. Cross-module communication uses only the `deps` parameter — feature modules never import from `app.ts`.
 
 **Unified side panel** — A single `#panel-btn` in the header opens `#side-overlay`, which contains `#side-panel` (a flexbox row). The panel has:
+
 - `#side-tab-rail` — 52px icon column with eight `.side-tab-btn[data-tab]` buttons (stories, parables, theophanies, typology, bookmarks, notes, settings, info) and `#side-close`
 - `#side-content` — scrollable area with eight `.side-pane[data-pane]` divs (stories, parables, theophanies, typology, bookmarks, notes, settings, info); only the `.active` pane is visible (`display: flex`)
 
 Key functions:
+
 - `activateSideTab(tab)` — toggles `.active` on both tab buttons and panes, saves to `localStorage` key `"side-panel-tab"`
 - `openSidePanel(tab?)` — adds `.open` to `#side-overlay`, calls `activateSideTab`, loads stories/parables/theophanies/typology/bookmarks data for their respective tabs (already in memory if background preload completed)
 - `closeSidePanel()` — removes `.open` from `#side-overlay`
@@ -481,11 +531,12 @@ Key functions:
 
 **Key design choice:** The app never routes to different pages. All navigation updates `#content` innerHTML and pushes URL state. The URL uses query parameters (`?t=NHEB&book=gen&chapter=3&verse=16`) not hash fragments.
 
-**Translation switching logic:** When changing translations, the app calls `parseQueryBooks()` *before* switching to capture English book keys from the old translation's aliases, then rebuilds the query string using the new translation's display names. This ensures `"Joh 3:16"` becomes `"John 3:16"` when switching KR38→NHEB.
+**Translation switching logic:** When changing translations, the app calls `parseQueryBooks()` _before_ switching to capture English book keys from the old translation's aliases, then rebuilds the query string using the new translation's display names. This ensures `"Joh 3:16"` becomes `"John 3:16"` when switching KR38→NHEB.
 
 **State flow:** User input → `applyState()` → rendering function → `replaceState()`/`pushState()` → URL updated. On `popstate`, the reverse: URL → `readState()` → `applyState()`.
 
 **`applyState()` dispatch:** Uses `tryParseNavGroups(query)` to attempt parsing the entire query as grouped references. If successful and all referenced books exist in the loaded data:
+
 - Single group with one ref → `renderNavRef` (direct navigation).
 - Multiple groups → `renderMultiNav(data, navGroups)` or `renderParallelMultiNav` in parallel mode.
 
@@ -498,6 +549,7 @@ If `tryParseNavGroups` fails and the query contains no quoted text, `parseNavTer
 **QR code overlay:** `showQrOverlay(url)` opens `#qr-overlay` (a fixed overlay with a `<canvas>`) and lazily imports `./qr.ts` to call `drawQR()`. The overlay is closed by clicking its close button or the backdrop. Pressing Escape also closes it. The overlay is triggered from share buttons when the `navigator.share` API is unavailable.
 
 **Translation metadata** — `TRANSLATION_NAMES` and `TRANSLATION_LANG` are exported from `services/api.ts`:
+
 - `NHEB` → English (default), `KJV` → English, `CPDV` → English, `KR38` → Finnish (Suomi), `SV17` → Swedish (Svenska)
 - Imported by `app.ts`, `features/highlights.ts`, and any other module that needs them.
 
@@ -514,10 +566,12 @@ Three pure DOM helpers used by multiple feature modules:
 Centralises all network + IndexedDB fetch functions and the translation constant maps:
 
 **Constants:**
+
 - `TRANSLATION_NAMES: Record<string, { name: string; language: string }>` — human-readable name and language for each translation code.
 - `TRANSLATION_LANG: Record<string, string>` — maps translation code to 2-letter UI language code (`"en"`, `"fi"`, `"sv"`).
 
 **Functions:**
+
 - `fetchInterlinear(book)` — checks render.ts in-memory store → IndexedDB → network fetch of `/text/interlinear/{book}.json`.
 - `fetchStrongs()` — checks render.ts in-memory store → IndexedDB → network fetch of `/text/strongs.json`.
 - `fetchTranslation(code)` — checks IndexedDB → network fetch of `/text/bible-{code}.json`.
@@ -531,6 +585,7 @@ Exports `initNotes(deps: NotesDeps): NotesModule`.
 **`NotesDeps`:** `{ getData: () => BibleData; showToast: (msg: string) => void }`
 
 **`NotesModule`:**
+
 - `openNoteDialog(book, chapter, verse)` — Opens `#note-panel-overlay`, populates title/ref/verse-preview/textarea, wires Save/Delete/Cancel handlers.
 - `closeNoteDialog()` — Closes the overlay.
 - `syncSidenotes()` — Repositions all `<aside class="verse-sidenote">` elements into `#sidenotes-rail` on desktop (≥768px), or leaves them inline on mobile. Runs after every render and on window resize.
@@ -545,6 +600,7 @@ Exports `initHighlights(deps: HighlightsDeps): { closeVerseMenu: () => void }`.
 **`HighlightsDeps`:** `{ getData, getParallelData, getCurrentTranslation, getParallelTranslation, getHighlightMap, updateHighlightEntry, showToast, openNoteDialog, syncBookmarkBtn }`
 
 Attaches `click`, `contextmenu`, `touchstart`, `touchend`, and `touchmove` listeners to `#content`.
+
 - Left-click / long-press (500ms) on a verse `<sup>` opens a floating `#verse-menu` with: five color dot buttons, active-color ring, remove-highlight button, copy-verse button, bookmark button, and add/edit-note button.
 - Color dot click → calls `deps.updateHighlightEntry()` and re-renders the verse span class.
 - Copy → writes translation label + reference + text to clipboard, shows toast.
@@ -592,6 +648,7 @@ Also removes `visibility:hidden` FOUC protection from `#side-overlay` on init.
 Operates entirely client-side on the in-memory `BibleData` object. `initSearch()` stores a reference to the data and extracts `bookNames` — it does not create any intermediate arrays or duplicate verse text, keeping memory usage minimal.
 
 **Query parsing:** Semicolon-separated terms (after normalization). Each term can be:
+
 - A book reference (with optional chapter, chapter range, verse, verse segments)
 - A quoted text filter (`"grace"`)
 - A combined reference + text filter (`Romans "faith"`)
@@ -600,10 +657,12 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 - A Strong's number (`G2316` or `H430`) — searches interlinear data for matching words
 
 **Query normalization (`normalizeQuery`):** Applied before splitting on semicolons in `search()`, `tryParseNav()`, and `parseQueryBooks()`:
+
 - Replaces en-dash (`\u2013`) and em-dash (`\u2014`) with regular hyphens.
 - Converts comma-separated book references to semicolons: `, ` followed by a letter or numbered-book start (e.g., `Matt. 27:1-38, Luuk. 23:39-43` → `Matt. 27:1-38; Luuk. 23:39-43`). Verse-segment commas (`, 5`, `, 10-15`) are left intact because they are followed by bare digits.
 
 **Book matching pipeline (`matchBook`):**
+
 1. Strip abbreviation periods from input (e.g., `Matt.` → `Matt`, `Joh.` → `Joh`). Periods after digits like `1.` are preserved.
 2. Exact full-name match on English keys (longest-first to prefer "1 John" over "John").
 3. Exact/starts-with match on translation aliases (Finnish display names, abbreviations).
@@ -612,15 +671,18 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 6. Fuzzy match via Levenshtein distance (threshold: ≤1 edit for names ≤5 chars, ≤2 edits otherwise, minimum 3 chars).
 
 **Reference parsing (`parseRef`):**
+
 - Strips trailing incomplete operators (`-`, `,`, `:`), trailing non-ref symbols, whitespace, and stray letter suffixes for progressive typing support.
 - Supports: book only, book + chapter, book + chapter range, book + chapter:verse, book + chapter:verseSegments (ranges and comma-separated).
 
 **Text matching (`buildTextMatcher`):**
+
 - Plain substring (fast `.includes()` path) when no anchors.
 - `^word` — word-start boundary (`\b` prefix). `word$` — word-end boundary. `^word$` — exact word.
 - Special regex characters are escaped.
 
 **Regex matching (`extractRegexFilter`):**
+
 - Syntax: `/pattern/` or `/pattern/flags` (e.g., `/for \w+ so loved/`, `/grace/i`).
 - Detected by matching a forward-slash delimited pattern at the end of a term, with an optional reference prefix before it.
 - Defaults to case-insensitive (`i` flag) when no flags are specified, consistent with text search.
@@ -641,45 +703,45 @@ Operates entirely client-side on the in-memory `BibleData` object. `initSearch()
 
 All functions write to `$("content").innerHTML`. Functions:
 
-| Function | Purpose |
-|----------|---------|
-| `renderChapter` | Single chapter with nav arrows, copy button, verse numbers |
-| `renderBook` | Entire book (all chapters) |
-| `renderVerse` | Single verse with nav arrows and "Read full chapter" link |
-| `renderChapterRange` | Multiple chapters (e.g., Genesis 1-3) |
-| `renderVerseSegments` | Specific verse selections (e.g., Genesis 1:1-3,5) |
-| `renderMultiNav` | Multiple semicolon-separated references (accepts `NavRef[][]` groups) |
-| `renderMixedMultiNav` | Mixed valid/invalid references; invalid terms render as "Invalid reference" error paragraphs |
-| `renderParallelMixedMultiNav` | Two-column parallel version of `renderMixedMultiNav` |
-| `renderNavRefGroup` | Renders a single group of `NavRef[]` — first ref gets `<h2>`, subsequent get `<h3>` |
-| `renderParallelNavRefGroup` | Two-column parallel version of `renderNavRefGroup` |
-| `renderResults` | Search results with pagination (50 per page), highlighting |
-| `renderIndex` | Three-column book index panel with keyboard navigation. Accepts callbacks: `onBook`, `onReadBook`, `onChapter`, `onReadChapter`, `onVerse`. Prepends `.idx-read-book` as first item in chapters column and `.idx-read-chapter` as first item in verses column. |
-| `renderParallelChapter` | Two-column side-by-side chapter view |
-| `renderParallelChapterRange` | Two-column side-by-side chapter range (e.g., Genesis 1-3 in parallel); fixes the previous bug where chapter ranges fell back to single-column |
-| `renderParallelBook` | Two-column side-by-side full book view |
-| `renderParallelVerse` | Two-column single verse view |
-| `renderParallelVerseSegments` | Two-column verse segments view |
-| `renderParallelMultiNav` | Two-column multi-reference view |
-| `renderStrongsPanel` | Side panel with Strong's definition, pronunciation, morphology |
-| `setHighlightMap` | Updates the highlight color map for rendering |
-| `setDescriptions` | Updates the primary description data for rendering |
-| `setSecondaryDescriptions` | Updates the secondary description data (for parallel view) |
-| `setSubheadings` | Stores primary translation's subheadings data |
-| `setSecondarySubheadings` | Stores secondary translation's subheadings (for parallel view) |
-| `setStyleguide` | Sets the styleguide formatting data for rendering |
-| `setTranslationCode` | Sets the current translation code for rendering |
-| `setNoteMap` | Updates the in-memory note id→text map used when rendering note markers |
-| `getNoteMap` | Returns the current in-memory note map |
-| `setInterlinearEnabled` | Enables/disables interlinear mode |
-| `getInterlinearEnabled` | Returns whether interlinear mode is active |
-| `setInterlinearBook` | Stores loaded interlinear data for a book |
-| `getInterlinearBook` | Retrieves interlinear data for a given book |
-| `getInterlinearBooks` | Returns the full interlinear data map |
-| `setStrongsDict` | Stores the Strong's Concordance dictionary |
-| `getStrongsDict` | Retrieves the Strong's dictionary |
-| `renderStyledVerses` | Renders verses with paragraph breaks, poetry indentation, stanza breaks, subheadings |
-| `navRefLabel` | Generates display labels for NavRef objects |
+| Function                      | Purpose                                                                                                                                                                                                                                                        |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `renderChapter`               | Single chapter with nav arrows, copy button, verse numbers                                                                                                                                                                                                     |
+| `renderBook`                  | Entire book (all chapters)                                                                                                                                                                                                                                     |
+| `renderVerse`                 | Single verse with nav arrows and "Read full chapter" link                                                                                                                                                                                                      |
+| `renderChapterRange`          | Multiple chapters (e.g., Genesis 1-3)                                                                                                                                                                                                                          |
+| `renderVerseSegments`         | Specific verse selections (e.g., Genesis 1:1-3,5)                                                                                                                                                                                                              |
+| `renderMultiNav`              | Multiple semicolon-separated references (accepts `NavRef[][]` groups)                                                                                                                                                                                          |
+| `renderMixedMultiNav`         | Mixed valid/invalid references; invalid terms render as "Invalid reference" error paragraphs                                                                                                                                                                   |
+| `renderParallelMixedMultiNav` | Two-column parallel version of `renderMixedMultiNav`                                                                                                                                                                                                           |
+| `renderNavRefGroup`           | Renders a single group of `NavRef[]` — first ref gets `<h2>`, subsequent get `<h3>`                                                                                                                                                                            |
+| `renderParallelNavRefGroup`   | Two-column parallel version of `renderNavRefGroup`                                                                                                                                                                                                             |
+| `renderResults`               | Search results with pagination (50 per page), highlighting                                                                                                                                                                                                     |
+| `renderIndex`                 | Three-column book index panel with keyboard navigation. Accepts callbacks: `onBook`, `onReadBook`, `onChapter`, `onReadChapter`, `onVerse`. Prepends `.idx-read-book` as first item in chapters column and `.idx-read-chapter` as first item in verses column. |
+| `renderParallelChapter`       | Two-column side-by-side chapter view                                                                                                                                                                                                                           |
+| `renderParallelChapterRange`  | Two-column side-by-side chapter range (e.g., Genesis 1-3 in parallel); fixes the previous bug where chapter ranges fell back to single-column                                                                                                                  |
+| `renderParallelBook`          | Two-column side-by-side full book view                                                                                                                                                                                                                         |
+| `renderParallelVerse`         | Two-column single verse view                                                                                                                                                                                                                                   |
+| `renderParallelVerseSegments` | Two-column verse segments view                                                                                                                                                                                                                                 |
+| `renderParallelMultiNav`      | Two-column multi-reference view                                                                                                                                                                                                                                |
+| `renderStrongsPanel`          | Side panel with Strong's definition, pronunciation, morphology                                                                                                                                                                                                 |
+| `setHighlightMap`             | Updates the highlight color map for rendering                                                                                                                                                                                                                  |
+| `setDescriptions`             | Updates the primary description data for rendering                                                                                                                                                                                                             |
+| `setSecondaryDescriptions`    | Updates the secondary description data (for parallel view)                                                                                                                                                                                                     |
+| `setSubheadings`              | Stores primary translation's subheadings data                                                                                                                                                                                                                  |
+| `setSecondarySubheadings`     | Stores secondary translation's subheadings (for parallel view)                                                                                                                                                                                                 |
+| `setStyleguide`               | Sets the styleguide formatting data for rendering                                                                                                                                                                                                              |
+| `setTranslationCode`          | Sets the current translation code for rendering                                                                                                                                                                                                                |
+| `setNoteMap`                  | Updates the in-memory note id→text map used when rendering note markers                                                                                                                                                                                        |
+| `getNoteMap`                  | Returns the current in-memory note map                                                                                                                                                                                                                         |
+| `setInterlinearEnabled`       | Enables/disables interlinear mode                                                                                                                                                                                                                              |
+| `getInterlinearEnabled`       | Returns whether interlinear mode is active                                                                                                                                                                                                                     |
+| `setInterlinearBook`          | Stores loaded interlinear data for a book                                                                                                                                                                                                                      |
+| `getInterlinearBook`          | Retrieves interlinear data for a given book                                                                                                                                                                                                                    |
+| `getInterlinearBooks`         | Returns the full interlinear data map                                                                                                                                                                                                                          |
+| `setStrongsDict`              | Stores the Strong's Concordance dictionary                                                                                                                                                                                                                     |
+| `getStrongsDict`              | Retrieves the Strong's dictionary                                                                                                                                                                                                                              |
+| `renderStyledVerses`          | Renders verses with paragraph breaks, poetry indentation, stanza breaks, subheadings                                                                                                                                                                           |
+| `navRefLabel`                 | Generates display labels for NavRef objects                                                                                                                                                                                                                    |
 
 **Navigation arrows:** Computed by `getChapterNav()` and `getVerseNav()` which walk the book/chapter/verse structure to find prev/next targets, crossing book boundaries. Arrows show full labels on desktop, abbreviated on mobile.
 
@@ -721,6 +783,7 @@ All functions write to `$("content").innerHTML`. Functions:
 ### db.ts — IndexedDB Layer
 
 Database: `sanatheos-db`, version 4. Four object stores:
+
 - `data` — Bible translation data keyed by translation code (e.g., `"NHEB"`), plus interlinear data keyed by `"interlinear-{Book}"`, Strong's dictionary keyed by `"strongs"`, and side panel data keyed by `"stories"`, `"parables"`, `"theophanies"`, `"typology"`.
 - `highlights` — Highlight records with compound key `book:chapter:verse`.
 - `bookmarks` — Bookmark records with `keyPath: "id"`. Each record: `{ id: string, book?: string, chapter?: number, verse?: number, query?: string, addedAt: number }`. `id` is a structured key (`book:chapter:verse`, `book:chapter`, `book`, or `q:query`). Records are returned sorted by `addedAt` descending.
@@ -737,6 +800,7 @@ Exports: `loadBible`, `saveBible`, `getHighlightMap`, `setHighlight`, `removeHig
 ### i18n.ts — Internationalization
 
 Three language tables: English (`EN`), Finnish (`FI`), and Swedish (`SV`), all implementing the `Strings` interface. Covers:
+
 - Header labels and placeholder text
 - Content messages (not found, loading, result count)
 - Settings modal labels (translation, language, theme, parallel, font size with 5 levels, font family, data export/import)
@@ -769,6 +833,7 @@ The info modal content is rebuilt dynamically from i18n strings whenever the lan
 ### bookNames.ts — Book Name Registry
 
 Contains full display names and aliases for all books (including deuterocanonical) in three translation groups:
+
 - **EN (English):** Shared by NHEB, KJV, and CPDV. Display names match English keys. Aliases include common abbreviations (`gen`, `exod`, `ex`, `rev`, `1 cor`, etc.). Includes deuterocanonical books.
 - **KR38 (Finnish):** Full Finnish names (e.g., "1. Mooseksen kirja" for Genesis) and Finnish abbreviations (`1 moos`, `joh`, `room`, `ilm`, etc.).
 - **SV17 (Swedish):** Full Swedish names (e.g., "1 Mosebok" for Genesis) and Swedish abbreviations (`1 mos`, `joh`, `rom`, `upp`, etc.).
@@ -791,6 +856,7 @@ tob ↔ Tobit, jdt ↔ Judith, wis ↔ Wisdom, sir ↔ Sirach, ...
 ## Shared Module (shared/bible-loader.ts)
 
 Exports three items used by both `server.ts` and `build-static.ts`:
+
 - `BOOK_ORDER` — Canonical array of 84 book names: OT (39) + Deuterocanonical (18) + NT (27), from Genesis through Revelation.
 - `loadBible(textDir, code)` — Reads a single JSON file from `public/text/CODE.json`, converts the array-based source format to `BibleData`, normalizes book names via `SOURCE_NAME_MAP`, strips empty verses and books, orders by `BOOK_ORDER`, and returns stringified JSON.
 - `discoverTranslations(textDir)` — Scans `*.json` files in the text directory, excluding non-translation files (`strongs`, `translations`), returning sorted translation codes.
@@ -798,20 +864,22 @@ Exports three items used by both `server.ts` and `build-static.ts`:
 ## Server (server.ts)
 
 Bun HTTP server on port 3000. Uses `loadBible` and `discoverTranslations` from the shared module. On startup:
+
 1. Builds the client bundle (`app.ts` → `public/bundle.js`).
 2. Loads all translations into memory from `public/text/` directory.
 3. Serves:
-   - `/text/bible-CODE.json` — combined Bible data for a translation (from memory cache).
-   - `/data/descriptions-LANG.json` — book and chapter descriptions by language (from file cache).
-   - `/text/interlinear/{Book}.json` — per-book interlinear data (served from file).
-   - `/text/strongs.json` — Strong's Concordance dictionary (served from file).
-   - Static files from `public/` with MIME type mapping.
-   - SPA fallback: unknown paths serve `index.html`.
+    - `/text/bible-CODE.json` — combined Bible data for a translation (from memory cache).
+    - `/data/descriptions-LANG.json` — book and chapter descriptions by language (from file cache).
+    - `/text/interlinear/{Book}.json` — per-book interlinear data (served from file).
+    - `/text/strongs.json` — Strong's Concordance dictionary (served from file).
+    - Static files from `public/` with MIME type mapping.
+    - SPA fallback: unknown paths serve `index.html`.
 4. Path traversal protection: resolved paths must start with `PUBLIC`.
 
 ## Build Script (build-static.ts)
 
 Produces the `docs/` directory for GitHub Pages deployment. Uses `loadBible` and `discoverTranslations` from the shared module.
+
 1. Cleans and recreates `docs/`.
 2. Bundles `app.ts` → `docs/bundle.js` (minified, browser target).
 3. Copies static files: `index.html`, `dictionary.html`, `style.css`, `robots.txt`, `manifest.json`, `service-worker.js`.
@@ -829,12 +897,13 @@ Produces the `docs/` directory for GitHub Pages deployment. Uses `loadBible` and
 **manifest.json:** `name: "Sanatheos"`, `display: standalone`, icons at 192×192 and 512×512 (PNG), `start_url: ./index.html`, dark theme color `#1a1a1a`.
 
 **service-worker.js (Service Worker):** Cache name `sanatheos-v4`.
+
 - **Install:** Pre-caches shell assets: `./`, `./style.css`, `./bundle.js`, `./manifest.json`, `./icon/favicon.ico`, `./icon/pwaicon-192.png`, `./icon/pwaicon-512.png`. Calls `self.skipWaiting()`.
 - **Activate:** Deletes old caches (any key ≠ `CACHE_NAME`). Calls `self.clients.claim()`.
 - **Fetch strategy:**
-  - Same-origin GET only.
-  - `.json` files: Network-first with cache fallback (keeps translations up to date).
-  - Everything else: Cache-first with network fallback (fast shell loading).
+    - Same-origin GET only.
+    - `.json` files: Network-first with cache fallback (keeps translations up to date).
+    - Everything else: Cache-first with network fallback (fast shell loading).
 
 **Registration:** `<script>` block in `index.html` calls `navigator.serviceWorker.register("./service-worker.js")` if available.
 
@@ -957,6 +1026,7 @@ The page is a single HTML file with this DOM structure:
 **Layout:** Full-width single column. Max-width constraints on content. Sticky header. Overlays use fixed positioning with backdrop.
 
 **Key CSS components:**
+
 - `.verse` — Inline spans with superscript verse numbers. Cursor pointer on `sup` elements.
 - `.hl-{color}` — Highlight background colors on verses.
 - `.description` — Italic, centered, muted-color paragraph for book/chapter descriptions.
@@ -1020,6 +1090,7 @@ The page is a single HTML file with this DOM structure:
 The search input in the sticky header accepts multiple query formats. Input is debounced at 150ms. If the query parses as pure references (no quoted text), the app navigates directly to those passages instead of showing search results.
 
 **Query formats:**
+
 - `John 3:16` → navigates to single verse
 - `Genesis 1-3` → navigates to chapter range
 - `Genesis 1:1-3,5,8-10` → navigates to specific verse segments
@@ -1035,6 +1106,7 @@ The search input in the sticky header accepts multiple query formats. Input is d
 - `H430` → Strong's number search (finds all verses with Hebrew word אֱלֹהִים)
 
 **Non-standard syntax support:** The search input accepts common non-standard conventions:
+
 - En-dashes and em-dashes (`–`, `—`) as verse/chapter range separators (normalized to hyphens)
 - Periods after book abbreviations (`Matt.`, `Joh.`, `Luuk.`, `Gen.`, `Rev.`)
 - Comma-separated multi-book references (`Matt. 27:1–38, Luuk. 23:39–43, Joh. 19:31–37`)
@@ -1049,17 +1121,19 @@ The search input in the sticky header accepts multiple query formats. Input is d
 ### 2. Book Index Panel
 
 Three-column browser opened via the grid icon button or Ctrl+I:
+
 - **Column 1 (Books):** All books with "Old Testament", "Deuterocanonical", and "New Testament" section labels. Hovering or keyboard-navigating to a book reveals its chapters. The first item in the chapters column is "Read the full book" (`.idx-read-book`), which navigates to the book overview.
 - **Column 2 (Chapters):** Chapter numbers with verse 1 text preview (or chapter description when available). Hovering shows the verse list. The first item in the verse column is "Read the full chapter" (`.idx-read-chapter`), which navigates to that chapter. Clicking a chapter on desktop navigates to it; on mobile it advances to the verses step.
 - **Column 3 (Verses):** Verse numbers with truncated text preview (50 chars). Clicking navigates to that verse.
 
 Keyboard navigation: Arrow up/down within columns, Arrow left/right or Tab between columns, Enter to select. The panel has scroll locking (body overflow hidden + scrollbar compensation padding).
 
-**Mobile bottom sheet (≤768px):** On narrow viewports, `#index-overlay` aligns `#index-panel` to the bottom edge (bottom sheet pattern) with a `16px 16px 0 0` border-radius and 85vh height. Opening animates with `indexPanelSlideUp` (slide from bottom). Closing via button/backdrop animates with `indexPanelSlideDown` + `indexOverlayFadeOut` via a `.closing` class. Closing via drag: see *Drag-to-close* below.
+**Mobile bottom sheet (≤768px):** On narrow viewports, `#index-overlay` aligns `#index-panel` to the bottom edge (bottom sheet pattern) with a `16px 16px 0 0` border-radius and 85vh height. Opening animates with `indexPanelSlideUp` (slide from bottom). Closing via button/backdrop animates with `indexPanelSlideDown` + `indexOverlayFadeOut` via a `.closing` class. Closing via drag: see _Drag-to-close_ below.
 
 **Drag-to-close:** A visual drag-handle pill (`#idx-mobile-header::before`) at the top of the mobile header affords the gesture. Dragging the header downward translates the panel in real time and fades the backdrop proportionally. Releasing past 30% of panel height (or with velocity > 0.4 px/ms) animates the panel to `translateY(110%)` and closes. Releasing below the threshold springs the panel back with a `0.3s cubic-bezier` transition.
 
 **Mobile drill-down:** Instead of showing all three columns at once, the panel shows one column at a time. `#idx-cols-wrap` is 300% wide; a `translateX` transition driven by `data-step` on `#index-panel` slides between columns:
+
 - `data-step="books"` → `translateX(0)` (books visible)
 - `data-step="chapters"` → `translateX(-33.333%)` (chapters visible)
 - `data-step="verses"` → `translateX(-66.667%)` (verses visible)
@@ -1069,6 +1143,7 @@ Keyboard navigation: Arrow up/down within columns, Arrow left/right or Tab betwe
 `openIndex()` reads the current `readState()` and restores the appropriate starting step: books → books step, book only → chapters step, book + chapter → verses step.
 
 **`renderIndex` callbacks:**
+
 - `onBook(book)` — tap/click on a book: mobile → advance to chapters step; desktop → navigate to book
 - `onReadBook(book)` — click "Read the full book": always navigates to the book
 - `onChapter(book, chapter)` — tap/click on a chapter number: mobile → advance to verses step; desktop → navigate to chapter
@@ -1086,6 +1161,7 @@ In parallel mode, each column displays subheadings in its own language. The seco
 ### 4. Verse Highlighting
 
 Clicking a verse's superscript number opens a floating context menu with:
+
 - A "Copy verse" button (clipboard icon + translation label + reference + text).
 - Five color dots (yellow, green, blue, pink, orange). The active color has a ring indicator.
 - A remove button (✕) appears only when a highlight exists.
@@ -1127,6 +1203,7 @@ Both actions show a toast notification ("Copied!" / "Kopioitu!").
 ### 8. Themes
 
 Three options via `data-theme` attribute on `<html>`:
+
 - **Light** — White/off-white background, dark text.
 - **Dark** — Dark grey background, light text. Highlight colors use 0.35 opacity (vs 0.4 in light mode) for visible highlighting on dark backgrounds.
 - **System** — Follows `prefers-color-scheme` media query, updating on OS changes.
@@ -1140,6 +1217,7 @@ Five levels via `data-font-size` attribute: small (14px), medium (17px), large (
 ### 10. Shareable URLs
 
 Every navigation state is encoded in URL query parameters. Examples:
+
 - `?t=NHEB&book=jhn&chapter=3&verse=16` → John 3:16 in NHEB
 - `?t=KR38&q="armo"` → search for "armo" in KR38
 - `?t=NHEB&p=KR38&book=gen&chapter=1` → Genesis 1 with KR38 parallel
@@ -1166,6 +1244,7 @@ All user-facing strings are in `i18n.ts`. The single HTML `index.html` contains 
 Verse text is formatted with paragraph breaks, poetry indentation, and stanza breaks based on a `styleguide.json` file. The styleguide was generated from USFM source files of the World English Bible (WEB) translation and is applied to all translations for consistent formatting.
 
 **Formatting types:**
+
 - **Paragraph breaks** — A visual break (`0.6em` gap) before verses that start a new paragraph in prose text.
 - **Poetry indentation** — Verses in poetic books (Psalms, Proverbs, Song of Songs, prophets, etc.) render as block-level elements with 3 levels of indentation (`q1`, `q2`, `q3`).
 - **Stanza breaks** — An extra gap (`0.8em`) between poetry stanzas.
@@ -1201,6 +1280,7 @@ Within the main app, the `#strongs-panel` displays individual word definitions w
 ### 18. Share Links
 
 A share button on verses and sections allows copying a link to the current passage. Two options are available:
+
 - **Share with text** — copies the URL along with the verse text
 - **Share without text** — copies just the URL
 
@@ -1215,13 +1295,14 @@ Users can export all their personal data (highlights, bookmarks, notes) to a JSO
 **Import:** Clicking the Import button triggers the hidden `#import-data-input` file picker (`.json` accept filter). When a file is selected, it is read via `FileReader`, parsed as JSON, and passed to `importUserData(data)` from `db.ts`. This validates the `version` field (must be `1`), then clears and repopulates all three stores atomically per-store. After import, all in-memory state (highlight map, bookmarks list, notes map) is refreshed and the current view re-renders. An "Import successful" toast confirms completion. A separate error toast is shown if the file cannot be parsed or has an unsupported version.
 
 **`UserDataExport` interface:**
+
 ```typescript
 interface UserDataExport {
-  version: 1;
-  exportedAt: string; // ISO 8601
-  highlights: Array<Highlight & { id: string }>;
-  bookmarks: Bookmark[];
-  notes: VerseNote[];
+	version: 1;
+	exportedAt: string; // ISO 8601
+	highlights: Array<Highlight & { id: string }>;
+	bookmarks: Bookmark[];
+	notes: VerseNote[];
 }
 ```
 
@@ -1243,7 +1324,7 @@ An optional dyslexia-friendly font setting replaces all text in the app with [Op
 
 **Activation:** Selecting "OpenDyslexic" in the **Font** segmented control in settings sets `data-font="dyslexic"` on `<html>`. The CSS rule `[data-font="dyslexic"] { --sans: "OpenDyslexic", sans-serif; --serif: "OpenDyslexic", serif; }` overrides both font variables, switching every font-family declaration in the app (since all use `var(--sans)` or `var(--serif)`). Selecting "Default" removes the attribute.
 
-**CSS placement:** The `[data-font="dyslexic"]` rule must appear *after* both `:root` and `[data-theme="dark"]` in the stylesheet. All three selectors have equal specificity (one pseudo-class or attribute selector), so later position wins. Placing it earlier would cause `:root` to silently override it and the font would never load.
+**CSS placement:** The `[data-font="dyslexic"]` rule must appear _after_ both `:root` and `[data-theme="dark"]` in the stylesheet. All three selectors have equal specificity (one pseudo-class or attribute selector), so later position wins. Placing it earlier would cause `:root` to silently override it and the font would never load.
 
 **Persistence:** Saved in `localStorage` as `"bible-font"`. On startup, `app.ts` reads the value and sets `data-font` before the first render to avoid a flash of unstyled text. When `"default"`, no attribute is set on `<html>` (the attribute is removed via `removeAttribute`).
 
@@ -1258,6 +1339,7 @@ An optional dyslexia-friendly font setting replaces all text in the app with [Op
 Users can annotate individual verses with free-text notes. Notes persist in IndexedDB and are displayed in a side rail (desktop) or inline (mobile).
 
 **Creating/editing a note:** Left-clicking (or long-pressing on touch) the verse superscript number opens the verse context menu. The menu includes a "✎ Add note" (or "✎ Edit note" if a note already exists) button. Clicking it opens the `#note-panel-overlay`, a slide-in panel from the left edge containing:
+
 - A header with title ("Add note" / "Edit note"), the verse reference, and verse text preview.
 - A `<textarea>` for the note text.
 - Save, Cancel, and Delete buttons (Delete is hidden for new notes).
@@ -1278,26 +1360,27 @@ Users can annotate individual verses with free-text notes. Notes persist in Inde
 
 ## Storage
 
-| Store | Technology | Purpose | Persistence |
-|-------|-----------|---------|-------------|
-| Bible data | IndexedDB `data` store | Cached translation JSON | Permanent (per-origin) |
-| Interlinear data | IndexedDB `data` store | Per-book interlinear data (keyed `interlinear-{Book}`) | Permanent (per-origin) |
-| Strong's dict | IndexedDB `data` store | Strong's Concordance (keyed `strongs`) | Permanent (per-origin) |
-| Highlights | IndexedDB `highlights` store | Verse highlight colors | Permanent (per-origin) |
-| Notes | IndexedDB `notes` store | Verse annotations (`VerseNote` records) | Permanent (per-origin) |
-| Translation | `localStorage` `bible-translation` | Last-used translation code | Permanent |
-| Parallel | `localStorage` `bible-parallel` | Parallel translation code | Permanent |
-| Theme | `localStorage` `bible-theme` | "light" / "dark" / "system" | Permanent |
-| Font size | `localStorage` `bible-font-size` | "small" thru "xxl" | Permanent |
-| Font family | `localStorage` `bible-font` | "default" / "dyslexic" | Permanent |
-| Language | `localStorage` `bible-language` | "en" / "fi" / "sv" | Permanent |
-| App shell | Service worker Cache API | HTML, CSS, JS, icons | Until cache version changes |
+| Store            | Technology                         | Purpose                                                | Persistence                 |
+| ---------------- | ---------------------------------- | ------------------------------------------------------ | --------------------------- |
+| Bible data       | IndexedDB `data` store             | Cached translation JSON                                | Permanent (per-origin)      |
+| Interlinear data | IndexedDB `data` store             | Per-book interlinear data (keyed `interlinear-{Book}`) | Permanent (per-origin)      |
+| Strong's dict    | IndexedDB `data` store             | Strong's Concordance (keyed `strongs`)                 | Permanent (per-origin)      |
+| Highlights       | IndexedDB `highlights` store       | Verse highlight colors                                 | Permanent (per-origin)      |
+| Notes            | IndexedDB `notes` store            | Verse annotations (`VerseNote` records)                | Permanent (per-origin)      |
+| Translation      | `localStorage` `bible-translation` | Last-used translation code                             | Permanent                   |
+| Parallel         | `localStorage` `bible-parallel`    | Parallel translation code                              | Permanent                   |
+| Theme            | `localStorage` `bible-theme`       | "light" / "dark" / "system"                            | Permanent                   |
+| Font size        | `localStorage` `bible-font-size`   | "small" thru "xxl"                                     | Permanent                   |
+| Font family      | `localStorage` `bible-font`        | "default" / "dyslexic"                                 | Permanent                   |
+| Language         | `localStorage` `bible-language`    | "en" / "fi" / "sv"                                     | Permanent                   |
+| App shell        | Service worker Cache API           | HTML, CSS, JS, icons                                   | Until cache version changes |
 
 ## Testing
 
 Unit tests across 4 files using `bun test` (scoped to `tests/` via `bunfig.toml`). End-to-end tests using Playwright (`bun run test:e2e`).
 
 **search.test.ts:** Comprehensive search engine testing using a minimal 4-book fixture (Genesis 1-3, John 1+3, 1 John 1, Revelation 1). Covers:
+
 - `parseVerseSegments` — single, range, comma-separated, edge cases, invalid inputs, overlapping ranges, inverted ranges
 - `matchBook` — exact, case-insensitive, numbered books, prefix, fuzzy (Levenshtein), 3-letter codes, Finnish aliases, abbreviation periods, empty/whitespace inputs
 - `parseRef` — book only, chapters, verse ranges, segments, trailing operators, edge cases, chapter 0, verse 0, very large numbers

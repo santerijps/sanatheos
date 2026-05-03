@@ -4,7 +4,7 @@
 [![CodeQL](https://github.com/santerijps/sanatheos/actions/workflows/github-code-scanning/codeql/badge.svg?branch=master)](https://github.com/santerijps/sanatheos/actions/workflows/github-code-scanning/codeql)
 [![pages-build-deployment](https://github.com/santerijps/sanatheos/actions/workflows/pages/pages-build-deployment/badge.svg?branch=master)](https://github.com/santerijps/sanatheos/actions/workflows/pages/pages-build-deployment)
 
-A fast, modern web application for reading and searching the Bible, built with TypeScript and Bun. The name is derived from *sana* (Finnish: "word") and *theos* (Greek: "God").
+A fast, modern web application for reading and searching the Bible, built with TypeScript and Bun. The name is derived from _sana_ (Finnish: "word") and _theos_ (Greek: "God").
 
 Lightweight, offline-ready, keyboard-friendly, and requires no sign-up.
 
@@ -42,14 +42,14 @@ A curated list of named Bible stories — from the Creation through the Book of 
 
 ### Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `Ctrl+K` | Focus search input |
-| `Ctrl+I` | Toggle book index panel |
-| `Escape` | Close any open panel |
+| Shortcut   | Action                            |
+| ---------- | --------------------------------- |
+| `Ctrl+K`   | Focus search input                |
+| `Ctrl+I`   | Toggle book index panel           |
+| `Escape`   | Close any open panel              |
 | Arrow keys | Navigate items in the index panel |
-| `Tab` | Switch columns in the index panel |
-| `Enter` | Select the focused item |
+| `Tab`      | Switch columns in the index panel |
+| `Enter`    | Select the focused item           |
 
 ### Shareable URLs
 
