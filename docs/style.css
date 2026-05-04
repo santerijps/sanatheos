@@ -95,6 +95,10 @@ body.preload * {
     --serif: "OpenDyslexic", serif;
 }
 
+[data-verse-font="sans"] #content {
+    font-family: var(--sans);
+}
+
 html {
     height: 100%;
 }

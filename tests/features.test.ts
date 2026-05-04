@@ -2186,3 +2186,150 @@ describe("HTML — mobile index elements", () => {
 		expect(colsBlock).toContain('id="idx-verses"');
 	});
 });
+
+// ---------------------------------------------------------------------------
+// i18n — verse font (text style) strings
+// ---------------------------------------------------------------------------
+
+describe("i18n — verse font strings (EN)", () => {
+	beforeEach(() => setLanguage("en"));
+
+	test("verseFontLabel is 'Text style'", () => {
+		expect(t().verseFontLabel).toBe("Text style");
+	});
+
+	test("verseFontSerif is 'Serif'", () => {
+		expect(t().verseFontSerif).toBe("Serif");
+	});
+
+	test("verseFontSans is 'Sans-serif'", () => {
+		expect(t().verseFontSans).toBe("Sans-serif");
+	});
+});
+
+describe("i18n — verse font strings (FI)", () => {
+	beforeEach(() => setLanguage("fi"));
+
+	test("verseFontLabel is non-empty", () => {
+		expect(t().verseFontLabel.length).toBeGreaterThan(0);
+	});
+
+	test("verseFontSerif is non-empty", () => {
+		expect(t().verseFontSerif.length).toBeGreaterThan(0);
+	});
+
+	test("verseFontSans is non-empty", () => {
+		expect(t().verseFontSans.length).toBeGreaterThan(0);
+	});
+});
+
+describe("i18n — verse font strings (SV)", () => {
+	beforeEach(() => setLanguage("sv"));
+
+	test("verseFontLabel is non-empty", () => {
+		expect(t().verseFontLabel.length).toBeGreaterThan(0);
+	});
+
+	test("verseFontSerif is non-empty", () => {
+		expect(t().verseFontSerif.length).toBeGreaterThan(0);
+	});
+
+	test("verseFontSans is non-empty", () => {
+		expect(t().verseFontSans.length).toBeGreaterThan(0);
+	});
+});
+
+describe("i18n — verse font strings non-empty across all languages", () => {
+	const verseFontKeys = ["verseFontLabel", "verseFontSerif", "verseFontSans"] as const;
+
+	for (const lang of ["en", "fi", "sv"] as const) {
+		test(`${lang.toUpperCase()}: all verse font strings are non-empty`, () => {
+			setLanguage(lang);
+			const s = t();
+			for (const key of verseFontKeys) {
+				expect(typeof s[key]).toBe("string");
+				expect((s[key] as string).length).toBeGreaterThan(0);
+			}
+		});
+	}
+});
+
+describe("i18n — infoSettingsText mentions text style", () => {
+	test("EN infoSettingsText mentions text style", () => {
+		setLanguage("en");
+		expect(t().infoSettingsText.toLowerCase()).toContain("text style");
+	});
+
+	test("FI infoSettingsText mentions text style (tekstin tyyli)", () => {
+		setLanguage("fi");
+		expect(t().infoSettingsText.toLowerCase()).toContain("tekstin tyyli");
+	});
+
+	test("SV infoSettingsText mentions text style (textstil)", () => {
+		setLanguage("sv");
+		expect(t().infoSettingsText.toLowerCase()).toContain("textstil");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// CSS — verse font (text style) rule
+// ---------------------------------------------------------------------------
+
+describe("CSS — verse font (text style) rule", () => {
+	const css = readFileSync(join(ROOT, "public", "style.css"), "utf-8");
+
+	test("has [data-verse-font='sans'] #content rule", () => {
+		expect(css).toContain('[data-verse-font="sans"] #content');
+	});
+
+	test("[data-verse-font='sans'] #content sets font-family to var(--sans)", () => {
+		const idx = css.indexOf('[data-verse-font="sans"] #content');
+		expect(idx).not.toBe(-1);
+		const block = css.slice(idx, css.indexOf("}", idx) + 1);
+		expect(block).toContain("font-family");
+		expect(block).toContain("var(--sans)");
+	});
+
+	test("does NOT use [data-verse-font='sans'] .verses (too narrow)", () => {
+		expect(css).not.toContain('[data-verse-font="sans"] .verses');
+	});
+});
+
+// ---------------------------------------------------------------------------
+// HTML — verse font segmented control
+// ---------------------------------------------------------------------------
+
+describe("HTML — verse font segmented control", () => {
+	const html = readFileSync(join(PUBLIC, "index.html"), "utf-8");
+
+	test("has #verse-font-segmented element", () => {
+		expect(html).toContain('id="verse-font-segmented"');
+	});
+
+	test("has settings-verse-font-label element", () => {
+		expect(html).toContain('id="settings-verse-font-label"');
+	});
+
+	test("#verse-font-segmented has a serif button", () => {
+		const segIdx = html.indexOf('id="verse-font-segmented"');
+		expect(segIdx).not.toBe(-1);
+		const segBlock = html.slice(segIdx, html.indexOf("</div>", segIdx) + 6);
+		expect(segBlock).toContain('data-value="serif"');
+	});
+
+	test("#verse-font-segmented has a sans button", () => {
+		const segIdx = html.indexOf('id="verse-font-segmented"');
+		expect(segIdx).not.toBe(-1);
+		const segBlock = html.slice(segIdx, html.indexOf("</div>", segIdx) + 6);
+		expect(segBlock).toContain('data-value="sans"');
+	});
+
+	test("#verse-font-segmented has exactly two seg-btn buttons", () => {
+		const segIdx = html.indexOf('id="verse-font-segmented"');
+		expect(segIdx).not.toBe(-1);
+		const segBlock = html.slice(segIdx, html.indexOf("</div>", segIdx) + 6);
+		const matches = segBlock.match(/class="seg-btn"/g);
+		expect(matches).not.toBeNull();
+		expect(matches!.length).toBe(2);
+	});
+});

@@ -148,6 +148,9 @@ interface Strings {
 	fontLabel: string;
 	fontDefault: string;
 	fontDyslexic: string;
+	verseFontLabel: string;
+	verseFontSerif: string;
+	verseFontSans: string;
 
 	// Data export / import
 	dataLabel: string;
@@ -227,7 +230,7 @@ const EN: Strings = {
 	],
 	infoSettingsTitle: "Settings",
 	infoSettingsText:
-		"Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. NHEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), and change the application language. All selections are saved across sessions.",
+		"Click the <strong>&#9881;</strong> gear button to open settings. You can switch between Bible translations (e.g. NHEB, KR38), choose a <strong>parallel translation</strong> (side-by-side view), set the <strong>theme</strong> (Light, Dark, or System), change the <strong>text style</strong> (Serif or Sans-serif), and change the application language. All selections are saved across sessions.",
 	infoFeaturesTitle: "Features",
 	infoFeaturesItems: [
 		"<strong>Highlights</strong> &mdash; Right-click a verse number and choose a highlight color (yellow, green, blue, pink, orange). Choose &ldquo;Remove highlight&rdquo; to clear it.",
@@ -327,6 +330,9 @@ const EN: Strings = {
 	fontLabel: "Font",
 	fontDefault: "Default",
 	fontDyslexic: "OpenDyslexic",
+	verseFontLabel: "Text style",
+	verseFontSerif: "Serif",
+	verseFontSans: "Sans-serif",
 
 	dataLabel: "Data",
 	exportData: "Export",
@@ -404,7 +410,7 @@ const FI: Strings = {
 	],
 	infoSettingsTitle: "Asetukset",
 	infoSettingsText:
-		"Napsauta <strong>&#9881;</strong>-rataspainiketta avataksesi asetukset. Voit vaihtaa raamatunkäännöstä (esim. NHEB, KR38), valita <strong>rinnakkaiskäännöksen</strong> (vierekkäin-näkymä), asettaa <strong>teeman</strong> (Vaalea, Tumma tai Järjestelmä) ja vaihtaa sovelluksen kielen. Valinnat tallennetaan.",
+		"Napsauta <strong>&#9881;</strong>-rataspainiketta avataksesi asetukset. Voit vaihtaa raamatunkäännöstä (esim. NHEB, KR38), valita <strong>rinnakkaiskäännöksen</strong> (vierekkäin-näkymä), asettaa <strong>teeman</strong> (Vaalea, Tumma tai Järjestelmä), vaihtaa <strong>tekstin tyyli</strong> (Serif tai Groteski) ja vaihtaa sovelluksen kielen. Valinnat tallennetaan.",
 	infoFeaturesTitle: "Ominaisuudet",
 	infoFeaturesItems: [
 		"<strong>Korostus</strong> &mdash; Napsauta hiiren oikealla jaenumeroa ja valitse korostusväri (keltainen, vihreä, sininen, pinkki, oranssi). Valitse &ldquo;Poista korostus&rdquo; poistaaksesi sen.",
@@ -505,6 +511,9 @@ const FI: Strings = {
 	fontLabel: "Fontti",
 	fontDefault: "Oletus",
 	fontDyslexic: "OpenDyslexic",
+	verseFontLabel: "Tekstin tyyli",
+	verseFontSerif: "Serif",
+	verseFontSans: "Sans-serif",
 
 	dataLabel: "Tiedot",
 	exportData: "Vie",
@@ -582,7 +591,7 @@ const SV: Strings = {
 	],
 	infoSettingsTitle: "Inställningar",
 	infoSettingsText:
-		"Klicka på <strong>&#9881;</strong>-kugghjulsknappen för att öppna inställningarna. Du kan byta Bibelöversättning (t.ex. NHEB, SV17), välja en <strong>parallell översättning</strong> (sida vid sida), ange <strong>tema</strong> (Ljust, Mörkt eller System) och ändra applikationsspråk. Alla val sparas.",
+		"Klicka på <strong>&#9881;</strong>-kugghjulsknappen för att öppna inställningarna. Du kan byta Bibelöversättning (t.ex. NHEB, SV17), välja en <strong>parallell översättning</strong> (sida vid sida), ange <strong>tema</strong> (Ljust, Mörkt eller System), ändra <strong>textstil</strong> (Serif eller Sans-serif) och ändra applikationsspråk. Alla val sparas.",
 	infoFeaturesTitle: "Funktioner",
 	infoFeaturesItems: [
 		"<strong>Markeringar</strong> &mdash; Högerklicka på ett versnummer och välj en markeringsfärg (gul, grön, blå, rosa, orange). Välj &ldquo;Ta bort markering&rdquo; för att rensa den.",
@@ -683,6 +692,9 @@ const SV: Strings = {
 	fontLabel: "Teckensnitt",
 	fontDefault: "Standard",
 	fontDyslexic: "OpenDyslexic",
+	verseFontLabel: "Textstil",
+	verseFontSerif: "Serif",
+	verseFontSans: "Sans-serif",
 
 	dataLabel: "Data",
 	exportData: "Exportera",

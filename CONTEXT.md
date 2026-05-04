@@ -465,7 +465,7 @@ A thin orchestrator (~1,680 lines). The `init()` function runs on page load:
 2. **Loads Bible data** — checks IndexedDB cache first, then fetches `bible-CODE.json` from the server. Stores in IndexedDB for offline use.
 3. **Loads metadata in parallel** — fetches `data/styleguide.json`, `data/descriptions-LANG.json`, and `data/subheadings-LANG.json` concurrently via `Promise.all()` and passes them to their respective setters in render.ts.
 4. **Initializes the search engine** with the loaded data.
-5. **Populates settings selectors** — translation, parallel, language, theme, font size — from `localStorage` and URL state.
+5. **Populates settings selectors** — translation, parallel, language, theme, font size, font family, and text style — from `localStorage` and URL state.
 6. **Renders initial content** based on URL state.
 7. **Initialises feature modules** (after `updateStaticText()`):
     - `initNotes(deps)` → `NotesModule` (note dialog + sidenotes)
@@ -481,7 +481,7 @@ A thin orchestrator (~1,680 lines). The `init()` function runs on page load:
     - Browser back/forward (`popstate`).
     - Translation switching with automatic query book name translation.
     - Parallel translation loading and toggling.
-    - Theme, font size, and font family segmented control handlers.
+    - Theme, font size, font family, and text style segmented control handlers.
     - Data export/import handlers.
     - QR code overlay open/close.
 
@@ -543,6 +543,8 @@ Key functions:
 If `tryParseNavGroups` fails and the query contains no quoted text, `parseNavTerms(query)` is called to parse each semicolon-separated term independently. Terms that resolve to valid refs are rendered; terms that don't (e.g. a misspelled book) are shown as `<p class="empty">` "Invalid reference" messages via `renderMixedMultiNav` / `renderParallelMixedMultiNav`. If no term resolves to a valid ref, or if the query contains quoted text, `search()` is called and results are rendered.
 
 **Font family setting:** `savedFont = localStorage.getItem("bible-font") || "default"`. Sets `data-font` attribute on `document.documentElement` (omitted when `"default"`). The `#font-segmented` control has `"default"` and `"dyslexic"` values; selecting `"dyslexic"` sets `data-font="dyslexic"` which activates the `[data-font="dyslexic"]` CSS rule overriding `--sans` and `--serif` to OpenDyslexic. Saved in `localStorage` as `"bible-font"`.
+
+**Text style setting:** `savedVerseFont = localStorage.getItem("bible-verse-font") || "serif"`. Sets `data-verse-font` attribute on `document.documentElement` (omitted when `"serif"`). The `#verse-font-segmented` control has `"serif"` and `"sans"` values; selecting `"sans"` sets `data-verse-font="sans"` which activates the `[data-verse-font="sans"] #content` CSS rule switching all main content text (verses, search results, and descriptions) to `var(--sans)`. Selecting `"serif"` removes the attribute. Saved in `localStorage` as `"bible-verse-font"`.
 
 **Data export/import:** `exportUserData()` collects all highlights, bookmarks, and notes into a `UserDataExport` JSON object, then triggers a browser file download named `sanatheos-export-YYYY-MM-DD.json`. `importUserData(data)` replaces all existing user data. Both show toast notifications on success. Import errors (invalid JSON or wrong version) show an error toast.
 
@@ -803,7 +805,7 @@ Three language tables: English (`EN`), Finnish (`FI`), and Swedish (`SV`), all i
 
 - Header labels and placeholder text
 - Content messages (not found, loading, result count)
-- Settings modal labels (translation, language, theme, parallel, font size with 5 levels, font family, data export/import)
+- Settings modal labels (translation, language, theme, parallel, font size with 5 levels, font family, text style, data export/import)
 - Info modal sections (search help, browse, shortcuts, settings, features, data/storage)
 - Index panel labels (Old Testament, New Testament)
 - Footer text, favicon attribution, dictionary link (`footerDictionary`), and styleguide attribution (`footerStyleguide`)
@@ -1075,7 +1077,7 @@ The page is a single HTML file with this DOM structure:
 - `#note-panel` — `position: fixed; left: 0; top: 0; height: 100%; width: min(clamp(320px, 28vw, 520px), 92vw); transform: translateX(-100%); transition: transform 0.28s`. Slides in from left edge when overlay has `.open`.
 - Settings/info modals — Centered cards with close buttons.
 - `.settings-group` — Fieldset grouping related settings (content vs appearance).
-- `.segmented` / `.seg-btn` — Horizontal segmented controls for theme, font size, language, and font family. Active state uses `--accent` background.
+- `.segmented` / `.seg-btn` — Horizontal segmented controls for theme, font size, language, font family, and text style. Active state uses `--accent` background.
 - `.settings-data-btns` — Flex row containing the Export and Import buttons in the Data settings section.
 - `#qr-overlay` — Fixed full-screen overlay containing a `<canvas>` for QR code display and a close button. Opened programmatically by `showQrOverlay()`. Hidden by default via `hidden` attribute.
 - **Filtered list pane CSS pattern** — Each side panel pane that contains a filter input and scrollable list requires explicit ID-based CSS rules in the `/* --- Stories & Parables panes --- */` block of `style.css`. When adding a new pane named `foo`, add `#foo-header`, `#foo-title`, `#foo-search-wrap`, `#foo-filter`, `#foo-filter:focus`, `#foo-filter::placeholder`, `#foo-list`, and all `#foo-list::-webkit-scrollbar*` selectors to each of the eight corresponding CSS rule groups alongside the existing stories/parables/theophanies selectors. Omitting any selector group causes the filter input to render unstyled or the list to be non-scrollable.
@@ -1214,6 +1216,10 @@ Saved in `localStorage` as `bible-theme`.
 
 Five levels via `data-font-size` attribute: small (14px), medium (17px), large (20px), xl (23px), xxl (26px). Affects `.verses` font-size. Saved in `localStorage` as `bible-font-size`.
 
+### 9a. Text Style
+
+Two options via `data-verse-font` attribute on `<html>`: serif (default, attribute absent) and sans-serif (`data-verse-font="sans"`). The `[data-verse-font="sans"] #content` CSS rule switches all main content text — verses, search results, and descriptions — to `var(--sans)`. Saved in `localStorage` as `bible-verse-font`.
+
 ### 10. Shareable URLs
 
 Every navigation state is encoded in URL query parameters. Examples:
@@ -1330,6 +1336,16 @@ An optional dyslexia-friendly font setting replaces all text in the app with [Op
 
 **i18n strings:** `fontLabel`, `fontDefault`, `fontDyslexic`.
 
+### 25. Text Style Setting
+
+A Serif/Sans-serif toggle for all main content text in the `#content` area (verses, search results, descriptions).
+
+**Activation:** Selecting "Sans-serif" in the **Text style** segmented control in settings sets `data-verse-font="sans"` on `<html>`. The CSS rule `[data-verse-font="sans"] #content { font-family: var(--sans); }` switches all text rendered inside `<main id="content">` to the sans-serif font stack. Selecting "Serif" removes the attribute, restoring the default serif body font.
+
+**Persistence:** Saved in `localStorage` as `"bible-verse-font"`. On startup, `app.ts` reads the value and sets `data-verse-font` if non-default.
+
+**i18n strings:** `verseFontLabel`, `verseFontSerif`, `verseFontSans`.
+
 ### 19. Deuterocanonical Books
 
 18 deuterocanonical/apocryphal books are supported (Tobit, Judith, Wisdom, Sirach, Baruch, 1–4 Maccabees, etc.). These appear in translations that include them (e.g., CPDV). The book index panel displays a "Deuterocanonical" section label between Old and New Testament sections. Book codes for URL routing cover all 84 books.
@@ -1372,6 +1388,7 @@ Users can annotate individual verses with free-text notes. Notes persist in Inde
 | Theme            | `localStorage` `bible-theme`       | "light" / "dark" / "system"                            | Permanent                   |
 | Font size        | `localStorage` `bible-font-size`   | "small" thru "xxl"                                     | Permanent                   |
 | Font family      | `localStorage` `bible-font`        | "default" / "dyslexic"                                 | Permanent                   |
+| Text style       | `localStorage` `bible-verse-font`  | "serif" / "sans"                                       | Permanent                   |
 | Language         | `localStorage` `bible-language`    | "en" / "fi" / "sv"                                     | Permanent                   |
 | App shell        | Service worker Cache API           | HTML, CSS, JS, icons                                   | Until cache version changes |
 
@@ -1398,7 +1415,7 @@ Unit tests across 4 files using `bun test` (scoped to `tests/` via `bunfig.toml`
 
 **state.test.ts:** `stateToInputText` conversion, `bookToCode`/`bookFromCode` mapping (including empty strings, uniqueness, code length), `toUrl` generation (including parallel param, special characters, verse omission).
 
-**features.test.ts:** Feature string verification for EN/FI/SV (themes, parallel, copy, highlights, interlinear, share links, dictionary, deuterocanonical). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN, FI, and SV: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI/SV key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness, interlinear styles). HTML structural elements (Strong's panel, toast, verse menu). Book names (displayName, displayNameFor, getBookKeys). Deuterocanonical book codes. Interlinear types validation. Strong's data validation. **Mobile index strings** (readFullChapter, readFullBook, idxBrowseLabel in EN/FI/SV exact values, non-empty across all three languages). **Mobile index CSS** (has `#idx-mobile-header`, `#idx-back-btn`, `display:none` on desktop, `flex-end` bottom sheet, `border-radius 16px`, `transition` on `#idx-cols-wrap`, `data-step` selectors, `.idx-read-chapter`/`.idx-read-book`, drag handle pill `::before`, `.dragging`/`.dragging-done` animation suppression, `touch-action: none` on header). **Mobile index HTML** (`#idx-mobile-header`, `#idx-back-btn`, `#idx-breadcrumb`, `#idx-cols-wrap` containing all three column divs).
+**features.test.ts:** Feature string verification for EN/FI/SV (themes, parallel, copy, highlights, interlinear, share links, dictionary, deuterocanonical). Language switching. Info section content. Copy segment parsing. Highlight type shape validation and map construction. Description data type validation, descriptions.json structure checks (entries, chapter ordering, book descriptions). Description files in public/data/ validation. Build script and server descriptions integration. PWA manifest validation (required fields, PNG icons at 192+512, file existence), service worker content checks (cache name, install/activate/fetch, shell assets, icons), HTML integration (manifest link, SW registration), build script coverage (copies all PWA files), i18n PWA feature mentions. Subheadings data validation (EN, FI, and SV: book count, chapter keys, entry fields, structural match between languages). i18n edge cases (function-type strings, font size strings, EN/FI/SV key parity, array length parity). Favicon attribution (Wikimedia Commons link in EN/FI). CSS validation (responsive section-title sizing, dark mode highlight brightness, interlinear styles). HTML structural elements (Strong's panel, toast, verse menu). Book names (displayName, displayNameFor, getBookKeys). Deuterocanonical book codes. Interlinear types validation. Strong's data validation. **Mobile index strings** (readFullChapter, readFullBook, idxBrowseLabel in EN/FI/SV exact values, non-empty across all three languages). **Mobile index CSS** (has `#idx-mobile-header`, `#idx-back-btn`, `display:none` on desktop, `flex-end` bottom sheet, `border-radius 16px`, `transition` on `#idx-cols-wrap`, `data-step` selectors, `.idx-read-chapter`/`.idx-read-book`, drag handle pill `::before`, `.dragging`/`.dragging-done` animation suppression, `touch-action: none` on header). **Mobile index HTML** (`#idx-mobile-header`, `#idx-back-btn`, `#idx-breadcrumb`, `#idx-cols-wrap` containing all three column divs). **Verse font (text style)** — i18n strings `verseFontLabel`/`verseFontSerif`/`verseFontSans` non-empty in EN/FI/SV; `infoSettingsText` mentions text style in all three languages; CSS `[data-verse-font="sans"] #content` rule exists and uses `var(--sans)` (not the narrower `.verses`); HTML `#verse-font-segmented` has `data-value="serif"` and `data-value="sans"` buttons.
 
 **bible-loader.test.ts:** BOOK_ORDER completeness (84 books, OT/DC/NT ordering, no duplicates, deuterocanonical placement). `loadBible` (JSON parsing, canonical ordering, book name normalization, empty verse trimming). `discoverTranslations` (discovery, sorting, exclusion of non-translation files).
 

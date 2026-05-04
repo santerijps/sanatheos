@@ -291,6 +291,13 @@ async function init() {
 	const fontSegmented = document.getElementById("font-segmented");
 	activateSegmented(fontSegmented, savedFont);
 
+	// Apply verse font style (serif vs sans-serif)
+	const savedVerseFont = localStorage.getItem("bible-verse-font") || "serif";
+	if (savedVerseFont !== "serif")
+		document.documentElement.setAttribute("data-verse-font", savedVerseFont);
+	const verseFontSegmented = document.getElementById("verse-font-segmented");
+	activateSegmented(verseFontSegmented, savedVerseFont);
+
 	window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
 		const theme = localStorage.getItem("bible-theme") || "system";
 		if (theme === "system") applyTheme("system");
@@ -571,6 +578,22 @@ async function init() {
 				document.documentElement.setAttribute("data-font", font);
 			}
 			localStorage.setItem("bible-font", font);
+		});
+	}
+
+	// Verse font style segmented control
+	if (verseFontSegmented) {
+		verseFontSegmented.addEventListener("click", (e) => {
+			const btn = (e.target as HTMLElement).closest(".seg-btn") as HTMLElement | null;
+			if (!btn || btn.classList.contains("seg-active")) return;
+			const verseFont = btn.dataset.value!;
+			activateSegmented(verseFontSegmented, verseFont);
+			if (verseFont === "serif") {
+				document.documentElement.removeAttribute("data-verse-font");
+			} else {
+				document.documentElement.setAttribute("data-verse-font", verseFont);
+			}
+			localStorage.setItem("bible-verse-font", verseFont);
 		});
 	}
 
@@ -1674,6 +1697,16 @@ function updateStaticText() {
 		const fontLabels = [s.fontDefault, s.fontDyslexic];
 		fontBtns.forEach((btn, i) => {
 			if (i < fontLabels.length) btn.textContent = fontLabels[i];
+		});
+	}
+	const verseFontLabelEl = document.getElementById("settings-verse-font-label");
+	if (verseFontLabelEl) verseFontLabelEl.textContent = s.verseFontLabel;
+	const verseFontSeg = document.getElementById("verse-font-segmented");
+	if (verseFontSeg) {
+		const verseFontBtns = verseFontSeg.querySelectorAll<HTMLElement>(".seg-btn");
+		const verseFontLabels = [s.verseFontSerif, s.verseFontSans];
+		verseFontBtns.forEach((btn, i) => {
+			if (i < verseFontLabels.length) btn.textContent = verseFontLabels[i];
 		});
 	}
 	const dataLabel = document.getElementById("settings-data-label");
