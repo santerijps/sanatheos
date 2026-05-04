@@ -409,6 +409,28 @@ test.describe("URL state", () => {
 		await page.goBack();
 		await expect(page.locator("#content")).toContainText("Genesis 1", { timeout: 10_000 });
 	});
+
+	test("translation-only URL does not trigger last-read restore", async ({ page }) => {
+		// Seed last-read as Ruth so it would be visible if mistakenly restored
+		await page.goto("/");
+		await page.evaluate(() => {
+			localStorage.setItem("bible-last-read", JSON.stringify({ book: "rut" }));
+		});
+
+		// Navigate to a translation-only URL (no book/chapter/verse/query params)
+		await page.goto("/?t=KR38");
+		await waitForApp(page);
+
+		// URL must not have acquired book=rut
+		const url = page.url();
+		expect(url).not.toContain("book=rut");
+
+		// Content must NOT be Ruth (it should default to Genesis 1)
+		// KR38 is Finnish, so Genesis is rendered as "Mooseksen kirja"
+		const content = page.locator("#content");
+		await expect(content).not.toContainText("Ruth", { timeout: 5_000 });
+		await expect(content).toContainText("Mooseksen kirja");
+	});
 });
 
 // ---------------------------------------------------------------------------

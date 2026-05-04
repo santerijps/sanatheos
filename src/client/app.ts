@@ -756,7 +756,7 @@ async function init() {
 
 	// Render initial state from URL
 	const state = readState();
-	if (!state.book && !state.chapter && !state.verse && !state.query) {
+	if (!window.location.search && !state.book && !state.chapter && !state.verse && !state.query) {
 		try {
 			const lastRead = localStorage.getItem("bible-last-read");
 			if (lastRead) {
