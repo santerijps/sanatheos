@@ -941,6 +941,16 @@ async function init() {
 				.forEach((w) => w.classList.remove("share-open"));
 		}
 	});
+	// Keyboard activation of nav arrows (Enter or Space when focused via Tab)
+	content.addEventListener("keydown", (e) => {
+		if (e.key === "Enter" || e.key === " ") {
+			const arrow = (e.target as HTMLElement).closest(".nav-arrow") as HTMLElement;
+			if (arrow && !arrow.classList.contains("nav-disabled")) {
+				e.preventDefault();
+				arrow.click();
+			}
+		}
+	});
 	content.addEventListener("click", async (e) => {
 		// Click on nav arrow → navigate to prev/next chapter/verse
 		const arrow = (e.target as HTMLElement).closest(".nav-arrow") as HTMLElement;

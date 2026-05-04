@@ -2346,4 +2346,102 @@ describe("app.ts source quality", () => {
 		// unresolved placeholder. It should have been replaced with a valid declaration.
 		expect(appSrc).not.toContain("[FONT]");
 	});
+
+	test("nav arrow Enter/Space keydown handler is present", () => {
+		// nav arrows have tabindex="0", so keyboard users can Tab to them; this
+		// handler fires click() on Enter or Space so navigation actually happens.
+		expect(appSrc).toMatch(/content\.addEventListener\("keydown"/);
+		expect(appSrc).toMatch(/e\.key === "Enter" \|\| e\.key === " "/);
+		expect(appSrc).toContain('.closest(".nav-arrow")');
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Bug fixes — render.ts structural and behavioural issues
+// ---------------------------------------------------------------------------
+
+import { formatVerseText, type QuoteState } from "../src/client/render.ts";
+
+describe("render.ts — formatVerseText quote curling", () => {
+	test("single call: paired quotes curl correctly", () => {
+		expect(formatVerseText('"Hello"')).toBe("&ldquo;Hello&rdquo;");
+	});
+
+	test("each call without shared state resets to open=true", () => {
+		// Without a shared QuoteState, each call is independent.
+		const r1 = formatVerseText('"A"');
+		const r2 = formatVerseText('"B"');
+		expect(r1).toBe("&ldquo;A&rdquo;");
+		expect(r2).toBe("&ldquo;B&rdquo;"); // would both be &ldquo; if state leaked
+	});
+
+	test("shared QuoteState persists across multiple verse calls", () => {
+		// Simulates a multi-verse quoted passage: verse 1 opens the quote,
+		// verse 2 closes it. The state must persist between calls.
+		const qs: QuoteState = { open: true };
+		const v1 = formatVerseText('"In the beginning', qs);
+		const v2 = formatVerseText('God created." And', qs);
+		expect(v1).toContain("&ldquo;");
+		expect(v1).not.toContain("&rdquo;");
+		expect(v2).toContain("&rdquo;");
+		expect(v2).not.toContain("&ldquo;");
+	});
+
+	test("shared QuoteState handles multiple quotes per verse", () => {
+		const qs: QuoteState = { open: true };
+		// verse 1: opens and closes a quote (net state: open=true again)
+		const v1 = formatVerseText('"said," he replied', qs);
+		// verse 2: should open a new quote with &ldquo;
+		const v2 = formatVerseText('"next verse"', qs);
+		expect(v1).toBe("&ldquo;said,&rdquo; he replied");
+		expect(v2).toBe("&ldquo;next verse&rdquo;");
+	});
+});
+
+describe("render.ts source quality", () => {
+	const src = readFileSync(join(ROOT, "src", "client", "render.ts"), "utf-8");
+
+	test("formatVerseText does not reset quote state with 'let open = true' inside function body", () => {
+		// After the fix the per-call reset is gone; state is passed via QuoteState param.
+		expect(src).not.toMatch(/function formatVerseText[\s\S]{0,300}let open = true/);
+	});
+
+	test("renderVerseSegments does not emit spurious translation-label div", () => {
+		// renderVerseSegments is a single-column view: it should only emit
+		// print-translation-label, not the multi-nav translation-label.
+		// The bug was emitting both consecutively in the same function.
+		// A print-translation-label immediately followed by a translation-label
+		// within a short span in the source is the exact pattern to forbid.
+		expect(src).not.toMatch(/print-translation-label[\s\S]{1,200}class="translation-label"/);
+	});
+
+	test("showMore does not contain dead insertAdjacentHTML('afterend','') call", () => {
+		expect(src).not.toContain(`insertAdjacentHTML("afterend", "")`);
+	});
+
+	test("disabled next nav arrow renders visible &rsaquo; character", () => {
+		expect(src).toContain(`class="nav-arrow nav-next nav-disabled">&rsaquo;</span>`);
+	});
+
+	test("enabled nav arrows have tabindex='0' for keyboard accessibility", () => {
+		// Both prev and next enabled arrows need tabindex so Tab navigation reaches them.
+		const matches = src.match(/class="nav-arrow nav-(prev|next)" tabindex="0"/g);
+		expect(matches?.length).toBeGreaterThanOrEqual(2);
+	});
+
+	test("renderParallelChapter bottom nav passes false to suppress ⟹ indicator", () => {
+		// The closing navArrowsHtml call in renderParallelChapter should pass false
+		// so the translation indicator (⟹) is not shown in the bottom navigation bar.
+		// A bare navArrowsHtml(prev, next) immediately before innerHTML would be wrong.
+		expect(src).not.toMatch(
+			/navArrowsHtml\(prev, next\)\s*;\s*\n\s*getElement\("content"\)\.innerHTML\s*=\s*html/,
+		);
+	});
+
+	test("parallelNavRefHtml chapter-range loop uses per-chapter QuoteState for each column", () => {
+		// Both primary and secondary verse loops inside parallelNavRefHtml must use
+		// a dedicated QuoteState object so quotes curl correctly across verses.
+		expect(src).toMatch(/const primaryQs: QuoteState = \{ open: true \}/g);
+		expect(src).toMatch(/const secondaryQs: QuoteState = \{ open: true \}/g);
+	});
 });

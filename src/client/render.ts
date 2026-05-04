@@ -172,13 +172,14 @@ function getHighlightClass(book: string, chapter: number, verse: number): string
 	return color ? ` hl-${color}` : "";
 }
 
-function formatVerseText(text: string): string {
-	let open = true;
+export type QuoteState = { open: boolean };
+
+export function formatVerseText(text: string, qs: QuoteState = { open: true }): string {
 	return escapeHtml(text)
 		.replace(/\n/g, "<br>")
 		.replace(/&quot;/g, () => {
-			const q = open ? "&ldquo;" : "&rdquo;";
-			open = !open;
+			const q = qs.open ? "&ldquo;" : "&rdquo;";
+			qs.open = !qs.open;
 			return q;
 		});
 }
@@ -198,6 +199,7 @@ function renderStyledVerses(
 	let mode: "prose" | "poetry" = "prose";
 	let poetryLevel = 1;
 	let noteCounter = 0;
+	const qs: QuoteState = { open: true };
 
 	for (let i = 0; i < nums.length; i++) {
 		const n = nums[i];
@@ -240,11 +242,11 @@ function renderStyledVerses(
 				? `<aside class="verse-sidenote" data-note-id="${escapeHtml(noteId)}" data-secondary="1"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${escapeHtml(noteText)}</span></aside>`
 				: `<aside class="verse-sidenote" data-note-id="${escapeHtml(noteId)}"><span class="verse-sidenote-num">${num}</span><span class="verse-sidenote-text">${escapeHtml(noteText)}</span></aside>`;
 			parts.push(
-				`<span class="verse${poetryClass}${getHighlightClass(book, chapter, n)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${formatVerseText(text)}⁠<sup class="verse-note-marker" data-note-id="${escapeHtml(noteId)}" data-secondary="${secondary ? "1" : ""}" role="button" tabindex="0" aria-label="Note ${num}">${num}</sup></span>${aside} `,
+				`<span class="verse${poetryClass}${getHighlightClass(book, chapter, n)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${formatVerseText(text, qs)}⁠<sup class="verse-note-marker" data-note-id="${escapeHtml(noteId)}" data-secondary="${secondary ? "1" : ""}" role="button" tabindex="0" aria-label="Note ${num}">${num}</sup></span>${aside} `,
 			);
 		} else {
 			parts.push(
-				`<span class="verse${poetryClass}${getHighlightClass(book, chapter, n)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${formatVerseText(text)}</span> `,
+				`<span class="verse${poetryClass}${getHighlightClass(book, chapter, n)}" data-book="${escapeHtml(book)}" data-chapter="${chapter}" data-verse="${n}"${secAttr}><sup>${n}</sup>${formatVerseText(text, qs)}</span> `,
 			);
 		}
 	}
@@ -554,11 +556,11 @@ function navArrowsHtml(
 	showTranslation = true,
 ): string {
 	const prevBtn = prev
-		? `<a class="nav-arrow nav-prev" title="${escapeHtml(prev.label)}" data-book="${escapeHtml(prev.book)}"${prev.chapter ? ` data-chapter="${prev.chapter}"` : ""}${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&lsaquo;</a>`
+		? `<a class="nav-arrow nav-prev" tabindex="0" title="${escapeHtml(prev.label)}" data-book="${escapeHtml(prev.book)}"${prev.chapter ? ` data-chapter="${prev.chapter}"` : ""}${prev.verse !== undefined ? ` data-verse="${prev.verse}"` : ""}>&lsaquo;</a>`
 		: `<span class="nav-arrow nav-prev nav-disabled">&lsaquo;</span>`;
 	const nextBtn = next
-		? `<a class="nav-arrow nav-next" title="${escapeHtml(next.label)}" data-book="${escapeHtml(next.book)}"${next.chapter ? ` data-chapter="${next.chapter}"` : ""}${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&rsaquo;</a>`
-		: `<span class="nav-arrow nav-next nav-disabled"></span>`;
+		? `<a class="nav-arrow nav-next" tabindex="0" title="${escapeHtml(next.label)}" data-book="${escapeHtml(next.book)}"${next.chapter ? ` data-chapter="${next.chapter}"` : ""}${next.verse !== undefined ? ` data-verse="${next.verse}"` : ""}>&rsaquo;</a>`
+		: `<span class="nav-arrow nav-next nav-disabled">&rsaquo;</span>`;
 	const mid = showTranslation ? `<span class="nav-translation">&DoubleRightArrow;</span>` : "";
 	return `<nav class="chapter-nav">${prevBtn}${mid}${nextBtn}</nav>`;
 }
@@ -743,7 +745,6 @@ export function renderVerseSegments(
 	const title = `${displayName(book)} ${chapter}:${segLabel}`;
 
 	let html = `<div class="print-translation-label"><span class="nav-translation"></span></div>`;
-	html += `<div class="translation-label"><span class="nav-translation"></span></div>`;
 	const segNums: number[] = [];
 	for (const seg of segments) for (let v = seg.start; v <= seg.end; v++) segNums.push(v);
 	html += `<h2 class="section-title">${escapeHtml(title)} <button class="copy-btn" title="Copy text" data-copy-book="${escapeHtml(book)}" data-copy-chapter="${chapter}" data-copy-segments="${escapeHtml(segLabel)}">${ICON_COPY}</button>${shareButtonHtml()}${bookmarkButtonHtml()}${interlinearToggleHtml()}</h2>`;
@@ -963,7 +964,6 @@ export function renderResults(results: VerseResult[], query: string) {
 
 		if (shown < results.length) {
 			const remaining = results.length - shown;
-			container.insertAdjacentHTML("afterend", "");
 			const btn = document.createElement("button");
 			btn.id = "show-more-btn";
 			btn.className = "show-more-btn";
@@ -1373,7 +1373,7 @@ export function renderParallelChapter(
 	html += `</div></div>`;
 
 	html += `</div>`;
-	html += navArrowsHtml(prev, next);
+	html += navArrowsHtml(prev, next, false);
 	getElement("content").innerHTML = html;
 	window.scrollTo(0, 0);
 }
@@ -1668,18 +1668,20 @@ function parallelNavRefHtml(
 					primaryHtml += `<h3 class="multi-nav-subheading">${escapeHtml(displayNameFor(primaryLabel, book))} ${c}</h3>`;
 					secondaryHtml += `<h3 class="multi-nav-subheading">${escapeHtml(displayNameFor(secondaryLabel, book))} ${c}</h3>`;
 				}
+				const primaryQs: QuoteState = { open: true };
 				primaryHtml += `<div class="verses">`;
 				for (const n of nums) {
-					primaryHtml += `<span class="verse${getHighlightClass(book, c, n)}" data-book="${escapeHtml(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${formatVerseText(ch1[String(n)])}</span> `;
+					primaryHtml += `<span class="verse${getHighlightClass(book, c, n)}" data-book="${escapeHtml(book)}" data-chapter="${c}" data-verse="${n}"><sup>${n}</sup>${formatVerseText(ch1[String(n)], primaryQs)}</span> `;
 				}
 				primaryHtml += `</div>`;
 
+				const secondaryQs: QuoteState = { open: true };
 				secondaryHtml += `<div class="verses">`;
 				if (ch2) {
 					for (const n of nums) {
 						const text = ch2[String(n)];
 						if (text)
-							secondaryHtml += `<span class="verse${getHighlightClass(book, c, n)}" data-book="${escapeHtml(book)}" data-chapter="${c}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${formatVerseText(text)}</span> `;
+							secondaryHtml += `<span class="verse${getHighlightClass(book, c, n)}" data-book="${escapeHtml(book)}" data-chapter="${c}" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${formatVerseText(text, secondaryQs)}</span> `;
 					}
 				} else {
 					secondaryHtml += `<p class="empty">${t().notFound}</p>`;
@@ -1695,18 +1697,20 @@ function parallelNavRefHtml(
 		const nums = Object.keys(ch1)
 			.map(Number)
 			.sort((a, b) => a - b);
+		const primaryQs: QuoteState = { open: true };
 		primaryHtml += `<div class="verses">`;
 		for (const n of nums) {
-			primaryHtml += `<span class="verse${getHighlightClass(book, 1, n)}" data-book="${escapeHtml(book)}" data-chapter="1" data-verse="${n}"><sup>${n}</sup>${formatVerseText(ch1[String(n)])}</span> `;
+			primaryHtml += `<span class="verse${getHighlightClass(book, 1, n)}" data-book="${escapeHtml(book)}" data-chapter="1" data-verse="${n}"><sup>${n}</sup>${formatVerseText(ch1[String(n)], primaryQs)}</span> `;
 		}
 		primaryHtml += `</div>`;
 
+		const secondaryQs: QuoteState = { open: true };
 		secondaryHtml += `<div class="verses">`;
 		if (ch2) {
 			for (const n of nums) {
 				const text = ch2[String(n)];
 				if (text)
-					secondaryHtml += `<span class="verse${getHighlightClass(book, 1, n)}" data-book="${escapeHtml(book)}" data-chapter="1" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${formatVerseText(text)}</span> `;
+					secondaryHtml += `<span class="verse${getHighlightClass(book, 1, n)}" data-book="${escapeHtml(book)}" data-chapter="1" data-verse="${n}" data-secondary="1"><sup>${n}</sup>${formatVerseText(text, secondaryQs)}</span> `;
 			}
 		} else {
 			secondaryHtml += `<p class="empty">${t().notFound}</p>`;
