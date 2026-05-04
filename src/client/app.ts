@@ -122,7 +122,7 @@ const BUY_ME_A_COFFEE_BUTTON = `
 	line-height: 0;
 	width: 100%;
 	flex-shrink: 0;
-	font-family: [FONT] !important;
+	font-family: inherit;
 	white-space: nowrap;
 	}
 
@@ -369,7 +369,7 @@ async function init() {
 			.join("");
 	}
 
-	async function applyTranslationChange(code: string, failedSelect: HTMLSelectElement | null) {
+	async function applyTranslationChange(code: string, _failedSelect: HTMLSelectElement | null) {
 		if (code === currentTranslation) return;
 
 		// Pre-parse query books with old translation's aliases
@@ -416,10 +416,14 @@ async function init() {
 			indexPanel.invalidateIndex();
 			if (overlay.classList.contains("open")) indexPanel.openIndex();
 
-			// Turn off interlinear mode when switching away from KJV
-			if (getInterlinearEnabled()) {
+			// Sync interlinear mode with the new translation
+			if (getInterlinearEnabled() && !isKJV()) {
+				// Switched away from KJV — disable in memory but preserve localStorage preference
 				setInterlinearEnabled(false);
-				localStorage.setItem("bible-interlinear", "0");
+				updateIlToggle();
+			} else if (isKJV() && localStorage.getItem("bible-interlinear") === "1") {
+				// Switched back to KJV — restore saved preference
+				setInterlinearEnabled(true);
 				updateIlToggle();
 			}
 
@@ -442,7 +446,8 @@ async function init() {
 			updateFooter();
 		} catch {
 			content.innerHTML = `<p class="empty">${t().loadTranslationFailed(code)}</p>`;
-			if (failedSelect) failedSelect.value = currentTranslation;
+			if (translationSelect) translationSelect.value = currentTranslation;
+			if (headerTranslationSelect) headerTranslationSelect.value = currentTranslation;
 		}
 	}
 
@@ -480,7 +485,6 @@ async function init() {
 	// Parallel translation selector
 	const parallelSelect = document.getElementById("parallel-select") as HTMLSelectElement | null;
 	if (parallelSelect && translationSelect) {
-		const translations = await fetchTranslations();
 		const savedParallel = initialState.parallel || localStorage.getItem("bible-parallel") || "";
 		parallelSelect.innerHTML =
 			`<option value="">${t().parallelNone}</option>` +
@@ -813,6 +817,18 @@ async function init() {
 				replaceState(withTranslationParams(s));
 				return;
 			}
+			// Avoid re-rendering if the query resolves to the same view that is
+			// already displayed (e.g. "gen" and "gene" both resolve to Genesis).
+			const newNav = stateForUrl({ query: q });
+			const cur = readState();
+			if (
+				newNav.book === cur.book &&
+				newNav.chapter === cur.chapter &&
+				newNav.verse === cur.verse &&
+				newNav.query === cur.query
+			) {
+				return;
+			}
 			applyState({ query: q });
 			replaceState(withTranslationParams(stateForUrl({ query: q })));
 		}, 150);
@@ -1024,7 +1040,10 @@ async function init() {
 			if (shareOpt.dataset.share === "qr") {
 				showQrOverlay(url.toString());
 			} else {
-				navigator.clipboard.writeText(url.toString()).then(() => showToast(t().linkCopied));
+				navigator.clipboard
+					.writeText(url.toString())
+					.then(() => showToast(t().linkCopied))
+					.catch(() => {});
 			}
 			return;
 		}
@@ -1152,11 +1171,14 @@ async function init() {
 			}
 			const text = parts.join("\n\n");
 			if (text) {
-				navigator.clipboard.writeText(text).then(() => {
-					showToast(t().copied);
-					copyBtn.classList.add("copy-success");
-					window.setTimeout(() => copyBtn.classList.remove("copy-success"), 1500);
-				});
+				navigator.clipboard
+					.writeText(text)
+					.then(() => {
+						showToast(t().copied);
+						copyBtn.classList.add("copy-success");
+						window.setTimeout(() => copyBtn.classList.remove("copy-success"), 1500);
+					})
+					.catch(() => {});
 			}
 			return;
 		}
@@ -1240,6 +1262,15 @@ async function init() {
 				setTranslationCode(s.translation);
 				localStorage.setItem("bible-translation", s.translation);
 				initSearch(data);
+
+				// Reload descriptions and subheadings for the restored translation
+				const restoredDesc = await fetchDescriptions(s.translation);
+				setDescriptions(restoredDesc);
+				const restoredShLang = TRANSLATION_LANG[s.translation] || "en";
+				try {
+					const shRes = await fetch(`./data/subheadings-${restoredShLang}.json`);
+					if (shRes.ok) setSubheadings(await shRes.json());
+				} catch {}
 
 				// Auto-switch UI language to match translation
 				const newLang = TRANSLATION_LANG[s.translation];
@@ -1414,7 +1445,7 @@ function renderNavRef(nav: NavRef) {
 		if (useParallel) {
 			renderParallelBook(data, parallelData!, book, currentTranslation, parallelTranslation);
 		} else {
-			renderChapter(data, book, 1);
+			renderBook(data, book);
 		}
 	}
 }
@@ -1445,7 +1476,7 @@ function queryToUrlState(q: string): AppState {
 	if (!navRefs || navRefs.length !== 1 || !data[navRefs[0].book]) return { query: q };
 	const nav = navRefs[0];
 	if (nav.chapterStart === undefined) {
-		return { book: nav.book, chapter: 1 };
+		return { book: nav.book };
 	}
 	if (nav.chapterStart === nav.chapterEnd && !nav.verseSegments) {
 		return { book: nav.book, chapter: nav.chapterStart };

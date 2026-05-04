@@ -2333,3 +2333,17 @@ describe("HTML — verse font segmented control", () => {
 		expect(matches!.length).toBe(2);
 	});
 });
+
+// ---------------------------------------------------------------------------
+// Bug fix — app.ts source must not contain unresolved CSS placeholder [FONT]
+// ---------------------------------------------------------------------------
+
+describe("app.ts source quality", () => {
+	const appSrc = readFileSync(join(ROOT, "src", "client", "app.ts"), "utf-8");
+
+	test("BUY_ME_A_COFFEE_BUTTON CSS does not contain unresolved [FONT] placeholder", () => {
+		// The original CSS template had 'font-family: [FONT] !important' which is an
+		// unresolved placeholder. It should have been replaced with a valid declaration.
+		expect(appSrc).not.toContain("[FONT]");
+	});
+});

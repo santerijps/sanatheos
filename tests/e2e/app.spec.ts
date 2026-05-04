@@ -98,6 +98,28 @@ test.describe("Search", () => {
 		// Should return to chapter view with no results
 		await expect(page.locator(".result")).toHaveCount(0, { timeout: 5_000 });
 	});
+
+	// Bug fix: searching a bare book name must render the full book TOC (all chapter
+	// headings), not just chapter 1.
+	test("bare book name in search renders full book view with multiple chapters", async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await waitForApp(page);
+		await page.fill("#search-input", "Genesis");
+		// Wait for content to update
+		await page.waitForSelector(".chapter-heading", { timeout: 5_000 });
+		// The book view should have many chapter headings (Genesis has 50 chapters)
+		const headings = page.locator(".chapter-heading");
+		const count = await headings.count();
+		expect(count).toBeGreaterThan(1);
+		// Should NOT be a single-chapter view (which would show verse spans)
+		// All chapter headings should reference Genesis
+		const first = await headings.first().textContent();
+		expect(first).toContain("1");
+		const last = await headings.last().textContent();
+		expect(Number(last?.match(/\d+/)?.[0])).toBeGreaterThan(1);
+	});
 });
 
 // ---------------------------------------------------------------------------
@@ -449,6 +471,43 @@ test.describe("Translation switching", () => {
 			"In the beginning God created the heaven and the earth",
 			{ timeout: 10_000 },
 		);
+	});
+
+	// Bug fix: interlinear preference must survive a KJV → other → KJV round-trip
+	test("interlinear preference is restored after switching away from KJV and back", async ({
+		page,
+	}) => {
+		// Start on KJV Genesis 1
+		await page.goto("/?book=gen&chapter=1&t=KJV");
+		await waitForApp(page);
+
+		// Enable interlinear via the toggle button in the content
+		const ilToggle = page.locator(".il-toggle-btn").first();
+		await expect(ilToggle).toBeVisible({ timeout: 10_000 });
+		await ilToggle.click();
+		// Interlinear words should appear after enabling
+		await expect(page.locator(".il-word").first()).toBeVisible({ timeout: 10_000 });
+
+		// Switch away from KJV to NHEB
+		await openPanelTab(page, "settings");
+		await page.selectOption("#translation-select", "NHEB");
+		await page.click("#side-close");
+		await expect(page.locator("#content")).toContainText("In the beginning", {
+			timeout: 10_000,
+		});
+
+		// Switch back to KJV
+		await openPanelTab(page, "settings");
+		await page.selectOption("#translation-select", "KJV");
+		await page.click("#side-close");
+		// Wait for KJV to load — the translation label must update
+		await expect(page.locator(".nav-translation").first()).toHaveText("KJV", {
+			timeout: 10_000,
+		});
+
+		// Interlinear should be active again (saved preference restored):
+		// .il-word elements are only rendered when interlinear is on
+		await expect(page.locator(".il-word").first()).toBeVisible({ timeout: 10_000 });
 	});
 });
 
