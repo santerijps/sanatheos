@@ -16,7 +16,7 @@ import {
 	_levenshtein,
 	_normalizeQuery,
 	escapeRegex,
-	_extractRegexFilter,
+	extractRegexFilter,
 } from "../src/client/search.ts";
 import { setTranslation, getAliases, getSortedAliases } from "../src/client/bookNames.ts";
 
@@ -1264,7 +1264,7 @@ describe("matchBook — 3-letter short codes", () => {
 // --- extractRegexFilter ---
 describe("extractRegexFilter", () => {
 	test("simple pattern returns regex and empty refPart", () => {
-		const result = _extractRegexFilter("/loved/");
+		const result = extractRegexFilter("/loved/");
 		expect(result).not.toBeNull();
 		expect(result!.refPart).toBe("");
 		expect(result!.regex.source).toBe("loved");
@@ -1272,48 +1272,48 @@ describe("extractRegexFilter", () => {
 	});
 
 	test("defaults to case-insensitive when no flags given", () => {
-		const result = _extractRegexFilter("/pattern/");
+		const result = extractRegexFilter("/pattern/");
 		expect(result!.regex.flags).toContain("i");
 	});
 
 	test("explicit flags override the default", () => {
-		const result = _extractRegexFilter("/pattern/gi");
+		const result = extractRegexFilter("/pattern/gi");
 		expect(result!.regex.flags).toContain("g");
 		expect(result!.regex.flags).toContain("i");
 	});
 
 	test("reference prefix is captured", () => {
-		const result = _extractRegexFilter("John /so loved/");
+		const result = extractRegexFilter("John /so loved/");
 		expect(result).not.toBeNull();
 		expect(result!.refPart).toBe("John");
 		expect(result!.regex.source).toBe("so loved");
 	});
 
 	test("reference with chapter prefix is captured", () => {
-		const result = _extractRegexFilter("Genesis 1 /beginning/");
+		const result = extractRegexFilter("Genesis 1 /beginning/");
 		expect(result).not.toBeNull();
 		expect(result!.refPart).toBe("Genesis 1");
 		expect(result!.regex.source).toBe("beginning");
 	});
 
 	test("invalid regex syntax returns null", () => {
-		expect(_extractRegexFilter("/[invalid/")).toBeNull();
+		expect(extractRegexFilter("/[invalid/")).toBeNull();
 	});
 
 	test("no slashes returns null", () => {
-		expect(_extractRegexFilter("Genesis 1:1")).toBeNull();
+		expect(extractRegexFilter("Genesis 1:1")).toBeNull();
 	});
 
 	test("only one slash returns null", () => {
-		expect(_extractRegexFilter("/pattern")).toBeNull();
+		expect(extractRegexFilter("/pattern")).toBeNull();
 	});
 
 	test("empty pattern returns null", () => {
-		expect(_extractRegexFilter("//")).toBeNull();
+		expect(extractRegexFilter("//")).toBeNull();
 	});
 
 	test("metacharacters are preserved as-is", () => {
-		const result = _extractRegexFilter("/\\w+ so loved/");
+		const result = extractRegexFilter("/\\w+ so loved/");
 		expect(result).not.toBeNull();
 		expect(result!.regex.source).toBe("\\w+ so loved");
 	});
@@ -2502,5 +2502,168 @@ describe("tryParseNavGroups", () => {
 
 	test("invalid sub-ref inside cross-chapter expansion returns null", () => {
 		expect(tryParseNavGroups("Bogus 18:16-19:5,20-29")).toBeNull();
+	});
+});
+
+// ---------------------------------------------------------------------------
+// search.ts fixes — regression tests
+// ---------------------------------------------------------------------------
+
+// --- Fix: Strong's number search now applies textMatch filter ---
+describe("Strong's number search — combined with text filter", () => {
+	const bibleData: BibleData = {
+		John: {
+			"1": {
+				"1": "In the beginning was the Word, and the Word was with God, and the Word was God.",
+				"2": "The same was in the beginning with God.",
+				"3": "All things were made through him.",
+			},
+		},
+	};
+
+	const interlinearMap: Map<string, InterlinearBook> = new Map([
+		[
+			"John",
+			{
+				"1": {
+					"1": [
+						{
+							w: "Word",
+							english: "Word",
+							original: "λόγος",
+							translit: "logos",
+							strongs: "g3056",
+						},
+						{
+							w: "God",
+							english: "God",
+							original: "θεός",
+							translit: "theos",
+							strongs: "g2316",
+						},
+					],
+					"2": [
+						{
+							w: "God",
+							english: "God",
+							original: "θεός",
+							translit: "theos",
+							strongs: "g2316",
+						},
+					],
+					"3": [
+						{
+							w: "all",
+							english: "all",
+							original: "πάντα",
+							translit: "panta",
+							strongs: "g3956",
+						},
+					],
+				},
+			},
+		],
+	]);
+
+	beforeEach(() => {
+		setTranslation("NHEB");
+		initSearch(bibleData);
+		setSearchInterlinearData(interlinearMap);
+	});
+
+	test("G2316 without text filter returns both matching verses", () => {
+		const results = search(bibleData, "G2316");
+		expect(results).toHaveLength(2);
+	});
+
+	test("G2316 with matching text filter returns only verses where text matches", () => {
+		// Verse 1:1 contains "Word" and "God"; verse 1:2 contains "God" but not "Word"
+		const results = search(bibleData, 'G2316 "Word"');
+		expect(results).toHaveLength(1);
+		expect(results[0].verse).toBe(1);
+	});
+
+	test("G2316 with non-matching text filter returns empty", () => {
+		// No verse with G2316 contains "serpent"
+		const results = search(bibleData, 'G2316 "serpent"');
+		expect(results).toHaveLength(0);
+	});
+
+	test("G3056 with text filter narrows to matching verse", () => {
+		// G3056 appears only in verse 1:1; that verse contains "beginning"
+		const results = search(bibleData, 'G3056 "beginning"');
+		expect(results).toHaveLength(1);
+		expect(results[0].verse).toBe(1);
+	});
+
+	test("G3056 with non-matching text filter returns empty", () => {
+		const results = search(bibleData, 'G3056 "serpent"');
+		expect(results).toHaveLength(0);
+	});
+});
+
+// --- Fix: whole-book search returns chapters in numeric order ---
+describe("search — whole-book chapter order", () => {
+	// Fixture with chapters added in non-sequential key order
+	const outOfOrderFixture: BibleData = {
+		Psalms: {
+			"10": { "1": "Why standest thou afar off, O LORD?" },
+			"2": { "1": "Why do the heathen rage, and the people imagine a vain thing?" },
+			"1": { "1": "Blessed is the man that walketh not in the counsel of the ungodly." },
+		},
+	};
+
+	beforeEach(() => {
+		setTranslation("NHEB");
+		initSearch(outOfOrderFixture);
+		setSearchInterlinearData(new Map());
+	});
+
+	test("whole-book results come back sorted by chapter number", () => {
+		const results = search(outOfOrderFixture, "Psalms");
+		expect(results).toHaveLength(3);
+		expect(results[0].chapter).toBe(1);
+		expect(results[1].chapter).toBe(2);
+		expect(results[2].chapter).toBe(10);
+	});
+
+	test("whole-book + text filter still returns sorted chapters", () => {
+		const results = search(outOfOrderFixture, 'Psalms "the"');
+		// All three verses contain "the"; chapters should still be ordered
+		const chapters = results.map((r) => r.chapter);
+		expect(chapters).toEqual([...chapters].sort((a, b) => a - b));
+	});
+});
+
+// --- Fix: expandCrossChapterTrailing uses fully named destructuring ---
+describe("expandCrossChapterTrailing — correct verse numbers in both halves", () => {
+	test("first half retains the correct verse numbers from the regex groups", () => {
+		// "Acts 6:8-7:5,47-60" should expand to:
+		//   "Acts 6:8-7:5"  (ch1=6, v1=8, ch2=7, v2=5)
+		//   "Acts 7:47-60"  (ch2=7, trailing=47-60)
+		const nav = tryParseNav("Genesis 18:16-19:5,20-29");
+		expect(nav).not.toBeNull();
+		expect(nav).toHaveLength(2);
+		// First ref: Genesis 18:16-19:5 (verseStart=16, verseEnd=5)
+		expect(nav![0].chapterStart).toBe(18);
+		expect(nav![0].chapterEnd).toBe(19);
+		expect(nav![0].verseStart).toBe(16);
+		expect(nav![0].verseEnd).toBe(5);
+		// Second ref: Genesis 19:20-29
+		expect(nav![1].chapterStart).toBe(19);
+		expect(nav![1].chapterEnd).toBe(19);
+		expect(nav![1].verseSegments).toEqual([{ start: 20, end: 29 }]);
+	});
+
+	test("verse numbers 1-digit ch1:v1-ch2:v2 are not swapped", () => {
+		// Genesis 1:2-3:4,5-10 → first half is 1:2-3:4, second half is 3:5-10
+		const nav = tryParseNav("Genesis 1:2-3:4,5-10");
+		expect(nav).not.toBeNull();
+		expect(nav![0].verseStart).toBe(2);
+		expect(nav![0].verseEnd).toBe(4);
+		expect(nav![0].chapterStart).toBe(1);
+		expect(nav![0].chapterEnd).toBe(3);
+		expect(nav![1].chapterStart).toBe(3);
+		expect(nav![1].verseSegments).toEqual([{ start: 5, end: 10 }]);
 	});
 });

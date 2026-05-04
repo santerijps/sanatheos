@@ -249,10 +249,10 @@ function expandCrossChapterTrailing(term: string): [string, string] | null {
 		.replace(/[-,:]+$/, "");
 	const m = rest.match(/^(\d+):(\d+)-(\d+):(\d+),(.+)$/);
 	if (!m) return null;
-	const [, ch1, , ch2, , trailing] = m;
+	const [, ch1, v1, ch2, v2, trailing] = m;
 	// Only accept trailing content that looks like verse segments (digits, commas, hyphens)
 	if (!/^[\d,-]+$/.test(trailing)) return null;
-	return [`${bm.book} ${ch1}:${m[2]}-${ch2}:${m[4]}`, `${bm.book} ${ch2}:${trailing}`];
+	return [`${bm.book} ${ch1}:${v1}-${ch2}:${v2}`, `${bm.book} ${ch2}:${trailing}`];
 }
 
 /**
@@ -449,6 +449,7 @@ export function search(data: BibleData, query: string): VerseResult[] {
 						const hasStrongs = words.some((w) => w.strongs === strongsId);
 						if (hasStrongs) {
 							const text = searchData[book]?.[c]?.[v] || "";
+							if (textMatch && !textMatch(text)) continue;
 							const k = `${book}:${c}:${v}`;
 							if (!seen.has(k)) {
 								seen.add(k);
@@ -521,14 +522,17 @@ export function search(data: BibleData, query: string): VerseResult[] {
 					}
 				}
 			} else {
-				// Whole book
-				for (const [c, verses] of Object.entries(bookData)) {
+				// Whole book — sort chapters numerically for deterministic order
+				for (const c of Object.keys(bookData)
+					.map(Number)
+					.sort((a, b) => a - b)) {
+					const verses = bookData[String(c)];
 					for (const [v, text] of Object.entries(verses)) {
 						if (textMatch && !textMatch(text)) continue;
 						const k = `${ref.book}:${c}:${v}`;
 						if (!seen.has(k)) {
 							seen.add(k);
-							results.push({ book: ref.book, chapter: +c, verse: +v, text });
+							results.push({ book: ref.book, chapter: c, verse: +v, text });
 						}
 					}
 				}
@@ -577,5 +581,4 @@ export {
 	normalizeQuery as _normalizeQuery,
 	escapeRegex,
 	extractRegexFilter,
-	extractRegexFilter as _extractRegexFilter,
 };
