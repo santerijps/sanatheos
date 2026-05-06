@@ -21,27 +21,31 @@ const NOTES_STORE = "notes";
 
 /** Persistent connection — opened once on first use, reused for all subsequent operations. */
 let dbInstance: IDBDatabase | null = null;
+/** In-flight open promise — deduplicates concurrent open() calls before the DB is ready. */
+let openPromise: Promise<IDBDatabase> | null = null;
 
 function open(): Promise<IDBDatabase> {
 	if (dbInstance) return Promise.resolve(dbInstance);
-	return new Promise((resolve, reject) => {
+	openPromise ??= new Promise((resolve, reject) => {
 		const req = indexedDB.open(DB_NAME, DB_VERSION);
-		let dataStoreNeedsReset = false;
 		req.onupgradeneeded = (event) => {
 			const db = req.result;
+			const tx = req.transaction!;
 			const oldVersion = event.oldVersion;
 
-			// Track whether an existing database was upgraded (not a fresh install).
-			// On upgrade, cached Bible data is cleared so it is re-fetched from the network.
-			// User data (highlights, bookmarks, notes) is preserved.
-			if (oldVersion > 0) dataStoreNeedsReset = true;
-
-			// v3: initial sanatheos-db schema (DB was renamed from "bible-app" at this version,
-			// so oldVersion < 3 covers both fresh installs and any hypothetical earlier versions)
 			if (oldVersion < 3) {
+				// Fresh install or first sanatheos-db version — create all stores.
+				// (The DB was renamed from "bible-app" at v3, so oldVersion < 3
+				// covers both true fresh installs and any pre-rename clients.)
 				db.createObjectStore(DATA_STORE);
 				db.createObjectStore(HIGHLIGHTS_STORE, { keyPath: "id" });
 				db.createObjectStore(BOOKMARKS_STORE, { keyPath: "id" });
+			} else {
+				// Upgrade of an existing DB: clear cached Bible data within the
+				// same atomic upgrade transaction so stale translations, interlinear
+				// files, and Strong's data are discarded and re-fetched on next
+				// access. User data (highlights, bookmarks, notes) is preserved.
+				tx.objectStore(DATA_STORE).clear();
 			}
 
 			// v4: notes store added
@@ -51,23 +55,15 @@ function open(): Promise<IDBDatabase> {
 		};
 		req.onsuccess = () => {
 			dbInstance = req.result;
+			openPromise = null;
 			// Re-open on unexpected close (e.g. browser pressure)
 			dbInstance.onclose = () => {
 				dbInstance = null;
 			};
-			if (dataStoreNeedsReset) {
-				// Clear cached Bible data after an upgrade so stale or incompatible
-				// cached translations, interlinear files, and Strong's data are
-				// discarded and re-fetched fresh from the network on next access.
-				const tx = dbInstance.transaction(DATA_STORE, "readwrite");
-				tx.objectStore(DATA_STORE).clear();
-				tx.oncomplete = () => resolve(dbInstance!);
-				tx.onerror = () => resolve(dbInstance!); // non-fatal: stale data is better than crashing
-			} else {
-				resolve(dbInstance);
-			}
+			resolve(dbInstance);
 		};
 		req.onerror = () => {
+			openPromise = null;
 			const error = req.error;
 			// A VersionError means a stale cached bundle is requesting a lower DB
 			// version than what already exists. Unregister all service workers so
@@ -82,6 +78,7 @@ function open(): Promise<IDBDatabase> {
 			reject(error);
 		};
 	});
+	return openPromise;
 }
 
 export async function loadBible(key: string): Promise<BibleData | null> {
@@ -399,54 +396,32 @@ export async function importUserData(data: UserDataExport): Promise<void> {
 
 	const db = await open();
 
-	// Clear and re-populate highlights
+	// Each store is cleared and re-populated inside a single transaction so a
+	// crash between the two operations can't leave the store permanently empty.
 	await new Promise<void>((resolve, reject) => {
 		const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
-		tx.objectStore(HIGHLIGHTS_STORE).clear();
+		const store = tx.objectStore(HIGHLIGHTS_STORE);
+		store.clear();
+		for (const h of data.highlights ?? []) store.put(h);
 		tx.oncomplete = () => resolve();
 		tx.onerror = () => reject(tx.error);
 	});
-	if (data.highlights?.length) {
-		await new Promise<void>((resolve, reject) => {
-			const tx = db.transaction(HIGHLIGHTS_STORE, "readwrite");
-			const store = tx.objectStore(HIGHLIGHTS_STORE);
-			for (const h of data.highlights) store.put(h);
-			tx.oncomplete = () => resolve();
-			tx.onerror = () => reject(tx.error);
-		});
-	}
 
-	// Clear and re-populate bookmarks
 	await new Promise<void>((resolve, reject) => {
 		const tx = db.transaction(BOOKMARKS_STORE, "readwrite");
-		tx.objectStore(BOOKMARKS_STORE).clear();
+		const store = tx.objectStore(BOOKMARKS_STORE);
+		store.clear();
+		for (const b of data.bookmarks ?? []) store.put(b);
 		tx.oncomplete = () => resolve();
 		tx.onerror = () => reject(tx.error);
 	});
-	if (data.bookmarks?.length) {
-		await new Promise<void>((resolve, reject) => {
-			const tx = db.transaction(BOOKMARKS_STORE, "readwrite");
-			const store = tx.objectStore(BOOKMARKS_STORE);
-			for (const b of data.bookmarks) store.put(b);
-			tx.oncomplete = () => resolve();
-			tx.onerror = () => reject(tx.error);
-		});
-	}
 
-	// Clear and re-populate notes
 	await new Promise<void>((resolve, reject) => {
 		const tx = db.transaction(NOTES_STORE, "readwrite");
-		tx.objectStore(NOTES_STORE).clear();
+		const store = tx.objectStore(NOTES_STORE);
+		store.clear();
+		for (const n of data.notes ?? []) store.put(n);
 		tx.oncomplete = () => resolve();
 		tx.onerror = () => reject(tx.error);
 	});
-	if (data.notes?.length) {
-		await new Promise<void>((resolve, reject) => {
-			const tx = db.transaction(NOTES_STORE, "readwrite");
-			const store = tx.objectStore(NOTES_STORE);
-			for (const n of data.notes) store.put(n);
-			tx.oncomplete = () => resolve();
-			tx.onerror = () => reject(tx.error);
-		});
-	}
 }
