@@ -26,15 +26,28 @@ function open(): Promise<IDBDatabase> {
 	if (dbInstance) return Promise.resolve(dbInstance);
 	return new Promise((resolve, reject) => {
 		const req = indexedDB.open(DB_NAME, DB_VERSION);
-		req.onupgradeneeded = () => {
+		let dataStoreNeedsReset = false;
+		req.onupgradeneeded = (event) => {
 			const db = req.result;
-			if (!db.objectStoreNames.contains(DATA_STORE)) db.createObjectStore(DATA_STORE);
-			if (!db.objectStoreNames.contains(HIGHLIGHTS_STORE))
+			const oldVersion = event.oldVersion;
+
+			// Track whether an existing database was upgraded (not a fresh install).
+			// On upgrade, cached Bible data is cleared so it is re-fetched from the network.
+			// User data (highlights, bookmarks, notes) is preserved.
+			if (oldVersion > 0) dataStoreNeedsReset = true;
+
+			// v3: initial sanatheos-db schema (DB was renamed from "bible-app" at this version,
+			// so oldVersion < 3 covers both fresh installs and any hypothetical earlier versions)
+			if (oldVersion < 3) {
+				db.createObjectStore(DATA_STORE);
 				db.createObjectStore(HIGHLIGHTS_STORE, { keyPath: "id" });
-			if (!db.objectStoreNames.contains(BOOKMARKS_STORE))
 				db.createObjectStore(BOOKMARKS_STORE, { keyPath: "id" });
-			if (!db.objectStoreNames.contains(NOTES_STORE))
+			}
+
+			// v4: notes store added
+			if (oldVersion < 4) {
 				db.createObjectStore(NOTES_STORE, { keyPath: "id" });
+			}
 		};
 		req.onsuccess = () => {
 			dbInstance = req.result;
@@ -42,7 +55,17 @@ function open(): Promise<IDBDatabase> {
 			dbInstance.onclose = () => {
 				dbInstance = null;
 			};
-			resolve(dbInstance);
+			if (dataStoreNeedsReset) {
+				// Clear cached Bible data after an upgrade so stale or incompatible
+				// cached translations, interlinear files, and Strong's data are
+				// discarded and re-fetched fresh from the network on next access.
+				const tx = dbInstance.transaction(DATA_STORE, "readwrite");
+				tx.objectStore(DATA_STORE).clear();
+				tx.oncomplete = () => resolve(dbInstance!);
+				tx.onerror = () => resolve(dbInstance!); // non-fatal: stale data is better than crashing
+			} else {
+				resolve(dbInstance);
+			}
 		};
 		req.onerror = () => {
 			const error = req.error;
