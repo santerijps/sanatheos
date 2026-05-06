@@ -50,7 +50,7 @@ ${O} ${U0}`;navigator.clipboard.writeText(V0).then(()=>$.showToast(w().copied))}
 </svg>`,dZ=`
 <div id="buy-me-a-coffee" style="text-align: center; margin-top: 16px;">
 	<style>.bmc-btn svg {
-		height: 32px !important;
+		height: 22px !important;
 		margin-bottom: 0px !important;
 		box-shadow: none !important;
 		border: none !important;
@@ -60,16 +60,16 @@ ${O} ${U0}`;navigator.clipboard.writeText(V0).then(()=>$.showToast(w().copied))}
 	}
 
 	.bmc-btn {
-		min-width: 210px;
+		min-width: 140px;
 		color: #000000 !important;
 		background-color: #FFDD00 !important;
-		height: 60px;
-		border-radius: 12px;
-		font-size: 24px;
+		height: 40px;
+		border-radius: 8px;
+		font-size: 16px;
 		font-weight: Bold;
 		border: none;
-		padding: 0px 24px;
-		line-height: 27px;
+		padding: 0px 14px;
+		line-height: 18px;
 		text-decoration: none !important;
 		display: inline-flex !important;
 		align-items: center;
