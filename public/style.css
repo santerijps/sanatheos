@@ -1486,11 +1486,18 @@ mark {
     background-repeat: no-repeat;
     background-size: 0% 2px;
     background-position: 0 100%;
+    font-weight: 300;
     transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
     /* Prettier text justification */
     letter-spacing: -0.2px;
     /* word-spacing: -1px; */
     hyphens: auto;
+}
+
+.verse:first-of-type,
+.para-break + .verse,
+.subheading + .verse {
+    padding-inline-start: 32px;
 }
 
 .verse.note-hover {
@@ -2987,6 +2994,18 @@ mark {
 
     #strongs-panel {
         width: 100vw;
+    }
+
+    .description {
+        padding-inline: 24px;
+    }
+
+    .subheading {
+        text-align: center;
+    }
+
+    .verses {
+        padding-inline: 32px;
     }
 }
 
